@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Job</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
-    @php echo '<script>' . file_get_contents(resource_path('js/new.js')) . '</script>'; @endphp
-
-    </head>
+</head>
 <body class="bg-gray-100">
     <!-- Navbar -->
     <nav class="bg-white shadow p-4 flex justify-between items-center relative">
@@ -69,5 +66,6 @@
             </form>
         </div>
     </section>
+    <script src="js/new.js"></script>
 </body>
 </html>

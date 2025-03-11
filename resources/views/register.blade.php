@@ -8,7 +8,7 @@
 </head>
 <body class="flex justify-center items-center min-h-screen bg-gray-100 p-4">
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-md">
-        <img src="assets/images/logo.png" alt="Logo" class="w-24 mx-auto mb-4">
+        <!-- <img src="assets/images/logo.png" alt="Logo" class="w-24 mx-auto mb-4"> -->
         <h2 class="text-3xl font-semibold text-gray-700 text-center">Register</h2>
         <input type="text" placeholder="Username" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
         <input type="email" placeholder="Email" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">

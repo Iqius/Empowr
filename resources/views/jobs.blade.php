@@ -8,7 +8,6 @@
 </head>
 <body class="bg-gray-100">
     <!-- Navbar -->
-    <script src="js/jobs.js"></script>
     <nav class="bg-white shadow p-4 flex justify-between items-center relative">
         <div class="flex items-center gap-4">
             <img id="logoPreview" src="assets/images/Logo.png" alt="Logo" class="w-20 h-5">
@@ -57,5 +56,7 @@
             <!-- Job Cards -->
         </div>
     </section>
+    <script src="js/jobs.js"></script>
+
 </body>
 </html>

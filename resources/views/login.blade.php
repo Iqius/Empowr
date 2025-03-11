@@ -8,7 +8,7 @@
 </head>
 <body class="flex justify-center items-center h-screen bg-gray-100 px-4">
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-md text-center">
-        <img src="assets/images/logo.png" alt="Logo" class="w-24 mx-auto mb-4">
+        <!-- <img src="assets/images/logo.png" alt="Logo" class="w-24 mx-auto mb-4"> -->
         <h2 class="text-3xl font-semibold text-gray-700">Login</h2>
         <input type="text" placeholder="Username" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
         <input type="password" placeholder="Password" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
