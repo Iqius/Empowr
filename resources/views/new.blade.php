@@ -19,12 +19,16 @@
         </div>
         <div class="relative">
             <button id="clientMenuBtn" class="flex items-center gap-2 focus:outline-none">
-                <img src="assets/images/avatar.png" alt="Avatar" class="w-8 h-8 rounded-full">
-                <span class="text-gray-600 hidden md:inline">Dede Rahmat</span>
+                <img src="{{  Auth::user()->profile_image ? asset('storage/' .  Auth::user()->profile_image) : asset('assets/images/avatar.png') }}" 
+                alt="Avatar" class="w-8 h-8 rounded-full">
+                <span class="text-gray-600 hidden md:inline">{{ Auth::user()->name }}</span>
             </button>
             <div id="clientMenu" class="absolute right-0 mt-2 w-32 bg-white shadow-lg rounded hidden">
                 <a href="/profil" class="block px-4 py-2 text-gray-600 hover:bg-gray-200">Profile</a>
-                <button id="logoutBtn" class="block w-full text-left px-4 py-2 text-gray-600 hover:bg-gray-200">Log Out</button>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button id="logoutBtn" type="button" class="block w-full text-left px-4 py-2 text-gray-600 hover:bg-gray-200">Log Out</button>
+                </form>
             </div>
         </div>
     </nav>

@@ -14,17 +14,21 @@
             <button id="menuBtn" class="md:hidden text-gray-600 focus:outline-none">☰</button>
             <div id="menu" class="hidden md:flex gap-6 ml-4 flex-col md:flex-row absolute md:relative bg-white md:bg-transparent top-16 left-4 md:top-0 md:left-0 w-40 md:w-auto shadow md:shadow-none rounded-md p-2 md:p-0">
                 <a href="/jobs" class="text-blue-600 border-b-2 border-blue-600">Jobs</a>
-                <a href="/new" class="text-gray-600 hover:text-blue-600">New Job</a>
+                <!-- <a href="/new" class="text-gray-600 hover:text-blue-600">New Job</a> -->
             </div>
         </div>
         <div class="relative">
             <button id="clientMenuBtn" class="flex items-center gap-2 focus:outline-none">
-                <img src="assets/images/avatar.png" alt="Avatar" class="w-8 h-8 rounded-full">
-                <span class="text-gray-600 hidden md:inline">Dede Rahmat</span>
+                <img src="{{  Auth::user()->profile_image ? asset('storage/' .  Auth::user()->profile_image) : asset('assets/images/avatar.png') }}" 
+                alt="Avatar" class="w-8 h-8 rounded-full">
+                <span class="text-gray-600 hidden md:inline">{{ Auth::user()->name }}</span>
             </button>
             <div id="clientMenu" class="absolute right-0 mt-2 w-32 bg-white shadow-lg rounded hidden">
                 <a href="/profil" class="block px-4 py-2 text-gray-600 hover:bg-gray-200">Profile</a>
-                <button id="logoutBtn" class="block w-full text-left px-4 py-2 text-gray-600 hover:bg-gray-200">Log Out</button>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button id="logoutBtn" type="button" class="block w-full text-left px-4 py-2 text-gray-600 hover:bg-gray-200">Log Out</button>
+                </form>
             </div>
         </div>
     </nav>
@@ -53,8 +57,17 @@
             <button class="p-2 border rounded bg-blue-600 text-white w-full md:w-auto">Filter</button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="jobContainer">
-            <!-- Job Cards -->
+            <!-- Job Card -->
+            <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200">
+                <a href="/job-detail" class="block">
+                    <p class="text-blue-600 font-semibold">Poster Designer</p>
+                    <p class="text-gray-600 text-sm">Desain suatu poster...</p>
+                    <p class="text-black font-bold mt-2">Rp 200000</p>
+                    <p class="text-gray-500 text-sm">By Jim</p>
+                </a>
+            </div>
         </div>
+
     </section>
     <script src="js/jobs.js"></script>
 
