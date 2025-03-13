@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job</title>
+    <title>New Job</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
@@ -13,9 +13,9 @@
             <img id="logoPreview" src="{{ asset('assets/images/Logo.png') }}" alt="Logo" class="w-20 h-5">
             <button id="menuBtn" class="md:hidden text-gray-600 focus:outline-none">☰</button>
             <div id="menu" class="hidden md:flex gap-6 ml-4 flex-col md:flex-row absolute md:relative bg-white md:bg-transparent top-16 left-4 md:top-0 md:left-0 w-40 md:w-auto shadow md:shadow-none rounded-md p-2 md:p-0">
-            <a href="/dashboard" class="text-gray-600 hover:text-blue-600">Dashboard</a>    
-            <a href="/worker/jobs" class="text-blue-600 border-b-2 border-blue-600">Jobs</a>
-                <a href="/client/new" class="text-gray-600 hover:text-blue-600">New Job</a>
+            <a href="/dashboard" class="text-gray-600 hover:text-blue-600">Dashboard</a>        
+            <a href="/worker/jobs" class="text-gray-600 hover:text-blue-600">Jobs</a>
+                <a href="/client/new" class="text-blue-600 border-b-2 border-blue-600">New Job</a>
             </div>
         </div>
         <div class="relative">
@@ -46,32 +46,30 @@
         </div>
     </div>
 
-    <!-- Job List -->
-    <section class="p-4 md:p-8">
-        <h1 class="text-2xl md:text-3xl font-semibold mb-4">Jobs List</h1>
-        <div class="flex flex-col md:flex-row gap-4 mb-6">
-            <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
-            <select class="p-2 border rounded w-full md:w-auto" id="sortSelect">
-                <option>Sort</option>
-                <option value="price">Price</option>
-            </select>
-            <button class="p-2 border rounded bg-blue-600 text-white w-full md:w-auto">Filter</button>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4" id="jobContainer">
-            <!-- Job Card -->
-            @php
-                $jobs = \App\Models\Job::all();
-            @endphp
-
-            @foreach ($jobs as $job)
-                <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200">
-                    <a href="#">
-                        <p class="text-blue-600 font-semibold">{{ $job->title }}</p>
-                        <p class="text-black font-bold mt-2">Rp {{ number_format($job->price, 0, ',', '.') }}</p>
-                        <p class="text-gray-500 text-sm">By {{ $job->user->name ?? 'Unknown' }}</p>
-                    </a>
+    <!-- New Job Form -->
+    <section class="p-4 md:p-8 flex justify-center">
+        <div class="bg-white p-6 rounded shadow-md w-full max-w-lg">
+            <h1 class="text-2xl font-semibold mb-4">Add New Job</h1>
+            <form action="{{ route('jobs.store') }}" method="POST">
+                @csrf
+                <div class="mb-4">
+                    <label class="block text-gray-700">Title</label>
+                    <input type="text" name="title" class="w-full p-2 border rounded" required>
                 </div>
-            @endforeach
+                <div class="mb-4">
+                    <label class="block text-gray-700">Description</label>
+                    <textarea name="description" class="w-full p-2 border rounded"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700">Price (Rp)</label>
+                    <input type="number" name="price" class="w-full p-2 border rounded" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700">End Date</label>
+                    <input type="date" name="end_date" class="w-full p-2 border rounded" required>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded">Save</button>
+            </form>
         </div>
     </section>
 
@@ -114,22 +112,5 @@
             });
         });
     </script>
-
-    <script>
-        document.getElementById("searchInput").addEventListener("input", function () {
-            let searchValue = this.value.toLowerCase(); // Ambil input dan ubah ke lowercase
-            let jobCards = document.querySelectorAll(".job-card"); // Ambil semua kartu pekerjaan
-
-            jobCards.forEach(function (card) {
-                let title = card.querySelector(".job-title").textContent.toLowerCase(); // Ambil teks judul
-                if (title.includes(searchValue)) {
-                    card.style.display = "block"; // Tampilkan jika cocok
-                } else {
-                    card.style.display = "none"; // Sembunyikan jika tidak cocok
-                }
-            });
-        });
-    </script>
-
 </body>
 </html>

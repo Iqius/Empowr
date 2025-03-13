@@ -15,8 +15,8 @@
             <button id="menuBtn" class="md:hidden text-gray-600 focus:outline-none">☰</button>
             <div id="menu" class="hidden md:flex gap-6 ml-4 flex-col md:flex-row absolute md:relative bg-white md:bg-transparent top-16 left-4 md:top-0 md:left-0 w-40 md:w-auto shadow md:shadow-none rounded-md p-2 md:p-0">
                 <a href="/dashboard" class="text-blue-600 border-b-2 border-blue-600">Dashboard</a>
-                <a href="/jobs" class="text-gray-600 hover:text-blue-600">Jobs</a>
-                <a href="/new" class="text-gray-600 hover:text-blue-600">New Job</a>
+                <a href="/worker/jobs" class="text-gray-600 hover:text-blue-600">Jobs</a>
+                <a href="/client/new" class="text-gray-600 hover:text-blue-600">New Job</a>
             </div>
         </div>
         <div class="relative">
