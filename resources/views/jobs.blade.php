@@ -13,7 +13,8 @@
             <img id="logoPreview" src="assets/images/Logo.png" alt="Logo" class="w-20 h-5">
             <button id="menuBtn" class="md:hidden text-gray-600 focus:outline-none">☰</button>
             <div id="menu" class="hidden md:flex gap-6 ml-4 flex-col md:flex-row absolute md:relative bg-white md:bg-transparent top-16 left-4 md:top-0 md:left-0 w-40 md:w-auto shadow md:shadow-none rounded-md p-2 md:p-0">
-                <a href="/jobs" class="text-blue-600 border-b-2 border-blue-600">Jobs</a>
+            <a href="/dashboard" class="text-gray-600 hover:text-blue-600">Dashboard</a>    
+            <a href="/jobs" class="text-blue-600 border-b-2 border-blue-600">Jobs</a>
                 <a href="/new" class="text-gray-600 hover:text-blue-600">New Job</a>
             </div>
         </div>
@@ -53,7 +54,12 @@
             <button class="p-2 border rounded bg-blue-600 text-white w-full md:w-auto">Filter</button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="jobContainer">
-            <!-- Job Cards -->
+            <div class='job-card hidden bg-white p-4 rounded shadow hover:shadow-lg cursor-pointer'>
+                <h2 class='job-title text-lg font-semibold text-blue-600'></h2>
+                <p class='job-desc text-gray-600 text-sm'></p>
+                <p class='job-price font-bold'></p>
+                <p class='job-client text-sm text-gray-500'></p>
+            </div>
         </div>
     </section>
     <script src="js/jobs.js"></script>

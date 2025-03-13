@@ -11,6 +11,7 @@ Route::view('/register', 'register')->name('register');
 Route::view('/loginregister', 'loginregister')->name('loginregister');
 Route::view('/jobs', 'jobs')->name('jobs');
 Route::view('/new', 'new')->name('new');
+Route::view('/dashboard', 'dashboard')->name('dashboard');
 
 Route::view('/profil', 'profil')->name('profil');
 

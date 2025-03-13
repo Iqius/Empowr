@@ -16,7 +16,7 @@
             <input type="checkbox" id="remember" class="mr-2">
             <label for="remember" class="text-sm text-gray-600">Remember Me</label>
         </div>
-        <button onclick="window.location.href='/jobs'" class="w-full mt-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-600" >Login</button>
+        <button onclick="window.location.href='/dashboard'" class="w-full mt-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-600" >Login</button>
         <p class="text-sm text-gray-600 mt-3">Don't have an account? <a href="/register" class="text-blue-500 hover:underline">Register</a></p>
     </div>
 </body>
