@@ -59,20 +59,22 @@ class AuthController extends Controller
             return redirect()->route('dashboard')->with('success', 'Login berhasil!');
         }
 
-        return back()->withErrors(['username' => 'Username atau password salah.']);
+        return back()->with('error', 'Username atau password salah.');
     }
 
     public function clientDashboard()
     {
-        return view('new'); // Sesuaikan dengan view yang ada
+        if (!Auth::check() || Auth::user()->role !== 'client') {
+            return redirect('/worker/jobs')->with('error', 'Access Denied!');
+        }
+
+        return view('new'); 
     }
 
     public function workerDashboard()
     {
-        return view('jobs'); // Sesuaikan dengan view yang ada
+        return view('jobs'); 
     }
-
-
 
     // **LOGOUT**
     public function logout()

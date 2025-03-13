@@ -10,11 +10,14 @@
     <!-- Navbar -->
     <nav class="bg-white shadow p-4 flex justify-between items-center relative">
         <div class="flex items-center gap-4">
-            <img id="logoPreview" src="assets/images/Logo.png" alt="Logo" class="w-20 h-5">
+            <img id="logoPreview" src="{{ asset('assets/images/Logo.png') }}" alt="Logo" class="w-20 h-5">
             <button id="menuBtn" class="md:hidden text-gray-600 focus:outline-none">☰</button>
             <div id="menu" class="hidden md:flex gap-6 ml-4 flex-col md:flex-row absolute md:relative bg-white md:bg-transparent top-16 left-4 md:top-0 md:left-0 w-40 md:w-auto shadow md:shadow-none rounded-md p-2 md:p-0">
-                <a href="/jobs" class="text-blue-600 border-b-2 border-blue-600">Jobs</a>
-                <!-- <a href="/new" class="text-gray-600 hover:text-blue-600">New Job</a> -->
+                <a href="/worker/jobs" class="text-blue-600 border-b-2 border-blue-600">Jobs</a>
+                @if(Auth::user()->role == 'client')
+                    <a href="/client/new" class="text-gray-600 hover:text-blue-600">New Job</a>
+                @endif
+
             </div>
         </div>
         <div class="relative">
@@ -56,20 +59,79 @@
             </select>
             <button class="p-2 border rounded bg-blue-600 text-white w-full md:w-auto">Filter</button>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="jobContainer">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4" id="jobContainer">
             <!-- Job Card -->
-            <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200">
-                <a href="/job-detail" class="block">
-                    <p class="text-blue-600 font-semibold">Poster Designer</p>
-                    <p class="text-gray-600 text-sm">Desain suatu poster...</p>
-                    <p class="text-black font-bold mt-2">Rp 200000</p>
-                    <p class="text-gray-500 text-sm">By Jim</p>
-                </a>
-            </div>
-        </div>
+            @php
+                $jobs = \App\Models\Job::all();
+            @endphp
 
+            @foreach ($jobs as $job)
+                <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200">
+                    <a href="#">
+                        <p class="text-blue-600 font-semibold">{{ $job->title }}</p>
+                        <p class="text-black font-bold mt-2">Rp {{ number_format($job->price, 0, ',', '.') }}</p>
+                        <p class="text-gray-500 text-sm">By {{ $job->user->name ?? 'Unknown' }}</p>
+                    </a>
+                </div>
+            @endforeach
+        </div>
     </section>
-    <script src="js/jobs.js"></script>
+
+    <!-- JavaScript untuk Dropdown Profil dan Logout -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Toggle dropdown profil
+            const clientMenuBtn = document.getElementById("clientMenuBtn");
+            const clientMenu = document.getElementById("clientMenu");
+
+            clientMenuBtn.addEventListener("click", function (event) {
+                event.stopPropagation(); // Mencegah event bubbling
+                clientMenu.classList.toggle("hidden");
+            });
+
+            // Klik di luar dropdown untuk menutup
+            document.addEventListener("click", function (event) {
+                if (!clientMenu.contains(event.target) && !clientMenuBtn.contains(event.target)) {
+                    clientMenu.classList.add("hidden");
+                }
+            });
+
+            // Toggle modal logout
+            const logoutBtn = document.getElementById("logoutBtn");
+            const logoutModal = document.getElementById("logoutModal");
+            const cancelLogout = document.getElementById("cancelLogout");
+            const confirmLogout = document.getElementById("confirmLogout");
+
+            logoutBtn.addEventListener("click", function (event) {
+                event.preventDefault(); // Mencegah aksi default tombol
+                logoutModal.classList.remove("hidden");
+            });
+
+            cancelLogout.addEventListener("click", function () {
+                logoutModal.classList.add("hidden");
+            });
+
+            confirmLogout.addEventListener("click", function () {
+                document.querySelector("form").submit(); // Submit form logout
+            });
+        });
+    </script>
+
+    <script>
+        document.getElementById("searchInput").addEventListener("input", function () {
+            let searchValue = this.value.toLowerCase(); // Ambil input dan ubah ke lowercase
+            let jobCards = document.querySelectorAll(".job-card"); // Ambil semua kartu pekerjaan
+
+            jobCards.forEach(function (card) {
+                let title = card.querySelector(".job-title").textContent.toLowerCase(); // Ambil teks judul
+                if (title.includes(searchValue)) {
+                    card.style.display = "block"; // Tampilkan jika cocok
+                } else {
+                    card.style.display = "none"; // Sembunyikan jika tidak cocok
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>
