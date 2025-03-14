@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Job</title>
+    <title>Dashbaord</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-100">
     <!-- Navbar -->
@@ -13,9 +14,9 @@
             <img id="logoPreview" src="{{ asset('assets/images/Logo.png') }}" alt="Logo" class="w-20 h-5">
             <button id="menuBtn" class="md:hidden text-gray-600 focus:outline-none">☰</button>
             <div id="menu" class="hidden md:flex gap-6 ml-4 flex-col md:flex-row absolute md:relative bg-white md:bg-transparent top-16 left-4 md:top-0 md:left-0 w-40 md:w-auto shadow md:shadow-none rounded-md p-2 md:p-0">
-            <a href="/client/dashboard" class="text-gray-600 hover:text-blue-600">Dashboard</a>        
-            <a href="/worker/jobs" class="text-gray-600 hover:text-blue-600">Jobs</a>
-                <a href="/client/new" class="text-blue-600 border-b-2 border-blue-600">New Job</a>
+            <a href="/worker/dashboard" class="text-gray-600 hover:text-blue-600">Dashboard</a>    
+            <a href="/worker/jobs" class="text-blue-600 border-b-2 border-blue-600">Jobs</a>
+                <a href="/client/new" class="text-gray-600 hover:text-blue-600">New Job</a>
             </div>
         </div>
         <div class="relative">
@@ -46,32 +47,54 @@
         </div>
     </div>
 
-    <!-- New Job Form -->
-    <section class="p-4 md:p-8 flex justify-center">
-        <div class="bg-white p-6 rounded shadow-md w-full max-w-lg">
-            <h1 class="text-2xl font-semibold mb-4">Add New Job</h1>
-            <form action="{{ route('jobs.store') }}" method="POST">
-                @csrf
-                <div class="mb-4">
-                    <label class="block text-gray-700">Title</label>
-                    <input type="text" name="title" class="w-full p-2 border rounded" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700">Description</label>
-                    <textarea name="description" class="w-full p-2 border rounded"></textarea>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700">Price (Rp)</label>
-                    <input type="number" name="price" class="w-full p-2 border rounded" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700">End Date</label>
-                    <input type="date" name="end_date" class="w-full p-2 border rounded" required>
-                </div>
-                <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded">Save</button>
-            </form>
-        </div>
+    <!-- Job List & Chart -->
+    <section class="p-4 md:p-8">
+        <h1 class="text-2xl md:text-3xl font-semibold mb-4">Dashboard</h1>
+
+        <!-- Chart Container -->
+        <div class="bg-white p-6 rounded shadow-md h-64">
+    <h2 class="text-xl font-semibold mb-4">Job Statistics</h2>
+    <canvas id="jobChart"></canvas>
+</div>
     </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("{{ route('jobs.data') }}")
+    .then(response => response.json())
+    .then(data => {
+        console.log("Data dari server:", data); // Debugging
+        const labels = data.map(job => job.category);
+        const jobCounts = data.map(job => job.count);
+
+        const ctx = document.getElementById('jobChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Number of Jobs',
+                    data: jobCounts,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    })
+    .catch(error => console.error('Error fetching job data:', error));
+
+        });
+    </script>
 
     <!-- JavaScript untuk Dropdown Profil dan Logout -->
     <script>
@@ -112,5 +135,6 @@
             });
         });
     </script>
+
 </body>
 </html>

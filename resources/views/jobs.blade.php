@@ -13,11 +13,9 @@
             <img id="logoPreview" src="{{ asset('assets/images/Logo.png') }}" alt="Logo" class="w-20 h-5">
             <button id="menuBtn" class="md:hidden text-gray-600 focus:outline-none">☰</button>
             <div id="menu" class="hidden md:flex gap-6 ml-4 flex-col md:flex-row absolute md:relative bg-white md:bg-transparent top-16 left-4 md:top-0 md:left-0 w-40 md:w-auto shadow md:shadow-none rounded-md p-2 md:p-0">
-                <a href="/worker/jobs" class="text-blue-600 border-b-2 border-blue-600">Jobs</a>
-                @if(Auth::user()->role == 'client')
-                    <a href="/client/new" class="text-gray-600 hover:text-blue-600">New Job</a>
-                @endif
-
+            <a href="/worker/dashboard" class="text-gray-600 hover:text-blue-600">Dashboard</a>    
+            <a href="/worker/jobs" class="text-blue-600 border-b-2 border-blue-600">Jobs</a>
+                <a href="/client/new" class="text-gray-600 hover:text-blue-600">New Job</a>
             </div>
         </div>
         <div class="relative">

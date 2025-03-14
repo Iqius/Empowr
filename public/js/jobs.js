@@ -5,20 +5,22 @@ const jobs = [
     { title: "Data Labeller", desc: "Ngelabel data", price: 90000, client: "Jim" },
 ];
 
-function renderJobs() {
+document.addEventListener("DOMContentLoaded", function () {
     const jobContainer = document.getElementById("jobContainer");
-    jobContainer.innerHTML = "";
+    const jobTemplate = document.querySelector(".job-card");
+
     jobs.forEach(job => {
-        jobContainer.innerHTML += `
-            <div class='bg-white p-4 rounded shadow hover:shadow-lg cursor-pointer'>
-                <h2 class='text-lg font-semibold text-blue-600'>${job.title}</h2>
-                <p class='text-gray-600 text-sm'>${job.desc.substring(0, 40)}...</p>
-                <p class='font-bold'>Rp ${job.price}</p>
-                <p class='text-sm text-gray-500'>By ${job.client}</p>
-            </div>`;
+        const jobClone = jobTemplate.cloneNode(true);
+        jobClone.classList.remove("hidden"); 
+
+        jobClone.querySelector(".job-title").textContent = job.title;
+        jobClone.querySelector(".job-desc").textContent = job.desc.substring(0, 40) + "...";
+        jobClone.querySelector(".job-price").textContent = `Rp ${job.price}`;
+        jobClone.querySelector(".job-client").textContent = `By ${job.client}`;
+
+        jobContainer.appendChild(jobClone);
     });
-}
-renderJobs();
+});
 
 document.getElementById("clientMenuBtn").addEventListener("click", () => {
     document.getElementById("clientMenu").classList.toggle("hidden");
