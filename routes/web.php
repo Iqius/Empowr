@@ -34,8 +34,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profil/update', [AuthController::class, 'updateProfile'])->name('profil.update');
 
     // Client & Worker Dashboard
-    Route::get('/client/dashboard', [AuthController::class, 'clientDashboard'])->name('client.dashboard');
-    Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->name('worker.dashboard');
+    Route::get('/client/dashboard', [AuthController::class, 'clientDashboard'])->name('client.dashboardClient');
+    Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->name('worker.dashboardWorker');
     Route::get('/client/new', [AuthController::class, 'clientNew'])->name('client.new');
     Route::get('/worker/jobs', [AuthController::class, 'workerJobs'])->name('worker.jobs');
 
@@ -43,4 +43,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index'); // Memastikan data dikirim ke view
     Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
 });
+
+Route::get('/jobs/data', [JobController::class, 'getJobData'])->name('jobs.data');
 

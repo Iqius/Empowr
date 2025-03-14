@@ -11,22 +11,26 @@
     <!-- Navbar -->
     <nav class="bg-white shadow p-4 flex justify-between items-center relative">
         <div class="flex items-center gap-4">
-            <img id="logoPreview" src="assets/images/Logo.png" alt="Logo" class="w-20 h-5">
+            <img id="logoPreview" src="{{ asset('assets/images/Logo.png') }}" alt="Logo" class="w-20 h-5">
             <button id="menuBtn" class="md:hidden text-gray-600 focus:outline-none">☰</button>
             <div id="menu" class="hidden md:flex gap-6 ml-4 flex-col md:flex-row absolute md:relative bg-white md:bg-transparent top-16 left-4 md:top-0 md:left-0 w-40 md:w-auto shadow md:shadow-none rounded-md p-2 md:p-0">
-                <a href="/dashboard" class="text-blue-600 border-b-2 border-blue-600">Dashboard</a>
-                <a href="/worker/jobs" class="text-gray-600 hover:text-blue-600">Jobs</a>
+            <a href="/client/dashboard" class="text-blue-600 border-b-2 border-blue-600">Dashboard</a>
+            <a href="/worker/jobs" class="text-gray-600 hover:text-blue-600">Jobs</a>
                 <a href="/client/new" class="text-gray-600 hover:text-blue-600">New Job</a>
             </div>
         </div>
         <div class="relative">
             <button id="clientMenuBtn" class="flex items-center gap-2 focus:outline-none">
-                <img src="assets/images/avatar.png" alt="Avatar" class="w-8 h-8 rounded-full">
-                <span class="text-gray-600 hidden md:inline">Dede Rahmat</span>
+                <img src="{{  Auth::user()->profile_image ? asset('storage/' .  Auth::user()->profile_image) : asset('assets/images/avatar.png') }}" 
+                alt="Avatar" class="w-8 h-8 rounded-full">
+                <span class="text-gray-600 hidden md:inline">{{ Auth::user()->name }}</span>
             </button>
             <div id="clientMenu" class="absolute right-0 mt-2 w-32 bg-white shadow-lg rounded hidden">
                 <a href="/profil" class="block px-4 py-2 text-gray-600 hover:bg-gray-200">Profile</a>
-                <button id="logoutBtn" class="block w-full text-left px-4 py-2 text-gray-600 hover:bg-gray-200">Log Out</button>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button id="logoutBtn" type="button" class="block w-full text-left px-4 py-2 text-gray-600 hover:bg-gray-200">Log Out</button>
+                </form>
             </div>
         </div>
     </nav>
@@ -78,6 +82,45 @@
                         }
                     }
                 }
+            });
+        });
+    </script>
+    <!-- JavaScript untuk Dropdown Profil dan Logout -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Toggle dropdown profil
+            const clientMenuBtn = document.getElementById("clientMenuBtn");
+            const clientMenu = document.getElementById("clientMenu");
+
+            clientMenuBtn.addEventListener("click", function (event) {
+                event.stopPropagation(); // Mencegah event bubbling
+                clientMenu.classList.toggle("hidden");
+            });
+
+            // Klik di luar dropdown untuk menutup
+            document.addEventListener("click", function (event) {
+                if (!clientMenu.contains(event.target) && !clientMenuBtn.contains(event.target)) {
+                    clientMenu.classList.add("hidden");
+                }
+            });
+
+            // Toggle modal logout
+            const logoutBtn = document.getElementById("logoutBtn");
+            const logoutModal = document.getElementById("logoutModal");
+            const cancelLogout = document.getElementById("cancelLogout");
+            const confirmLogout = document.getElementById("confirmLogout");
+
+            logoutBtn.addEventListener("click", function (event) {
+                event.preventDefault(); // Mencegah aksi default tombol
+                logoutModal.classList.remove("hidden");
+            });
+
+            cancelLogout.addEventListener("click", function () {
+                logoutModal.classList.add("hidden");
+            });
+
+            confirmLogout.addEventListener("click", function () {
+                document.querySelector("form").submit(); // Submit form logout
             });
         });
     </script>

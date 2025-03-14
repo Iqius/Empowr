@@ -34,4 +34,13 @@ class JobController extends Controller
 
         return redirect('/client/new')->with('success', 'Job created successfully.');
     }
+    
+    public function getJobData()
+    {
+        $jobs = Job::selectRaw('count(*) as count, category')
+                ->groupBy('category')
+                ->get();
+
+        return response()->json($jobs);
+    }
 }

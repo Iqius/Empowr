@@ -51,9 +51,9 @@ class AuthController extends Controller
 
             // Redirect berdasarkan role
             if ($user->role === 'client') {
-                return redirect()->route('client.new')->with('success', 'Login berhasil!');
+                return redirect()->route('client.dashboardClient')->with('success', 'Login berhasil!');
             } elseif ($user->role === 'worker') {
-                return redirect()->route('worker.jobs')->with('success', 'Login berhasil!');
+                return redirect()->route('worker.dashboardWorker')->with('success', 'Login berhasil!');
             }
 
             return redirect()->route('dashboard')->with('success', 'Login berhasil!');
@@ -64,14 +64,28 @@ class AuthController extends Controller
 
     public function clientDashboard()
     {
+        // if (!Auth::check() || Auth::user()->role !== 'client') {
+        //     return redirect('/worker/dashboard')->with('error', 'Access Denied!');
+        // }
+
+        return view('dashboardClient'); 
+    }
+
+    public function clientNew()
+    {
         if (!Auth::check() || Auth::user()->role !== 'client') {
-            return redirect('/worker/jobs')->with('error', 'Access Denied!');
+            return redirect('/worker/dashboard')->with('error', 'Access Denied!');
         }
 
         return view('new'); 
     }
 
     public function workerDashboard()
+    {
+        return view('dashboardWorker'); 
+    }
+
+    public function workerJobs()
     {
         return view('jobs'); 
     }
