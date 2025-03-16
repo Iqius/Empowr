@@ -68,7 +68,7 @@ class AuthController extends Controller
         //     return redirect('/worker/dashboard')->with('error', 'Access Denied!');
         // }
 
-        return view('dashboardClient'); 
+        return view('client.dashboardClient'); 
     }
 
     public function clientNew()

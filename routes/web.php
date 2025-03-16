@@ -6,7 +6,7 @@ use App\Http\Controllers\JobController;
 
 // Landing Page
 Route::get('/', function () {
-    return view('landing');
+    return view('Landing.landing');
 });
 
 // Authentication Routes

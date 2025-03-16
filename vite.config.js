@@ -8,6 +8,8 @@ export default defineConfig({
                 'resources/js/jobs.js',    // File JS yang kamu gunakan
                 'resources/js/new.js',
                 // File JS yang kamu gunakan
+                'resources/css/app.css', 
+                'resources/js/app.js'
             ],
             refresh: true,
         }),
