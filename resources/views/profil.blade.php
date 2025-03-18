@@ -52,6 +52,29 @@
         </form>
 
     </div>
-    <script src="js/profil.js"></script>
+    @if(session('success'))
+<div id="successModal" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 rounded shadow-md text-center">
+        <h2 class="text-lg font-semibold text-green-600">Update Berhasil</h2>
+        <p class="mt-2 text-gray-700">{{ session('success') }}</p>
+        <button id="closeModal" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">OK</button>
+    </div>
+</div>
+@endif
+
+<!-- Tambahkan script setelah modal -->
+<script >document.addEventListener("DOMContentLoaded", function () {
+    let closeModal = document.getElementById("closeModal");
+    let successModal = document.getElementById("successModal");
+
+    if (closeModal && successModal) {
+        closeModal.addEventListener("click", function () {
+            successModal.style.display = "none"; // Menutup modal tanpa reload
+        });
+    }
+});
+</script>
+
+
 </body>
 </html>

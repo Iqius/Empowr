@@ -68,10 +68,19 @@
                     <label class="block text-gray-700">End Date</label>
                     <input type="date" name="end_date" class="w-full p-2 border rounded" required>
                 </div>
-                <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded">Save</button>
+                <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded">Post</button>
             </form>
         </div>
     </section>
+    <div id="successModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden">
+    <div class="bg-white p-6 rounded shadow-md w-80 text-center">
+        <h2 class="text-lg font-semibold text-green-600">Berhasil Diposting</h2>
+        <p class="mt-2 text-gray-700">Pekerjaan telah berhasil diposting.</p>
+        <button id="closeSuccessModal" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            OK
+        </button>
+    </div>
+</div>
 
     <!-- JavaScript untuk Dropdown Profil dan Logout -->
     <script>
@@ -111,6 +120,20 @@
                 document.querySelector("form").submit(); // Submit form logout
             });
         });
+        document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+        const successModal = document.getElementById("successModal");
+        const closeSuccessModal = document.getElementById("closeSuccessModal");
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault(); // Mencegah submit langsung
+            successModal.classList.remove("hidden"); // Tampilkan modal
+        });
+
+        closeSuccessModal.addEventListener("click", function () {
+            successModal.classList.add("hidden"); // Tutup modal
+        });
+    });
     </script>
 </body>
 </html>

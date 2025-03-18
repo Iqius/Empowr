@@ -8,7 +8,17 @@
 </head>
 <body class="flex justify-center items-center min-h-screen bg-gray-100 p-4">
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-md">
-        
+    @if(session('success'))
+    <div id="successModal" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded shadow-md text-center">
+            <h2 class="text-lg font-semibold text-green-600">Registration Successful</h2>
+            <p class="mt-2 text-gray-700">{{ session('success') }}</p>
+            <button id="closeModal" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">OK</button>
+        </div>
+    </div>
+@endif
+
+
         <form method="POST" action="{{ route('register') }}">
             @csrf
             <h2 class="text-3xl font-semibold text-gray-700 text-center">Register</h2>
@@ -47,4 +57,10 @@
         <p class="text-sm text-gray-600 mt-3 text-center">Already have an account? <a href="{{ route('login') }}" class="text-blue-500 hover:underline">Login</a></p>
     </div>
 </body>
+    <script>
+        document.getElementById("closeModal")?.addEventListener("click", function () {
+            window.location.href = "{{ route('login') }}"; // Redirect ke halaman login
+        });
+    </script>
+
 </html>

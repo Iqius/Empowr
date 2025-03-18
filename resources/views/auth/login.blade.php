@@ -14,8 +14,8 @@
             <!-- <img src="assets/images/logo.png" alt="Logo" class="w-24 mx-auto mb-4"> -->
             <h2 class="text-3xl font-semibold text-gray-700">Login</h2>
             <!-- Username Input -->
-            <div class="relative">
-                <input type="text" name="username" placeholder="Username" 
+            <div class="relative mb-4">
+            <input type="text" name="username" placeholder="Username" 
                     class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 
                     @error('username') border-red-500 @enderror" 
                     value="{{ old('username') }}">
@@ -24,8 +24,8 @@
                 @enderror
             </div>
              <!-- Password Input -->
-            <div class="relative">
-                <input type="password" name="password" placeholder="Password" 
+             <div class="relative mb-4">
+             <input type="password" name="password" placeholder="Password" 
                     class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 
                     @error('password') border-red-500 @enderror">
                 @error('password')
