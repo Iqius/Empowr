@@ -7,6 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
+@if(session('success'))
+<div id="successModal" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 rounded shadow-md text-center">
+        <h2 class="text-lg font-semibold text-green-600">Berhasil Diposting</h2>
+        <p class="mt-2 text-gray-700">{{ session('success') }}</p>
+        <button id="closeModal" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">OK</button>
+    </div>
+</div>
+@endif
+
     <!-- Navbar -->
     <nav class="bg-white shadow p-4 flex justify-between items-center relative">
         <div class="flex items-center gap-4">
@@ -121,19 +131,23 @@
             });
         });
         document.addEventListener("DOMContentLoaded", function () {
-        const form = document.querySelector("form");
         const successModal = document.getElementById("successModal");
-        const closeSuccessModal = document.getElementById("closeSuccessModal");
+        const closeModal = document.getElementById("closeModal");
 
-        form.addEventListener("submit", function (event) {
-            event.preventDefault(); // Mencegah submit langsung
-            successModal.classList.remove("hidden"); // Tampilkan modal
-        });
+        if (successModal) {
+            closeModal.addEventListener("click", function () {
+                successModal.style.display = "none";
+            });
 
-        closeSuccessModal.addEventListener("click", function () {
-            successModal.classList.add("hidden"); // Tutup modal
-        });
+            setTimeout(function () {
+                successModal.style.display = "none";
+            }, 3000); // Modal otomatis hilang setelah 3 detik
+        }
     });
+</script>
+
+</script>
+
     </script>
 </body>
 </html>
