@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\ProfileController;
 
 // Landing Page
 Route::get('/', function () {
@@ -42,7 +43,18 @@ Route::middleware(['auth'])->group(function () {
     // Job Routes
     Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index'); // Memastikan data dikirim ke view
     Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
+
+    //chat
+    Route::get('/chat', [\Chatify\Http\Controllers\MessagesController::class, 'index'])->name('chat');
+
 });
-
+Route::post('/update-profile', [UserController::class, 'update']);
+Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
+Route::get('/my-jobs', [JobController::class, 'myJobs'])->name('jobs.my');
+Route::get('/jobs/manage/{id}', [JobController::class, 'manage'])->name('jobs.manage');
+Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
 Route::get('/jobs/data', [JobController::class, 'getJobData'])->name('jobs.data');
-
+Route::get('/jobs/{job}/chat/{user}', [ChatController::class, 'index'])->name('jobs.chat');
+Route::post('/jobs/{job}/chat/{user}', [ChatController::class, 'send'])->name('jobs.chat.send');
+Route::get('/manage-worker', function () {return view('manageWorker');})->name('manage.worker');
+Route::get('/my-job-worker', function () {return view('myJobWorker');})->name('myjob.worker');

@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <title>Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
 </head>
 <body class="flex justify-center items-center h-screen bg-gray-100 px-4">
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-md text-center">
@@ -25,12 +27,19 @@
             </div>
              <!-- Password Input -->
              <div class="relative mb-4">
-             <input type="password" name="password" placeholder="Password" 
-                    class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 
-                    @error('password') border-red-500 @enderror">
-                @error('password')
-                    <p class="text-red-500 text-sm absolute mt-1">{{ $message }}</p>
-                @enderror
+             <input id="password" type="password" name="password" placeholder="Password"
+        class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 
+        @error('password') border-red-500 @enderror">
+    
+        <button type="button" onclick="togglePassword()"         
+            class="absolute right-3 top-1/2 transform -translate-y-1 flex items-center">
+            <i id="eye-icon" class="fa-solid fa-eye text-gray-500"></i>
+        </button>
+
+
+    @error('password')
+        <p class="text-red-500 text-sm absolute mt-1">{{ $message }}</p>
+    @enderror
             </div>
             <!-- <div class="flex items-center mt-3">
                 <input type="checkbox" name="remember" id="remember" class="mr-2">
@@ -47,14 +56,30 @@
             </div>
         </div>
 
-        <script>
-            document.getElementById("closeModal").addEventListener("click", function () {
-                document.getElementById("errorModal").style.display = "none";
-            });
-        </script>
         @endif
 
         <p class="text-sm text-gray-600 mt-3">Don't have an account? <a href="{{ route('register') }}" class="text-blue-500 hover:underline">Register</a></p>
     </div>
+    
+    <script>
+            document.getElementById("closeModal").addEventListener("click", function () {
+                document.getElementById("errorModal").style.display = "none";
+            });
+            function togglePassword() {
+    let passwordField = document.getElementById("password");
+    let eyeIcon = document.getElementById("eye-icon");
+
+    if (passwordField.type === "password") {
+        passwordField.type = "text";
+        eyeIcon.classList.remove("fa-eye");
+        eyeIcon.classList.add("fa-eye-slash");
+    } else {
+        passwordField.type = "password";
+        eyeIcon.classList.remove("fa-eye-slash");
+        eyeIcon.classList.add("fa-eye");
+    }
+}
+
+        </script>
 </body>
 </html>

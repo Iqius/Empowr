@@ -53,7 +53,7 @@ class AuthController extends Controller
             if ($user->role === 'client') {
                 return redirect()->route('client.dashboardClient')->with('success', 'Login berhasil!');
             } elseif ($user->role === 'worker') {
-                return redirect()->route('worker.dashboardWorker')->with('success', 'Login berhasil!');
+                return redirect()->route('client.dashboardClient')->with('success', 'Login berhasil!');
             }
 
             return redirect()->route('dashboard')->with('success', 'Login berhasil!');
