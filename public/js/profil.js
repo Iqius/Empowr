@@ -24,3 +24,12 @@ document.getElementById("profile-form").addEventListener("submit", function(even
     alert("Perubahan tersimpan!");
     window.location.href = "/jobs";
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    let closeModal = document.getElementById("closeModal");
+    if (closeModal) {
+        closeModal.addEventListener("click", function () {
+            location.reload(); // Langsung reload halaman saat tombol ditekan
+        });
+    }
+});
