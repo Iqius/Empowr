@@ -115,12 +115,12 @@
                             <label class="font-semibold">No Telepon:</label>
                             <p class="text-sm text-gray-500">Nomor akun e-wallet</p>
                         </div>
-                        <input type="text" name="wallet_number" value="{{ Auth::user()->paymentAccount->wallet_number }}" class="col-span-2 p-2 border rounded w-full">
+                        <input type="text" name="wallet_number" value="{{ Auth::user()->paymentAccount?->wallet_number }}" class="col-span-2 p-2 border rounded w-full">
                         <div>
                             <label class="font-semibold">Nama Pengguna:</label>
                             <p class="text-sm text-gray-500">Nama di akun e-wallet</p>
                         </div>
-                        <input type="text" name="ewallet_name" value="{{ Auth::user()->paymentAccount->ewallet_name }}" class="col-span-2 p-2 border rounded w-full">
+                        <input type="text" name="ewallet_name" value="{{ Auth::user()->paymentAccount?->ewallet_name }}" class="col-span-2 p-2 border rounded w-full">
                     </div>
                     
                         <!-- Bank Fields -->
@@ -145,12 +145,12 @@
                             <label class="font-semibold">No Rekening:</label>
                             <p class="text-sm text-gray-500">Nomor rekening bank</p>
                         </div>
-                        <input type="text" name="bank_number" value="{{ Auth::user()->paymentAccount->bank_number }}" class="col-span-2 p-2 border rounded w-full">
+                        <input type="text" name="bank_number" value="{{ Auth::user()->paymentAccount?->bank_number }}" class="col-span-2 p-2 border rounded w-full">
                         <div>
                             <label class="font-semibold">Nama Pemilik:</label>
                             <p class="text-sm text-gray-500">Nama di rekening bank</p>
                         </div>
-                        <input type="text" name="pemilik_bank" value="{{ Auth::user()->paymentAccount->pemilik_bank }}" class="col-span-2 p-2 border rounded w-full">
+                        <input type="text" name="pemilik_bank" value="{{ Auth::user()->paymentAccount?->pemilik_bank }}" class="col-span-2 p-2 border rounded w-full">
                     </div>
                 </div>
             </div>
@@ -234,7 +234,7 @@
                     </div>
 
                     <div class="col-span-2">
-                        <button type="button"  onclick="openCvModal('{{ asset('storage/' . $workerProfile->cv) }}')" class="bg-blue-600 text-white px-3 py-1 rounded">
+                        <button type="button"  onclick="openCvModal('{{ asset('storage/' . $workerProfile?->cv) }}')" class="bg-blue-600 text-white px-3 py-1 rounded">
                             Lihat CV
                         </button>
                     </div>
@@ -267,7 +267,7 @@
                         <label class="font-semibold">Pengalaman Kerja:</label>
                         <p class="text-sm text-gray-500">Masukkan pengalaman kerja</p>
                     </div>
-                    <input type="text" name="pengalaman_kerja" value="{{ Auth::user()->keahlian->pengalaman_kerja }}" class="col-span-2 p-2 border rounded w-full">
+                    <input type="text" name="pengalaman_kerja" value="{{ Auth::user()->keahlian?->pengalaman_kerja }}" class="col-span-2 p-2 border rounded w-full">
                 </div>
                 <!-- Pendidikan -->
                 <div class="grid grid-cols-3 items-center gap-4">
@@ -275,7 +275,7 @@
                         <label class="font-semibold">Pendidikan:</label>
                         <p class="text-sm text-gray-500">Masukkan jenjang pendidikan terakhir</p>
                     </div>
-                    <input type="text" name="pendidikan" value="{{ Auth::user()->keahlian->pendidikan }}" class="col-span-2 p-2 border rounded w-full">
+                    <input type="text" name="pendidikan" value="{{ Auth::user()->keahlian?->pendidikan }}" class="col-span-2 p-2 border rounded w-full">
                 </div>
                 <div class="space-y-4 mt-6">
                     <!-- Upload Sertifikasi -->
