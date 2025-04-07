@@ -15,7 +15,7 @@
             @csrf
             <h2 class="text-3xl font-semibold text-gray-700 text-center">Register</h2>
 
-            <input type="text" name="name" placeholder="Name" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" value="{{ old('name') }}" required>
+            <input type="text" name="nama_lengkap" placeholder="Name" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" value="{{ old('name') }}" required>
             @error('name') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
 
             <input type="text" name="username" placeholder="Username" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" value="{{ old('username') }}" required>
@@ -57,7 +57,7 @@
             <input type="date" name="date" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" value="{{ old('date') }}" required>
             @error('date') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror -->
 
-            <input type="text" name="phone" placeholder="No HP" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" value="{{ old('phone') }}" required>
+            <input type="text" name="nomor_telepon" placeholder="No HP" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" value="{{ old('phone') }}" required>
             @error('phone') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
 
             <button type="submit" class="w-full mt-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Sign Up</button>

@@ -58,3 +58,9 @@ Route::get('/jobs/{job}/chat/{user}', [ChatController::class, 'index'])->name('j
 Route::post('/jobs/{job}/chat/{user}', [ChatController::class, 'send'])->name('jobs.chat.send');
 Route::get('/manage-worker', function () {return view('manageWorker');})->name('manage.worker');
 Route::get('/my-job-worker', function () {return view('myJobWorker');})->name('myjob.worker');
+
+Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
+Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage']);
+
+Route::get('/profil', [AuthController::class, 'showProfile'])->name('profil');

@@ -13,16 +13,31 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('username');
-            $table->string('email')->unique();
-            $table->enum('role', ['client', 'worker']); // Tambahkan role
-            $table->date('date')->nullable(); // Tambahkan tanggal lahir
-            $table->string('phone')->nullable(); // Tambahkan nomor HP
-            // $table->timestamp('email_verified_at')->nullable();
+            $table->string('username')->unique();
             $table->string('password');
-            // $table->rememberToken();
+            $table->string('nama_lengkap');
+            $table->string('email')->unique();
+            $table->enum('role', ['worker', 'client']);
+            $table->string('profile_image')->nullable();
+            $table->string('nomor_telepon')->nullable();
+            $table->string('alamat')->nullable();
+            $table->string('negara')->nullable();
+            $table->timestamp('tanggal_bergabung')->useCurrent();
+            $table->text('bio')->nullable();
             $table->timestamps();
+        });
+
+        Schema::create('user_payment_accounts', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->enum('account_type', ['bank', 'paypal', 'ewallet']);
+            $table->string('account_number');
+            $table->string('account_name');
+            $table->string('bank_name', ['bca', 'bni', 'bri', 'mandiri']);
+            $table->string('ewallet_provider')->nullable();
+            $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -46,6 +61,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('user_payment_accounts');
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');

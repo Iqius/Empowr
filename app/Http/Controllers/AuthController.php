@@ -6,6 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\UserPaymentAccount;
+use App\Models\WorkerProfile;
+use App\Models\Sertifikasi;
+use App\Models\SertifikasiImage;
+use App\Models\Portofolio;
+use App\Models\PortofolioImage;
 
 class AuthController extends Controller
 {
@@ -13,22 +19,21 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'nama_lengkap' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'role' => 'required|in:client,worker',
-            'date' => 'nullable|date',
-            'phone' => 'nullable|string|max:15',
+            'nomor_telepon' => 'nullable|string|max:15',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
         $user = User::create([
-            'name' => $request->name,
+            'nama_lengkap' => $request->nama_lengkap,
             'username' => $request->username,
             'email' => $request->email,
             'role' => $request->role,
-            'date' => $request->date,
-            'phone' => $request->phone,
+            'nomor_telepon' => $request->nomor_telepon,
+            'tanggal_bergabung' => now(),
             'password' => Hash::make($request->password),
         ]);
 
@@ -99,27 +104,93 @@ class AuthController extends Controller
 
     public function updateProfile(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'nullable|string|max:15',
-            'linkedin' => 'nullable|url',
-            'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Maks 2MB
-        ]);
-
         $user = Auth::user();
 
-        // Handle Upload Gambar
-        if ($request->hasFile('profile_image')) {
-            $imagePath = $request->file('profile_image')->store('profile_images', 'public');
-            $user->profile_image = $imagePath;
-        }
-
-        $user->name = $request->name;
-        $user->phone = $request->phone;
-        $user->linkedin = $request->linkedin;
+        // Update data user
+        $user->nama_lengkap = $request->nama_lengkap;
+        $user->email = $request->email;
+        $user->nomor_telepon = $request->nomor_telepon;
+        $user->alamat = $request->alamat;
+        $user->negara = $request->negara;
+        $user->bio = $request->bio;
         $user->save();
 
+        $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
+
+        // Update path CV kalau file baru di-upload
+        $workerProfile->cv = $request->file('cv')
+            ? $request->file('cv')->store('cv', 'public')
+            : $workerProfile->cv; // jaga path lama kalau gak upload
+
+        // Simpan data lain
+        $workerProfile->keahlian = json_encode($request->keahlian);
+        $workerProfile->tingkat_keahlian = $request->tingkat_keahlian;
+        $workerProfile->pengalaman_kerja = $request->pengalaman_kerja;
+        $workerProfile->pendidikan = $request->pendidikan;
+        $workerProfile->empowr_label = $request->has('empowr_label');
+        $workerProfile->empowr_affiliate = $request->has('empowr_affiliate');
+
+        // Simpan semuanya
+        $workerProfile->save();
+
+        // Update atau buat data pembayaran
+        UserPaymentAccount::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'account_type' => $request->account_type,
+                'wallet_number' => $request->wallet_number,
+                'ewallet_name' => $request->ewallet_name,
+                'bank_name' => $request->bank_name,
+                'bank_number' => $request->bank_number,
+                'pemilik_bank' => $request->pemilik_bank,
+                'ewallet_provider' => $request->ewallet_provider,
+            ]
+        );
+
+        // Upload Sertifikat
+        if ($request->hasFile('sertifikat')) {
+            $sertifikasi = Sertifikasi::create([
+                'worker_id' => $user->id,
+                'title' => $request->sertifikat_caption,
+            ]);
+
+            $sertifImage = $request->file('sertifikat')->store('sertifikasi', 'public');
+
+            SertifikasiImage::create([
+                'sertifikasi_id' => $sertifikasi->id,
+                'image' => $sertifImage,
+            ]);
+        }
+
+        // Upload Portofolio
+        if ($request->hasFile('portofolio')) {
+            $portofolio = Portofolio::create([
+                'worker_id' => $user->id,
+                'title' => $request->portofolio_caption,
+                'description' => '',
+                'duration' => 0,
+            ]);
+
+            $portoImage = $request->file('portofolio')->store('portofolio', 'public');
+
+            PortofolioImage::create([
+                'portfolio_id' => $portofolio->id,
+                'image' => $portoImage,
+            ]);
+        }
+
         return back()->with('success', 'Profil berhasil diperbarui!');
+    }
+
+    public function showProfile()
+    {
+        $user = Auth::user();
+        $workerProfile = $user->workerProfile;
+
+        $sertifikasi = Sertifikasi::with('images')->where('worker_id', $user->id)->get();
+        $portofolio = Portofolio::with('images')->where('worker_id', $user->id)->get();
+
+        return view('profil', compact('workerProfile', 'sertifikasi', 'portofolio'));
     }
 
 }
