@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class TaskApplication extends Model
+{
+    protected $fillable = ['task_id', 'profile_id', 'catatan','bidPrice', 'status','applied_at'];
+    public $timestamps = false;
+
+
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class, 'task_id');
+    }
+
+    public function worker(): BelongsTo
+    {
+        return $this->belongsTo(WorkerProfile::class, 'profile_id');
+    }
+}
+

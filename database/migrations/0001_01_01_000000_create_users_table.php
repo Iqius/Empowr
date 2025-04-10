@@ -33,7 +33,7 @@ return new class extends Migration
             $table->enum('account_type', ['bank', 'paypal', 'ewallet']);
             $table->string('account_number');
             $table->string('account_name');
-            $table->string('bank_name', ['bca', 'bni', 'bri', 'mandiri']);
+            $table->enum('bank_name', ['bca', 'bni', 'bri', 'mandiri']);
             $table->string('ewallet_provider')->nullable();
             $table->timestamps();
 

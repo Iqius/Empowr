@@ -7,11 +7,12 @@
 
     <!-- Status Dropdown -->
     <select class="p-2 border rounded w-full md:w-auto" id="statusFilter">
-        <option disabled selected>Filter Status</option>
-        <option value="belum">Belum Dikerjakan</option>
-        <option value="sedang">Sedang Dikerjakan</option>
-        <option value="selesai">Selesai Dikerjakan</option>
+        <option value="">Semua Status</option>
+        <option value="open">Belum Dikerjakan</option>
+        <option value="in progress">Sedang Dikerjakan</option>
+        <option value="completed">Selesai Dikerjakan</option>
     </select>
+
 
     <!-- Filter Button -->
     <button class="p-2 border rounded bg-blue-600 text-white w-full md:w-auto">Filter</button>
@@ -22,20 +23,18 @@
     <!-- Job List -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 w-full" id="jobContainer">
         @php
-            $jobs = \App\Models\Job::where('user_id', Auth::id())->get();
-            $statuses = ['belum', 'sedang', 'selesai'];
+            $task = \App\Models\Task::with('user')->where('client_id', Auth::id())->get();
         @endphp
 
-        @foreach ($jobs as $index => $job)
-            @php $status = $statuses[$index % 3]; @endphp
-            <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200" data-status="{{ $status }}">
+        @foreach ($task as $index => $job)
+            <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200" data-status="{{ $job->status }}">
                 <a href="{{ route('jobs.manage', $job->id) }}">
                     <p class="text-blue-600 font-semibold text-base sm:text-lg">{{ $job->title }}</p>
                     <p class="text-black font-bold mt-2 text-sm sm:text-base">
                         Rp {{ number_format($job->price, 0, ',', '.') }}
                     </p>
-                    <p class="text-gray-500 text-sm">By {{ $job->user->name ?? 'Unknown' }}</p>
-                    <p class="text-xs text-gray-400 mt-1">Status: {{ ucfirst($status) }}</p>
+                    <p class="text-gray-500 text-sm">By {{ $job->user->nama_lengkap ?? 'Unknown' }}</p>
+                    <p class="text-xs text-gray-400 mt-1">Status: {{ $job->status }}</p>
                 </a>
             </div>
         @endforeach
@@ -46,10 +45,15 @@
 
 <!-- Script: Filter Tab -->
 <script>
- document.getElementById('statusFilter').addEventListener('change', function () {
+    document.getElementById('statusFilter').addEventListener('change', function () {
         const status = this.value;
         document.querySelectorAll('#jobContainer > div').forEach(card => {
-            card.style.display = (card.dataset.status === status) ? 'block' : 'none';
+            if (!status) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = (card.dataset.status === status) ? 'block' : 'none';
+            }
         });
     });
 </script>
+

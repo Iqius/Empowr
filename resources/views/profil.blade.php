@@ -16,7 +16,7 @@
         <!-- Tambahkan CSRF Token untuk keamanan -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        
+
         <!-- Tabs -->
         <div class="flex justify-center md:justify-start mt-6 border-b">
             <button onclick="showTab('dataDiri')" class="tab-button px-4 py-2 text-gray-600 hover:text-blue-600">Data Diri</button>
@@ -37,7 +37,7 @@
                         </div>
                         <input type="text" name="nama_lengkap" value="{{ Auth::user()->nama_lengkap }}" class="col-span-2 p-2 border rounded w-full">
                     </div>
-                    
+
                     <!-- Email -->
                     <div class="grid grid-cols-3 items-center gap-4">
                         <div>
@@ -46,21 +46,21 @@
                         </div>
                         <input type="email" name="email" value="{{ Auth::user()->email }}" class="col-span-2 p-2 border rounded w-full">
                     </div>
-                    
+
                     <!-- Role -->
                     <div class="grid grid-cols-3 items-center gap-4">
                         <div>
                             <label class="font-semibold">Role:</label>
                             <p class="text-sm text-gray-500">Role anda saat ini</p>
                         </div>
-                        <input 
+                        <input
                             type="text" name="role"
-                            value="{{ Auth::user()->role }}" 
+                            value="{{ Auth::user()->role }}"
                             readonly
                             class="col-span-2 p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
                         >
                     </div>
-                    
+
                     <!-- No Telp -->
                     <div class="grid grid-cols-3 items-center gap-4">
                         <div>
@@ -69,7 +69,7 @@
                         </div>
                         <input type="text" name="nomor_telepon" value="{{ Auth::user()->nomor_telepon }}"class="col-span-2 p-2 border rounded w-full">
                     </div>
-                    
+
                     <!-- Alamat -->
                     <div class="grid grid-cols-3 items-center gap-4">
                         <div>
@@ -78,7 +78,7 @@
                         </div>
                         <input type="text" name="alamat" value="{{ Auth::user()->alamat }}" class="col-span-2 p-2 border rounded w-full">
                     </div>
-                    
+
                     <!-- Negara -->
                     <div class="grid grid-cols-3 items-center gap-4">
                         <div>
@@ -87,11 +87,11 @@
                         </div>
                         <input type="text" name="negara" value="{{ Auth::user()->negara }}" class="col-span-2 p-2 border rounded w-full">
                     </div>
-                    
+
                     <!-- Tanggal Bergabung -->
                     <div class="grid grid-cols-3 items-center gap-4">
                         <div>
-                            <label class="font-semibold">Tgl Bergabung:</label> 
+                            <label class="font-semibold">Tgl Bergabung:</label>
                             <p class="text-sm text-gray-500">Tanggal bergabung</p>
                         </div>
                         <input type="string" name="tanggal_bergabung" readonly class="col-span-2 p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600" value="{{ Auth::user()->tanggal_bergabung }}" class="col-span-2 p-2 border rounded w-full">
@@ -108,7 +108,7 @@
                             <!-- <option value="paypal">Paypal</option> -->
                         </select>
                     </div>
-                    
+
                     <!-- E-Wallet Fields -->
                     <div id="ewalletFields" class="grid grid-cols-3 items-center gap-4">
                         <div>
@@ -122,7 +122,7 @@
                         </div>
                         <input type="text" name="ewallet_name" value="{{ Auth::user()->paymentAccount?->ewallet_name }}" class="col-span-2 p-2 border rounded w-full">
                     </div>
-                    
+
                         <!-- Bank Fields -->
                         <div id="bankDropdown" class="grid grid-cols-3 items-center gap-4" style="display: none;">
                         <div>
@@ -200,7 +200,7 @@
                         <label class="font-semibold">Empowr Label:</label>
                         <p class="text-sm text-gray-500">Tandai jika memiliki label</p>
                     </div>
-                    <input type="checkbox" name="empowr_label" class="col-span-2 w-6 h-6" 
+                    <input type="checkbox" name="empowr_label" class="col-span-2 w-6 h-6"
                         {{ old('empowr_label', Auth::user()->keahlian->empowr_label ?? false) ? 'checked' : '' }}>
                 </div>
                 <!-- Empowr Affiliate -->
@@ -209,7 +209,7 @@
                         <label class="font-semibold">Empowr Affiliate:</label>
                         <p class="text-sm text-gray-500">Tandai jika bagian dari affiliate</p>
                     </div>
-                    <input type="checkbox" name="empowr_affiliate" class="col-span-2 w-6 h-6" 
+                    <input type="checkbox" name="empowr_affiliate" class="col-span-2 w-6 h-6"
                         {{ old('empowr_affiliate', Auth::user()->keahlian->empowr_affiliate ?? false) ? 'checked' : '' }}>
                 </div>
                 <!-- Upload CV -->
@@ -390,7 +390,7 @@
         document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
         document.getElementById(tabId).classList.remove('hidden');
     }
-    
+
     // function previewImage(event) {
     //     const reader = new FileReader();
     //     reader.onload = function () {
@@ -437,7 +437,7 @@
             var ewalletFields = document.getElementById("ewalletFields");
             var bankFields = document.getElementById("bankFields");
             var bankDropdown = document.getElementById("bankDropdown");
-            
+
             if (rekeningType === "ewallet") {
                 ewalletFields.style.display = "grid";
                 bankFields.style.display = "none";
@@ -455,7 +455,7 @@
         create: false,
         maxItems: null
     });
-        const dropArea = document.getElementById("drop-area");
+    const dropArea = document.getElementById("drop-area");
     const fileInput = document.getElementById("fileInput");
     const fileNameDisplay = document.getElementById("file-name");
 
