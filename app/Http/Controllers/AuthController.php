@@ -37,6 +37,12 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        if ($request->role == 'worker') {
+            WorkerProfile::create([
+                'user_id' => $user->id,
+            ]);
+        }
+
         return redirect()->route('register')->with('success', 'Akun berhasil dibuat! Silakan login.');
     }
 
