@@ -85,10 +85,14 @@
             @endif
         </div>
         <!-- Button Daftar -->
-        <button type="button" id="applyBtn"
-            class="fixed bottom-6 right-6 bg-blue-600 text-white px-6 py-3 rounded shadow-lg hover:bg-blue-700 transition">
-            Daftar
-        </button>
+        @auth
+            @if (Auth::user()->role === 'worker')
+                <button type="button" id="applyBtn"
+                    class="fixed bottom-6 right-6 bg-blue-600 text-white px-6 py-3 rounded shadow-lg hover:bg-blue-700 transition">
+                    Daftar
+                </button>
+            @endif
+        @endauth
     </div>
 </form>
 

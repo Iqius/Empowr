@@ -88,11 +88,29 @@ class JobController extends Controller
     }
     public function manage($id)
     {
-        // Bisa pakai data real jika sudah ada di DB
+        $task = Task::with('user')->findOrFail($id);
+    
+        $applicants = TaskApplication::with([
+            'worker.user', // ⬅️ ambil relasi user
+            'worker.certifications.images',
+            'worker.portfolios.images',
+            // 'worker.reviews',
+        ])
+        ->where('task_id', $id) // ✅ ambil semua pelamar
+        ->get();
+    
+        return view('manage', compact('task', 'applicants'));
+    }
+    public function manageWorker($id)
+    {
         $task = \App\Models\Task::with('user')->findOrFail($id);
 
-        // Kirim ke view manage.blade.php
-        return view('manage', compact('task'));
+        // Cari lamaran user ini (jika ada)
+        $application = TaskApplication::where('task_id', $id)
+            ->where('profile_id', Auth::id())
+            ->first();
+    
+        return view('manageWorker', compact('task', 'application'));
     }
     public function destroy($id)
     {

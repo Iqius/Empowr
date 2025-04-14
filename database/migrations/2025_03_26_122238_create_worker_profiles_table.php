@@ -10,8 +10,8 @@ return new class extends Migration {
         Schema::create('worker_profiles', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->enum('tingkat_keahlian', ['Beginner', 'Intermediate', 'Expert']);
-            $table->text('keahlian');
+            $table->enum('tingkat_keahlian', ['Beginner', 'Intermediate', 'Expert'])->nullable();
+            $table->text('keahlian')->nullable();
             $table->boolean('empowr_label')->default(false);
             $table->boolean('empowr_affiliate')->default(false);
             $table->string('cv')->nullable();
@@ -97,6 +97,9 @@ return new class extends Migration {
         Schema::dropIfExists('portfolio_images');
         Schema::dropIfExists('portfolios');
         Schema::dropIfExists('worker_verification_affiliations');
+        Schema::dropIfExists('task_applications');
+        Schema::dropIfExists('task');            
         Schema::dropIfExists('worker_profiles');
     }
+    
 };

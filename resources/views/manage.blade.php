@@ -7,7 +7,6 @@
         <button class="tab-button text-gray-600 hover:text-blue-600" data-tab="applicants">Lamaran Worker</button>
         <button class="tab-button text-gray-600 hover:text-blue-600" data-tab="chat">Chat</button>
     </div>
-
     @php
         $job = $task;
     @endphp
@@ -83,12 +82,57 @@
                 <option value="default">Default</option>
                 <option value="price">Harga</option>
                 <option value="experience">Pengalaman</option>
-                <option value="rating">Rating</option>
+                <!-- <option value="rating">Rating</option> -->
             </select>
         </div>
 
         <!-- List Pelamar -->
-        <div id="applicants-list" class="space-y-4"></div>
+        <div id="applicants-list" class="space-y-4">
+    @foreach ($applicants as $applicant)
+        @php
+            $worker = $applicant->worker;
+            $user = $worker->user;
+            $avgRating = 0; // default
+            @endphp
+
+        <div class="border p-4 rounded"
+        data-index="{{ $loop->index }}"
+        data-name="{{ $user->nama_lengkap }}"
+             data-note="{{ $applicant->catatan }}"
+             data-price="{{ $applicant->bidPrice }}"
+             data-experience="{{ $worker->pengalaman_kerja }}"
+             data-rating="{{ number_format($avgRating, 1) }}"
+             data-education="{{ $worker->pendidikan }}"
+             data-cv="{{ $worker->cv }}"
+             data-label="{{ $worker->empowr_label }}"
+             data-affiliate="{{ $worker->empowr_affiliate }}">
+             <pre>
+@foreach ($applicants as $applicant)
+    profile_id: {{ $applicant->profile_id }},
+    user_id: {{ $applicant->worker->user->id }},
+    nama_lengkap: {{ $applicant->worker->user->nama_lengkap }}
+@endforeach
+</pre>
+
+             <p><strong>{{ $user->nama_lengkap }}</strong> - Rp{{ number_format($applicant->bidPrice) }}</p>
+             <p class="text-gray-600 text-sm">Catatan: {{ $applicant->catatan }}</p>
+            <p class="text-sm text-gray-500">
+                Pengalaman: {{ $worker->pengalaman_kerja }} tahun |
+                Rating: {{ number_format($avgRating, 1) }}
+            </p>
+            <div class="flex gap-2 mt-2">
+                <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
+                <button class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
+                <button class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow"
+                        onclick="openWorkerModalFromElement(this)">
+                    Lihat Profil Worker
+                </button>
+            </div>
+        </div>
+    @endforeach
+</div>
+
     </div>
 
     <!-- Tab 3: Chat -->
@@ -100,10 +144,10 @@
     <!-- Actions -->
     <div class="flex justify-end gap-2 mt-6">
         @if ($task->status === 'open')
-            <form action="{{ route('jobs.destroy', $task->id) }}" method="POST" onsubmit="return confirm('Yakin ingin membatalkan task ini?');">
+            <form id="cancelTaskForm{{ $task->id }}" action="{{ route('jobs.destroy', $task->id) }}" method="POST">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                <button type="button" onclick="confirmCancel({{ $task->id }})" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
                     Batalkan
                 </button>
             </form>
@@ -113,6 +157,7 @@
             </button>
         @endif
     </div>
+
 
     <!-- Modal Detail Worker -->
     <div id="workerDetailModal"
@@ -145,7 +190,7 @@
                     <div class="flex justify-center border-b overflow-x-auto">
                         <button onclick="showWorkerTab('keahlianTab')"
                             class="worker-tab-button px-4 py-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">Keahlian</button>
-                        <button onclick="showWorkerTab('ratingTab')"
+                        <!-- <button onclick="showWorkerTab('ratingTab')" -->
                             class="worker-tab-button px-4 py-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">Rating</button>
                     </div>
 
@@ -288,255 +333,337 @@
 
         </div>
     </div>
-
-
 </section>
 
 @include('client.footer')
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const chatForm = document.getElementById('chat-form');
-        if (chatForm) {
-            chatForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const input = document.getElementById('chat-input');
-                const msg = input.value.trim();
-                if (msg && currentWorker) {
-                    const timeNow = new Date().toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                    chatData[currentWorker].push({
-                        sender: 'client',
-                        message: msg,
-                        time: timeNow
-                    });
-                    input.value = '';
-                    renderChat(currentWorker);
-                    renderWorkerList();
-                }
-            });
-        }
+    function sortApplicants() {
+        const sortBy = document.getElementById("sortBy").value;
+        const container = document.getElementById("applicants-list");
 
-        document.querySelectorAll('.tab-button').forEach(button => {
-            button.addEventListener('click', () => {
-                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove(
-                    'text-blue-600', 'font-semibold'));
-                button.classList.add('text-blue-600', 'font-semibold');
-                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add(
-                    'hidden'));
-                document.getElementById(button.dataset.tab)?.classList.remove('hidden');
-            });
+        const items = Array.from(container.children);
+
+        items.sort((a, b) => {
+            const aValue = parseFloat(a.dataset[sortBy] || 0);
+            const bValue = parseFloat(b.dataset[sortBy] || 0);
+            return aValue - bValue;
         });
 
-        renderWorkerList();
+        container.innerHTML = "";
+        items.forEach(item => container.appendChild(item));
+    }
 
-        document.querySelectorAll('.btn-worker-info').forEach(btn => {
-            btn.addEventListener('click', () => {
-                renderWorkerModal(workerData);
-                showWorkerTab('keahlianTab');
-                document.getElementById('workerDetailModal').classList.remove('hidden');
+function confirmCancel(taskId) {
+    Swal.fire({
+        title: 'Yakin ingin membatalkan?',
+        text: "Tindakan ini tidak bisa dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#aaa',
+        confirmButtonText: 'Ya, batalkan!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Task berhasil dibatalkan!',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#3085d6'
+            }).then(() => {
+                document.getElementById(`cancelTaskForm${taskId}`).submit();
             });
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    // const chatForm = document.getElementById('chat-form');
+    // if (chatForm) {
+    //     chatForm.addEventListener('submit', function (e) {
+    //         e.preventDefault();
+    //         const input = document.getElementById('chat-input');
+    //         const msg = input.value.trim();
+    //         if (msg && currentWorker) {
+    //             const timeNow = new Date().toLocaleTimeString([], {
+    //                 hour: '2-digit',
+    //                 minute: '2-digit'
+    //             });
+    //             chatData[currentWorker].push({
+    //                 sender: 'client',
+    //                 message: msg,
+    //                 time: timeNow
+    //             });
+    //             input.value = '';
+    //             renderChat(currentWorker);
+    //             renderWorkerList();
+    //         }
+    //     });
+    // }
+
+    // ✅ ini biarkan
+    const sortSelect = document.getElementById("sortBy");
+    if (sortSelect) {
+        sortSelect.addEventListener("change", sortApplicants);
+    }
+
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', () => {
+            console.log("Tab clicked:", button.dataset.tab);
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('text-blue-600', 'font-semibold'));
+            button.classList.add('text-blue-600', 'font-semibold');
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(button.dataset.tab)?.classList.remove('hidden');
         });
     });
 
-    const applicants = [{
-            name: "Worker A",
-            note: "Saya memiliki pengalaman 3 tahun di bidang ini.",
-            price: 500000,
-            experience: 3,
-            skills: ["Web Development", "UI/UX Design"],
-            education: "S1 Informatika",
-            cv: "worker-a-cv.pdf",
-            empowrLabel: true,
-            empowrAffiliate: false,
-            reviews: [{
-                    name: "Fadli H.",
-                    rating: 5,
-                    comment: "Kerja cepat dan komunikatif!"
-                },
-                {
-                    name: "Laras N.",
-                    rating: 4,
-                    comment: "Desain bagus, revisi oke."
-                },
-                {
-                    name: "Joni W.",
-                    rating: 3,
-                    comment: "Butuh lebih responsif saat weekend."
-                }
-            ],
+    // renderWorkerList?.(); 
 
-            // Sertifikat untuk dropdown + preview
-            certImages: [{
-                    caption: "10km Berkuda",
-                    image: "/assets/images/11.jpg"
-                },
-                {
-                    caption: "Dicoding Frontend Developer",
-                    image: "/assets/images/portfolio2.jpg"
-                }
-            ],
-            portfolios: [{
-                    caption: "Mengalahkan mino exp",
-                    image: "/assets/images/12.jpg"
-                },
-                {
-                    caption: "Website Company Profile",
-                    image: "/assets/images/portfolio2.jpg"
-                }
-            ]
-        },
-        {
-            name: "Worker B",
-            note: "Saya ahli di bidang pemasaran digital selama 5 tahun.",
-            price: 650000,
-            experience: 5,
-            skills: ["Marketing", "Data Science"],
-            education: "S2 Marketing",
-            cv: "worker-b-cv.pdf",
-            empowrLabel: false,
-            empowrAffiliate: true,
-            reviews: [{
-                    name: "Dina M.",
-                    rating: 5,
-                    comment: "Strategi marketing-nya keren banget!"
-                },
-                {
-                    name: "Andi L.",
-                    rating: 5,
-                    comment: "Terbukti naikin traffic & engagement."
-                },
-                {
-                    name: "Sinta Q.",
-                    rating: 4,
-                    comment: "Detail & tepat waktu."
-                }
-            ]
-        },
-        {
-            name: "Worker C",
-            note: "Fresh graduate tapi punya banyak proyek freelance.",
-            price: 300000,
-            experience: 1,
-            skills: ["Mobile Development"],
-            education: "S1 Teknik Informatika",
-            cv: "worker-c-cv.pdf",
-            empowrLabel: false,
-            empowrAffiliate: false,
-            reviews: [{
-                    name: "Reza A.",
-                    rating: 4,
-                    comment: "Responsif & punya banyak ide!"
-                },
-                {
-                    name: "Nina T.",
-                    rating: 3,
-                    comment: "Masih perlu belajar soal timeline."
-                },
-                {
-                    name: "Kevin J.",
-                    rating: 4,
-                    comment: "Sudah oke untuk pemula."
-                }
-            ]
-        }
-    ];
+    document.querySelectorAll('.btn-worker-info').forEach(btn => {
+        btn.addEventListener('click', () => {
+            renderWorkerModal(workerData);
+            showWorkerTab('keahlianTab');
+            document.getElementById('workerDetailModal').classList.remove('hidden');
+        });
+    });
+});
 
+    // const applicants = [{
+    //         name: "Worker A",
+    //         note: "Saya memiliki pengalaman 3 tahun di bidang ini.",
+    //         price: 500000,
+    //         experience: 3,
+    //         skills: ["Web Development", "UI/UX Design"],
+    //         education: "S1 Informatika",
+    //         cv: "worker-a-cv.pdf",
+    //         empowrLabel: true,
+    //         empowrAffiliate: false,
+    //         reviews: [{
+    //                 name: "Fadli H.",
+    //                 rating: 5,
+    //                 comment: "Kerja cepat dan komunikatif!"
+    //             },
+    //             {
+    //                 name: "Laras N.",
+    //                 rating: 4,
+    //                 comment: "Desain bagus, revisi oke."
+    //             },
+    //             {
+    //                 name: "Joni W.",
+    //                 rating: 3,
+    //                 comment: "Butuh lebih responsif saat weekend."
+    //             }
+    //         ],
+
+    //         // Sertifikat untuk dropdown + preview
+    //         certImages: [{
+    //                 caption: "10km Berkuda",
+    //                 image: "/assets/images/11.jpg"
+    //             },
+    //             {
+    //                 caption: "Dicoding Frontend Developer",
+    //                 image: "/assets/images/portfolio2.jpg"
+    //             }
+    //         ],
+    //         portfolios: [{
+    //                 caption: "Mengalahkan mino exp",
+    //                 image: "/assets/images/12.jpg"
+    //             },
+    //             {
+    //                 caption: "Website Company Profile",
+    //                 image: "/assets/images/portfolio2.jpg"
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         name: "Worker B",
+    //         note: "Saya ahli di bidang pemasaran digital selama 5 tahun.",
+    //         price: 650000,
+    //         experience: 5,
+    //         skills: ["Marketing", "Data Science"],
+    //         education: "S2 Marketing",
+    //         cv: "worker-b-cv.pdf",
+    //         empowrLabel: false,
+    //         empowrAffiliate: true,
+    //         reviews: [{
+    //                 name: "Dina M.",
+    //                 rating: 5,
+    //                 comment: "Strategi marketing-nya keren banget!"
+    //             },
+    //             {
+    //                 name: "Andi L.",
+    //                 rating: 5,
+    //                 comment: "Terbukti naikin traffic & engagement."
+    //             },
+    //             {
+    //                 name: "Sinta Q.",
+    //                 rating: 4,
+    //                 comment: "Detail & tepat waktu."
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         name: "Worker C",
+    //         note: "Fresh graduate tapi punya banyak proyek freelance.",
+    //         price: 300000,
+    //         experience: 1,
+    //         skills: ["Mobile Development"],
+    //         education: "S1 Teknik Informatika",
+    //         cv: "worker-c-cv.pdf",
+    //         empowrLabel: false,
+    //         empowrAffiliate: false,
+    //         reviews: [{
+    //                 name: "Reza A.",
+    //                 rating: 4,
+    //                 comment: "Responsif & punya banyak ide!"
+    //             },
+    //             {
+    //                 name: "Nina T.",
+    //                 rating: 3,
+    //                 comment: "Masih perlu belajar soal timeline."
+    //             },
+    //             {
+    //                 name: "Kevin J.",
+    //                 rating: 4,
+    //                 comment: "Sudah oke untuk pemula."
+    //             }
+    //         ]
+    //     }
+    // ];
+
+    // function calculateAverageRating(reviews) {
+    //     if (!reviews || reviews.length === 0) return 0;
+    //     const total = reviews.reduce((sum, r) => sum + r.rating, 0);
+    //     return total / reviews.length;
+    // }
+
+    // function calculateRatingDistribution(reviews) {
+    //     const distribution = {
+    //         1: 0,
+    //         2: 0,
+    //         3: 0,
+    //         4: 0,
+    //         5: 0
+    //     };
+    //     reviews.forEach(r => {
+    //         distribution[r.rating] = (distribution[r.rating] || 0) + 1;
+    //     });
+    //     return distribution;
+    // }
+
+    // // Fungsi untuk render list pelamar
+    // function renderApplicants(list) {
+    //     const container = document.getElementById("applicants-list");
+    //     container.innerHTML = "";
+
+    //     list.forEach((worker, i) => {
+    //         const div = document.createElement("div");
+    //         div.className = "border p-4 rounded";
+
+    //         div.innerHTML = `
+    //   <p><strong>${worker.name}</strong> - Rp${worker.price.toLocaleString()}</p>
+    //   <p class="text-gray-600 text-sm">Catatan: ${worker.note}</p>
+    //   <p class="text-sm text-gray-500">Pengalaman: ${worker.experience} tahun | Rating: ${worker.rating}</p>
+    //   <div class="flex gap-2 mt-2">
+    //     <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
+    //     <button class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
+    //     <button class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
+    //     <button onclick="openWorkerModal(${i})" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow">
+    //       Lihat Profil Worker
+    //     </button>
+    //   </div>
+    // `;
+    //         container.appendChild(div);
+    //     });
+    // }
     function calculateAverageRating(reviews) {
-        if (!reviews || reviews.length === 0) return 0;
-        const total = reviews.reduce((sum, r) => sum + r.rating, 0);
-        return total / reviews.length;
-    }
+    if (!reviews || reviews.length === 0) return 0;
 
-    function calculateRatingDistribution(reviews) {
-        const distribution = {
-            1: 0,
-            2: 0,
-            3: 0,
-            4: 0,
-            5: 0
-        };
-        reviews.forEach(r => {
-            distribution[r.rating] = (distribution[r.rating] || 0) + 1;
-        });
-        return distribution;
-    }
+    const total = reviews.reduce((sum, r) => sum + r.rating, 0);
+    return total / reviews.length;
+}
 
-    // Fungsi untuk render list pelamar
-    function renderApplicants(list) {
-        const container = document.getElementById("applicants-list");
-        container.innerHTML = "";
 
-        list.forEach((worker, i) => {
-            const div = document.createElement("div");
-            div.className = "border p-4 rounded";
+//     function sortApplicants() {
+//         const sortBy = document.getElementById("sortBy").value;
+//         let sorted = [...applicants];
 
-            div.innerHTML = `
-      <p><strong>${worker.name}</strong> - Rp${worker.price.toLocaleString()}</p>
-      <p class="text-gray-600 text-sm">Catatan: ${worker.note}</p>
-      <p class="text-sm text-gray-500">Pengalaman: ${worker.experience} tahun | Rating: ${worker.rating}</p>
-      <div class="flex gap-2 mt-2">
-        <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
-        <button class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
-        <button class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
-        <button onclick="openWorkerModal(${i})" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow">
-          Lihat Profil Worker
-        </button>
-      </div>
+//         if (sortBy === "price") {
+//             sorted.sort((a, b) => a.price - b.price);
+//         } else if (sortBy === "experience") {
+//             sorted.sort((a, b) => b.experience - a.experience);
+//         } else if (sortBy === "rating") {
+//             sorted.sort((a, b) => calculateAverageRating(b.reviews) - calculateAverageRating(a.reviews));
+//         }
+
+//         renderApplicants(sorted);
+//     }
+
+//     function renderApplicants(list) {
+//         const container = document.getElementById("applicants-list");
+//         container.innerHTML = "";
+
+//         list.forEach((worker, i) => {
+//             const avgRating = calculateAverageRating(worker.reviews);
+
+//             document.getElementById("worker-rating-summary").innerHTML = `
+//   <p class="text-lg font-semibold">Rata-rata Rating: ${avgRating.toFixed(1)}</p>
+// `;
+
+//             const div = document.createElement("div");
+//             div.className = "border p-4 rounded";
+
+//             div.innerHTML = `
+//       <p><strong>${worker.name}</strong> - Rp${worker.price.toLocaleString()}</p>
+//       <p class="text-gray-600 text-sm">Catatan: ${worker.note}</p>
+//       <p class="text-sm text-gray-500">
+//         Pengalaman: ${worker.experience} tahun | Rating: ${avgRating.toFixed(1)}
+//       </p>
+//       <div class="flex gap-2 mt-2">
+//         <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
+//         <button class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
+//         <button class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
+//         <button onclick="openWorkerModal(${i})" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow">
+//           Lihat Profil Worker
+//         </button>
+//       </div>
+//     `;
+//             container.appendChild(div);
+//         });
+//     }
+    function openWorkerModalFromElement(el) {
+    const data = el.closest('div');
+    
+    const name = data.getAttribute('data-name');
+    const note = data.getAttribute('data-note');
+    const price = data.getAttribute('data-price');
+    const experience = data.getAttribute('data-experience');
+    const rating = data.getAttribute('data-rating');
+    const education = data.getAttribute('data-education');
+    const cv = data.getAttribute('data-cv');
+    const label = data.getAttribute('data-label') === '1' ? 'Ya' : 'Tidak';
+    const affiliate = data.getAttribute('data-affiliate') === '1' ? 'Ya' : 'Tidak';
+
+    // Inject ke modal
+    document.getElementById("worker-name").textContent = name;
+    document.getElementById("worker-skills-value").textContent = "-"; // dari backend belum ada
+    document.getElementById("worker-label").textContent = label;
+    document.getElementById("worker-affiliate").textContent = affiliate;
+    document.getElementById("worker-education").textContent = education;
+    document.getElementById("worker-experience").textContent = `${experience} tahun`;
+    document.getElementById("worker-cv").href = cv ?? "#";
+
+    // Rating Summary
+    document.getElementById("worker-rating-summary").innerHTML = `
+        <h3 class="text-2xl font-semibold">${rating}</h3>
+        <p class="text-yellow-500 text-xl">${"⭐".repeat(Math.floor(rating))}</p>
+        <p class="text-sm text-gray-500">Dari rating user</p>
     `;
-            container.appendChild(div);
-        });
-    }
 
-    function sortApplicants() {
-        const sortBy = document.getElementById("sortBy").value;
-        let sorted = [...applicants];
-
-        if (sortBy === "price") {
-            sorted.sort((a, b) => a.price - b.price);
-        } else if (sortBy === "experience") {
-            sorted.sort((a, b) => b.experience - a.experience);
-        } else if (sortBy === "rating") {
-            sorted.sort((a, b) => calculateAverageRating(b.reviews) - calculateAverageRating(a.reviews));
-        }
-
-        renderApplicants(sorted);
-    }
-
-    function renderApplicants(list) {
-        const container = document.getElementById("applicants-list");
-        container.innerHTML = "";
-
-        list.forEach((worker, i) => {
-            const avgRating = calculateAverageRating(worker.reviews);
-
-            document.getElementById("worker-rating-summary").innerHTML = `
-  <p class="text-lg font-semibold">Rata-rata Rating: ${avgRating.toFixed(1)}</p>
-`;
-
-            const div = document.createElement("div");
-            div.className = "border p-4 rounded";
-
-            div.innerHTML = `
-      <p><strong>${worker.name}</strong> - Rp${worker.price.toLocaleString()}</p>
-      <p class="text-gray-600 text-sm">Catatan: ${worker.note}</p>
-      <p class="text-sm text-gray-500">
-        Pengalaman: ${worker.experience} tahun | Rating: ${avgRating.toFixed(1)}
-      </p>
-      <div class="flex gap-2 mt-2">
-        <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
-        <button class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
-        <button class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
-        <button onclick="openWorkerModal(${i})" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow">
-          Lihat Profil Worker
-        </button>
-      </div>
-    `;
-            container.appendChild(div);
-        });
-    }
+    // Show modal
+    showWorkerTab('keahlianTab');
+    document.getElementById('workerDetailModal').classList.remove('hidden');
+}
 
 
 
@@ -654,5 +781,4 @@
     }
 
     // Inisialisasi awal
-    renderApplicants(applicants);
 </script>

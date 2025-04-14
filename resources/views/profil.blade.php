@@ -20,7 +20,11 @@
         <!-- Tabs -->
         <div class="flex justify-center md:justify-start mt-6 border-b">
             <button onclick="showTab('dataDiri')" class="tab-button px-4 py-2 text-gray-600 hover:text-blue-600">Data Diri</button>
-            <button onclick="showTab('keahlian')" class="tab-button px-4 py-2 text-gray-600 hover:text-blue-600">Keahlian</button>
+            @auth
+            @if (Auth::user()->role === 'worker')
+                <button onclick="showTab('keahlian')" class="tab-button px-4 py-2 text-gray-600 hover:text-blue-600">Keahlian</button>
+                @endif
+            @endauth
             <button onclick="showTab('rating')" class="tab-button px-4 py-2 text-gray-600 hover:text-blue-600">Rating</button>
         </div>
         <form action="{{ route('profil.update') }}" method="POST" enctype="multipart/form-data">
@@ -248,19 +252,6 @@
                         <iframe id="cvFrame" src="" class="w-full h-full rounded border" frameborder="0"></iframe>
                     </div>
                 </div>
-
-                <script>
-                    function openCvModal(cvUrl) {
-                        document.getElementById('cvFrame').src = cvUrl;
-                        document.getElementById('cvModal').classList.remove('hidden');
-                    }
-
-                    function closeCvModal() {
-                        document.getElementById('cvModal').classList.add('hidden');
-                        document.getElementById('cvFrame').src = '';
-                    }
-                </script>
-
                 <!-- Pengalaman Kerja -->
                 <div class="grid grid-cols-3 items-center gap-4">
                     <div>
@@ -356,8 +347,10 @@
                         <a id="portfolioCaptionLink" href="#" target="_blank" class="text-blue-600 hover:underline">Lihat Portofolio</a>
                         </p>
                     </div>
-                    </div>
                 </div>
+            </div>
+            </div>
+            </div> 
             </div>
             <div id="rating" class="tab-content p-4 hidden space-y-6">
                 <!-- Container untuk rating summary -->
@@ -367,9 +360,9 @@
                 <!-- Container untuk daftar ulasan -->
                 <div id="rating-reviews" class="space-y-4"></div>
             </div>
-            </div>
+
             <!-- Save Buttons -->
-            <div class="flex flex-col sm:flex-row justify-center sm:justify-end items-center gap-3 mt-6 px-4">
+            <div id="saveButtons" class="flex flex-col sm:flex-row justify-center sm:justify-end items-center gap-3 mt-6 px-4">
                 <button
                     onclick="window.location.reload()"
                     class="w-full sm:w-auto bg-gray-300 text-gray-800 px-6 py-2 rounded hover:bg-gray-400 transition">
@@ -385,11 +378,33 @@
 </div>
 
 <script>
-    //norek
-    function showTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-        document.getElementById(tabId).classList.remove('hidden');
+    function openCvModal(cvUrl) {
+        document.getElementById('cvFrame').src = cvUrl;
+        document.getElementById('cvModal').classList.remove('hidden');
     }
+
+    function closeCvModal() {
+        document.getElementById('cvModal').classList.add('hidden');
+        document.getElementById('cvFrame').src = '';
+    }
+
+    function showTab(tabId) {
+    // Sembunyikan semua tab
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.classList.add('hidden'));
+
+    // Tampilkan tab yang dipilih
+    document.getElementById(tabId).classList.remove('hidden');
+
+    // Tampilkan tombol Save kecuali pada sub page rating
+    const saveButtons = document.getElementById('saveButtons');
+    if (tabId === 'rating') {
+        saveButtons.classList.add('hidden');
+    } else {
+        saveButtons.classList.remove('hidden');
+    }
+}
+
 
     // function previewImage(event) {
     //     const reader = new FileReader();

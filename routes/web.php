@@ -57,8 +57,9 @@ Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.s
 Route::get('/jobs/data', [JobController::class, 'getJobData'])->name('jobs.data');
 // Route::get('/jobs/{job}/chat/{user}', [ChatController::class, 'index'])->name('jobs.chat');
 // Route::post('/jobs/{job}/chat/{user}', [ChatController::class, 'send'])->name('jobs.chat.send');
-Route::get('/manage-worker', function () {return view('manageWorker');})->name('manage.worker');
+// Route::get('/manage-worker/{id}', [JobController::class, 'manage'])->name('manage');
 Route::get('/my-job-worker', function () {return view('myJobWorker');})->name('myjob.worker');
+Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->name('manage.worker');
 
 Route::post('/task/{task}/apply', [JobController::class, 'apply'])->name('task.apply');
 Route::post('/application/{id}/accept', [JobController::class, 'accept'])->name('application.accept');
