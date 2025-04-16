@@ -7,7 +7,7 @@ use App\Models\task;
 use App\Models\TaskApplication;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-
+use App\Models\WorkerProfile;
 
 class JobController extends Controller
 {
@@ -86,21 +86,39 @@ class JobController extends Controller
         $task = \App\Models\Task::where('client_id', Auth::id())->get();
         return view('myJobClient', compact('task'));
     }
-    public function manage($id)
-    {
-        $task = Task::with('user')->findOrFail($id);
     
-        $applicants = TaskApplication::with([
-            'worker.user', // ⬅️ ambil relasi user
+    public function manage($id, Request $request)
+{
+    $task = Task::with('user')->findOrFail($id);
+
+    $sortBy = $request->get('sort', 'bidPrice'); // default: harga
+    $sortDir = $request->get('dir', 'asc'); // default: naik
+
+    // Validasi agar tidak bisa inject kolom tak dikenal
+    $allowedSorts = ['bidPrice', 'experience']; // experience berasal dari relasi
+    if (!in_array($sortBy, $allowedSorts)) {
+        $sortBy = 'bidPrice';
+    }
+
+    $applicants = TaskApplication::with([
+            'worker.user',
             'worker.certifications.images',
             'worker.portfolios.images',
-            // 'worker.reviews',
         ])
-        ->where('task_id', $id) // ✅ ambil semua pelamar
-        ->get();
+        ->where('task_id', $id)
+        ->get()
+        ->sortBy(function ($applicant) use ($sortBy) {
+            if ($sortBy === 'experience') {
+                return $applicant->worker->pengalaman_kerja ?? 0;
+            }
+            return $applicant->{$sortBy} ?? 0;
+        }, SORT_REGULAR, $request->get('dir') === 'desc')
+        ->values(); // reset index
+
+    return view('manage', compact('task', 'applicants'));
+}
     
-        return view('manage', compact('task', 'applicants'));
-    }
+
     public function manageWorker($id)
     {
         $task = \App\Models\Task::with('user')->findOrFail($id);
@@ -135,10 +153,11 @@ class JobController extends Controller
     public function apply(Request $request, $taskId)
     {
         $task = Task::findOrFail($taskId);
+        $profileId = WorkerProfile::where('user_id', Auth::id())->value('id');
 
         // Cek apakah sudah pernah melamar
         $existing = TaskApplication::where('task_id', $taskId)
-            ->where('profile_id', Auth::id())
+            ->where('profile_id', $profileId)
             ->first();
 
         if ($existing) {
@@ -147,7 +166,7 @@ class JobController extends Controller
 
         TaskApplication::create([
             'task_id' => $taskId,
-            'profile_id' => Auth::id(),
+            'profile_id' => $profileId,
             'bidPrice' => $request->bidPrice,
             'catatan' => $request->catatan,
             'status' => 'pending',
@@ -178,6 +197,7 @@ class JobController extends Controller
         return back()->with('success', 'Worker berhasil diterima. Task dimulai.');
     }
 
+   
     // public function showApplicants($taskId)
     // {
     //     $applicants = TaskApplication::with(['profile.user', 'profile'])

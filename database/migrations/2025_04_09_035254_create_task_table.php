@@ -45,7 +45,7 @@ return new class extends Migration
                 $table->dateTime('applied_at');
 
                 $table->foreign('task_id')->references('id')->on('task')->onDelete('cascade');
-                $table->foreign('profile_id')->references('user_id')->on('worker_profiles')->onDelete('cascade');
+                $table->foreign('profile_id')->references('id')->on('worker_profiles')->onDelete('cascade');
             });
         }
 

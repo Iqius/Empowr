@@ -1,6 +1,6 @@
 @include('client.header')
 
-<section class="p-4 mt-16 lg:ml-64">
+<section class="p-4 mt-16 ml-16">
     <!-- Tabs -->
     <div class="flex flex-wrap gap-4 border-b pb-2 text-sm sm:text-base overflow-x-auto">
         <button class="tab-button text-blue-600 font-semibold" data-tab="info">Informasi Lengkap</button>
@@ -75,16 +75,24 @@
     <div id="applicants" class="tab-content hidden mt-4">
         <h2 class="text-xl font-bold mb-4">Lamaran Worker</h2>
 
-        <!-- Filter -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
-            <label for="sortBy" class="font-semibold">Urutkan Berdasarkan:</label>
-            <select id="sortBy" onchange="sortApplicants()" class="p-2 border rounded">
-                <option value="default">Default</option>
-                <option value="price">Harga</option>
-                <option value="experience">Pengalaman</option>
-                <!-- <option value="rating">Rating</option> -->
-            </select>
-        </div>
+      <!-- Filter -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
+    <form method="GET" class="flex items-center gap-2">
+        <label for="sortBy" class="font-semibold">Urutkan Berdasarkan:</label>
+        <select name="sort" id="sortBy" class="p-2 border rounded" onchange="this.form.submit()">
+            <option value="bidPrice" {{ request('sort') === 'bidPrice' ? 'selected' : '' }}>Harga</option>
+            <option value="experience" {{ request('sort') === 'experience' ? 'selected' : '' }}>Pengalaman</option>
+        </select>
+
+        <select name="dir" class="p-2 border rounded" onchange="this.form.submit()">
+            <option value="asc" {{ request('dir') === 'asc' ? 'selected' : '' }}>Naik ↑</option>
+            <option value="desc" {{ request('dir') === 'desc' ? 'selected' : '' }}>Turun ↓</option>
+        </select>
+    </form>
+</div>
+
+
+
 
         <!-- List Pelamar -->
         <div id="applicants-list" class="space-y-4">
@@ -106,14 +114,6 @@
              data-cv="{{ $worker->cv }}"
              data-label="{{ $worker->empowr_label }}"
              data-affiliate="{{ $worker->empowr_affiliate }}">
-             <pre>
-@foreach ($applicants as $applicant)
-    profile_id: {{ $applicant->profile_id }},
-    user_id: {{ $applicant->worker->user->id }},
-    nama_lengkap: {{ $applicant->worker->user->nama_lengkap }}
-@endforeach
-</pre>
-
              <p><strong>{{ $user->nama_lengkap }}</strong> - Rp{{ number_format($applicant->bidPrice) }}</p>
              <p class="text-gray-600 text-sm">Catatan: {{ $applicant->catatan }}</p>
             <p class="text-sm text-gray-500">
@@ -190,7 +190,7 @@
                     <div class="flex justify-center border-b overflow-x-auto">
                         <button onclick="showWorkerTab('keahlianTab')"
                             class="worker-tab-button px-4 py-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">Keahlian</button>
-                        <!-- <button onclick="showWorkerTab('ratingTab')" -->
+                        <button onclick="showWorkerTab('ratingTab')"
                             class="worker-tab-button px-4 py-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">Rating</button>
                     </div>
 
@@ -337,21 +337,33 @@
 
 @include('client.footer')
 <script>
-    function sortApplicants() {
+  function sortApplicants() {
         const sortBy = document.getElementById("sortBy").value;
         const container = document.getElementById("applicants-list");
-
         const items = Array.from(container.children);
 
-        items.sort((a, b) => {
-            const aValue = parseFloat(a.dataset[sortBy] || 0);
-            const bValue = parseFloat(b.dataset[sortBy] || 0);
-            return aValue - bValue;
-        });
+        // Mapping nilai dropdown ke atribut data HTML
+        const dataAttrMap = {
+            'price': 'price',
+            'experience': 'experience',
+            'rating': 'rating',
+        };
 
-        container.innerHTML = "";
+        if (sortBy === 'default') {
+            items.sort((a, b) => parseInt(a.dataset.index) - parseInt(b.dataset.index));
+        } else {
+            const attr = dataAttrMap[sortBy];
+            items.sort((a, b) => {
+                const aVal = parseFloat(a.getAttribute(`data-${attr}`)) || 0;
+                const bVal = parseFloat(b.getAttribute(`data-${attr}`)) || 0;
+                return aVal - bVal;
+            });
+        }
+
+        container.innerHTML = '';
         items.forEach(item => container.appendChild(item));
     }
+
 
 function confirmCancel(taskId) {
     Swal.fire({
