@@ -4,16 +4,19 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\CheckUserRole;
+use App\Http\Middleware\RoleMiddleware;
 
-// Landing Page
+
+// LANDING PAGE
 Route::get('/', function () {
     return view('Landing.landing');
 });
 
-// Authentication Routes
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
+
+
+// AUTHENTIKASI
+Route::get('/register', function () {return view('auth.register');})->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::get('/login', function () {
@@ -21,6 +24,22 @@ Route::get('/login', function () {
 })->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+// CLIENT
+// -- DASHBOARD
+Route::get('/client/dashboard', [AuthController::class, 'clientDashboard'])->middleware(['auth'])->name('client.dashboardClient');
+
+
+
+
+
+
+
+
+
+// Authentication Routes
+
 
 // Dashboard (Protected by Auth Middleware)
 Route::middleware(['auth'])->group(function () {
@@ -35,10 +54,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profil/update', [AuthController::class, 'updateProfile'])->name('profil.update');
 
     // Client & Worker Dashboard
-    Route::get('/client/dashboard', [AuthController::class, 'clientDashboard'])->name('client.dashboardClient');
-    Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->name('worker.dashboardWorker');
+   
+    Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->middleware(['auth'])->name('worker.dashboardWorker');
     Route::get('/client/new', [AuthController::class, 'clientNew'])->name('client.new');
-    Route::get('/worker/jobs', [AuthController::class, 'workerJobs'])->name('worker.jobs');
+    Route::get('/dashboard/jobs', [AuthController::class, 'workerJobs'])->name('list.jobs');
 
     // Job Routes
     Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index'); // Memastikan data dikirim ke view

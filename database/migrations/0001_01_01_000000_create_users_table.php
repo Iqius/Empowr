@@ -27,18 +27,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('user_payment_accounts', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->enum('account_type', ['bank', 'paypal', 'ewallet']);
-            $table->string('account_number');
-            $table->string('account_name');
-            $table->enum('bank_name', ['bca', 'bni', 'bri', 'mandiri']);
-            $table->string('ewallet_provider')->nullable();
-            $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
@@ -61,7 +49,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_payment_accounts');
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');

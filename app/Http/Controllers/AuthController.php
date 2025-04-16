@@ -41,10 +41,19 @@ class AuthController extends Controller
             WorkerProfile::create([
                 'user_id' => $user->id,
             ]);
+            UserPaymentAccount::create([
+                'user_id' => $user->id,
+            ]);
+        }else{
+            UserPaymentAccount::create([
+                'user_id' => $user->id,
+            ]);
         }
 
         return redirect()->route('register')->with('success', 'Akun berhasil dibuat! Silakan login.');
     }
+
+
 
     // **LOGIN**
     public function login(Request $request)
@@ -64,7 +73,7 @@ class AuthController extends Controller
             if ($user->role === 'client') {
                 return redirect()->route('client.dashboardClient')->with('success', 'Login berhasil!');
             } elseif ($user->role === 'worker') {
-                return redirect()->route('client.dashboardClient')->with('success', 'Login berhasil!');
+                return redirect()->route('worker.dashboardWorker')->with('success', 'Login berhasil!');
             }
 
             return redirect()->route('dashboard')->with('success', 'Login berhasil!');
@@ -73,27 +82,23 @@ class AuthController extends Controller
         return back()->with('error', 'Username atau password salah.');
     }
 
+
     public function clientDashboard()
     {
-        // if (!Auth::check() || Auth::user()->role !== 'client') {
-        //     return redirect('/worker/dashboard')->with('error', 'Access Denied!');
-        // }
-
-        return view('client.dashboardClient'); 
-    }
-
-    public function clientNew()
-    {
-        if (!Auth::check() || Auth::user()->role !== 'client') {
-            return redirect('/worker/dashboard')->with('error', 'Access Denied!');
+        if(Auth::user()->role == 'client'){
+            return view('client.dashboardClient');
         }
-
-        return view('new'); 
+        return view('Landing.landing');
+         
     }
+
 
     public function workerDashboard()
     {
-        return view('dashboardWorker'); 
+        if(Auth::user()->role == 'worker'){
+            return view('worker.dashboardWorker');
+        }
+        return view('Landing.landing'); 
     }
 
     public function workerJobs()

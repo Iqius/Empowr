@@ -5,8 +5,8 @@
         <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
         <select class="p-2 border rounded w-full md:w-auto" id="sortSelect">
             <option disabled selected>Sort</option>
-            <option value="price-asc">Harga Termurah</option>
-            <option value="price-desc">Harga Termahal</option>
+            <option value="price-asc">Harga Terendah</option>
+            <option value="price-desc">Harga Tertinggi</option>
         </select>
 
         <button class="p-2 border rounded bg-blue-600 text-white w-full md:w-auto">Filter</button>
