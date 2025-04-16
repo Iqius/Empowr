@@ -70,7 +70,7 @@
               </div>
               <ul class="py-1" role="none">
                 <li>
-                  <a href="/profil" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Profile</a>
+                  <a href="{{route('profil')}}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Profile</a>
                 </li>
 
                 <li>
@@ -95,13 +95,13 @@
    <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
       <ul class="space-y-2 font-medium">
          <li>
-            <a href="/client/dashboard" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+            <a href="{{ Auth::user()->role === 'client' ? route('client.dashboardClient') : route('worker.dashboardWorker') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                <i class="bi bi-house text-lg text-gray-500 group-hover:text-gray-900"></i>
                <span class="ms-3 sidebar-text">Dashboard</span>
             </a>
          </li>
          <li>
-            <a href="/worker/jobs" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+            <a href="{{ route('list.jobs') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                <i class="bi bi-briefcase text-lg text-gray-500 group-hover:text-gray-900"></i>
                <span class="ms-3 sidebar-text">Job</span>
             </a>

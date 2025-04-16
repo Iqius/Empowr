@@ -117,6 +117,42 @@ class AuthController extends Controller
     {
         $user = Auth::user();
 
+        $request->validate([
+            'nama_lengkap' => 'nullable|string|max:255',
+            'email' => 'nullable|email',
+            'nomor_telepon' => 'nullable|string',
+            'alamat' => 'nullable|string',
+            'negara' => 'nullable|string',
+            'bio' => 'nullable|string',
+            'keahlian' => 'nullable|array',
+            'tingkat_keahlian' => 'nullable|string',
+            'pengalaman_kerja' => 'nullable|string',
+            'pendidikan' => 'nullable|string',
+            'cv' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240', // 10MB
+            'sertifikat' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'sertifikat_caption' => 'nullable|string',
+            'portofolio' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'portofolio_caption' => 'nullable|string',
+            'account_type' => 'nullable|string',
+            'wallet_number' => 'nullable|string',
+            'ewallet_name' => 'nullable|string',
+            'bank_name' => 'nullable|string',
+            'bank_number' => 'nullable|string',
+            'pemilik_bank' => 'nullable|string',
+            'ewallet_provider' => 'nullable|string',
+        ]);
+
+
+        // Update data user
+        $user->nama_lengkap = $request->nama_lengkap ?? $user->nama_lengkap;
+        $user->email = $request->email ?? $user->email;
+        $user->nomor_telepon = $request->nomor_telepon ?? $user->nomor_telepon;
+        $user->alamat = $request->alamat ?? $user->alamat;
+        $user->negara = $request->negara ?? $user->negara;
+        $user->bio = $request->bio ?? $user->bio;
+        $user->save();
+
+        // Update khusus role worker
         // Update data user
         $user->nama_lengkap = $request->nama_lengkap;
         $user->email = $request->email;
@@ -144,17 +180,16 @@ class AuthController extends Controller
         // Simpan semuanya
         $workerProfile->save();
 
-        // Update atau buat data pembayaran
+        // Data rekening tetap bisa diisi semua role
         UserPaymentAccount::updateOrCreate(
             ['user_id' => $user->id],
             [
                 'account_type' => $request->account_type,
                 'wallet_number' => $request->wallet_number,
-                'ewallet_name' => $request->ewallet_name,
+                'ewallet_provider' => $request->ewallet_name,
                 'bank_name' => $request->bank_name,
-                'bank_number' => $request->bank_number,
-                'pemilik_bank' => $request->pemilik_bank,
-                'ewallet_provider' => $request->ewallet_provider,
+                'account_number' => $request->bank_number,
+                'account_name' => $request->pemilik_bank,
             ]
         );
 
@@ -190,7 +225,7 @@ class AuthController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Profil berhasil diperbarui!');
+        return redirect()->route('profil')->with('success', 'Anda telah berhasil menyimpan.');
     }
 
     public function showProfile()

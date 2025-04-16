@@ -93,9 +93,8 @@
 
 
 
-
-        <!-- List Pelamar -->
-        <div id="applicants-list" class="space-y-4">
+<!-- List Pelamar -->
+<div id="applicants-list" class="space-y-4">
     @foreach ($applicants as $applicant)
         @php
             $worker = $applicant->worker;
@@ -163,7 +162,6 @@
     <div id="workerDetailModal"
         class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50">
         <div class="relative bg-white rounded-lg shadow-lg w-[95vw] max-w-md sm:max-w-2xl max-h-[90vh] overflow-hidden">
-
             <!-- Tombol Close -->
             <button onclick="document.getElementById('workerDetailModal').classList.add('hidden')"
                 class="absolute top-2 right-3 text-gray-500 hover:text-red-600 text-2xl font-bold z-50">
