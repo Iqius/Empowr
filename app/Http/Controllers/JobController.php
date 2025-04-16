@@ -92,8 +92,10 @@ class JobController extends Controller
 
     public function myJobsWorker()
     {
+        $user = Auth::user();
+        $workerProfile = $user->workerProfile;
         $taskApplied = TaskApplication::with(['task', 'profile'])
-        ->where('profile_id', Auth::id())
+        ->where('profile_id', $workerProfile->id)
         ->get();
         return view('Worker.Jobs.myJobWorker', compact('taskApplied'));
     }

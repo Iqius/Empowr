@@ -73,7 +73,7 @@
 
     <!-- Actions -->
     <div class="flex justify-end gap-2 mt-6">
-        <a href="{{ route('myjob.worker') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+        <a href="{{ route('jobs.Worker') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
             Back
         </a>
     </div>
