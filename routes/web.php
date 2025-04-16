@@ -34,13 +34,17 @@ Route::get('/client/dashboard', [AuthController::class, 'clientDashboard'])->mid
 // WORKER
 // -- DASHBOARD
 Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->middleware(['auth'])->name('worker.dashboardWorker');
-
+// MyJobs
+Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->name('jobs.Worker');
 
 
 
 // --Profile update
-Route::get('/profil', [AuthController::class, 'showProfile'])->name('profil');
-Route::post('/profile/update', [AuthController::class, 'updateProfile'])->name('profile.update');
+Route::get('/profil', [ProfileController::class, 'showProfile'])->name('profil');
+Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
+
+// List all Jobs
+Route::get('/dashboard/jobs', [JobController::class, 'index'])->name('jobs.index');
 
 
 
@@ -63,10 +67,10 @@ Route::middleware(['auth'])->group(function () {
     // Client & Worker Dashboard
    
     Route::get('/client/new', [AuthController::class, 'clientNew'])->name('client.new');
-    Route::get('/dashboard/jobs', [AuthController::class, 'workerJobs'])->name('list.jobs');
+    
     
     // Job Routes
-    Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index'); // Memastikan data dikirim ke view
+    // Memastikan data dikirim ke view
     Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
 
     //chat

@@ -101,13 +101,13 @@
             </a>
          </li>
          <li>
-            <a href="{{ route('list.jobs') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+            <a href="{{ route('jobs.index') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                <i class="bi bi-briefcase text-lg text-gray-500 group-hover:text-gray-900"></i>
                <span class="ms-3 sidebar-text">Job</span>
             </a>
          </li>
          <li>
-            <a href="{{ Auth::user()->role === 'client' ? route('jobs.my') : route('myjob.worker') }}"
+            <a href="{{ Auth::user()->role === 'client' ? route('jobs.my') : route('jobs.Worker') }}"
                class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                <i class="bi bi-person-workspace text-lg text-gray-500 group-hover:text-gray-900"></i>
                <span class="ms-3 sidebar-text">My Job</span>

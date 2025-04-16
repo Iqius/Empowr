@@ -11,6 +11,7 @@ use App\Models\WorkerProfile;
 
 class JobController extends Controller
 {
+    // List All Jobs 
     public function index()
     {
         $jobs = task::all();
@@ -18,6 +19,7 @@ class JobController extends Controller
     }
 
 
+    // Create job Client
     public function store(Request $request)
     {
         $request->validate([
@@ -62,8 +64,9 @@ class JobController extends Controller
             'job_file' => $path,
         ]);
 
-        return redirect()->route('list.jobs')->with('success', 'Job created successfully.');
+        return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
+
 
     public function getJobData()
     {
@@ -85,6 +88,14 @@ class JobController extends Controller
     {
         $task = Task::where('client_id', Auth::id())->get();
         return view('client.jobs.myJobClient', compact('task'));
+    }
+
+    public function myJobsWorker()
+    {
+        $taskApplied = TaskApplication::with(['task', 'profile'])
+        ->where('profile_id', Auth::id())
+        ->get();
+        return view('Worker.Jobs.myJobWorker', compact('taskApplied'));
     }
 
 
@@ -117,7 +128,7 @@ class JobController extends Controller
         ->values(); // reset index
 
 
-        
+
 
         return view('client.jobs.manage', compact('task', 'applicants'));
     }
