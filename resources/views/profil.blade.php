@@ -1,5 +1,5 @@
 @include('client.header')
-<div class="p-4 sm:ml-60 mt-10">
+<div class="p-4 transition-all duration-300 main-content mt-10">
     <div class="p-6 bg-white rounded-lg shadow-md">
         <!-- Header Profil -->
         <div class="flex flex-col md:flex-row items-center gap-4">
@@ -363,11 +363,11 @@
 
             <!-- Save Buttons -->
             <div id="saveButtons" class="flex flex-col sm:flex-row justify-center sm:justify-end items-center gap-3 mt-6 px-4">
-                <button
-                    onclick="window.location.reload()"
+                <a href="/client/dashboard"
                     class="w-full sm:w-auto bg-gray-300 text-gray-800 px-6 py-2 rounded hover:bg-gray-400 transition">
                     Cancel
-                </button>
+                </a>
+
                 <button type="submit"
                     class="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
                     Save

@@ -1,6 +1,6 @@
 @include('client.header')
 <!-- Job List -->
-<section class="p-4 md:p-8 lg:ml-64 mt-16">
+<section class="p-4 md:p-8 ml-16 mt-16">
     <div class="flex flex-col md:flex-row gap-4 mb-6">
         <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
         <select class="p-2 border rounded w-full md:w-auto" id="sortSelect">

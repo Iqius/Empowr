@@ -91,30 +91,28 @@
   </div>
 </nav>
 
-<aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200" aria-label="Sidebar">
+<aside id="logo-sidebar" class="fixed top-0 left-0 z-40 h-screen pt-20 transition-all bg-white border-r border-gray-200 w-64 sidebar" aria-label="Sidebar">
    <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
       <ul class="space-y-2 font-medium">
-      <li>
-        <a href="{{ Auth::user()->role === 'client' ? route('client.dashboardClient') : route('worker.dashboardWorker') }}"class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-          <i class="bi bi-house text-lg text-gray-500 group-hover:text-gray-900"></i>
-          <span class="ms-3">Dashboard</span>
-        </a>
-      </li>
-
-      <li>
-  <a href="{{ route('list.jobs') }}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-    <i class="bi bi-briefcase text-lg text-gray-500 group-hover:text-gray-900"></i>
-    <span class="flex-1 ms-3 whitespace-nowrap">Job</span>
-  </a>
-</li>
-
-<li>
-  <a href="{{ Auth::user()->role === 'client' ? route('jobs.my') : route('myjob.worker') }}"
-     class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-    <i class="bi bi-person-workspace text-lg text-gray-500 group-hover:text-gray-900"></i>
-    <span class="flex-1 ms-3 whitespace-nowrap">My Job</span>
-  </a>
-</li> 
+         <li>
+            <a href="/client/dashboard" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+               <i class="bi bi-house text-lg text-gray-500 group-hover:text-gray-900"></i>
+               <span class="ms-3 sidebar-text">Dashboard</span>
+            </a>
+         </li>
+         <li>
+            <a href="/worker/jobs" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+               <i class="bi bi-briefcase text-lg text-gray-500 group-hover:text-gray-900"></i>
+               <span class="ms-3 sidebar-text">Job</span>
+            </a>
+         </li>
+         <li>
+            <a href="{{ Auth::user()->role === 'client' ? route('jobs.my') : route('myjob.worker') }}"
+               class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+               <i class="bi bi-person-workspace text-lg text-gray-500 group-hover:text-gray-900"></i>
+               <span class="ms-3 sidebar-text">My Job</span>
+            </a>
+         </li>
       </ul>
    </div>
 </aside>
@@ -122,6 +120,22 @@
      class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"
      onclick="closeSidebar()">
 </div>
+
+<!-- Toggle Button -->
+<button onclick="toggleSidebar()" class="absolute top-4 left-4 z-50 bg-gray-200 p-2 rounded">
+   <i class="bi bi-list"></i>
+</button>
+
+<style>
+   .sidebar-collapsed {
+      width: 4rem !important; /* Tailwind w-16 = 4rem */
+   }
+
+   .sidebar-collapsed .sidebar-text {
+      display: none;
+   }
+</style>
+
 
 <!-- Logout Modal -->
     <div id="logoutModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden">
