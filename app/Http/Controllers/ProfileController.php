@@ -23,8 +23,16 @@ class ProfileController extends Controller
 
         $sertifikasi = Sertifikasi::with('images')->where('worker_id', $user->id)->get();
         $portofolio = Portofolio::with('images')->where('worker_id', $user->id)->get();
-
+        
         return view('profil', compact('workerProfile', 'sertifikasi', 'portofolio'));
+    }
+
+
+    public function showProfileWorkerLamar($id)
+    {
+        // Ambil worker beserta relasi user
+        $worker = WorkerProfile::with(['user', 'certifications.images'])->findOrFail($id);
+        return view('client.Jobs.lamaranWorkerDetailProfile', compact('worker'));
     }
 
     // Update profile

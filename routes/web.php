@@ -29,6 +29,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // CLIENT
 // -- DASHBOARD
 Route::get('/client/dashboard', [AuthController::class, 'clientDashboard'])->middleware(['auth'])->name('client.dashboardClient');
+// --Show profile worker yang melamar
+Route::get('/profil/{id}', [ProfileController::class, 'showProfileWorkerLamar'])->name('profile.worker.lamar');
+
+
 
 
 // WORKER

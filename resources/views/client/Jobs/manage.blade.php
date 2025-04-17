@@ -1,7 +1,7 @@
 @include('client.header')
 
 <section class="p-4 mt-16 ">
-    <!-- Tabs -->
+    <!-- Tabs button -->
     <div class="flex flex-wrap gap-4 border-b pb-2 text-sm sm:text-base overflow-x-auto">
         <button class="tab-button text-blue-600 font-semibold" data-tab="info">Informasi Lengkap</button>
         <button class="tab-button text-gray-600 hover:text-blue-600" data-tab="applicants">Lamaran Worker</button>
@@ -75,63 +75,61 @@
     <div id="applicants" class="tab-content hidden mt-4">
         <h2 class="text-xl font-bold mb-4">Lamaran Worker</h2>
 
-      <!-- Filter -->
-<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
-    <form method="GET" class="flex items-center gap-2">
-        <label for="sortBy" class="font-semibold">Urutkan Berdasarkan:</label>
-        <select name="sort" id="sortBy" class="p-2 border rounded" onchange="this.form.submit()">
-            <option value="bidPrice" {{ request('sort') === 'bidPrice' ? 'selected' : '' }}>Harga</option>
-            <option value="experience" {{ request('sort') === 'experience' ? 'selected' : '' }}>Pengalaman</option>
-        </select>
 
-        <select name="dir" class="p-2 border rounded" onchange="this.form.submit()">
-            <option value="asc" {{ request('dir') === 'asc' ? 'selected' : '' }}>Naik ↑</option>
-            <option value="desc" {{ request('dir') === 'desc' ? 'selected' : '' }}>Turun ↓</option>
-        </select>
-    </form>
-</div>
+        <!-- Filter -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
+            <form method="GET" class="flex items-center gap-2">
+                <label for="sortBy" class="font-semibold">Urutkan Berdasarkan:</label>
+                <select name="sort" id="sortBy" class="p-2 border rounded" onchange="this.form.submit()">
+                    <option value="bidPrice" {{ request('sort') === 'bidPrice' ? 'selected' : '' }}>Harga</option>
+                    <option value="experience" {{ request('sort') === 'experience' ? 'selected' : '' }}>Pengalaman</option>
+                </select>
 
-
-
-<!-- List Pelamar -->
-<div id="applicants-list" class="space-y-4">
-    @foreach ($applicants as $applicant)
-        @php
-            $worker = $applicant->worker;
-            $user = $worker->user;
-            $avgRating = 0; // default
-            @endphp
-
-        <div class="border p-4 rounded"
-        data-index="{{ $loop->index }}"
-        data-name="{{ $user->nama_lengkap }}"
-             data-note="{{ $applicant->catatan }}"
-             data-price="{{ $applicant->bidPrice }}"
-             data-experience="{{ $worker->pengalaman_kerja }}"
-             data-rating="{{ number_format($avgRating, 1) }}"
-             data-education="{{ $worker->pendidikan }}"
-             data-cv="{{ $worker->cv }}"
-             data-label="{{ $worker->empowr_label }}"
-             data-affiliate="{{ $worker->empowr_affiliate }}">
-             <p><strong>{{ $user->nama_lengkap }}</strong> - Rp{{ number_format($applicant->bidPrice) }}</p>
-             <p class="text-gray-600 text-sm">Catatan: {{ $applicant->catatan }}</p>
-            <p class="text-sm text-gray-500">
-                Pengalaman: {{ $worker->pengalaman_kerja }} tahun |
-                Rating: {{ number_format($avgRating, 1) }}
-            </p>
-            <div class="flex gap-2 mt-2">
-                <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
-                <button class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
-                <button class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
-                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow"
-                        onclick="openWorkerModalFromElement(this)">
-                    Lihat Profil Worker
-                </button>
-            </div>
+                <select name="dir" class="p-2 border rounded" onchange="this.form.submit()">
+                    <option value="asc" {{ request('dir') === 'asc' ? 'selected' : '' }}>Naik ↑</option>
+                    <option value="desc" {{ request('dir') === 'desc' ? 'selected' : '' }}>Turun ↓</option>
+                </select>
+            </form>
         </div>
-    @endforeach
-</div>
 
+        <!-- List Pelamar -->
+        <div id="applicants-list" class="space-y-4">
+            @foreach ($applicants as $applicant)
+                @php
+                    $worker = $applicant->worker;
+                    $user = $worker->user;
+                    $avgRating = 0; // default
+                    @endphp
+
+                <div class="border p-4 rounded"
+                data-index="{{ $loop->index }}"
+                data-name="{{ $user->nama_lengkap }}"
+                    data-note="{{ $applicant->catatan }}"
+                    data-price="{{ $applicant->bidPrice }}"
+                    data-experience="{{ $worker->pengalaman_kerja }}"
+                    data-rating="{{ number_format($avgRating, 1) }}"
+                    data-education="{{ $worker->pendidikan }}"
+                    data-cv="{{ $worker->cv }}"
+                    data-label="{{ $worker->empowr_label }}"
+                    data-affiliate="{{ $worker->empowr_affiliate }}">
+                    <p><strong>{{ $user->nama_lengkap }}</strong> - Rp{{ number_format($applicant->bidPrice) }}</p>
+                    <p class="text-gray-600 text-sm">Catatan: {{ $applicant->catatan }}</p>
+                    <p class="text-sm text-gray-500">
+                        Pengalaman: {{ $worker->pengalaman_kerja }} tahun |
+                        Rating: {{ number_format($avgRating, 1) }}
+                    </p>
+                    <div class="flex gap-2 mt-2">
+                        <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
+                        <button class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
+                        <button class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
+                        <a href="{{ route('profile.worker.lamar', $worker->id) }}"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow inline-block">
+                            Lihat Profil Worker
+                        </a>
+                    </div>
+                </div>
+            @endforeach
+        </div>
     </div>
 
     <!-- Tab 3: Chat -->
@@ -140,7 +138,7 @@
         <iframe src="{{ route('chat') }}" class="w-full h-[500px] border rounded shadow"></iframe>
     </div>
 
-    <!-- Actions -->
+    <!-- button delete task -->
     <div class="flex justify-end gap-2 mt-6">
         @if ($task->status === 'open')
             <form id="cancelTaskForm{{ $task->id }}" action="{{ route('jobs.destroy', $task->id) }}" method="POST">
@@ -161,187 +159,12 @@
     </div>
 
 
-    <!-- Modal Detail Worker -->
-    <div id="workerDetailModal"
-        class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50">
-        <div class="relative bg-white rounded-lg shadow-lg w-[95vw] max-w-md sm:max-w-2xl max-h-[90vh] overflow-hidden">
-            <!-- Tombol Close -->
-            <button onclick="document.getElementById('workerDetailModal').classList.add('hidden')"
-                class="absolute top-2 right-3 text-gray-500 hover:text-red-600 text-2xl font-bold z-50">
-                &times;
-            </button>
-
-            <!-- Kontainer isi -->
-            <div class="flex flex-col h-full">
-
-                <!-- Konten scrollable -->
-                <div class="overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 space-y-6 max-h-[90vh]">
-
-                    <!-- Header -->
-                    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
-                        <img id="worker-avatar" src="assets/images/avatar.png" alt="Worker Avatar"
-                            class="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border border-gray-300">
-                        <div>
-                            <h2 id="worker-name" class="text-2xl font-bold">Worker Dummy</h2>
-                            <span id="worker-status" class="text-blue-500">✔ Verified</span>
-                        </div>
-                    </div>
-
-                    <!-- Tabs -->
-                    <div class="flex justify-center border-b overflow-x-auto">
-                        <button onclick="showWorkerTab('keahlianTab')"
-                            class="worker-tab-button px-4 py-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">Keahlian</button>
-                        <button onclick="showWorkerTab('ratingTab')"
-                            class="worker-tab-button px-4 py-2 text-gray-600 hover:text-blue-600 whitespace-nowrap">Rating</button>
-                    </div>
-
-                    <!-- Tab Konten -->
-                    <div id="keahlianTab" class="worker-tab-content space-y-4">
-                        <!-- Keahlian -->
-                        <div class="grid grid-cols-3 items-center gap-4">
-                            <div>
-                                <label class="font-semibold">Keahlian:</label>
-                                <p class="text-sm text-gray-500">Keahlian yang dimiliki</p>
-                            </div>
-                            <div class="col-span-2">
-                                <p id="worker-skills-value" class="p-2 border rounded w-full bg-gray-100"></p>
-                            </div>
-                        </div>
-
-                        <!-- Empowr Label -->
-                        <div class="grid grid-cols-3 items-center gap-4">
-                            <div>
-                                <label class="font-semibold">Empowr Label :</label>
-                                <p class="text-sm text-gray-500">Label yang dimiliki</p>
-                            </div>
-                            <div class="col-span-2">
-                                <p id="worker-label" class="p-2 border rounded w-full bg-gray-100"></p>
-                            </div>
-                        </div>
-
-                        <!-- Empowr Affiliate -->
-                        <div class="grid grid-cols-3 items-center gap-4">
-                            <div>
-                                <label class="font-semibold">Empowr Affiliate :</label>
-                                <p class="text-sm text-gray-500">Affiliasi dengan empowr</p>
-                            </div>
-                            <div class="col-span-2">
-                                <p id="worker-affiliate" class="p-2 border rounded w-full bg-gray-100"></p>
-                            </div>
-                        </div>
-
-                        <!-- Pendidikan -->
-                        <div class="grid grid-cols-3 items-center gap-4">
-                            <div>
-                                <label class="font-semibold">Pendidikan :</label>
-                                <p class="text-sm text-gray-500">Pendidikan Terakhir</p>
-                            </div>
-                            <div class="col-span-2">
-                                <p id="worker-education" class="p-2 border rounded w-full bg-gray-100"></p>
-                            </div>
-                        </div>
-
-                        <!-- Pengalaman Kerja -->
-                        <div class="grid grid-cols-3 items-center gap-4">
-                            <div>
-                                <label class="font-semibold">Pengalaman Kerja:</label>
-                                <p class="text-sm text-gray-500">Lama pengalaman kerja</p>
-                            </div>
-                            <div class="col-span-2">
-                                <p id="worker-experience" class="p-2 border rounded w-full bg-gray-100"></p>
-                            </div>
-                        </div>
-
-                        <!-- CV -->
-                        <div class="grid grid-cols-3 items-center gap-4">
-                            <div>
-                                <label class="font-semibold">CV :</label>
-                                <p class="text-sm text-gray-500">CV Worker</p>
-                            </div>
-                            <div class="col-span-2">
-                                <a id="worker-cv" href="#" target="_blank"
-                                    class="p-2 border rounded w-full bg-gray-100 block">Lihat CV</a>
-                            </div>
-                        </div>
-
-                        <!-- Dropdown Sertifikat -->
-                        <div class="grid grid-cols-3 items-start gap-4">
-                            <div>
-                                <label class="font-semibold">Pilih Sertifikat:</label>
-                                <p class="text-sm text-gray-500">Lihat sertifikat yang telah ditambahkan</p>
-                            </div>
-                            <div class="col-span-2">
-                                <select id="certSelect" class="p-2 border rounded w-full">
-                                    <option disabled selected>Lihat Sertifikasi</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Preview Sertifikat -->
-                        <div id="certPreview" class="grid grid-cols-3 items-start gap-4 mt-4 hidden">
-                            <div>
-                                <label class="font-semibold">Preview Sertifikat:</label>
-                                <p class="text-sm text-gray-500">Klik caption untuk membuka gambar penuh</p>
-                            </div>
-                            <div class="col-span-2 space-y-2">
-                                <img id="certImage" src="" alt="Preview Sertifikat"
-                                    class="w-40 h-40 object-cover rounded border">
-                                <p>
-                                    <a id="certCaptionLink" href="#" target="_blank"
-                                        class="text-blue-600 hover:underline">Lihat Sertifikat</a>
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Dropdown Portofolio -->
-                        <div class="grid grid-cols-3 items-start gap-4 mt-4">
-                            <div>
-                                <label class="font-semibold">Pilih Portofolio:</label>
-                                <p class="text-sm text-gray-500">Lihat portofolio yang telah ditambahkan</p>
-                            </div>
-                            <div class="col-span-2">
-                                <select id="portfolioSelect" class="p-2 border rounded w-full">
-                                    <option disabled selected>Lihat Portofolio</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Preview Portofolio -->
-                        <div id="portfolioPreview" class="grid grid-cols-3 items-start gap-4 mt-4 hidden">
-                            <div>
-                                <label class="font-semibold">Preview Portofolio:</label>
-                                <p class="text-sm text-gray-500">Klik caption untuk membuka gambar penuh</p>
-                            </div>
-                            <div class="col-span-2 space-y-2">
-                                <img id="portfolioImage" src="" alt="Preview Portofolio"
-                                    class="w-40 h-40 object-cover rounded border">
-                                <p>
-                                    <a id="portfolioCaptionLink" href="#" target="_blank"
-                                        class="text-blue-600 hover:underline">Lihat Portofolio</a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Rating -->
-                    <div id="ratingTab" class="worker-tab-content hidden space-y-4">
-                        <div id="worker-rating-summary" class="text-center"></div>
-                        <div id="worker-rating-distribution"></div>
-                        <div id="worker-rating-reviews"></div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Modal bayar -->
     <div id="bayarModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden transition-opacity duration-300 opacity-0">
         <div id="modalContent" class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative transform transition-all duration-300 scale-95">
 
-            <!-- Tombol Close -->
-            <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl font-bold">
-                &times;
-            </button>
+            
 
             <h2 class="text-lg font-semibold mb-4">Pilih Metode Pembayaran</h2>
 
@@ -393,6 +216,10 @@
                 <!-- Tombol Submit -->
                 <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full">
                     Bayar Sekarang
+                </button>
+                <!-- Tombol Close -->
+                <button onclick="closeModal()" class="py-2 px-4 mt-4 bg-red-600 rounded hover:bg-red-700 w-full text-white">
+                    Tutup
                 </button>
             </form>
         </div>
@@ -508,30 +335,6 @@ function confirmCancel(taskId) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    // const chatForm = document.getElementById('chat-form');
-    // if (chatForm) {
-    //     chatForm.addEventListener('submit', function (e) {
-    //         e.preventDefault();
-    //         const input = document.getElementById('chat-input');
-    //         const msg = input.value.trim();
-    //         if (msg && currentWorker) {
-    //             const timeNow = new Date().toLocaleTimeString([], {
-    //                 hour: '2-digit',
-    //                 minute: '2-digit'
-    //             });
-    //             chatData[currentWorker].push({
-    //                 sender: 'client',
-    //                 message: msg,
-    //                 time: timeNow
-    //             });
-    //             input.value = '';
-    //             renderChat(currentWorker);
-    //             renderWorkerList();
-    //         }
-    //     });
-    // }
-
-    // ✅ ini biarkan
     const sortSelect = document.getElementById("sortBy");
     if (sortSelect) {
         sortSelect.addEventListener("change", sortApplicants);
@@ -546,8 +349,6 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById(button.dataset.tab)?.classList.remove('hidden');
         });
     });
-
-    // renderWorkerList?.(); 
 
     document.querySelectorAll('.btn-worker-info').forEach(btn => {
         btn.addEventListener('click', () => {

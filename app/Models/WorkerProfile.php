@@ -38,7 +38,7 @@ class WorkerProfile extends Model
     }
     public function certifications()
     {
-        return $this->hasMany(\App\Models\Sertifikasi::class, 'worker_id');
+        return $this->hasMany(Sertifikasi::class, 'worker_id');
     }
     public function portfolios()
     {

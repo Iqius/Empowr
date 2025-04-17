@@ -106,7 +106,6 @@ class JobController extends Controller
     {
         $task = Task::with('user')->findOrFail($id);
 
-
         // Filter
         $sortBy = $request->get('sort', 'bidPrice'); // default: harga
         $sortDir = $request->get('dir', 'asc'); // default: naik
