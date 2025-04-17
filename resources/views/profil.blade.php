@@ -27,7 +27,7 @@
             @endauth
             <button onclick="showTab('rating')" class="tab-button px-4 py-2 text-gray-600 hover:text-blue-600">Rating</button>
         </div>
-        <form action="{{ route('profil.update') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('POST')
             <!-- Content -->
@@ -389,21 +389,21 @@
     }
 
     function showTab(tabId) {
-    // Sembunyikan semua tab
-    const tabs = document.querySelectorAll('.tab-content');
-    tabs.forEach(tab => tab.classList.add('hidden'));
+        // Sembunyikan semua tab
+        const tabs = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => tab.classList.add('hidden'));
 
-    // Tampilkan tab yang dipilih
-    document.getElementById(tabId).classList.remove('hidden');
+        // Tampilkan tab yang dipilih
+        document.getElementById(tabId).classList.remove('hidden');
 
-    // Tampilkan tombol Save kecuali pada sub page rating
-    const saveButtons = document.getElementById('saveButtons');
-    if (tabId === 'rating') {
-        saveButtons.classList.add('hidden');
-    } else {
-        saveButtons.classList.remove('hidden');
+        // Tampilkan tombol Save kecuali pada sub page rating
+        const saveButtons = document.getElementById('saveButtons');
+        if (tabId === 'rating') {
+            saveButtons.classList.add('hidden');
+        } else {
+            saveButtons.classList.remove('hidden');
+        }
     }
-}
 
 
     // function previewImage(event) {

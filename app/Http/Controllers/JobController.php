@@ -11,6 +11,7 @@ use App\Models\WorkerProfile;
 
 class JobController extends Controller
 {
+    // List All Jobs 
     public function index()
     {
         $jobs = task::all();
@@ -18,6 +19,7 @@ class JobController extends Controller
     }
 
 
+    // Create job Client
     public function store(Request $request)
     {
         $request->validate([
@@ -62,8 +64,9 @@ class JobController extends Controller
             'job_file' => $path,
         ]);
 
-        return redirect('/worker/jobs')->with('success', 'Job created successfully.');
+        return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
+
 
     public function getJobData()
     {
@@ -83,24 +86,35 @@ class JobController extends Controller
     }
     public function myJobs()
     {
-        $task = \App\Models\Task::where('client_id', Auth::id())->get();
-        return view('myJobClient', compact('task'));
+        $task = Task::where('client_id', Auth::id())->get();
+        return view('client.jobs.myJobClient', compact('task'));
     }
+
+    public function myJobsWorker()
+    {
+        $user = Auth::user();
+        $workerProfile = $user->workerProfile;
+        $taskApplied = TaskApplication::with(['task', 'profile'])
+        ->where('profile_id', $workerProfile->id)
+        ->get();
+        return view('Worker.Jobs.myJobWorker', compact('taskApplied'));
+    }
+
+
     
     public function manage($id, Request $request)
-{
-    $task = Task::with('user')->findOrFail($id);
+    {
+        $task = Task::with('user')->findOrFail($id);
 
-    $sortBy = $request->get('sort', 'bidPrice'); // default: harga
-    $sortDir = $request->get('dir', 'asc'); // default: naik
 
-    // Validasi agar tidak bisa inject kolom tak dikenal
-    $allowedSorts = ['bidPrice', 'experience']; // experience berasal dari relasi
-    if (!in_array($sortBy, $allowedSorts)) {
-        $sortBy = 'bidPrice';
-    }
-
-    $applicants = TaskApplication::with([
+        // Filter
+        $sortBy = $request->get('sort', 'bidPrice'); // default: harga
+        $sortDir = $request->get('dir', 'asc'); // default: naik
+        $allowedSorts = ['bidPrice', 'experience']; // experience berasal dari relasi
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'bidPrice';
+        }
+        $applicants = TaskApplication::with([
             'worker.user',
             'worker.certifications.images',
             'worker.portfolios.images',
@@ -115,8 +129,11 @@ class JobController extends Controller
         }, SORT_REGULAR, $request->get('dir') === 'desc')
         ->values(); // reset index
 
-    return view('manage', compact('task', 'applicants'));
-}
+
+
+
+        return view('client.jobs.manage', compact('task', 'applicants'));
+    }
     
 
     public function manageWorker($id)
