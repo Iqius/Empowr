@@ -155,6 +155,9 @@
                 Tidak Bisa Dibatalkan Task Sudah Di Proses
             </button>
         @endif
+        <button onclick="openModal()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+            Bayar
+        </button>
     </div>
 
 
@@ -328,14 +331,131 @@
 
                 </div>
             </div>
+        </div>
+    </div>
 
+    <!-- Modal bayar -->
+    <div id="bayarModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden transition-opacity duration-300 opacity-0">
+        <div id="modalContent" class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative transform transition-all duration-300 scale-95">
+
+            <!-- Tombol Close -->
+            <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl font-bold">
+                &times;
+            </button>
+
+            <h2 class="text-lg font-semibold mb-4">Pilih Metode Pembayaran</h2>
+
+            <form id="bayarForm" action="/pay" method="POST">
+                @csrf
+
+                <!-- Input Jumlah -->
+                <div class="mb-4">
+                    <label for="id_order" class="block text-sm font-medium">Order ID</label>
+                    <input type="" name="amount" id="" class="w-full border rounded px-3 py-2 mt-1" readonly>
+                </div>
+                <div class="mb-4">
+                    <label for="amount" class="block text-sm font-medium">Jumlah Harga</label>
+                    <input type="number" name="amount" id="amount" class="w-full border rounded px-3 py-2 mt-1" placeholder="Contoh: 150000" required>
+                </div>
+
+                <!-- Metode Pembayaran -->
+                <div class="mb-4">
+                    <label for="payment_method" class="block text-sm font-medium">Metode Pembayaran</label>
+                    <select name="payment_method" id="payment_method" class="w-full border rounded px-3 py-2 mt-1" onchange="togglePaymentOptions()" required>
+                        <option value="">-- Pilih Metode --</option>
+                        <option value="bank">Bank Transfer</option>
+                        <option value="ewallet">E-Wallet</option>
+                    </select>
+                </div>
+
+                <!-- Opsi Bank -->
+                <div class="mb-4 hidden" id="bankOptions">
+                    <label for="bank_type" class="block text-sm font-medium">Pilih Bank</label>
+                    <select name="bank_type" id="bank_type" class="w-full border rounded px-3 py-2 mt-1">
+                        <option value="bca">BCA</option>
+                        <option value="bni">BNI</option>
+                        <option value="bri">BRI</option>
+                        <option value="permata">Permata</option>
+                    </select>
+                </div>
+
+                <!-- Opsi E-Wallet -->
+                <div class="mb-4 hidden" id="ewalletOptions">
+                    <label for="ewallet_type" class="block text-sm font-medium">Pilih E-Wallet</label>
+                    <select name="ewallet_type" id="ewallet_type" class="w-full border rounded px-3 py-2 mt-1">
+                        <option value="gopay">GoPay</option>
+                        <option value="ovo">OVO</option>
+                        <option value="dana">DANA</option>
+                        <option value="shopeepay">ShopeePay</option>
+                    </select>
+                </div>
+
+                <!-- Tombol Submit -->
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full">
+                    Bayar Sekarang
+                </button>
+            </form>
         </div>
     </div>
 </section>
 
 @include('client.footer')
+
+<!-- Script untuk modal bayar -->
 <script>
-  function sortApplicants() {
+
+    function openModal() {
+        const modal = document.getElementById('bayarModal');
+        const content = document.getElementById('modalContent');
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.replace('opacity-0', 'opacity-100');
+            content.classList.replace('scale-95', 'scale-100');
+        }, 10); 
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('bayarModal');
+        const content = document.getElementById('modalContent');
+
+        modal.classList.replace('opacity-100', 'opacity-0');
+        content.classList.replace('scale-100', 'scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300); 
+    }
+
+    // Tampilkan opsi berdasarkan pilihan
+    function togglePaymentOptions() {
+        const selected = document.getElementById('payment_method').value;
+        const bank = document.getElementById('bankOptions');
+        const ewallet = document.getElementById('ewalletOptions');
+
+        bank.classList.add('hidden');
+        ewallet.classList.add('hidden');
+
+        if (selected === 'bank') {
+            bank.classList.remove('hidden');
+        } else if (selected === 'ewallet') {
+            ewallet.classList.remove('hidden');
+        }
+    }
+
+    // Tutup modal saat klik area luar
+    window.onclick = function (event) {
+        const modal = document.getElementById('bayarModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+</script>
+
+
+
+<script>
+    function sortApplicants() {
         const sortBy = document.getElementById("sortBy").value;
         const container = document.getElementById("applicants-list");
         const items = Array.from(container.children);
