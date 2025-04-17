@@ -39,10 +39,6 @@
             });
         }
     });
-//     function toggleSidebar() {
-//       const sidebar = document.getElementById('logo-sidebar');
-//       sidebar.classList.toggle('sidebar-collapsed');
-//    }
 </script>
 </body>
 </html>

@@ -1,15 +1,13 @@
 @include('client.header')
 <!-- Job List -->
-<section class="p-4 md:p-8 ml-16 mt-16">
+<section class="p-4 md:p-8 mt-16">
     <div class="flex flex-col md:flex-row gap-4 mb-6">
         <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
         <select class="p-2 border rounded w-full md:w-auto" id="sortSelect">
             <option disabled selected>Sort</option>
-            <option value="price-asc">Harga Termurah</option>
-            <option value="price-desc">Harga Termahal</option>
+            <option value="price-asc">Lowest Price</option>
+            <option value="price-desc">Highest Price</option>
         </select>
-
-        <button class="p-2 border rounded bg-blue-600 text-white w-full md:w-auto">Filter</button>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4" id="jobContainer">
         <!-- Job Card -->
@@ -46,81 +44,82 @@
 
 
 <!-- Modal -->
-<div id="jobModal" class="fixed inset-0 mt-10 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden">
-    <div class="bg-white p-6 rounded shadow-md w-full max-w-lg">
-        <h1 class="text-2xl font-semibold mb-4">Add New Job</h1>
-        <form action="{{ route('jobs.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="grid grid-cols-3 gap-4">
-                <!-- Title -->
-                <div class="col-span-2">
-                    <label class="block text-gray-700">Title</label>
-                    <input type="text" name="title" class="w-full p-2 border rounded" required>
-                </div>
+<div id="jobModal" class="fixed inset-0 z-50 bg-gray-800 bg-opacity-50 flex justify-center items-start overflow-y-auto py-10 hidden">
+  <div class="bg-white p-6 rounded shadow-md w-full max-w-lg mx-4">
+    <h1 class="text-2xl font-semibold mb-4">Add New Job</h1>
+    <form action="{{ route('jobs.store') }}" method="POST" enctype="multipart/form-data">
+      @csrf
+      <div class="grid grid-cols-3 gap-4">
+        <!-- Title -->
+        <div class="col-span-2">
+          <label class="block text-gray-700">Title</label>
+          <input type="text" name="title" class="w-full p-2 border rounded" required>
+        </div>
 
-                <!-- Price -->
-                <div class="col-span-1">
-                    <label class="block text-gray-700">Price (Rp)</label>
-                    <input type="number" name="price" class="w-full p-2 border rounded" required>
-                </div>
+        <!-- Price -->
+        <div class="col-span-1">
+          <label class="block text-gray-700">Price (Rp)</label>
+          <input type="number" name="price" class="w-full p-2 border rounded" required>
+        </div>
 
-                <!-- Description -->
-                <div class="col-span-3">
-                    <label class="block text-gray-700">Description</label>
-                    <textarea name="description" class="w-full p-2 border rounded" required></textarea>
-                </div>
+        <!-- Description -->
+        <div class="col-span-3">
+          <label class="block text-gray-700">Description</label>
+          <textarea name="description" class="w-full p-2 border rounded" required></textarea>
+        </div>
 
-                <!-- Revisions -->
-                <div class="col-span-1">
-                    <label class="block text-gray-700">Revisions</label>
-                    <input type="number" name="revisions" class="w-full p-2 border rounded" required>
-                </div>
+        <!-- Revisions -->
+        <div class="col-span-1">
+          <label class="block text-gray-700">Revisions</label>
+          <input type="number" name="revisions" class="w-full p-2 border rounded" required>
+        </div>
 
-                <!-- Deadline -->
-                <div class="col-span-1">
-                    <label class="block text-gray-700">Deadline</label>
-                    <input type="date" name="deadline" class="w-full p-2 border rounded" required>
-                </div>
+        <!-- Deadline -->
+        <div class="col-span-1">
+          <label class="block text-gray-700">Deadline</label>
+          <input type="date" name="deadline" class="w-full p-2 border rounded" required>
+        </div>
 
-                <!-- Deadline Promotion -->
-                <div class="col-span-1">
-                    <label class="block text-gray-700">Deadline Promotion</label>
-                    <input type="date" name="deadline_promotion" class="w-full p-2 border rounded" required>
-                </div>
+        <!-- Deadline Promotion -->
+        <div class="col-span-1">
+          <label class="block text-gray-700">Deadline Promotion</label>
+          <input type="date" name="deadline_promotion" class="w-full p-2 border rounded" required>
+        </div>
 
-                <!-- Task Type -->
-                <div class="col-span-1">
-                    <label class="block text-gray-700">Task Type</label>
-                    <select name="taskType" class="w-full p-2 border rounded" required>
-                        <option value="it">IT</option>
-                        <option value="nonIT">Non-IT</option>
-                    </select>
-                </div>
+        <!-- Task Type -->
+        <div class="col-span-1">
+          <label class="block text-gray-700">Task Type</label>
+          <select name="taskType" class="w-full p-2 border rounded" required>
+            <option value="it">IT</option>
+            <option value="nonIT">Non-IT</option>
+          </select>
+        </div>
 
-                <!-- Provisions -->
-                <div class="col-span-3">
-                    <label class="block text-gray-700">Provisions</label>
-                    <textarea name="provisions" class="w-full p-2 border rounded"></textarea>
-                </div>
+        <!-- Provisions -->
+        <div class="col-span-3">
+          <label class="block text-gray-700">Provisions</label>
+          <textarea name="provisions" class="w-full p-2 border rounded"></textarea>
+        </div>
 
-                <!-- Drag & Drop File Upload -->
-                <div class="col-span-3">
-                    <label class="block text-gray-700">Upload File</label>
-                    <div id="drop-area-job" class="border-2 border-dashed p-4 text-center cursor-pointer">
-                        <p id="drop-text-job">Drag & Drop file here or click to select</p>
-                        <input type="file" name="job_file" id="fileInputJob" class="hidden">
-                        <p id="file-name-job" class="text-gray-500 text-sm mt-2"></p>
-                    </div>
-                </div>
-            </div>
+        <!-- File Upload -->
+        <div class="col-span-3">
+          <label class="block text-gray-700">Upload File</label>
+          <div id="drop-area-job" class="border-2 border-dashed p-4 text-center cursor-pointer">
+            <p id="drop-text-job">Drag & Drop file here or click to select</p>
+            <input type="file" name="job_file" id="fileInputJob" class="hidden">
+            <p id="file-name-job" class="text-gray-500 text-sm mt-2"></p>
+          </div>
+        </div>
+      </div>
 
-            <div class="flex justify-end gap-2 mt-4">
-                <button type="button" id="closeModalBtn" class="bg-gray-400 text-white p-2 rounded">Cancel</button>
-                <button type="submit" class="bg-blue-600 text-white p-2 rounded">Post</button>
-            </div>
-        </form>
-    </div>
+      <div class="flex justify-end gap-2 mt-4">
+        <button type="button" id="closeModalBtn" class="bg-gray-400 text-white p-2 rounded">Cancel</button>
+        <button type="submit" class="bg-blue-600 text-white p-2 rounded">Post</button>
+      </div>
+    </form>
+  </div>
 </div>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {

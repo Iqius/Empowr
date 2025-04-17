@@ -62,7 +62,7 @@
             <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-sm shadow-sm " id="dropdown-user">
               <div class="px-4 py-3" role="none">
                 <p class="text-sm text-gray-900 " role="none">
-                    {{ Auth::user()->name }}
+                    {{ Auth::user()->nama_lengkap }}
                 </p>
                 <p class="text-sm font-medium text-gray-900 truncate " role="none">
                     {{ Auth::user()->email }}
@@ -91,7 +91,9 @@
   </div>
 </nav>
 
-<aside id="logo-sidebar" class="fixed top-0 left-0 z-40 h-screen pt-20 transition-all bg-white border-r border-gray-200 w-64 sidebar" aria-label="Sidebar">
+<aside id="logo-sidebar"
+  class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200"
+  aria-label="Sidebar">
    <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
       <ul class="space-y-2 font-medium">
          <li>
@@ -116,22 +118,6 @@
       </ul>
    </div>
 </aside>
-
-<!-- Toggle Button -->
-<button onclick="toggleSidebar()" class="absolute top-4 left-4 z-50 bg-gray-200 p-2 rounded">
-   <i class="bi bi-list"></i>
-</button>
-
-<style>
-   .sidebar-collapsed {
-      width: 4rem !important; /* Tailwind w-16 = 4rem */
-   }
-
-   .sidebar-collapsed .sidebar-text {
-      display: none;
-   }
-</style>
-
 
 <!-- Logout Modal -->
     <div id="logoutModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden">

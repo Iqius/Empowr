@@ -1,6 +1,6 @@
 @include('client.header')
 
-<section class="p-4 mt-16 ml-16">
+<section class="p-4 mt-16 ">
  
     <!-- Tabs -->
     <div class="flex flex-wrap gap-4 border-b pb-2 text-sm sm:text-base overflow-x-auto">

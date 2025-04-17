@@ -1,5 +1,5 @@
 @include('client.header')
-<div class="p-4 transition-all duration-300 main-content mt-10">
+<div class="p-4 mt-10">
     <div class="p-6 bg-white rounded-lg shadow-md">
         <!-- Header Profil -->
         <div class="flex flex-col md:flex-row items-center gap-4">

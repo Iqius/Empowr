@@ -131,13 +131,25 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Masukkan ke input hidden
-                    document.getElementById("formBidPrice").value = result.value.nego;
-                    document.getElementById("formCatatan").value = result.value.note;
+    // Masukkan ke input hidden
+    document.getElementById("formBidPrice").value = result.value.nego;
+    document.getElementById("formCatatan").value = result.value.note;
 
-                    // Submit form
-                    form.submit();
-                }
+    Swal.fire({
+    icon: 'success',
+    title: 'Berhasil!',
+    text: 'Lamaran berhasil dikirim.',
+    showConfirmButton: false,
+    timer: 1500
+});
+
+
+    // Delay submit sedikit agar notifikasi bisa muncul
+    setTimeout(() => {
+        form.submit();
+    }, 800); // 800ms biar notif terlihat
+}
+
             });
         });
     });

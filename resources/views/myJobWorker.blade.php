@@ -1,6 +1,6 @@
 @include('client.header')
 
-<section class="p-4 sm:p-6 md:p-8 ml-16 transition-all duration-300 main-content mt-16">
+<section class="p-4 sm:p-6 md:p-8  mt-16">
   <div class="flex flex-col md:flex-row gap-4 mb-6">
       <!-- Search Input -->
       <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
@@ -13,8 +13,6 @@
           <option value="selesai">Selesai Dikerjakan</option>
       </select>
 
-      <!-- Filter Button -->
-      <button class="p-2 border rounded bg-blue-600 text-white w-full md:w-auto" onclick="filterByStatus()">Filter</button>
   </div>
 
 <!-- List Job yang Dilamar oleh Worker (berasal dari task_applications) -->
@@ -42,7 +40,7 @@
             </a>
         </div>
     @empty
-        <p class="text-sm text-gray-500">BNgelamar sek mas nang dukur.</p>
+        <p class="text-sm text-gray-500">Go Apply for a Job</p>
     @endforelse
 </div>
 
