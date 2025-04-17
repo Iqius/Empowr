@@ -25,6 +25,7 @@ return new class extends Migration
             $table->integer('revisions');
             $table->enum('taskType', ['it', 'nonIT']);
             $table->string('job_file')->nullable();
+            $table->boolean('bayar')->default(false);
             $table->timestamps();
 
             $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');
