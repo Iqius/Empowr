@@ -31,7 +31,7 @@ class JobController extends Controller
             //     'provisions' => 'nullable|string',
             //     'revisions' => 'required|integer',
             //     'taskType' => 'required|in:paid,free',
-            'job_file' => 'nullable|file|max:2048', // max 2MB
+            'job_file' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240',// max 2MB
         ]);
 
         // Handle file upload jika ada
@@ -80,9 +80,15 @@ class JobController extends Controller
     {
         // Ambil job berdasarkan ID dari URL
         $job = task::with('user')->findOrFail($id); // Ambil juga relasi user jika ada
-
+        $applicants = TaskApplication::with([
+            'worker.user',
+            'worker.certifications.images',
+            'worker.portfolios.images',
+        ])
+        ->where('task_id', $id)
+        ->get();
         // Kirim ke view
-        return view('show', compact('job'));
+        return view('General.showJobsDetail', compact('job','applicants'));
     }
     public function myJobs()
     {

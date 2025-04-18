@@ -1,4 +1,4 @@
-@include('client.header')
+@include('General.header')
 
 <section class="p-4 mt-16 ">
     <!-- Tabs button -->
@@ -188,9 +188,6 @@
     <!-- Modal bayar -->
     <div id="bayarModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden transition-opacity duration-300 opacity-0">
         <div id="modalContent" class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative transform transition-all duration-300 scale-95">
-
-            
-
             <h2 class="text-lg font-semibold mb-4">Pilih Metode Pembayaran</h2>
 
             <form id="bayarForm" action="/pay" method="POST">
@@ -251,7 +248,7 @@
     </div>
 </section>
 
-@include('client.footer')
+@include('General.footer')
 
 <!-- Script untuk modal bayar -->
 <script>

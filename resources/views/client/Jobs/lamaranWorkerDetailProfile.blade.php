@@ -1,4 +1,4 @@
-@include('client.header')
+@include('General.header')
 
 <div class="p-4 mt-10">
     <div class="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-6 min-h-screen">
@@ -175,7 +175,7 @@
     </button>
 </div>
 
-@include('client.footer')
+@include('General.footer')
 
 <script>
     // untuk membuka cv

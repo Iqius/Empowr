@@ -1,4 +1,4 @@
-@include('client.header')
+@include('General.header')
 
 <section class="p-4 sm:p-6 md:p-8  mt-16">
   <div class="flex flex-col md:flex-row gap-4 mb-6">
@@ -16,7 +16,7 @@
   </div>
 
 <!-- List Job yang Dilamar oleh Worker (berasal dari task_applications) -->
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full" id="jobContainer">
+<div class="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full" id="jobContainer">
 
 @foreach ($taskApplied as $job)
     <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200" data-status="{{ $job->status }}">
@@ -36,7 +36,7 @@
 
 </section>
 
-@include('client.footer')
+@include('General.footer')
 
 <!-- Script: Filter -->
 <script>
