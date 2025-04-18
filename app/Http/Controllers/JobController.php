@@ -133,7 +133,7 @@ class JobController extends Controller
 
     public function manageWorker($id)
     {
-        $task = \App\Models\Task::with('user')->findOrFail($id);
+        $task = Task::with('user')->findOrFail($id);
 
         // Cari lamaran user ini (jika ada)
         $application = TaskApplication::where('task_id', $id)
@@ -142,6 +142,7 @@ class JobController extends Controller
     
         return view('manageWorker', compact('task', 'application'));
     }
+    
     public function destroy($id)
     {
         $task = Task::findOrFail($id);
@@ -209,7 +210,44 @@ class JobController extends Controller
         return back()->with('success', 'Worker berhasil diterima. Task dimulai.');
     }
 
-   
+    //function hire
+    public function Clienthire(Request $request)
+    {
+        $request->validate([
+            'task_id' => 'required|exists:task,id',
+            'worker_profile_id' => 'required|exists:worker_profiles,id',
+        ]);
+    
+        $task = Task::find($request->task_id);
+    
+        // 1. Cek apakah sudah bayar
+        if (!$task->bayar) {
+            return back()->with('error', 'Silakan bayar terlebih dahulu sebelum merekrut worker.');
+        }
+    
+        $profile = WorkerProfile::findOrFail($request->worker_profile_id);
+
+        // 2. Update task
+        $task->profile_id = $profile->user_id;
+        $task->status = 'in progress';
+        $task->save();
+        
+        TaskApplication::where('task_id', $task->id)->delete();
+
+        return back()->with('success', 'Worker berhasil direkrut, dan semua lamaran lainnya telah dihapus.');
+    }
+
+    //tolak worker
+    public function ClientReject(Request $request)
+    {
+        $request->validate([
+            'application_id' => 'required|exists:task_applications,id',
+        ]);
+    
+        TaskApplication::where('id', $request->application_id)->delete();
+    
+        return back()->with('success', 'Lamaran berhasil dihapus.');
+    }
     // public function showApplicants($taskId)
     // {
     //     $applicants = TaskApplication::with(['profile.user', 'profile'])

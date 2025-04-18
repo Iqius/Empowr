@@ -41,7 +41,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/client/dashboard', [AuthController::class, 'clientDashboard'])->middleware(['auth'])->name('client.dashboardClient');
 // --Show profile worker yang melamar
 Route::get('/profil/{id}', [ProfileController::class, 'showProfileWorkerLamar'])->name('profile.worker.lamar');
-
+// --Hire worker
+Route::post('/hire', [JobController::class, 'Clienthire'])->name('client.hire');
+// --Client Tolak Worker
+Route::post('/reject', [JobController::class, 'ClientReject'])->name('client.reject');
 
 
 
