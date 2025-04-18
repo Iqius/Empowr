@@ -133,10 +133,6 @@ class JobController extends Controller
             return $applicant->{$sortBy} ?? 0;
         }, SORT_REGULAR, $request->get('dir') === 'desc')
         ->values(); // reset index
-
-
-
-
         return view('client.jobs.manage', compact('task', 'applicants'));
     }
     

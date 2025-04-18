@@ -1,4 +1,4 @@
-@include('General.header')
+@include('client.header')
 <div class="p-4">
     <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
         <div class="grid grid-cols-3 gap-4 mb-4">
@@ -9,8 +9,15 @@
                 </svg>
                 </p>
             </div>
-        </div>
+            <button class="bg-blue-100 text-blue-700 px-3 py-1 text-sm rounded">Details</button>
+          </li>
+        </ul>
+        <div class="mt-4 text-right text-sm text-gray-500">1 to 4 of 4 items</div>
+      </div>
+
+
     </div>
+  </div>
 </div>
 
-@include('General.footer')
+@include('client.footer')

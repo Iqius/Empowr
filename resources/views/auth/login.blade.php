@@ -45,6 +45,12 @@
                 <input type="checkbox" name="remember" id="remember" class="mr-2">
                 <label for="remember" class="text-sm text-gray-600">Remember Me</label>
             </div> -->
+            <!-- Forgot Password -->
+<div class="text-right mb-4">
+    <a href="{{ route('forgot-password.form') }}" class="text-sm text-blue-500 hover:underline">
+        Forgot Password?
+    </a>
+</div>
             <button type="submit" class="w-full mt-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-600" >Login</button>
         </form>
         @if(session('error'))

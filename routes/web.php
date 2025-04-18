@@ -18,6 +18,16 @@ Route::get('/', function () {
 // AUTHENTIKASI
 Route::get('/register', function () {return view('auth.register');})->name('register');
 Route::post('/register', [AuthController::class, 'register']);
+Route::get('/forgot-password', [AuthController::class, 'showForgotForm'])->name('forgot-password.form');
+Route::post('/forgot-password', [AuthController::class, 'sendOtp'])->name('forgot-password.send-otp');
+
+Route::get('/verify-otp', [AuthController::class, 'showOtpForm'])->name('forgot-password.otp-form');
+Route::post('/verify-otp-check', [AuthController::class, 'checkOtp'])->name('forgot-password.verify-otp-check');
+
+// Langkah 2: Set password baru
+Route::get('/set-password', [AuthController::class, 'showSetPasswordForm'])->name('forgot-password.set-password-form');
+Route::post('/verify-otp-set-password', [AuthController::class, 'setNewPassword'])->name('forgot-password.set-new-password');
+Route::post('/resend-otp', [AuthController::class, 'resendOtp'])->name('forgot-password.resend-otp');
 
 Route::get('/login', function () {
     return view('auth.login');
