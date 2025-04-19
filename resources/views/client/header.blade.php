@@ -119,6 +119,20 @@
                <span class="ms-3 sidebar-text">My Job</span>
             </a>
          </li>
+         <li>
+            <a href="{{ url('/chatify') }}#"
+               class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+               <i class="bi bi-chat-dots text-lg text-gray-500 group-hover:text-gray-900"></i>
+               <span class="ms-3 sidebar-text">Chat</span>
+            </a>
+         </li>
+         <li>
+            <a href="#"
+               class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+               <i class="bi bi-person-lines-fill text-lg text-gray-500 group-hover:text-gray-900"></i>
+               <span class="ms-3 sidebar-text">Arbitrase</span>
+            </a>
+         </li>
       </ul>
    </div>
 </aside>
