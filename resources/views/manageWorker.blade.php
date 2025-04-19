@@ -1,4 +1,4 @@
-@include('client.header')
+@include('General.header')
 
 <section class="p-4 mt-16 ">
  
@@ -81,7 +81,7 @@
 
 
 
-@include('client.footer')
+@include('General.footer')
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {

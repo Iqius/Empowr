@@ -1,4 +1,4 @@
-@include('client.header')
+@include('General.header')
 <!-- Job List -->
 <section class="p-4 md:p-8 mt-16">
     <div class="flex flex-col md:flex-row gap-4 mb-6">
@@ -9,7 +9,7 @@
             <option value="price-desc">Highest Price</option>
         </select>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4" id="jobContainer">
+    <div class="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full" id="jobContainer">
         <!-- Job Card -->
         @php
             $task = \App\Models\Task::all();
@@ -44,7 +44,7 @@
 
 
 <!-- Modal -->
-<div id="jobModal" class="fixed inset-0 z-50 bg-gray-800 bg-opacity-50 flex justify-center items-start overflow-y-auto py-10 hidden">
+<div id="jobModal" class="fixed inset-0 z-50 flex justify-center items-start overflow-y-auto py-10 bg-gray-800 bg-opacity-50 hidden transition-opacity duration-300 opacity-0">
   <div class="bg-white p-6 rounded shadow-md w-full max-w-lg mx-4">
     <h1 class="text-2xl font-semibold mb-4">Add New Job</h1>
     <form action="{{ route('jobs.store') }}" method="POST" enctype="multipart/form-data">
@@ -133,10 +133,36 @@
         const jobContainer = document.getElementById("jobContainer");
 
         // 🟦 Modal Open/Close
-        openModalBtn?.addEventListener("click", () => jobModal?.classList.remove("hidden"));
-        closeModalBtn?.addEventListener("click", () => jobModal?.classList.add("hidden"));
+        openModalBtn?.addEventListener("click", () => {
+        jobModal?.classList.remove("hidden");
+
+            // ⏫ Tambahkan animasi buka
+        setTimeout(() => {
+              jobModal?.classList.replace("opacity-0", "opacity-100");
+              jobModal?.classList.replace("scale-95", "scale-100");
+          }, 10);
+        });
+
+        closeModalBtn?.addEventListener("click", () => {
+          // ⏬ Tambahkan animasi tutup
+          jobModal?.classList.replace("opacity-100", "opacity-0");
+          jobModal?.classList.replace("scale-100", "scale-95");
+
+          setTimeout(() => {
+              jobModal?.classList.add("hidden");
+          }, 300);
+        });
+
         jobModal?.addEventListener("click", (e) => {
-            if (e.target === jobModal) jobModal.classList.add("hidden");
+            if (e.target === jobModal) {
+                // ⏬ Tutup saat klik luar modal + animasi
+                jobModal?.classList.replace("opacity-100", "opacity-0");
+                jobModal?.classList.replace("scale-100", "scale-95");
+
+                setTimeout(() => {
+                    jobModal.classList.add("hidden");
+                }, 300);
+            }
         });
 
         // 🟩 Drag & Drop File Upload
@@ -202,4 +228,4 @@
 </script>
 
 
-@include('client.footer')
+@include('General.footer')

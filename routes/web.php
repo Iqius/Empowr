@@ -60,9 +60,15 @@ Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->name('j
 Route::get('/profil', [ProfileController::class, 'showProfile'])->name('profil');
 Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
 
+
+
+
+
+####### GENERAL
 // List all Jobs
 Route::get('/dashboard/jobs', [JobController::class, 'index'])->name('jobs.index');
-
+// detail jobs di fitur jobs
+Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
 
 
 
@@ -96,7 +102,7 @@ Route::middleware(['auth'])->group(function () {
 
 });
 // Route::post('/update-profile', [UserController::class, 'update']);
-Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
+
 Route::get('/my-jobs', [JobController::class, 'myJobs'])->name('jobs.my');
 Route::get('/jobs/manage/{id}', [JobController::class, 'manage'])->name('jobs.manage');
 Route::delete('/jobs/delete/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');

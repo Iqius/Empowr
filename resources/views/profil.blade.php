@@ -1,4 +1,4 @@
-@include('client.header')
+@include('General.header')
 <div class="p-4 mt-10">
     <div class="p-6 bg-white rounded-lg shadow-md">
         <!-- Header Profil -->
@@ -751,4 +751,4 @@
     reader.readAsDataURL(file);
   }
 </script>
-@include('client.footer')
+@include('General.footer')
