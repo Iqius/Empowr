@@ -8,6 +8,7 @@ use App\Models\TaskApplication;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\WorkerProfile;
+use App\Models\User;
 
 class JobController extends Controller
 {
@@ -254,30 +255,34 @@ class JobController extends Controller
     
         return back()->with('success', 'Lamaran berhasil dihapus.');
     }
-    // public function showApplicants($taskId)
-    // {
-    //     $applicants = TaskApplication::with(['profile.user', 'profile'])
-    //         ->where('task_id', $taskId)
-    //         ->get()
-    //         ->map(function ($application) {
-    //             return [
-    //                 'name' => $application->profile->user->nama_lengkap ?? '-',
-    //                 'note' => $application->catatan,
-    //                 'price' => (int) $application->bidPrice,
-    //                 'experience' => $application->profile->experience ?? 0,
-    //                 'skills' => explode(',', $application->profile->skills ?? ''),
-    //                 'education' => $application->profile->education ?? '',
-    //                 'cv' => $application->profile->cv ?? '',
-    //                 'empowrLabel' => (bool) $application->profile->empowr_label,
-    //                 'empowrAffiliate' => (bool) $application->profile->empowr_affiliate,
-    //                 'reviews' => [], // bisa ditambahkan relasi review jika ada
-    //                 'certImages' => [], // tambahkan jika punya
-    //                 'portfolios' => [] // tambahkan jika punya
-    //             ];
-    //         });
 
-    //     return view('manage', compact('applicants'));
-    // }
+    //pay
+    public function bayar(Request $request)
+    {
+        \Midtrans\Config::$serverKey = config('midtrans.server_key');
+        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+        \Midtrans\Config::$isProduction = false;
+        // Set sanitization on (default)
+        \Midtrans\Config::$isSanitized = true;
+        // Set 3DS transaction for credit card to true
+        \Midtrans\Config::$is3ds = true;
+        $id = $request->task->id;
+        $client = User::findOrFail($task->id->client_id);
+        $params = array(
+            'transaction_details' => array(
+                'order_id' => $id,
+                'gross_amount' => $id->price,
+            ),
+            'customer_details' => array(
+                'first_name' => $client->nama_lengkap,
+                'last_name' => '',
+                'email' => $client->email,
+                'phone' => $client->nomor_telepon,
+            ),
+        );
+
+        $snapToken = \Midtrans\Snap::getSnapToken($params);
+    }
 
 
 }

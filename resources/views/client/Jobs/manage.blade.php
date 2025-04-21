@@ -190,13 +190,12 @@
         <div id="modalContent" class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative transform transition-all duration-300 scale-95">
             <h2 class="text-lg font-semibold mb-4">Pilih Metode Pembayaran</h2>
 
-            <form id="bayarForm" action="/pay" method="POST">
+            <form id="bayarForm" action="{{route('client.bayar',$task->id)}}" method="POST">
                 @csrf
-
                 <!-- Input Jumlah -->
                 <div class="mb-4">
                     <label for="id_order" class="block text-sm font-medium">Order ID</label>
-                    <input type="" name="amount" id="" class="w-full border rounded px-3 py-2 mt-1" readonly>
+                    <input type="" name="id_order" id="" class="w-full border rounded px-3 py-2 mt-1" value="{{ $task->id }}" readonly>
                 </div>
                 <div class="mb-4">
                     <label for="amount" class="block text-sm font-medium">Jumlah Harga</label>

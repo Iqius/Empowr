@@ -45,6 +45,8 @@ Route::get('/profil/{id}', [ProfileController::class, 'showProfileWorkerLamar'])
 Route::post('/hire', [JobController::class, 'Clienthire'])->name('client.hire');
 // --Client Tolak Worker
 Route::post('/reject', [JobController::class, 'ClientReject'])->name('client.reject');
+// --bayar
+Route::post('/bayar', [JobController::class, 'bayar'])->name('client.bayar');
 
 
 
