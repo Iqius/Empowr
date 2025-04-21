@@ -57,8 +57,35 @@
       </div>
       <div class="flex items-center">
           <div class="flex items-center ms-3">
+          <!-- Wrapper Notifikasi -->
+<div class="relative inline-block text-left">
+   <!-- Button -->
+   <button onclick="toggleDropdown()" class="relative p-2 bg-blue-600 rounded-full text-white hover:bg-blue-700 focus:outline-none w-8 h-8 flex items-center justify-center">
+      <i class="bi bi-bell text-xl"></i>
+      <span class="absolute -top-1 -right-1 bg-yellow-400 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center border border-white">1</span>
+   </button>
+
+   <!-- Dropdown Content -->
+   <div id="dropdown-notif" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+      <div class="px-4 py-2 font-semibold text-blue-600 border-b">Notification</div>
+
+      <!-- Notifikasi 1 -->
+      <div class="px-4 py-2 border-b">
+         <p class="font-semibold">Iqius</p>
+         <p class="text-sm text-gray-700">Info ark</p>
+         <p class="text-xs text-gray-400">1 Menit yang lalu</p>
+      </div>
+
+      <!-- Lihat Semua -->
+      <div class="px-4 py-2 text-center text-blue-500 hover:underline cursor-pointer">
+         Lihat Semua Notifikasi
+      </div>
+   </div>
+</div>
+
+
             <div>
-              <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 " aria-expanded="false" data-dropdown-toggle="dropdown-user">
+              <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 ml-4 " aria-expanded="false" data-dropdown-toggle="dropdown-user">
                 <span class="sr-only">Open user menu</span>
                 <img class="w-8 h-8 rounded-full" src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('assets/images/avatar.png') }}" alt="user photo">
               </button>
@@ -127,7 +154,7 @@
             </a>
          </li>
          <li>
-            <a href="#"
+            <a href="{{ url('/arbitrase') }}"
                class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                <i class="bi bi-person-lines-fill text-lg text-gray-500 group-hover:text-gray-900"></i>
                <span class="ms-3 sidebar-text">Arbitrase</span>

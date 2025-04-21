@@ -121,7 +121,8 @@ Route::post('/application/{id}/accept', [JobController::class, 'accept'])->name(
 
 Route::get('/tasks/{id}/applicants', [JobController::class, 'showApplicants']);
 
-
+//arbitrae
+Route::get('/arbitrase', function () {return view('arbitrase');});
 
 
 

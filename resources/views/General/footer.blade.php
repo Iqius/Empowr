@@ -39,6 +39,9 @@
             });
         }
     });
+    function toggleDropdown() {
+        document.getElementById("dropdown-notif").classList.toggle("hidden");
+    }
 </script>
 </body>
 </html>
