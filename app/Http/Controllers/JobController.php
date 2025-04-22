@@ -267,11 +267,14 @@ class JobController extends Controller
         // Set 3DS transaction for credit card to true
         \Midtrans\Config::$is3ds = true;
         $id = $request->task->id;
-        $client = User::findOrFail($task->id->client_id);
+        $task = Task::findOrFail($id);
+        $client = User::findOrFail($task->client_id);
+        $amount = $request->amount;
+ 
         $params = array(
             'transaction_details' => array(
                 'order_id' => $id,
-                'gross_amount' => $id->price,
+                'gross_amount' => $amount,
             ),
             'customer_details' => array(
                 'first_name' => $client->nama_lengkap,
@@ -282,6 +285,7 @@ class JobController extends Controller
         );
 
         $snapToken = \Midtrans\Snap::getSnapToken($params);
+        $dd($snapToken);
     }
 
 
