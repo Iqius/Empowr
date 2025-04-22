@@ -46,16 +46,13 @@ Route::post('/hire', [JobController::class, 'Clienthire'])->name('client.hire');
 // --Client Tolak Worker
 Route::post('/reject', [JobController::class, 'ClientReject'])->name('client.reject');
 // --bayar
-Route::post('/bayar', [JobController::class, 'bayar'])->name('client.bayar');
-
-
+Route::post('/bayar/{task}', [JobController::class, 'bayar'])->name('client.bayar');
 
 // WORKER
 // -- DASHBOARD
 Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->middleware(['auth'])->name('worker.dashboardWorker');
 // MyJobs
 Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->name('jobs.Worker');
-
 
 
 // --Profile update

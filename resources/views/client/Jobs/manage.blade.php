@@ -183,13 +183,17 @@
         </button>
     </div>
 
-
-
     <!-- Modal bayar -->
     <div id="bayarModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden transition-opacity duration-300 opacity-0">
         <div id="modalContent" class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative transform transition-all duration-300 scale-95">
             <h2 class="text-lg font-semibold mb-4">Pilih Metode Pembayaran</h2>
-
+            <!-- Error Alert -->
+            @if(session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 relative" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+            @endif
             <form id="bayarForm" action="{{route('client.bayar',$task->id)}}" method="POST">
                 @csrf
                 <!-- Input Jumlah -->
@@ -200,38 +204,6 @@
                 <div class="mb-4">
                     <label for="amount" class="block text-sm font-medium">Jumlah Harga</label>
                     <input type="number" name="amount" id="amount" class="w-full border rounded px-3 py-2 mt-1" placeholder="Contoh: 150000" required>
-                </div>
-
-                <!-- Metode Pembayaran -->
-                <div class="mb-4">
-                    <label for="payment_method" class="block text-sm font-medium">Metode Pembayaran</label>
-                    <select name="payment_method" id="payment_method" class="w-full border rounded px-3 py-2 mt-1" onchange="togglePaymentOptions()" required>
-                        <option value="">-- Pilih Metode --</option>
-                        <option value="bank">Bank Transfer</option>
-                        <option value="ewallet">E-Wallet</option>
-                    </select>
-                </div>
-
-                <!-- Opsi Bank -->
-                <div class="mb-4 hidden" id="bankOptions">
-                    <label for="bank_type" class="block text-sm font-medium">Pilih Bank</label>
-                    <select name="bank_type" id="bank_type" class="w-full border rounded px-3 py-2 mt-1">
-                        <option value="bca">BCA</option>
-                        <option value="bni">BNI</option>
-                        <option value="bri">BRI</option>
-                        <option value="permata">Permata</option>
-                    </select>
-                </div>
-
-                <!-- Opsi E-Wallet -->
-                <div class="mb-4 hidden" id="ewalletOptions">
-                    <label for="ewallet_type" class="block text-sm font-medium">Pilih E-Wallet</label>
-                    <select name="ewallet_type" id="ewallet_type" class="w-full border rounded px-3 py-2 mt-1">
-                        <option value="gopay">GoPay</option>
-                        <option value="ovo">OVO</option>
-                        <option value="dana">DANA</option>
-                        <option value="shopeepay">ShopeePay</option>
-                    </select>
                 </div>
 
                 <!-- Tombol Submit -->
@@ -245,13 +217,64 @@
             </form>
         </div>
     </div>
+    @if(session('error'))
+    <div class="fixed top-4 right-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md z-50" id="globalAlert" role="alert">
+        <div class="flex">
+            <div class="py-1">
+                <svg class="h-6 w-6 text-red-500 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div>
+                <p class="font-bold">Error</p>
+                <p class="text-sm">{{ session('error') }}</p>
+            </div>
+            <button onclick="document.getElementById('globalAlert').style.display='none'" class="ml-auto">
+                <svg class="h-4 w-4 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    @endif
+    <!-- Snap -->
+    <div id="snap-container"></div>
 </section>
 
 @include('General.footer')
 
-<!-- Script untuk modal bayar -->
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
 <script>
-
+    @if(session('snap_token'))
+        // Close modal if open
+        if (document.getElementById('bayarModal')) {
+            document.getElementById('bayarModal').classList.add('hidden');
+            document.getElementById('bayarModal').classList.remove('opacity-100');
+            document.getElementById('bayarModal').classList.add('opacity-0');
+            document.getElementById('modalContent').classList.remove('scale-100');
+            document.getElementById('modalContent').classList.add('scale-95');
+        }
+        
+        // Open Snap payment page
+        snap.pay('{{ session('snap_token') }}', {
+            onSuccess: function(result) {
+                alert('Pembayaran berhasil!');
+                window.location.href = '{{ route('jobs.my') }}';
+                // window.location.href = '{{route('invoice', $task->id)}}';
+            },
+            onPending: function(result) {
+                alert('Pembayaran tertunda, silakan selesaikan pembayaran Anda');
+                window.location.reload();
+            },
+            onError: function(result) {
+                alert('Pembayaran gagal, silakan coba lagi');
+                window.location.reload();
+            },
+            onClose: function() {
+                alert('Anda menutup popup tanpa menyelesaikan pembayaran');
+            }
+        });
+    @endif
     function openModal() {
         const modal = document.getElementById('bayarModal');
         const content = document.getElementById('modalContent');
@@ -297,6 +320,13 @@
         if (event.target === modal) {
             closeModal();
         }
+    }
+
+
+    if (document.getElementById('globalAlert')) {
+        setTimeout(function() {
+            document.getElementById('globalAlert').style.display = 'none';
+        }, 5000);
     }
 </script>
 
@@ -379,155 +409,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-
-    // const applicants = [{
-    //         name: "Worker A",
-    //         note: "Saya memiliki pengalaman 3 tahun di bidang ini.",
-    //         price: 500000,
-    //         experience: 3,
-    //         skills: ["Web Development", "UI/UX Design"],
-    //         education: "S1 Informatika",
-    //         cv: "worker-a-cv.pdf",
-    //         empowrLabel: true,
-    //         empowrAffiliate: false,
-    //         reviews: [{
-    //                 name: "Fadli H.",
-    //                 rating: 5,
-    //                 comment: "Kerja cepat dan komunikatif!"
-    //             },
-    //             {
-    //                 name: "Laras N.",
-    //                 rating: 4,
-    //                 comment: "Desain bagus, revisi oke."
-    //             },
-    //             {
-    //                 name: "Joni W.",
-    //                 rating: 3,
-    //                 comment: "Butuh lebih responsif saat weekend."
-    //             }
-    //         ],
-
-    //         // Sertifikat untuk dropdown + preview
-    //         certImages: [{
-    //                 caption: "10km Berkuda",
-    //                 image: "/assets/images/11.jpg"
-    //             },
-    //             {
-    //                 caption: "Dicoding Frontend Developer",
-    //                 image: "/assets/images/portfolio2.jpg"
-    //             }
-    //         ],
-    //         portfolios: [{
-    //                 caption: "Mengalahkan mino exp",
-    //                 image: "/assets/images/12.jpg"
-    //             },
-    //             {
-    //                 caption: "Website Company Profile",
-    //                 image: "/assets/images/portfolio2.jpg"
-    //             }
-    //         ]
-    //     },
-    //     {
-    //         name: "Worker B",
-    //         note: "Saya ahli di bidang pemasaran digital selama 5 tahun.",
-    //         price: 650000,
-    //         experience: 5,
-    //         skills: ["Marketing", "Data Science"],
-    //         education: "S2 Marketing",
-    //         cv: "worker-b-cv.pdf",
-    //         empowrLabel: false,
-    //         empowrAffiliate: true,
-    //         reviews: [{
-    //                 name: "Dina M.",
-    //                 rating: 5,
-    //                 comment: "Strategi marketing-nya keren banget!"
-    //             },
-    //             {
-    //                 name: "Andi L.",
-    //                 rating: 5,
-    //                 comment: "Terbukti naikin traffic & engagement."
-    //             },
-    //             {
-    //                 name: "Sinta Q.",
-    //                 rating: 4,
-    //                 comment: "Detail & tepat waktu."
-    //             }
-    //         ]
-    //     },
-    //     {
-    //         name: "Worker C",
-    //         note: "Fresh graduate tapi punya banyak proyek freelance.",
-    //         price: 300000,
-    //         experience: 1,
-    //         skills: ["Mobile Development"],
-    //         education: "S1 Teknik Informatika",
-    //         cv: "worker-c-cv.pdf",
-    //         empowrLabel: false,
-    //         empowrAffiliate: false,
-    //         reviews: [{
-    //                 name: "Reza A.",
-    //                 rating: 4,
-    //                 comment: "Responsif & punya banyak ide!"
-    //             },
-    //             {
-    //                 name: "Nina T.",
-    //                 rating: 3,
-    //                 comment: "Masih perlu belajar soal timeline."
-    //             },
-    //             {
-    //                 name: "Kevin J.",
-    //                 rating: 4,
-    //                 comment: "Sudah oke untuk pemula."
-    //             }
-    //         ]
-    //     }
-    // ];
-
-    // function calculateAverageRating(reviews) {
-    //     if (!reviews || reviews.length === 0) return 0;
-    //     const total = reviews.reduce((sum, r) => sum + r.rating, 0);
-    //     return total / reviews.length;
-    // }
-
-    // function calculateRatingDistribution(reviews) {
-    //     const distribution = {
-    //         1: 0,
-    //         2: 0,
-    //         3: 0,
-    //         4: 0,
-    //         5: 0
-    //     };
-    //     reviews.forEach(r => {
-    //         distribution[r.rating] = (distribution[r.rating] || 0) + 1;
-    //     });
-    //     return distribution;
-    // }
-
-    // // Fungsi untuk render list pelamar
-    // function renderApplicants(list) {
-    //     const container = document.getElementById("applicants-list");
-    //     container.innerHTML = "";
-
-    //     list.forEach((worker, i) => {
-    //         const div = document.createElement("div");
-    //         div.className = "border p-4 rounded";
-
-    //         div.innerHTML = `
-    //   <p><strong>${worker.name}</strong> - Rp${worker.price.toLocaleString()}</p>
-    //   <p class="text-gray-600 text-sm">Catatan: ${worker.note}</p>
-    //   <p class="text-sm text-gray-500">Pengalaman: ${worker.experience} tahun | Rating: ${worker.rating}</p>
-    //   <div class="flex gap-2 mt-2">
-    //     <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
-    //     <button class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
-    //     <button class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
-    //     <button onclick="openWorkerModal(${i})" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow">
-    //       Lihat Profil Worker
-    //     </button>
-    //   </div>
-    // `;
-    //         container.appendChild(div);
-    //     });
-    // }
     function calculateAverageRating(reviews) {
     if (!reviews || reviews.length === 0) return 0;
 
@@ -535,54 +416,6 @@ document.addEventListener('DOMContentLoaded', function () {
     return total / reviews.length;
 }
 
-
-//     function sortApplicants() {
-//         const sortBy = document.getElementById("sortBy").value;
-//         let sorted = [...applicants];
-
-//         if (sortBy === "price") {
-//             sorted.sort((a, b) => a.price - b.price);
-//         } else if (sortBy === "experience") {
-//             sorted.sort((a, b) => b.experience - a.experience);
-//         } else if (sortBy === "rating") {
-//             sorted.sort((a, b) => calculateAverageRating(b.reviews) - calculateAverageRating(a.reviews));
-//         }
-
-//         renderApplicants(sorted);
-//     }
-
-//     function renderApplicants(list) {
-//         const container = document.getElementById("applicants-list");
-//         container.innerHTML = "";
-
-//         list.forEach((worker, i) => {
-//             const avgRating = calculateAverageRating(worker.reviews);
-
-//             document.getElementById("worker-rating-summary").innerHTML = `
-//   <p class="text-lg font-semibold">Rata-rata Rating: ${avgRating.toFixed(1)}</p>
-// `;
-
-//             const div = document.createElement("div");
-//             div.className = "border p-4 rounded";
-
-//             div.innerHTML = `
-//       <p><strong>${worker.name}</strong> - Rp${worker.price.toLocaleString()}</p>
-//       <p class="text-gray-600 text-sm">Catatan: ${worker.note}</p>
-//       <p class="text-sm text-gray-500">
-//         Pengalaman: ${worker.experience} tahun | Rating: ${avgRating.toFixed(1)}
-//       </p>
-//       <div class="flex gap-2 mt-2">
-//         <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
-//         <button class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
-//         <button class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
-//         <button onclick="openWorkerModal(${i})" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow">
-//           Lihat Profil Worker
-//         </button>
-//       </div>
-//     `;
-//             container.appendChild(div);
-//         });
-//     }
     function openWorkerModalFromElement(el) {
     const data = el.closest('div');
     
