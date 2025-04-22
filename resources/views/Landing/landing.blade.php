@@ -1,321 +1,191 @@
 @include('Landing.header')
 
 <!-- Hero Section -->
-<section class="container mx-auto mt-40">
-    <div class="grid grid-rows mb-2">
-        <div class="flex flex-col items-center justify-center">
-            <h2 class="text-gradient bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent font-semibold text-3xl sm:text-4xl md:text-5xl text-center" style="line-height: 1.2;">Find the right talent <br> get the job done</h2>
+<section class="container mx-auto mt-20">
+    <section class="w-full bg-white py-8 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+
+            <!-- Left: Text with Scroll Animation -->
+            <div data-aos="fade-up">
+                <h2
+                    class="text-[#183E74] font-extrabold text-3xl sm:text-4xl md:text-5xl leading-tight mb-4 drop-shadow-md">
+                    Where Tasks Find Talent,<br>
+                    and Talent Finds Opportunity!
+                </h2>
+                <p class="text-gray-600 text-sm sm:text-base leading-relaxed mb-6 drop-shadow-md">
+                    Find the best opportunities, post and accept jobs easily. Join now and<br class="hidden sm:block">
+                    achieve success together!
+                </p>
+                <a href="{{ route('login') }}" class="inline-block bg-gradient-to-r from-[#1F4482] to-[#2A5DB2]
+                  hover:from-[#2A5DB2] hover:to-[#1F4482] text-white font-semibold text-sm sm:text-base
+                  px-14 py-3 rounded-md shadow transition-all duration-200 hover:shadow-lg">
+                    Get Started
+                </a>
+            </div>
+
+            <!-- Right: Image with Scroll Animation -->
+            <div class="flex justify-center md:justify-end" data-aos="fade-left">
+                <img src="assets/images/Landing Page 1.png" alt="Hero Image"
+                    class="max-w-30 w-full h-auto object-cover">
+            </div>
         </div>
-    </div>
-    <div class="grid grid-rows mb-5">
-        <div class="flex flex-col items-center justify-center">
-            <p class="text-center text-xs sm:text-sm leading-relaxed opacity-50" style="line-height: 1.9;">Temukan peluang terbaik, posting dan terima pekerjaan dengan mudah. <br>Bergabung sekarang dan raih kesuksesan bersama!</p>
+    </section>
+
+    <!-- Cards Section with Scroll Animations -->
+    <section class="w-full bg-[#f9f9f9] py-12">
+        <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-center items-center gap-6">
+            <!-- Card 1 -->
+            <div class="bg-gradient-to-b from-[#1F4482] to-[#2A5DB2] text-white rounded-md px-6 py-4 text-center w-full md:w-1/3"
+                data-aos="zoom-in">
+                <p class="text-sm mb-1">Total Client</p>
+                <h3 class="text-2xl font-bold">1k+</h3>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-gradient-to-b from-[#1F4482] to-[#2A5DB2] text-white rounded-md px-6 py-4 text-center w-full md:w-1/3"
+                data-aos="zoom-in">
+                <p class="text-sm mb-1">Total Worker</p>
+                <h3 class="text-2xl font-bold">500+</h3>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-gradient-to-b from-[#1F4482] to-[#2A5DB2] text-white rounded-md px-6 py-4 text-center w-full md:w-1/3"
+                data-aos="zoom-in">
+                <p class="text-sm mb-1">Total Tasks</p>
+                <h3 class="text-2xl font-bold">2k+</h3>
+            </div>
         </div>
-    </div>
-    <div class="grid grid-rows mb-10">
-        <div class="flex flex-col items-center justify-center">
-            <button href="{{ route('login') }}" class="relative inline-flex items-center justify-center p-3 mb-2 me-2 text-sm font-medium text-white rounded-lg" style="background:linear-gradient(to bottom right, #06b6d4, #3b82f6)">
-                Get started
-            </button>
-        </div>
-    </div>
-    <div class="grid grid-rows items-center justify-center">
-        <div class="px-7 py-3 rounded-xl" style="background:linear-gradient(to bottom right, #06b6d4, #3b82f6)">
-            <div class="grid grid-cols-4 gap-10 md:gap-20  text-center text-white">
-                <div class="p-2 items-center justify-center">
-                    <p class="font-semibold text-[8px] md:text-[10px]">Total User</p>
-                    <h5 class="text-lg lg:text-3xl md:text-xl font-bold">+100K</h5>
+    </section>
+</section>
+
+<!-- Why Choose Us Section with Scroll Animations -->
+<section class="w-full bg-[#f9f9f9] py-16 px-6 md:px-12">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="text-[#252525] font-bold text-2xl sm:text-3xl mb-8" data-aos="fade-up">
+            Why Choose Us
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Card: Trusted -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition"
+                data-aos="fade-right">
+                <div class="flex justify-center mb-4">
+                    <img src="assets/images/Icon LP1.png" alt="Trusted Icon" class="w-14 h-14">
                 </div>
-                <div class="p-2 items-center justify-center">
-                    <p class="font-semibold text-[8px] md:text-[10px]">Total Client</p>
-                    <h5 class="text-lg lg:text-3xl md:text-xl font-bold">+100K</h5>
+                <h3 class="text-center text-lg font-semibold text-gray-900 mb-2">Trusted</h3>
+                <p class="text-center text-gray-600 text-sm leading-relaxed">
+                    Lorem ipsum eurologi vatapōde krotāvis provis kavat depigisik, ultrassa prens vărade, gigasm fărotum
+                    kros mei.
+                </p>
+            </div>
+
+            <!-- Card: Quality -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition"
+                data-aos="fade-up">
+                <div class="flex justify-center mb-4">
+                    <img src="assets/images/Icon LP2.png" alt="Quality Icon" class="w-14 h-14">
                 </div>
-                <div class="p-2 items-center justify-center">
-                    <p class="font-semibold text-[8px] md:text-[10px]">Total Worker</p>
-                    <h5 class="text-lg lg:text-3xl md:text-xl font-bold">+100K</h5>
+                <h3 class="text-center text-lg font-semibold text-gray-900 mb-2">Quality</h3>
+                <p class="text-center text-gray-600 text-sm leading-relaxed">
+                    Lorem ipsum eurologi vatapōde krotāvis provis kavat depigisik, ultrassa prens vărade, gigasm fărotum
+                    kros mei.
+                </p>
+            </div>
+
+            <!-- Card: Flexibility -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition"
+                data-aos="fade-left">
+                <div class="flex justify-center mb-4">
+                    <img src="assets/images/Icon LP3.png" alt="Flexibility Icon" class="w-14 h-14">
                 </div>
-                <div class="p-2 items-center justify-center">
-                    <p class="font-semibold text-[8px] md:text-[10px]">Total task</p>
-                    <h5 class="text-lg lg:text-3xl md:text-xl font-bold">+100K</h5>
-                </div>
+                <h3 class="text-center text-lg font-semibold text-gray-900 mb-2">Flexibility</h3>
+                <p class="text-center text-gray-600 text-sm leading-relaxed">
+                    Lorem ipsum eurologi vatapōde krotāvis provis kavat depigisik, ultrassa prens vărade, gigasm fărotum
+                    kros mei.
+                </p>
             </div>
         </div>
     </div>
 </section>
 
+<!-- How Empowr Works Section -->
+<section class="w-full bg-white py-16 px-6 md:px-12">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="text-[#252525] font-bold text-2xl sm:text-3xl mb-8">How Empowr Works</h2>
 
-
-
-<!-- Features Section -->
-<section class="container mx-auto mt-32">
-    <div class="grid grid-rows mb-3">
-        <div class="grid grid-cols items-center justify-center">
-            <h1 class="text-gradient bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent font-semibold text-3xl sm:text-4xl md:text-3xl text-center " style="line-height: 1.6;">Lorem ipsum dolor sit amet consectetur <br> adipisicing elit</h1>
+        <!-- Client Section -->
+        <div class="flex flex-col md:flex-row justify-center items-center gap-6 mb-12" data-aos="fade-up">
+            <div class="flex justify-center md:justify-end md:w-1/2">
+                <img src="assets/images/Landing Page 2.png" alt="Client working with Empower"
+                    class="w-full h-auto object-cover">
+            </div>
+            <div class="text-left md:w-1/2">
+                <h3 class="text-[#252525] text-4xl font-semibold mb-4">As Client</h3>
+                <p class="text-gray-600 text-sm sm:text-base leading-relaxed mb-6">
+                    Empower streamlines your hiring process, allowing you to find the best workers quickly and
+                    efficiently.
+                    Whether you’re looking for short-term or long-term help, we match you with the right talent for the
+                    job.
+                    Hiring has never been this easy!
+                </p>
+                <a href="{{ route('login') }}"
+                    class="inline-block bg-gradient-to-r from-[#1F4482] to-[#2A5DB2] hover:from-[#2A5DB2] hover:to-[#1F4482] text-white font-semibold text-sm sm:text-base px-14 py-3 rounded-md shadow transition-all duration-200 hover:shadow-lg">
+                    Hire Worker Now!
+                </a>
+            </div>
         </div>
-    </div>
-    <div class="grid grid-rows mb-5">
-        <div class="grid grid-cols items-center justify-center">
-            <p class="text-center text-xs sm:text-sm leading-relaxed opacity-50">Temukan peluang terbaik, posting dan terima pekerjaan dengan mudah. <br>Bergabung sekarang dan raih kesuksesan bersama!</p>
-        </div>
-    </div>
-    <div class="grid grid-rows mb-5">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 mt-8 mx-auto my-auto">
-            <div class="py-5 px-3 md bg-white border-2 border-cyan-500 rounded-lg shadow-xl" style="max-width: 250px;">
-                <i class="bi bi-people-fill text-5xl lg:text-7xl" style="background: linear-gradient(to bottom right, #06b6d4, #3b82f6);-webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
-                <a href="#">
-                    <h5 class="mb-2 sm:text-sm md:text-md lg:text-xl font-semibold tracking-tight text-gradient bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">Need a help in Claim?</h5>
-                </a>
-                <p class="font-normal text-gray-500" style="font-size:10px;">Go to this step by step guideline process on how to certify for your weekly benefasdasd asdashdasd asd asda sdas dasdasdits:</p>
-            </div>
-            <div class="py-5 px-3 md bg-white border-2 border-cyan-500 rounded-lg shadow-xl" style="max-width: 250px;">
-                <i class="bi bi-people-fill text-5xl lg:text-7xl" style="background: linear-gradient(to bottom right, #06b6d4, #3b82f6);-webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
-                <a href="#">
-                    <h5 class="mb-2 sm:text-sm md:text-md lg:text-xl font-semibold tracking-tight text-gradient bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">Need a help in Claim?</h5>
-                </a>
-                <p class="font-normal text-gray-500" style="font-size:10px;">Go to this step by step guideline process on how to certify for your weekly benefasdasd asdashdasd asd asda sdas dasdasdits:</p>
-            </div>
-            <div class="py-5 px-3 md bg-white border-2 border-cyan-500 rounded-lg shadow-xl" style="max-width: 250px;">
-                <i class="bi bi-people-fill text-5xl lg:text-7xl" style="background: linear-gradient(to bottom right, #06b6d4, #3b82f6);-webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
-                <a href="#">
-                    <h5 class="mb-2 sm:text-sm md:text-md lg:text-xl font-semibold tracking-tight text-gradient bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">Need a help in Claim?</h5>
-                </a>
-                <p class="font-normal text-gray-500" style="font-size:10px;">Go to this step by step guideline process on how to certify for your weekly benefasdasd asdashdasd asd asda sdas dasdasdits:</p>
-            </div>
-            <div class="py-5 px-3 md bg-white border-2 border-cyan-500 rounded-lg shadow-xl" style="max-width: 250px;">
-                <i class="bi bi-people-fill text-5xl lg:text-7xl" style="background: linear-gradient(to bottom right, #06b6d4, #3b82f6);-webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
-                <a href="#">
-                    <h5 class="mb-2 sm:text-sm md:text-md lg:text-xl font-semibold tracking-tight text-gradient bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">Need a help in Claim?</h5>
-                </a>
-                <p class="font-normal text-gray-500" style="font-size:10px;">Go to this step by step guideline process on how to certify for your weekly benefasdasd asdashdasd asd asda sdas dasdasdits:</p>
-            </div>            
-        </div>
-    </div>
-</section>
 
-<!-- Lorem -->
-<section class="container mx-auto mt-32 px-6">
-    <div class="grid grid-rows">
-        <div class="grid grid-cols md:grid-cols-2">
-            <div class="text-wrap xl:ps-20">
-                <h3 class="text-gradient bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent font-semibold text-5xl md:text-4xl lg:text-5xl text-center md:text-start">Lorem ipsum dolor sit amet consectetur adipisicing elit. </h3>
-                <p class="font-normal text-gray-500 text-lg text-justify my-6 me-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam tenetur nisi sint impedit optio magni quo aliquid, sequi natus molestias.</p>
-                <div class="grid grid-rows items-center justify-center md:items-start md:justify-start">
-                    <button class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white focus:outline-none focus:ring-cyan-200 w-auto mx-auto md:ml-auto md:mr-0">
-                        <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-transparent">
-                            More Info
-                        </span>
-                    </button>
-                </div>
+        <!-- Worker Section -->
+        <div class="flex flex-col md:flex-row justify-center items-center gap-6 mb-24" data-aos="fade-up">
+            <div class="text-left md:w-1/2">
+                <h3 class="text-[#252525] text-4xl font-semibold mb-4">As Worker</h3>
+                <p class="text-gray-600 text-sm sm:text-base leading-relaxed mb-6">
+                    Empower helps you find the best job opportunities with ease. Whether you're looking for part-time,
+                    full-time, or freelance work, we connect you with top clients. Start today and take control of your
+                    career!
+                </p>
+                <a href="{{ route('login') }}"
+                    class="inline-block bg-gradient-to-r from-[#1F4482] to-[#2A5DB2] hover:from-[#2A5DB2] hover:to-[#1F4482] text-white font-semibold text-sm sm:text-base px-14 py-3 rounded-md shadow transition-all duration-200 hover:shadow-lg">
+                    Search Job Now!
+                </a>
             </div>
-            <div class="mt-5 md:mt-0">
-                <div class="grid grid-rows items-center justify-center">
-                    <img class="transition-all duration-300 " src="{{ asset('assets/images/mockup_Probioware.png') }}" alt="image description">
-                </div>
+            <div class="flex justify-center md:justify-end md:w-1/2">
+                <img src="assets/images/Landing Page 3.png" alt="Worker using Empower"
+                    class="w-full h-auto object-cover">
+            </div>
+        </div>
+
+        <!-- Arbitrase System Section -->
+        <div class="flex flex-col justify-center items-center mb-12" data-aos="fade-up">
+            <div class="flex justify-center">
+                <img src="assets/images/Landing Page 4.png" alt="Arbitrase System Image"
+                    class="w-full h-auto object-cover max-w-96">
+            </div>
+            <div class="text-center mb-6">
+                <h2 class="text-[#1F4482] font-bold text-3xl sm:text-4xl mb-4">
+                    We Provide You Arbitrase System
+                </h2>
+                <p class="text-gray-600 text-sm sm:text-base leading-relaxed mb-6">
+                    Lorem ipsum korrarade sask i belg dirän, ifall plaplada, den och setressade i nybel för diryn.
+                    Tyrrade eplahat röde kände betesvyis subonät att tenera. Dasanas plapabubel, monoppp måvaliga seng
+                    ifall tevesem.
+                </p>
             </div>
         </div>
     </div>
 </section>
-
-<!-- Lorem -->
-<section class="container mx-auto mt-32 px-6">
-    <div class="grid grid-rows mb-3 place-items-center">
-        <div class="grid grid-cols items-center justify-items-center text-center">
-            <img class="w-2/3 h-auto transition-all duration-300" src="{{ asset('assets/images/test.png') }}">
-            <h1 class="text-gradient bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent font-semibold text-3xl sm:text-4xl md:text-3xl text-center" style="line-height: 1.6;">
-                Lorem ipsum dolor sit amet consectetur <br> adipisicing elit
-            </h1>
+<!-- Footer Section -->
+<section class="w-full bg-[#f9f9f9] py-16 px-6 md:px-12">
+    <div class="max-w-7xl mx-auto text-center">
+        <div class="mb-8">
+            <img src="assets/images/logo.png" alt="Empowr Logo" class="w-32 h-auto mx-auto">
         </div>
-    </div>
-    <div class="grid grid-rows mb-5">
-        <div class="grid grid-cols items-center justify-center">
-            <p class="text-center text-xs sm:text-sm leading-relaxed opacity-50">Temukan peluang terbaik, posting dan terima pekerjaan dengan mudah. <br>Bergabung sekarang dan raih kesuksesan bersama!</p>
-        </div>
-    </div>
-    <div class="grid-rows place-items-center mb-5 mx-20">
-        <div class="swiper mySwiper ">
-            <div class="swiper-wrapper">
-                <!-- Card 1 -->
-                <div class="swiper-slide">
-                    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-md p-5">
-                        <img class="rounded-t-lg" alt="Image 1">
-                        <h5 class="text-xl font-semibold mt-3">Card 1</h5>
-                        <p class="text-gray-500">Deskripsi singkat mengenai card 1.</p>
-                    </div>
-                </div>
-                <!-- Card 2 -->
-                <div class="swiper-slide">
-                    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-md p-5">
-                        <img class="rounded-t-lg" alt="Image 2">
-                        <h5 class="text-xl font-semibold mt-3">Card 2</h5>
-                        <p class="text-gray-500">Deskripsi singkat mengenai card 2.</p>
-                    </div>
-                </div>
-                <!-- Card 3 -->
-                <div class="swiper-slide">
-                    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-md p-5">
-                        <img class="rounded-t-lg" alt="Image 3">
-                        <h5 class="text-xl font-semibold mt-3">Card 3</h5>
-                        <p class="text-gray-500">Deskripsi singkat mengenai card 3.</p>
-                    </div>
-                </div>
-                <!-- Card 3 -->
-                <div class="swiper-slide">
-                    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-md p-5">
-                        <img class="rounded-t-lg"  alt="Image 3">
-                        <h5 class="text-xl font-semibold mt-3">Card 3</h5>
-                        <p class="text-gray-500">Deskripsi singkat mengenai card 3.</p>
-                    </div>
-                </div>
-            </div>
+        <div class="flex justify-center space-x-6">
+            <a href="#" class="text-[#1F4482] font-semibold text-base hover:text-[#2A5DB2]">About Us</a>
+            <a href="#" class="text-[#1F4482] font-semibold text-base hover:text-[#2A5DB2]">Contact</a>
+            <a href="#" class="text-[#1F4482] font-semibold text-base hover:text-[#2A5DB2]">FAQs</a>
         </div>
     </div>
 </section>
-
-
-<!-- Testimoni -->
- <section class="container mx-auto mt-32 mb-10">
-    <div class="grid grid-rows mb-3">
-        <div class="grid grid-cols items-center justify-center">
-            <h1 class="text-gradient bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent font-semibold text-3xl sm:text-4xl md:text-3xl text-center " style="line-height: 1.6;">Lorem ipsum dolor sit amet consectetur <br> adipisicing elit</h1>
-        </div>
-    </div>
-    <div class="grid grid-rows mb-5">
-        <div class="grid grid-cols items-center justify-center">
-            <p class="text-center text-xs sm:text-sm leading-relaxed opacity-50">Temukan peluang terbaik, posting dan terima pekerjaan dengan mudah. <br>Bergabung sekarang dan raih kesuksesan bersama!</p>
-        </div>
-    </div>
-
-    <div class="grid-rows place-items-center mb-5 mx-20">
-        <div class="swiper swiperComment">
-            <div class="swiper-wrapper">
-                <!-- Card 1 -->
-                <div class="swiper-slide flex justify-center items-center">
-                    <div class="max-w-sm  bg-white border-2 border-cyan-500 rounded-lg p-5">
-                        <!-- Bintang -->
-                        <div class="flex justify-center items-center gap-1">
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                        </div>
-
-                        <!-- Isi komen -->
-                        <p class="text-gray-500 text-center mt-8 text-[12px]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ab aliquam, reiciendis omnis illum itaque odio animi esse corrupti pariatur!</p>
-                        
-                        <!-- Foto komen -->
-                        <img class="rounded-full w-16 h-16 my-2 mx-auto" src="{{ asset('assets/images/test.png') }}" alt="image description">
-                        
-                        <!-- nama -->
-                        <h5 class="text-lg font-semibold  text-center">Lorem</h5>                       
-                    </div>
-                </div>
-                <div class="swiper-slide flex justify-center items-center">
-                    <div class="max-w-sm  bg-white border-2 border-cyan-500 rounded-lg p-5">
-                        <!-- Bintang -->
-                        <div class="flex justify-center items-center gap-1">
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                        </div>
-
-                        <!-- Isi komen -->
-                        <p class="text-gray-500 text-center mt-8 text-[12px]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ab aliquam, reiciendis omnis illum itaque odio animi esse corrupti pariatur!</p>
-                        
-                        <!-- Foto komen -->
-                        <img class="rounded-full w-16 h-16 my-2 mx-auto" src="{{ asset('assets/images/test.png') }}" alt="image description">
-                        
-                        <!-- nama -->
-                        <h5 class="text-lg font-semibold  text-center">Lorem</h5>                       
-                    </div>
-                </div>
-                <div class="swiper-slide flex justify-center items-center">
-                    <div class="max-w-sm  bg-white border-2 border-cyan-500 rounded-lg p-5">
-                        <!-- Bintang -->
-                        <div class="flex justify-center items-center gap-1">
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                        </div>
-
-                        <!-- Isi komen -->
-                        <p class="text-gray-500 text-center mt-8 text-[12px]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ab aliquam, reiciendis omnis illum itaque odio animi esse corrupti pariatur!</p>
-                        
-                        <!-- Foto komen -->
-                        <img class="rounded-full w-16 h-16 my-2 mx-auto" src="{{ asset('assets/images/test.png') }}" alt="image description">
-                        
-                        <!-- nama -->
-                        <h5 class="text-lg font-semibold  text-center">Lorem</h5>                       
-                    </div>
-                </div>
-                <div class="swiper-slide flex justify-center items-center">
-                    <div class="bg-white border-2 border-cyan-500 rounded-lg p-5">
-                        <!-- Bintang -->
-                        <div class="flex justify-center items-center gap-1">
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                            </svg>
-                        </div>
-
-                        <!-- Isi komen -->
-                        <p class="text-gray-500 text-center mt-8 text-[12px]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis ab aliquam, reiciendis omnis illum itaque odio animi esse corrupti pariatur!</p>
-                        
-                        <!-- Foto komen -->
-                        <img class="rounded-full w-16 h-16 my-2 mx-auto" src="{{ asset('assets/images/test.png') }}" alt="image description">
-                        
-                        <!-- nama -->
-                        <h5 class="text-lg font-semibold  text-center">Lorem</h5>                       
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
- </section>
 
 @include('Landing.footer')
