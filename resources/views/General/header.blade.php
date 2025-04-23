@@ -96,22 +96,59 @@
                   <button onclick="toggleDropdown()"
                      class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center relative">
                      <i class="bi bi-bell"></i>
-                     <span
-                        class="absolute -top-1 -right-1 bg-red-400 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center border border-white">1</span>
+                     @if ($unreadCount > 0)
+                     <span class="absolute -top-1 -right-1 bg-red-400 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center border border-white">
+                        {{ $unreadCount }}
+                     </span>
+                     @endif
                   </button>
                   <div id="dropdown-notif"
                      class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
                      <div class="px-4 py-2 font-semibold text-blue-600 border-b">Notification</div>
+                     @foreach ($notifications as $notif)
                      <div class="px-4 py-2 border-b">
-                        <p class="font-semibold">Iqius</p>
-                        <p class="text-sm text-gray-700">Info ark</p>
-                        <p class="text-xs text-gray-400">1 Menit yang lalu</p>
+                        <p class="font-semibold">{{ $notif->sender_name }}</p>
+                        <p class="text-sm text-gray-700">{!! $notif->message !!}</p>
+                        <p class="text-xs text-gray-400">{{ $notif->created_at->diffForHumans() }}</p>
                      </div>
-                     <div class="px-4 py-2 text-center text-blue-500 hover:underline cursor-pointer">
+                     @endforeach
+                     <a href="{{ route('notifications.index') }}" class="block px-4 py-2 text-center text-blue-500 hover:underline">
                         Lihat Semua Notifikasi
-                     </div>
+                     </a>
                   </div>
                </div>
+
+               <!-- js -->
+               <!-- <script src="//unpkg.com/alpinejs" defer></script> -->
+
+               <!-- <div x-data="{ openNotifModal: false }">
+                  <div x-show="openNotifModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50" x-cloak>
+                     <div class="bg-white w-full max-w-xl mx-4 rounded-lg shadow-lg relative">
+                        <button class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-lg" @click="openNotifModal = false">&times;</button>
+
+                        <div class="p-6 max-h-[70vh] overflow-y-auto">
+                           <h2 class="text-xl font-bold mb-4">Semua Notifikasi</h2>
+
+                           <form method="POST" action="{{ route('notifications.markAllAsRead') }}">
+                              @csrf
+                              <button type="submit" class="text-blue-600 hover:underline mb-4">Tandai Semua sebagai Dibaca</button>
+                           </form>
+
+                           <div class="bg-white shadow rounded-md">
+                              @forelse ($notifications as $notif)
+                              <div class="border-b p-4 {{ !$notif->is_read ? 'bg-gray-50' : '' }}">
+                                 <p class="font-semibold">{{ $notif->sender_name }}</p>
+                                 <p class="text-gray-700">{!! $notif->message !!}</p>
+                                 <p class="text-xs text-gray-500">{{ $notif->created_at->diffForHumans() }}</p>
+                              </div>
+                              @empty
+                              <p class="p-4 text-gray-500">Tidak ada notifikasi.</p>
+                              @endforelse
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div> -->
 
                <!-- User -->
                <div class="relative">
@@ -124,7 +161,7 @@
                      <div class="ml-2 text-left hidden sm:block">
                         <div class="text-sm font-medium text-gray-900 leading-none">{{ Auth::user()->nama_lengkap }}
                         </div>
-                        <div class="text-xs text-gray-500">Worker</div>
+                        <div class="text-xs text-gray-500">{{ Auth::user()->role }}</div>
                      </div>
                   </button>
                   <div

@@ -5,26 +5,25 @@
     <div class="flex flex-wrap gap-4 border-b pb-2 text-sm sm:text-base overflow-x-auto">
         <button class="tab-button text-blue-600 font-semibold" data-tab="info">Informasi Lengkap</button>
         <button class="tab-button text-gray-600 hover:text-blue-600" data-tab="applicants">Lamaran Worker</button>
-        <button class="tab-button text-gray-600 hover:text-blue-600" data-tab="chat">Chat</button>
     </div>
 
     <!-- Flash Message -->
     @if (session('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative my-4" role="alert">
-            <strong class="font-bold">Gagal!</strong>
-            <span class="block sm:inline">{{ session('error') }}</span>
-        </div>
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative my-4" role="alert">
+        <strong class="font-bold">Gagal!</strong>
+        <span class="block sm:inline">{{ session('error') }}</span>
+    </div>
     @endif
 
     @if (session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative my-4" role="alert">
-            <strong class="font-bold">Berhasil!</strong>
-            <span class="block sm:inline">{{ session('success') }}</span>
-        </div>
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative my-4" role="alert">
+        <strong class="font-bold">Berhasil!</strong>
+        <span class="block sm:inline">{{ session('success') }}</span>
+    </div>
     @endif
 
     @php
-        $job = $task;
+    $job = $task;
     @endphp
 
     <!-- Tab 1: Informasi Lengkap -->
@@ -37,51 +36,51 @@
         <hr>
 
         @php
-            $typeLabels = [
-                'it' => 'IT',
-                'nonIT' => 'Non IT',
-            ];
+        $typeLabels = [
+        'it' => 'IT',
+        'nonIT' => 'Non IT',
+        ];
         @endphp
 
         @foreach ([
-            'Deskripsi' => 'description',
-            'Jumlah Revisi' => 'revisions',
-            'Tanggal Berakhir' => 'deadline',
-            'Tipe Pekerjaan' => 'taskType',
-            'Ketentuan' => 'provisions',
+        'Deskripsi' => 'description',
+        'Jumlah Revisi' => 'revisions',
+        'Tanggal Berakhir' => 'deadline',
+        'Tipe Pekerjaan' => 'taskType',
+        'Ketentuan' => 'provisions',
         ] as $label => $field)
-            <div>
-                <h2 class="text-lg font-semibold text-gray-700">{{ $label }}</h2>
+        <div>
+            <h2 class="text-lg font-semibold text-gray-700">{{ $label }}</h2>
 
-                @if ($field === 'taskType')
-                    <p class="text-gray-600 mt-1">{{ $typeLabels[$job->$field] ?? ucfirst($job->$field) }}</p>
-                @else
-                    <p class="text-gray-600 mt-1">{{ $job->$field ?? '[Belum ditentukan]' }}</p>
-                @endif
-            </div>
+            @if ($field === 'taskType')
+            <p class="text-gray-600 mt-1">{{ $typeLabels[$job->$field] ?? ucfirst($job->$field) }}</p>
+            @else
+            <p class="text-gray-600 mt-1">{{ $job->$field ?? '[Belum ditentukan]' }}</p>
+            @endif
+        </div>
         @endforeach
 
         <div>
             <h2 class="text-lg font-semibold text-gray-700">File Terkait</h2>
 
             @if ($job->job_file)
-                {{-- Cek apakah file adalah gambar --}}
-                @php
-                    $ext = pathinfo($job->job_file, PATHINFO_EXTENSION);
-                    $isImage = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
-                @endphp
+            {{-- Cek apakah file adalah gambar --}}
+            @php
+            $ext = pathinfo($job->job_file, PATHINFO_EXTENSION);
+            $isImage = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+            @endphp
 
-                @if ($isImage)
-                    <img src="{{ asset('storage/' . $job->job_file) }}" alt="Preview File" class="w-64 h-auto rounded shadow mt-2">
-                @endif
+            @if ($isImage)
+            <img src="{{ asset('storage/' . $job->job_file) }}" alt="Preview File" class="w-64 h-auto rounded shadow mt-2">
+            @endif
 
-                <p class="mt-2">
-                    <a href="{{ asset('storage/' . $job->job_file) }}" download class="text-blue-600 hover:underline">
-                        Download File
-                    </a>
-                </p>
+            <p class="mt-2">
+                <a href="{{ asset('storage/' . $job->job_file) }}" download class="text-blue-600 hover:underline">
+                    Download File
+                </a>
+            </p>
             @else
-                <p class="text-gray-600 mt-1">[File belum diunggah]</p>
+            <p class="text-gray-600 mt-1">[File belum diunggah]</p>
             @endif
         </div>
     </div>
@@ -111,72 +110,66 @@
         <!-- List Pelamar -->
         <div id="applicants-list" class="space-y-4">
             @foreach ($applicants as $applicant)
-                @php
-                    $worker = $applicant->worker;
-                    $user = $worker->user;
-                    $avgRating = 0; // default
-                    @endphp
+            @php
+            $worker = $applicant->worker;
+            $user = $worker->user;
+            $avgRating = 0; // default
+            @endphp
 
-                <div class="border p-4 rounded"
+            <div class="border p-4 rounded"
                 data-index="{{ $loop->index }}"
                 data-name="{{ $user->nama_lengkap }}"
-                    data-note="{{ $applicant->catatan }}"
-                    data-price="{{ $applicant->bidPrice }}"
-                    data-experience="{{ $worker->pengalaman_kerja }}"
-                    data-rating="{{ number_format($avgRating, 1) }}"
-                    data-education="{{ $worker->pendidikan }}"
-                    data-cv="{{ $worker->cv }}"
-                    data-label="{{ $worker->empowr_label }}"
-                    data-affiliate="{{ $worker->empowr_affiliate }}">
-                    <p><strong>{{ $user->nama_lengkap }}</strong> - Rp{{ number_format($applicant->bidPrice) }}</p>
-                    <p class="text-gray-600 text-sm">Catatan: {{ $applicant->catatan }}</p>
-                    <p class="text-sm text-gray-500">
-                        Pengalaman: {{ $worker->pengalaman_kerja }} tahun |
-                        Rating: {{ number_format($avgRating, 1) }}
-                    </p>
-                    <div class="flex gap-2 mt-2">
-                        <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
-                        <form action="{{ route('client.hire') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="task_id" value="{{ $applicant->task_id }}">
-                            <input type="hidden" name="worker_profile_id" value="{{ $worker->id }}">
-                            <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
-                        </form>
-                        <form action="{{ route('client.reject') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="application_id" value="{{ $applicant->id }}">
-                            <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
-                        </form>
-                        <a href="{{ route('profile.worker.lamar', $worker->id) }}"
+                data-note="{{ $applicant->catatan }}"
+                data-price="{{ $applicant->bidPrice }}"
+                data-experience="{{ $worker->pengalaman_kerja }}"
+                data-rating="{{ number_format($avgRating, 1) }}"
+                data-education="{{ $worker->pendidikan }}"
+                data-cv="{{ $worker->cv }}"
+                data-label="{{ $worker->empowr_label }}"
+                data-affiliate="{{ $worker->empowr_affiliate }}">
+                <p><strong>{{ $user->nama_lengkap }}</strong> - Rp{{ number_format($applicant->bidPrice) }}</p>
+                <p class="text-gray-600 text-sm">Catatan: {{ $applicant->catatan }}</p>
+                <p class="text-sm text-gray-500">
+                    Pengalaman: {{ $worker->pengalaman_kerja }} tahun |
+                    Rating: {{ number_format($avgRating, 1) }}
+                </p>
+                <div class="flex gap-2 mt-2">
+                    <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
+                    <form action="{{ route('client.hire') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="task_id" value="{{ $applicant->task_id }}">
+                        <input type="hidden" name="worker_profile_id" value="{{ $worker->id }}">
+                        <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
+                    </form>
+                    <form action="{{ route('client.reject') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="application_id" value="{{ $applicant->id }}">
+                        <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
+                    </form>
+                    <a href="{{ route('profile.worker.lamar', $worker->id) }}"
                         class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow inline-block">
-                            Lihat Profil Worker
-                        </a>
-                    </div>
+                        Lihat Profil Worker
+                    </a>
                 </div>
+            </div>
             @endforeach
         </div>
-    </div>
-
-    <!-- Tab 3: Chat -->
-    <div id="chat" class="tab-content hidden mt-4">
-        <h2 class="text-xl font-bold mb-4">Chat</h2>
-        <iframe src="{{ route('chat') }}" class="w-full h-[500px] border rounded shadow"></iframe>
     </div>
 
     <!-- button delete task -->
     <div class="flex justify-end gap-2 mt-6">
         @if ($task->status === 'open')
-            <form id="cancelTaskForm{{ $task->id }}" action="{{ route('jobs.destroy', $task->id) }}" method="POST">
-                @csrf
-                @method('DELETE')
-                <button type="button" onclick="confirmCancel({{ $task->id }})" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-                    Batalkan
-                </button>
-            </form>
-        @else
-            <button class="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed" disabled>
-                Tidak Bisa Dibatalkan Task Sudah Di Proses
+        <form id="cancelTaskForm{{ $task->id }}" action="{{ route('jobs.destroy', $task->id) }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <button type="button" onclick="confirmCancel({{ $task->id }})" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                Batalkan
             </button>
+        </form>
+        @else
+        <button class="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed" disabled>
+            Tidak Bisa Dibatalkan Task Sudah Di Proses
+        </button>
         @endif
         <button onclick="openModal()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
             Bayar
@@ -252,7 +245,6 @@
 
 <!-- Script untuk modal bayar -->
 <script>
-
     function openModal() {
         const modal = document.getElementById('bayarModal');
         const content = document.getElementById('modalContent');
@@ -261,7 +253,7 @@
         setTimeout(() => {
             modal.classList.replace('opacity-0', 'opacity-100');
             content.classList.replace('scale-95', 'scale-100');
-        }, 10); 
+        }, 10);
     }
 
     function closeModal() {
@@ -273,7 +265,7 @@
 
         setTimeout(() => {
             modal.classList.add('hidden');
-        }, 300); 
+        }, 300);
     }
 
     // Tampilkan opsi berdasarkan pilihan
@@ -293,7 +285,7 @@
     }
 
     // Tutup modal saat klik area luar
-    window.onclick = function (event) {
+    window.onclick = function(event) {
         const modal = document.getElementById('bayarModal');
         if (event.target === modal) {
             closeModal();
@@ -332,54 +324,54 @@
     }
 
 
-function confirmCancel(taskId) {
-    Swal.fire({
-        title: 'Yakin ingin membatalkan?',
-        text: "Tindakan ini tidak bisa dikembalikan!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#aaa',
-        confirmButtonText: 'Ya, batalkan!',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Task berhasil dibatalkan!',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#3085d6'
-            }).then(() => {
-                document.getElementById(`cancelTaskForm${taskId}`).submit();
-            });
-        }
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    const sortSelect = document.getElementById("sortBy");
-    if (sortSelect) {
-        sortSelect.addEventListener("change", sortApplicants);
+    function confirmCancel(taskId) {
+        Swal.fire({
+            title: 'Yakin ingin membatalkan?',
+            text: "Tindakan ini tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Ya, batalkan!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Task berhasil dibatalkan!',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6'
+                }).then(() => {
+                    document.getElementById(`cancelTaskForm${taskId}`).submit();
+                });
+            }
+        });
     }
 
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.addEventListener('click', () => {
-            console.log("Tab clicked:", button.dataset.tab);
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('text-blue-600', 'font-semibold'));
-            button.classList.add('text-blue-600', 'font-semibold');
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-            document.getElementById(button.dataset.tab)?.classList.remove('hidden');
-        });
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const sortSelect = document.getElementById("sortBy");
+        if (sortSelect) {
+            sortSelect.addEventListener("change", sortApplicants);
+        }
 
-    document.querySelectorAll('.btn-worker-info').forEach(btn => {
-        btn.addEventListener('click', () => {
-            renderWorkerModal(workerData);
-            showWorkerTab('keahlianTab');
-            document.getElementById('workerDetailModal').classList.remove('hidden');
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                console.log("Tab clicked:", button.dataset.tab);
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('text-blue-600', 'font-semibold'));
+                button.classList.add('text-blue-600', 'font-semibold');
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+                document.getElementById(button.dataset.tab)?.classList.remove('hidden');
+            });
+        });
+
+        document.querySelectorAll('.btn-worker-info').forEach(btn => {
+            btn.addEventListener('click', () => {
+                renderWorkerModal(workerData);
+                showWorkerTab('keahlianTab');
+                document.getElementById('workerDetailModal').classList.remove('hidden');
+            });
         });
     });
-});
 
     // const applicants = [{
     //         name: "Worker A",
@@ -530,93 +522,93 @@ document.addEventListener('DOMContentLoaded', function () {
     //     });
     // }
     function calculateAverageRating(reviews) {
-    if (!reviews || reviews.length === 0) return 0;
+        if (!reviews || reviews.length === 0) return 0;
 
-    const total = reviews.reduce((sum, r) => sum + r.rating, 0);
-    return total / reviews.length;
-}
+        const total = reviews.reduce((sum, r) => sum + r.rating, 0);
+        return total / reviews.length;
+    }
 
 
-//     function sortApplicants() {
-//         const sortBy = document.getElementById("sortBy").value;
-//         let sorted = [...applicants];
+    //     function sortApplicants() {
+    //         const sortBy = document.getElementById("sortBy").value;
+    //         let sorted = [...applicants];
 
-//         if (sortBy === "price") {
-//             sorted.sort((a, b) => a.price - b.price);
-//         } else if (sortBy === "experience") {
-//             sorted.sort((a, b) => b.experience - a.experience);
-//         } else if (sortBy === "rating") {
-//             sorted.sort((a, b) => calculateAverageRating(b.reviews) - calculateAverageRating(a.reviews));
-//         }
+    //         if (sortBy === "price") {
+    //             sorted.sort((a, b) => a.price - b.price);
+    //         } else if (sortBy === "experience") {
+    //             sorted.sort((a, b) => b.experience - a.experience);
+    //         } else if (sortBy === "rating") {
+    //             sorted.sort((a, b) => calculateAverageRating(b.reviews) - calculateAverageRating(a.reviews));
+    //         }
 
-//         renderApplicants(sorted);
-//     }
+    //         renderApplicants(sorted);
+    //     }
 
-//     function renderApplicants(list) {
-//         const container = document.getElementById("applicants-list");
-//         container.innerHTML = "";
+    //     function renderApplicants(list) {
+    //         const container = document.getElementById("applicants-list");
+    //         container.innerHTML = "";
 
-//         list.forEach((worker, i) => {
-//             const avgRating = calculateAverageRating(worker.reviews);
+    //         list.forEach((worker, i) => {
+    //             const avgRating = calculateAverageRating(worker.reviews);
 
-//             document.getElementById("worker-rating-summary").innerHTML = `
-//   <p class="text-lg font-semibold">Rata-rata Rating: ${avgRating.toFixed(1)}</p>
-// `;
+    //             document.getElementById("worker-rating-summary").innerHTML = `
+    //   <p class="text-lg font-semibold">Rata-rata Rating: ${avgRating.toFixed(1)}</p>
+    // `;
 
-//             const div = document.createElement("div");
-//             div.className = "border p-4 rounded";
+    //             const div = document.createElement("div");
+    //             div.className = "border p-4 rounded";
 
-//             div.innerHTML = `
-//       <p><strong>${worker.name}</strong> - Rp${worker.price.toLocaleString()}</p>
-//       <p class="text-gray-600 text-sm">Catatan: ${worker.note}</p>
-//       <p class="text-sm text-gray-500">
-//         Pengalaman: ${worker.experience} tahun | Rating: ${avgRating.toFixed(1)}
-//       </p>
-//       <div class="flex gap-2 mt-2">
-//         <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
-//         <button class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
-//         <button class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
-//         <button onclick="openWorkerModal(${i})" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow">
-//           Lihat Profil Worker
-//         </button>
-//       </div>
-//     `;
-//             container.appendChild(div);
-//         });
-//     }
+    //             div.innerHTML = `
+    //       <p><strong>${worker.name}</strong> - Rp${worker.price.toLocaleString()}</p>
+    //       <p class="text-gray-600 text-sm">Catatan: ${worker.note}</p>
+    //       <p class="text-sm text-gray-500">
+    //         Pengalaman: ${worker.experience} tahun | Rating: ${avgRating.toFixed(1)}
+    //       </p>
+    //       <div class="flex gap-2 mt-2">
+    //         <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
+    //         <button class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
+    //         <button class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
+    //         <button onclick="openWorkerModal(${i})" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow">
+    //           Lihat Profil Worker
+    //         </button>
+    //       </div>
+    //     `;
+    //             container.appendChild(div);
+    //         });
+    //     }
     function openWorkerModalFromElement(el) {
-    const data = el.closest('div');
-    
-    const name = data.getAttribute('data-name');
-    const note = data.getAttribute('data-note');
-    const price = data.getAttribute('data-price');
-    const experience = data.getAttribute('data-experience');
-    const rating = data.getAttribute('data-rating');
-    const education = data.getAttribute('data-education');
-    const cv = data.getAttribute('data-cv');
-    const label = data.getAttribute('data-label') === '1' ? 'Ya' : 'Tidak';
-    const affiliate = data.getAttribute('data-affiliate') === '1' ? 'Ya' : 'Tidak';
+        const data = el.closest('div');
 
-    // Inject ke modal
-    document.getElementById("worker-name").textContent = name;
-    document.getElementById("worker-skills-value").textContent = "-"; // dari backend belum ada
-    document.getElementById("worker-label").textContent = label;
-    document.getElementById("worker-affiliate").textContent = affiliate;
-    document.getElementById("worker-education").textContent = education;
-    document.getElementById("worker-experience").textContent = `${experience} tahun`;
-    document.getElementById("worker-cv").href = cv ?? "#";
+        const name = data.getAttribute('data-name');
+        const note = data.getAttribute('data-note');
+        const price = data.getAttribute('data-price');
+        const experience = data.getAttribute('data-experience');
+        const rating = data.getAttribute('data-rating');
+        const education = data.getAttribute('data-education');
+        const cv = data.getAttribute('data-cv');
+        const label = data.getAttribute('data-label') === '1' ? 'Ya' : 'Tidak';
+        const affiliate = data.getAttribute('data-affiliate') === '1' ? 'Ya' : 'Tidak';
 
-    // Rating Summary
-    document.getElementById("worker-rating-summary").innerHTML = `
+        // Inject ke modal
+        document.getElementById("worker-name").textContent = name;
+        document.getElementById("worker-skills-value").textContent = "-"; // dari backend belum ada
+        document.getElementById("worker-label").textContent = label;
+        document.getElementById("worker-affiliate").textContent = affiliate;
+        document.getElementById("worker-education").textContent = education;
+        document.getElementById("worker-experience").textContent = `${experience} tahun`;
+        document.getElementById("worker-cv").href = cv ?? "#";
+
+        // Rating Summary
+        document.getElementById("worker-rating-summary").innerHTML = `
         <h3 class="text-2xl font-semibold">${rating}</h3>
         <p class="text-yellow-500 text-xl">${"⭐".repeat(Math.floor(rating))}</p>
         <p class="text-sm text-gray-500">Dari rating user</p>
     `;
 
-    // Show modal
-    showWorkerTab('keahlianTab');
-    document.getElementById('workerDetailModal').classList.remove('hidden');
-}
+        // Show modal
+        showWorkerTab('keahlianTab');
+        document.getElementById('workerDetailModal').classList.remove('hidden');
+    }
 
 
 

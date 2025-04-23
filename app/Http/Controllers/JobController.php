@@ -8,6 +8,7 @@ use App\Models\TaskApplication;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\WorkerProfile;
+use App\Models\Notification;
 
 class JobController extends Controller
 {
@@ -249,9 +250,21 @@ class JobController extends Controller
         $request->validate([
             'application_id' => 'required|exists:task_applications,id',
         ]);
-    
-        TaskApplication::where('id', $request->application_id)->delete();
-    
+
+        $application = TaskApplication::findOrFail($request->application_id);
+        // $task = Task::findOrFail($request->task_id);
+        $user = Auth::user();
+        
+        // Simpan notifikasi untuk worker
+        Notification::create([
+            'user_id' => $application->worker->user_id,
+            'sender_name' => $user->nama_lengkap, 
+            'message' => 'Lamaran kamu untuk task <b>"' . $application->task->title . '"</b> telah ditolak.',
+            'is_read' => false,
+        ]);        
+
+        $application->delete();
+
         return back()->with('success', 'Lamaran berhasil dihapus.');
     }
     // public function showApplicants($taskId)

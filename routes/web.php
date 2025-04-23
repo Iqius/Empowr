@@ -6,6 +6,7 @@ use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\CheckUserRole;
 use App\Http\Middleware\RoleMiddleware;
+use App\Http\Controllers\NotificationController;
 
 
 // LANDING PAGE
@@ -128,4 +129,8 @@ Route::get('/arbitrase', function () {return view('arbitrase');});
 
 Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage']);
 
+
+//notif
+Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifications.index');
+Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
