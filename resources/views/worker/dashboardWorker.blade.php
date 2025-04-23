@@ -2,8 +2,6 @@
 
 <div class="p-4 ">
     <div class="p-4 mt-14">
-        <h2 class="mb-4 text-xl font-bold">Dashboard</h2>
-        <p class="mb-4">Hello, Denis Dontol!</p>
         <h2 class="text-xl font-semibold mb-2 flex items-center gap-1">
             Your Tasks
             <span class="text-gray-400 text-base">

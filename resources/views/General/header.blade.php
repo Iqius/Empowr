@@ -72,20 +72,7 @@
             </div>
 
             <!-- Tengah: Search Bar -->
-            <div class="max-w-xs mx-4">
-               <div class="relative">
-                  <input type="text" placeholder="Search"
-                     class="w-full px-4 py-2 rounded-full bg-gray-200 placeholder-gray-500 focus:outline-none">
-                  <button type="submit"
-                     class="absolute right-0 top-0 h-full px-4 text-white bg-[#183E74] rounded-r-full hover:bg-[#1a4a91]">
-                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" class="w-5 h-5" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                           d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
-                     </svg>
-                  </button>
-               </div>
-            </div>
+           
 
             <!-- Kanan: Ikon & Profile -->
             <div class="flex items-center space-x-3">

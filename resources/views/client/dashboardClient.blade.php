@@ -1,203 +1,440 @@
 @include('General.header')
-<div class="p-4 mt-16">
-<div class="max-w-7xl mx-auto space-y-6">
-    <!-- Stats Overview -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div class="bg-white p-4 rounded shadow flex justify-between items-center">
-        <div>
-          <p class="text-lg font-semibold">4</p>
-          <p class="text-sm text-gray-500">Jobs Posted</p>
-        </div>
-        <div class="text-blue-500 text-xl">↗</div>
+
+<div class="p-4 ">
+  <div class="p-4 mt-14">
+    <button id="openModalBtn"
+      class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow mb-6">
+      Add New Job
+    </button>
+    <h2 class="text-xl font-semibold mb-2 flex items-center gap-1">
+      Your Tasks
+      <span class="text-gray-400 text-base">
+        <i class="fas fa-info-circle"></i>
+      </span>
+    </h2>
+
+    <div class="grid grid-cols-3 gap-4">
+      <div class="flex flex-col items-center justify-center h-32 bg-white p-6 rounded border border-gray-300">
+        <p class="text-3xl font-bold" style="color: #1F4482;">1</p>
+        <p class="text-base font-medium text-gray-600">Jobs Post</p>
       </div>
-      <div class="bg-white p-4 rounded shadow flex justify-between items-center">
-        <div>
-          <p class="text-lg font-semibold">3</p>
-          <p class="text-sm text-gray-500">Ongoing Jobs</p>
-        </div>
-        <div class="text-blue-500 text-xl">↗</div>
+      <div class="flex flex-col items-center justify-center h-32 bg-white p-6 rounded border border-gray-300">
+        <p class="text-3xl font-bold" style="color: #1F4482;">0</p>
+        <p class="text-base font-medium text-gray-600">On Going Jobs</p>
       </div>
-      <div class="bg-white p-4 rounded shadow flex justify-between items-center">
-        <div>
-          <p class="text-lg font-semibold">11</p>
-          <p class="text-sm text-gray-500">Completed Jobs</p>
-        </div>
-        <div class="text-blue-500 text-xl">↗</div>
+      <div class="flex flex-col items-center justify-center h-32 bg-white p-6 rounded border border-gray-300">
+        <p class="text-3xl font-bold" style="color: #1F4482;">1</p>
+        <p class="text-base font-medium text-gray-600">Complete Jobs</p>
       </div>
     </div>
 
-
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <div class="hidden sm:block"></div>
-
-  <div class="col-span-1 sm:col-span-2 bg-white p-4 rounded shadow">
-    <!-- Chart  -->
-    <div class="flex items-center justify-between mb-4">
-      <h3 class="font-semibold text-lg">Requests by Status</h3>
-      <span class="text-sm text-gray-500">2025 </span>
+    <div class="mt-2 grid grid-cols-1 sm:grid-cols-1 gap-6">
+      <div class="hidden sm:block"></div>
+      <div class="bg-white border rounded p-4 shadow-sm col-span-1 sm:col-span-3">
+        <!-- Chart  -->
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-semibold text-lg">Requests by Status</h3>
+          <span class="text-sm text-gray-500">2025 </span>
+        </div>
+        <div class="w-full h-64 relative">
+          <canvas id="statusChart" class="absolute left-0 top-0 w-full h-full"></canvas>
+        </div>
+      </div>
     </div>
-    <div class="w-full h-64 relative">
-      <canvas id="statusChart" class="absolute left-0 top-0 w-full h-full"></canvas>
-    </div>
-  </div>
 
-</div>
-
-
-    <!-- Main Grid -->
-  <div class="mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
       <!-- Jobs -->
-      <div class="bg-white p-4 rounded shadow col-span-1 xl:col-span-1">
-        <h3 class="font-semibold text-lg mb-4">Jobs</h3>
-        <ul class="space-y-3">
-          <li class="flex justify-between items-center border-b pb-2">
-            <div>
-              <p class="font-medium">Voice-over for Simple Scripts</p>
-              <p class="text-sm text-gray-500">Deadline: Monday, 06 May</p>
+      <div class="bg-white border rounded p-4 shadow-sm">
+        <h2 class="text-lg font-semibold mb-4">Jobs</h2>
+        <ul class="space-y-4">
+          <li class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
+                <i class="fas fa-briefcase text-gray-600"></i>
+              </div>
+              <div>
+                <p class="font-medium text-sm md:text-base">Visual Designer</p>
+                <p class="text-gray-400 text-xs">Applied 24 June 2024</p>
+              </div>
             </div>
-            <span class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded">Open</span>
+            <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
           </li>
-          <li class="flex justify-between items-center border-b pb-2">
-            <div>
-              <p class="font-medium">Online Research for Leads</p>
-              <p class="text-sm text-gray-500">Deadline: Thursday, 24 April</p>
+          <li class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
+                <i class="fas fa-briefcase text-gray-600"></i>
+              </div>
+              <div>
+                <p class="font-medium text-sm md:text-base">Graphic Design for Billboard</p>
+                <p class="text-gray-400 text-xs">Applied 24 June 2024</p>
+              </div>
             </div>
-            <span class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded">Open</span>
+            <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
           </li>
-          <li class="flex justify-between items-center border-b pb-2">
-            <div>
-              <p class="font-medium">Basic Blog Post Writing</p>
-              <p class="text-sm text-gray-500">Deadline: Wednesday, 07 May</p>
+          <li class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
+                <i class="fas fa-briefcase text-gray-600"></i>
+              </div>
+              <div>
+                <p class="font-medium text-sm md:text-base">Logo Maker Non AI</p>
+                <p class="text-gray-400 text-xs">Applied 24 June 2024</p>
+              </div>
             </div>
-            <span class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded">Open</span>
+            <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
           </li>
-          <li class="flex justify-between items-center">
-            <div>
-              <p class="font-medium">Email Sorting & Filtering</p>
-              <p class="text-sm text-gray-500">Deadline: Saturday, 10 May</p>
+          <li class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
+                <i class="fas fa-briefcase text-gray-600"></i>
+              </div>
+              <div>
+                <p class="font-medium text-sm md:text-base">Designer for Content</p>
+                <p class="text-gray-400 text-xs">Applied 24 June 2024</p>
+              </div>
             </div>
-            <span class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded">Open</span>
-          </li>
-        </ul>
-        <div class="mt-4 text-right text-sm text-gray-500">1 to 4 of 14 items</div>
-      </div>
-
-            <!-- Ongoing Jobs -->
-            <div class="bg-white p-4 rounded shadow col-span-1 xl:col-span-1">
-        <h3 class="font-semibold text-lg mb-4">Ongoing Jobs</h3>
-        <ul class="space-y-3">
-          <li class="flex justify-between items-center">
-            <div>
-              <p class="font-medium">Admin Streamer 2 hari</p>
-              <p class="text-sm text-gray-500">Applier: testextendbarubaruu</p>
-            </div>
-            <span class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded">Open</span>
-          </li>
-          <li class="flex justify-between items-center">
-            <div>
-              <p class="font-medium">Testing MVP</p>
-              <p class="text-sm text-gray-500">Applier: Worker3</p>
-            </div>
-            <span class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded">Open</span>
-          </li>
-          <li class="flex justify-between items-center">
-            <div>
-              <p class="font-medium">Admin Streamer 2 hari</p>
-              <p class="text-sm text-gray-500">Applier: Worker1</p>
-            </div>
-            <span class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded">Open</span>
+            <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
           </li>
         </ul>
-        <div class="mt-4 text-right text-sm text-gray-500">1 to 3 of 3 items</div>
+        <div class="flex justify-between mt-4">
+          <div class="mt-4 text-right text-sm text-gray-500">1 to 4 of 16 items</div>
+          <nav class="inline-flex gap-1">
+            <button class="border px-3 py-1 text-sm rounded">1</button>
+            <button class="border px-3 py-1 text-sm rounded">2</button>
+            <button class="border px-3 py-1 text-sm rounded">3</button>
+            <button class="border px-3 py-1 text-sm rounded">4</button>
+          </nav>
+        </div>
       </div>
-
-     
-
-
-      <!-- Client Applications -->
-      <div class="bg-white p-4 rounded shadow col-span-1 xl:col-span-1">
-        <h3 class="font-semibold text-lg mb-4">Client Applications</h3>
-        <ul class="space-y-3">
-          <li class="flex justify-between items-center">
-            <div>
-              <p class="font-medium">Admin Streamer 2 hari</p>
-              <p class="text-sm text-gray-500">Applier: EmpowrAffiliate</p>
+      <!-- On Going Jobs -->
+      <div class="bg-white border rounded p-4 shadow-sm">
+        <h2 class="text-lg font-semibold mb-4">On Going Jobs</h2>
+        <ul class="space-y-4">
+          <li class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
+                <i class="fas fa-briefcase text-gray-600"></i>
+              </div>
+              <div>
+                <p class="font-medium text-sm md:text-base">Visual Designer</p>
+                <p class="text-gray-400 text-xs">Applied 24 June 2024</p>
+              </div>
             </div>
-            <button class="bg-blue-100 text-blue-700 px-3 py-1 text-sm rounded">Details</button>
+            <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
           </li>
-          <li class="flex justify-between items-center">
-            <div>
-              <p class="font-medium">Email Sorting & Filtering</p>
-              <p class="text-sm text-gray-500">Applier: EmpowrAffiliate</p>
+          <li class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
+                <i class="fas fa-briefcase text-gray-600"></i>
+              </div>
+              <div>
+                <p class="font-medium text-sm md:text-base">Graphic Design for Billboard</p>
+                <p class="text-gray-400 text-xs">Applied 24 June 2024</p>
+              </div>
             </div>
-            <button class="bg-blue-100 text-blue-700 px-3 py-1 text-sm rounded">Details</button>
-          </li>
-          <li class="flex justify-between items-center">
-            <div>
-              <p class="font-medium">Basic Graphic Design</p>
-              <p class="text-sm text-gray-500">Applier: EmpowrAffiliate</p>
-            </div>
-            <button class="bg-blue-100 text-blue-700 px-3 py-1 text-sm rounded">Details</button>
-          </li>
-          <li class="flex justify-between items-center">
-            <div>
-              <p class="font-medium">Buat Poster</p>
-              <p class="text-sm text-gray-500">Applier: Worker3</p>
-            </div>
-            <button class="bg-blue-100 text-blue-700 px-3 py-1 text-sm rounded">Details</button>
+            <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
           </li>
         </ul>
-        <div class="mt-4 text-right text-sm text-gray-500">1 to 4 of 4 items</div>
+        <div class="flex justify-between mt-4">
+          <div class="mt-4 text-right text-sm text-gray-500">1 to 2 of 2 items</div>
+        </div>
       </div>
 
+      <!-- Worker Applications -->
+      <div class="bg-white border rounded p-4 shadow-sm">
+        <h2 class="text-lg font-semibold mb-4">Worker Applications</h2>
+        <ul class="space-y-4">
+          <li class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
+                <i class="fas fa-briefcase text-gray-600"></i>
+              </div>
+              <div>
+                <p class="font-medium text-sm md:text-base">Visual Designer</p>
+                <p class="text-gray-400 text-xs">Applier Fadel Alif</p>
+              </div>
+            </div>
+            <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
+          </li>
+          <li class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
+                <i class="fas fa-briefcase text-gray-600"></i>
+              </div>
+              <div>
+                <p class="font-medium text-sm md:text-base">Visual Designer</p>
+                <p class="text-gray-400 text-xs">Applier Dede Rahmat</p>
+              </div>
+            </div>
+            <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
+          </li>
+          <li class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
+                <i class="fas fa-briefcase text-gray-600"></i>
+              </div>
+              <div>
+                <p class="font-medium text-sm md:text-base">Logo Maker Non AI</p>
+                <p class="text-gray-400 text-xs">Applier Risky Farhan</p>
+              </div>
+            </div>
+            <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
+          </li>
+          <li class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
+                <i class="fas fa-briefcase text-gray-600"></i>
+              </div>
+              <div>
+                <p class="font-medium text-sm md:text-base">Designer for Content</p>
+                <p class="text-gray-400 text-xs">Applier David Rahmadana</p>
+              </div>
+            </div>
+            <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
+          </li>
+        </ul>
 
+        <!-- Pagination -->
+        <div class="flex justify-between mt-4">
+          <div class="mt-4 text-right text-sm text-gray-500">1 to 4 of 16 items</div>
+          <nav class="inline-flex gap-1">
+            <button class="border px-3 py-1 text-sm rounded">1</button>
+            <button class="border px-3 py-1 text-sm rounded">2</button>
+            <button class="border px-3 py-1 text-sm rounded">3</button>
+            <button class="border px-3 py-1 text-sm rounded">4</button>
+          </nav>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<div id="jobModal"
+  class="fixed inset-0 z-50 flex justify-center items-start overflow-y-auto py-10 bg-gray-800 bg-opacity-50 hidden transition-opacity duration-300 opacity-0">
+  <div class="bg-white p-6 rounded shadow-md w-full max-w-lg mx-4">
+    <h1 class="text-2xl font-semibold mb-4">Add New Job</h1>
+    <form action="{{ route('jobs.store') }}" method="POST" enctype="multipart/form-data">
+      @csrf
+      <div class="grid grid-cols-3 gap-4">
+        <!-- Title -->
+        <div class="col-span-2">
+          <label class="block text-gray-700">Title</label>
+          <input type="text" name="title" class="w-full p-2 border rounded" required>
+        </div>
+
+        <!-- Price -->
+        <div class="col-span-1">
+          <label class="block text-gray-700">Price (Rp)</label>
+          <input type="number" name="price" class="w-full p-2 border rounded" required>
+        </div>
+
+        <!-- Description -->
+        <div class="col-span-3">
+          <label class="block text-gray-700">Description</label>
+          <textarea name="description" class="w-full p-2 border rounded" required></textarea>
+        </div>
+
+        <!-- Revisions -->
+        <div class="col-span-1">
+          <label class="block text-gray-700">Revisions</label>
+          <input type="number" name="revisions" class="w-full p-2 border rounded" required>
+        </div>
+
+        <!-- Deadline -->
+        <div class="col-span-1">
+          <label class="block text-gray-700">Deadline</label>
+          <input type="date" name="deadline" class="w-full p-2 border rounded" required>
+        </div>
+
+        <!-- Deadline Promotion -->
+        <div class="col-span-1">
+          <label class="block text-gray-700">Deadline Promotion</label>
+          <input type="date" name="deadline_promotion" class="w-full p-2 border rounded" required>
+        </div>
+
+        <!-- Task Type -->
+        <div class="col-span-1">
+          <label class="block text-gray-700">Task Type</label>
+          <select name="taskType" class="w-full p-2 border rounded" required>
+            <option value="it">IT</option>
+            <option value="nonIT">Non-IT</option>
+          </select>
+        </div>
+
+        <!-- Provisions -->
+        <div class="col-span-3">
+          <label class="block text-gray-700">Provisions</label>
+          <textarea name="provisions" class="w-full p-2 border rounded"></textarea>
+        </div>
+
+        <!-- File Upload -->
+        <div class="col-span-3">
+          <label class="block text-gray-700">Upload File</label>
+          <div id="drop-area-job" class="border-2 border-dashed p-4 text-center cursor-pointer">
+            <p id="drop-text-job">Drag & Drop file here or click to select</p>
+            <input type="file" name="job_file" id="fileInputJob" class="hidden">
+            <p id="file-name-job" class="text-gray-500 text-sm mt-2"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-4">
+        <button type="button" id="closeModalBtn" class="bg-gray-400 text-white p-2 rounded">Cancel</button>
+        <button type="submit" class="bg-blue-600 text-white p-2 rounded">Post</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 
 @include('General.footer')
 
 <script>
-    
-   const statusCtx = document.getElementById('statusChart').getContext('2d');
-    new Chart(statusCtx, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul','Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        datasets: [
-          {
-            label: 'Ongoing',
-            data: [10, 20, 15, 25, 30, 45, 40, 15, 25, 30, 45, 40],
-            borderColor: '#3b82f6',
-            fill: false,
-            tension: 0.4,
-            pointBackgroundColor: '#3b82f6'
-          },
-          {
-            label: 'Completed',
-            data: [5, 15, 10, 20, 25, 30, 35, 12, 23, 10, 25, 10],
-            borderColor: '#10b981',
-            fill: false,
-            tension: 0.4,
-            pointBackgroundColor: '#10b981'
-          },
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
+  document.addEventListener("DOMContentLoaded", function () {
+    const openModalBtn = document.getElementById("openModalBtn");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const jobModal = document.getElementById("jobModal");
+    const dropAreaJob = document.getElementById("drop-area-job");
+    const fileInputJob = document.getElementById("fileInputJob");
+    const fileNameDisplayJob = document.getElementById("file-name-job");
+    const sortSelect = document.getElementById("sortSelect");
+    const jobContainer = document.getElementById("jobContainer");
 
-        plugins: {
-          legend: {
-            position: 'top'
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
+    // 🟦 Modal Open/Close
+    openModalBtn?.addEventListener("click", () => {
+      jobModal?.classList.remove("hidden");
+
+      // ⏫ Tambahkan animasi buka
+      setTimeout(() => {
+        jobModal?.classList.replace("opacity-0", "opacity-100");
+        jobModal?.classList.replace("scale-95", "scale-100");
+      }, 10);
+    });
+
+    closeModalBtn?.addEventListener("click", () => {
+      // ⏬ Tambahkan animasi tutup
+      jobModal?.classList.replace("opacity-100", "opacity-0");
+      jobModal?.classList.replace("scale-100", "scale-95");
+
+      setTimeout(() => {
+        jobModal?.classList.add("hidden");
+      }, 300);
+    });
+
+    jobModal?.addEventListener("click", (e) => {
+      if (e.target === jobModal) {
+        // ⏬ Tutup saat klik luar modal + animasi
+        jobModal?.classList.replace("opacity-100", "opacity-0");
+        jobModal?.classList.replace("scale-100", "scale-95");
+
+        setTimeout(() => {
+          jobModal.classList.add("hidden");
+        }, 300);
       }
     });
-  </script>
+
+    // 🟩 Drag & Drop File Upload
+    dropAreaJob?.addEventListener("click", () => {
+      fileInputJob.click();
+    });
+
+    fileInputJob?.addEventListener("change", () => {
+      if (fileInputJob.files.length > 0) {
+        fileNameDisplayJob.textContent = fileInputJob.files[0].name;
+      }
+    });
+
+    dropAreaJob?.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropAreaJob.classList.add("bg-gray-100");
+    });
+
+    dropAreaJob?.addEventListener("dragleave", () => {
+      dropAreaJob.classList.remove("bg-gray-100");
+    });
+
+    dropAreaJob?.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropAreaJob.classList.remove("bg-gray-100");
+
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        fileInputJob.files = files;
+        fileNameDisplayJob.textContent = files[0].name;
+      }
+    });
+
+    // 🟨 Sort Jobs by Price
+    sortSelect?.addEventListener("change", function () {
+      const value = this.value;
+      if (!jobContainer) return;
+
+      const cards = Array.from(jobContainer.children);
+      const sorted = cards.sort((a, b) => {
+        const priceA = parseInt(a.dataset.price || "0");
+        const priceB = parseInt(b.dataset.price || "0");
+        return value === "price-asc" ? priceA - priceB : priceB - priceA;
+      });
+
+      jobContainer.innerHTML = "";
+      sorted.forEach(card => jobContainer.appendChild(card));
+    });
+
+    // ✅ SweetAlert for Success Message
+    @if (session('success'))
+    Swal.fire({
+      icon: 'success',
+      title: 'Berhasil Diposting!',
+      text: "{{ session('success') }}",
+      confirmButtonColor: '#2563EB',
+      confirmButtonText: 'OK'
+    }).then(() => {
+      window.location.href = window.location.href;
+    });
+  @endif
+    });
+</script>
+
+<script>
+
+  const statusCtx = document.getElementById('statusChart').getContext('2d');
+  new Chart(statusCtx, {
+    type: 'line',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      datasets: [
+        {
+          label: 'Ongoing',
+          data: [10, 20, 15, 25, 30, 45, 40, 15, 25, 30, 45, 40],
+          borderColor: '#3b82f6',
+          fill: false,
+          tension: 0.4,
+          pointBackgroundColor: '#3b82f6'
+        },
+        {
+          label: 'Completed',
+          data: [5, 15, 10, 20, 25, 30, 35, 12, 23, 10, 25, 10],
+          borderColor: '#10b981',
+          fill: false,
+          tension: 0.4,
+          pointBackgroundColor: '#10b981'
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+
+      plugins: {
+        legend: {
+          position: 'top'
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>

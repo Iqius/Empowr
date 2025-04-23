@@ -27,15 +27,6 @@
 
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <!-- AOS Initialization -->
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-    <script>
-        AOS.init({
-            duration: 1000, // Animation duration in ms
-            easing: 'ease', // Animation easing
-            once: true, // Animation triggers only once
-        });
-    </script>
 
     <!-- style -->
     <style>
