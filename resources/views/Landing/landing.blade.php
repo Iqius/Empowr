@@ -32,7 +32,7 @@
     </section>
 
     <!-- Cards Section with Scroll Animations -->
-    <section class="w-full bg-[#f9f9f9] py-12">
+    <section class="w-full bg-[#f9f9f9] py-16 px-6 md:px-12">
         <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-center items-center gap-6">
             <!-- Card 1 -->
             <div class="bg-gradient-to-b from-[#1F4482] to-[#2A5DB2] text-white rounded-md px-6 py-4 text-center w-full md:w-1/3"

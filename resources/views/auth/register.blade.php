@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,108 +9,175 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-</head>
-<body class="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-    <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-md">
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
-            <h2 class="text-3xl font-semibold text-gray-700 text-center">Register</h2>
-
-            <input type="text" name="nama_lengkap" placeholder="Name" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" value="{{ old('name') }}" required>
-            @error('name') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
-
-            <input type="text" name="username" placeholder="Username" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" value="{{ old('username') }}" required>
-            @error('username') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
-
-            <input type="email" name="email" placeholder="Email" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" value="{{ old('email') }}" required>
-            @error('email') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
-
-            <select name="role" required class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
-                <option value="client" {{ old('role') == 'client' ? 'selected' : '' }}>Client</option>
-                <option value="worker" {{ old('role') == 'worker' ? 'selected' : '' }}>Worker</option>
-            </select>
-            @error('role') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
-
-            <div class="relative w-full mt-3">
-                <input id="password" type="password" name="password" placeholder="Password"
-                    class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" 
-                    autocomplete="new-password" required>
-                <button type="button" onclick="togglePassword()" 
-                    class="absolute inset-y-0 right-3 flex items-center">
-                    <i id="eye-icon" class="fa-solid fa-eye text-gray-500"></i>
-                </button>
-            </div>
-            @error('password') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
-
-            <div class="relative w-full mt-3">
-                <input id="password_confirmation" type="password" name="password_confirmation" placeholder="Confirm Password"
-                    class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" 
-                    autocomplete="new-password" required>
-                <button type="button" onclick="togglePassword()" 
-                    class="absolute inset-y-0 right-3 flex items-center">
-                    <i id="eye-icon-confirm" class="fa-solid fa-eye text-gray-500"></i>
-                </button>
-            </div>
-            @error('password_confirmation') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
-
-
-            <!-- <label class="text-sm text-gray-600">Tanggal Lahir</label>
-            <input type="date" name="date" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" value="{{ old('date') }}" required>
-            @error('date') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror -->
-
-            <input type="text" name="nomor_telepon" placeholder="No HP" class="w-full mt-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" value="{{ old('phone') }}" required>
-            @error('phone') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
-
-            <button type="submit" class="w-full mt-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Sign Up</button>
-        </form>
-        <p class="text-sm text-gray-600 mt-3 text-center">Already have an account? <a href="{{ route('login') }}" class="text-blue-500 hover:underline">Login</a></p>
-    </div>
-</body>
-
-<script>
-    function togglePassword() {
-        let passwordField = document.getElementById("password");
-        let passwordConfirmField = document.getElementById("password_confirmation");
-        let eyeIcon = document.getElementById("eye-icon");
-        let eyeIconConfirm = document.getElementById("eye-icon-confirm");
-
-        if (passwordField.type === "password") {
-            passwordField.type = "text";
-            passwordConfirmField.type = "text";
-            eyeIcon.classList.remove("fa-eye");
-            eyeIcon.classList.add("fa-eye-slash");
-            eyeIconConfirm.classList.remove("fa-eye");
-            eyeIconConfirm.classList.add("fa-eye-slash");
-        } else {
-            passwordField.type = "password";
-            passwordConfirmField.type = "password";
-            eyeIcon.classList.remove("fa-eye-slash");
-            eyeIcon.classList.add("fa-eye");
-            eyeIconConfirm.classList.remove("fa-eye-slash");
-            eyeIconConfirm.classList.add("fa-eye");
+    <style>
+        .background-blue {
+            background-color: #1F4482;
         }
-    }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        // Redirect button if closeModal exists (fallback dari alert sebelumnya)
-        document.getElementById("closeModal")?.addEventListener("click", function () {
-            window.location.href = "{{ route('login') }}";
-        });
+        /* Animation for sliding in */
+        .slide-left {
+            animation: slideInLeft 1s ease-out forwards;
+        }
 
-        // SweetAlert2 untuk session success (jika ada)
-        @if(session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Registrasi Berhasil!',
-                text: "{{ session('success') }}",
-                confirmButtonColor: '#2563EB',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                window.location.href = "{{ route('login') }}"; // Redirect setelah alert ditutup
-            });
-        @endif
-    });
-</script>
+        .slide-right {
+            animation: slideInRight 1s ease-out forwards;
+        }
 
+        /* Keyframes for the slide-in effect */
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="flex justify-center items-center h-screen bg-gray-100 px-0 overflow-auto">
+    <div class="flex w-full h-full overflow-y-auto">
+
+        <!-- Left Section with Image and Text (Full Height) -->
+        <div class="hidden md:flex w-1/2 background-blue p-12 justify-center items-center text-white slide-left">
+            <div class="flex flex-col justify-center items-center space-y-6">
+                <!-- Logo Placeholder -->
+                <img src="assets/images/Login 1.png" alt="Logo" class="w-240 mb-4">
+                <!-- Connect, Collaborate, Succeed Text as Image -->
+            </div>
+        </div>
+
+        <!-- Right Section with Register Form (Full Height) -->
+        <div class="w-full md:w-1/2 p-8 flex flex-col justify-start items-center slide-right overflow-y-auto">
+            <form method="POST" action="{{ route('register') }}" class="w-full max-w-md">
+                @csrf
+                <!-- Text Header -->
+                <h2 class="text-4xl font-extrabold text-[#1F4482] mb-4">Register</h2>
+                <p class="block text-sm font-medium text-gray-600 mb-6">Create a new account if you don't have one</p>
+
+                <!-- Name Input -->
+                <div class="relative mt-8 mb-8">
+                    <label for="name" class="block text-sm font-medium text-gray-600 mb-1">Full Name</label>
+                    <input id="name" type="text" name="nama_lengkap" placeholder="Enter Full Name"
+                        class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 @error('nama_lengkap') border-red-500 @enderror"
+                        value="{{ old('nama_lengkap') }}">
+                    @error('nama_lengkap') <p class="text-red-500 text-sm absolute mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <!-- Username Input -->
+                <div class="relative mb-8">
+                    <label for="username" class="block text-sm font-medium text-gray-600 mb-1">Username</label>
+                    <input id="username" type="text" name="username" placeholder="Enter Username"
+                        class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 @error('username') border-red-500 @enderror"
+                        value="{{ old('username') }}">
+                    @error('username') <p class="text-red-500 text-sm absolute mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <!-- Email Input -->
+                <div class="relative mb-8">
+                    <label for="email" class="block text-sm font-medium text-gray-600 mb-1">Email Address</label>
+                    <input id="email" type="email" name="email" placeholder="Enter Email"
+                        class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 @error('email') border-red-500 @enderror"
+                        value="{{ old('email') }}">
+                    @error('email') <p class="text-red-500 text-sm absolute mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <!-- Role Input -->
+                <div class="relative mb-8">
+                    <label for="role" class="block text-sm font-medium text-gray-600 mb-1">Role</label>
+                    <select name="role" required
+                        class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <option value="client" {{ old('role') == 'client' ? 'selected' : '' }}>Client</option>
+                        <option value="worker" {{ old('role') == 'worker' ? 'selected' : '' }}>Worker</option>
+                    </select>
+                    @error('role') <p class="text-red-500 text-sm absolute mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <!-- Password Input -->
+                <div class="relative mb-8">
+                    <label for="password" class="block text-sm font-medium text-gray-600 mb-1">Password</label>
+                    <input id="password" type="password" name="password" placeholder="Enter Password"
+                        class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        autocomplete="new-password" required>
+                    <button type="button" onclick="togglePassword()"
+                        class="absolute right-3 top-1/2 transform -translate-y-1">
+                        <i id="eye-icon" class="fa-solid fa-eye text-gray-500"></i>
+                    </button>
+                    @error('password') <p class="text-red-500 text-sm absolute mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <!-- Confirm Password Input -->
+                <div class="relative mb-8">
+                    <label for="password_confirmation" class="block text-sm font-medium text-gray-600 mb-1">Confirm
+                        Password</label>
+                    <input id="password_confirmation" type="password" name="password_confirmation"
+                        placeholder="Confirm Password"
+                        class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        autocomplete="new-password" required>
+                    <button type="button" onclick="togglePassword()"
+                        class="absolute right-3 top-1/2 transform -translate-y-1">
+                        <i id="eye-icon-confirm" class="fa-solid fa-eye text-gray-500"></i>
+                    </button>
+                    @error('password_confirmation') <p class="text-red-500 text-sm absolute mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Phone Input -->
+                <div class="relative mb-8">
+                    <label for="nomor_telepon" class="block text-sm font-medium text-gray-600 mb-1">Phone Number</label>
+                    <input id="nomor_telepon" type="text" name="nomor_telepon" placeholder="Enter Phone Number"
+                        class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        value="{{ old('nomor_telepon') }}" required>
+                    @error('phone') <p class="text-red-500 text-sm absolute mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit"
+                    class="w-full mt-4 inline-block bg-[#183E74] font-semibold hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">Sign
+                    Up</button>
+
+                <!-- Login Link -->
+                <p class="text-sm text-gray-600 mt-3 mb-6">Already have an account? <a href="{{ route('login') }}"
+                        class="text-sm font-semibold text-[#1F4482] hover:underline">Login</a></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            let passwordField = document.getElementById("password");
+            let passwordConfirmField = document.getElementById("password_confirmation");
+            let eyeIcon = document.getElementById("eye-icon");
+            let eyeIconConfirm = document.getElementById("eye-icon-confirm");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                passwordConfirmField.type = "text";
+                eyeIcon.classList.remove("fa-eye");
+                eyeIcon.classList.add("fa-eye-slash");
+                eyeIconConfirm.classList.remove("fa-eye");
+                eyeIconConfirm.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                passwordConfirmField.type = "password";
+                eyeIcon.classList.remove("fa-eye-slash");
+                eyeIcon.classList.add("fa-eye");
+                eyeIconConfirm.classList.remove("fa-eye-slash");
+                eyeIconConfirm.classList.add("fa-eye");
+            }
+        }
+    </script>
+</body>
 
 </html>
