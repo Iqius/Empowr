@@ -24,13 +24,13 @@ class AppServiceProvider extends ServiceProvider
         View::composer('*', function ($view) {
             if (auth()->check()) {
                 $unreadCount = Notification::where('user_id', auth()->id())
-                                        ->where('is_read', false)
-                                        ->count();
+                    ->where('is_read', false)
+                    ->count();
 
                 $notifications = Notification::where('user_id', auth()->id())
-                                            ->latest()
-                                            ->take(5)
-                                            ->get();
+                    ->latest()
+                    ->take(5)
+                    ->get();
 
                 $view->with([
                     'unreadCount' => $unreadCount,

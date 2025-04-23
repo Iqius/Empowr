@@ -133,6 +133,8 @@
                     Pengalaman: {{ $worker->pengalaman_kerja }} tahun |
                     Rating: {{ number_format($avgRating, 1) }}
                 </p>
+
+                <!-- lamran worker -->
                 <div class="flex gap-2 mt-2">
                     <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
                     <form action="{{ route('client.hire') }}" method="POST">
