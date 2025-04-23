@@ -9,10 +9,8 @@
                     <div class="flex flex-col md:flex-row md:gap-4">
                         <!-- Kiri -->
                         <div class="basis-1/6 md:basis-1/6 p-4 flex flex-col items-center justify-center md:justify-end">
-                            @foreach ($applicants as $applicant)
                                 @php
-                                    $client = $applicant->task;
-                                    $user = $client->client;
+                                    $user = $job->client;
                                 @endphp 
                                 @php
                                     $isClient = Auth::user()->role === 'client';
@@ -23,7 +21,6 @@
 
                                 <img id="profile-image" src="{{ $imagePath }}" alt="Profile Picture"
                                     class="w-20 h-20 sm:w-23 sm:h-23 rounded object-cover border border-gray-300">
-                            @endforeach
                         </div>
 
 

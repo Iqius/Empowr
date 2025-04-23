@@ -47,6 +47,10 @@ Route::post('/hire', [JobController::class, 'Clienthire'])->name('client.hire');
 Route::post('/reject', [JobController::class, 'ClientReject'])->name('client.reject');
 // --bayar
 Route::post('/bayar/{task}', [JobController::class, 'bayar'])->name('client.bayar');
+// --Buat job
+Route::post('/jobs', [JobController::class, 'createJobClient'])->name('jobs.store');
+
+
 
 // WORKER
 // -- DASHBOARD
@@ -55,62 +59,39 @@ Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->mid
 Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->name('jobs.Worker');
 
 
-// --Profile update
-Route::get('/profil', [ProfileController::class, 'showProfile'])->name('profil');
-Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
-
-
-
-
 
 ####### GENERAL
 // List all Jobs
 Route::get('/dashboard/jobs', [JobController::class, 'index'])->name('jobs.index');
 // detail jobs di fitur jobs
 Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
-
-
-
-
-
-
-// Authentication Routes
-
-
-// Dashboard (Protected by Auth Middleware)
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-   
-    
-
-    // Client & Worker Dashboard
-   
-    Route::get('/client/new', [AuthController::class, 'clientNew'])->name('client.new');
-    
-    
-    // Job Routes
-    // Memastikan data dikirim ke view
-    Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
-
-    //chat
-    Route::get('/chat', [\Chatify\Http\Controllers\MessagesController::class, 'index'])->name('chat');
-    
-
-});
-// Route::post('/update-profile', [UserController::class, 'update']);
-
 Route::get('/my-jobs', [JobController::class, 'myJobs'])->name('jobs.my');
+// --Profile update
+Route::get('/profil', [ProfileController::class, 'showProfile'])->name('profil');
+Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
+// --CHAT MASIH BELUM PASTI
+Route::get('/chat', [\Chatify\Http\Controllers\MessagesController::class, 'index'])->name('chat');
+// --In progress jobs
+Route::get('/In-progress-jobs', [JobController::class, 'DetailJobsInProgress'])->name('inProgress.jobs');
+
+
+
+
+
+
+
+
+
+
+
+
+
 Route::get('/jobs/manage/{id}', [JobController::class, 'manage'])->name('jobs.manage');
 Route::delete('/jobs/delete/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
 Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
 Route::get('/jobs/data', [JobController::class, 'getJobData'])->name('jobs.data');
 
-// Route::get('/jobs/{job}/chat/{user}', [ChatController::class, 'index'])->name('jobs.chat');
-// Route::post('/jobs/{job}/chat/{user}', [ChatController::class, 'send'])->name('jobs.chat.send');
-// Route::get('/manage-worker/{id}', [JobController::class, 'manage'])->name('manage');
+
 Route::get('/my-job-worker', function () {return view('myJobWorker');})->name('myjob.worker');
 Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->name('manage.worker');
 

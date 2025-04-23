@@ -18,12 +18,12 @@ class JobController extends Controller
     public function index()
     {
         $jobs = task::all();
-        return view('jobs', compact('jobs'));
+        return view('General.jobs', compact('jobs'));
     }
 
 
     // Create job Client
-    public function store(Request $request)
+    public function createJobClient(Request $request)
     {
         $request->validate([
             //     'title' => 'required|string|max:255',
@@ -103,10 +103,16 @@ class JobController extends Controller
     {
         $user = Auth::user();
         $workerProfile = $user->workerProfile;
+        // Ambil TaskApplication yang berhubungan dengan workerProfile
         $taskApplied = TaskApplication::with(['task', 'profile'])
-        ->where('profile_id', $workerProfile->id)
-        ->get();
-        return view('Worker.Jobs.myJobWorker', compact('taskApplied'));
+            ->where('profile_id', $workerProfile->id)
+            ->get(); // Semua lamaran yang diterima oleh workerProfile
+
+        // Ambil Task yang berhubungan dengan workerProfile (task yang dikerjakan oleh worker)
+        $task = Task::with('worker')
+            ->where('profile_id', $workerProfile->id) // Asumsi profile_id di task adalah id dari workerProfile
+            ->get(); 
+        return view('Worker.Jobs.myJobWorker', compact('taskApplied','task'));
     }
 
 
@@ -233,11 +239,10 @@ class JobController extends Controller
         if (!$task->bayar) {
             return back()->with('error', 'Silakan bayar terlebih dahulu sebelum merekrut worker.');
         }
-    
         $profile = WorkerProfile::findOrFail($request->worker_profile_id);
 
         // 2. Update task
-        $task->profile_id = $profile->user_id;
+        $task->profile_id = $profile->id;
         $task->status = 'in progress';
         $task->save();
         
@@ -323,9 +328,12 @@ class JobController extends Controller
         if ($hash === $request->signature_key) {
             if($request->transaction_status === 'capture') {
                 $task = Task::where('id', $request->order_id)->first();
-                if ($task) {
+                if ($task->bayar==0) {
                     $task->bayar = true;
                     $task->price = $request->gross_amount;
+                    $task->save();
+                }else if($task->bayar==1){
+                    $task->price = $task->price + $request->gross_amount;
                     $task->save();
                 }
             } elseif ($request->transaction_status === 'pending') {
@@ -347,5 +355,18 @@ class JobController extends Controller
         }
 
         return view('client.Jobs.invoice', compact('task'));
+    }
+
+    // Fungsi tampilan detail Job yang sudah in progres
+    public function DetailJobsInProgress(){
+        #DUMMY
+        $steps = [
+            'step1' => 'approved',  // Step 1 disetujui
+            'step2' => 'approved',  // Step 2 ditolak
+            'step3' => 'rejected',   // Step 3 belum diproses
+            'step4' => 'pending',   // Step 4 belum diproses
+        ];
+
+        return view('General.detailProgressionJobs', compact('steps'));
     }
 }

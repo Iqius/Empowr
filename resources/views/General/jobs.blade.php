@@ -16,17 +16,20 @@
         @endphp
 
         @foreach ($task as $job)
-            <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200" data-status="{{ $job->status }}">
-                <a href="{{ route('jobs.show', $job->id) }}">
-                    <p class="text-blue-600 font-semibold text-base sm:text-lg">{{ $job->title }}</p>
-                    <p class="text-black font-bold mt-2 text-sm sm:text-base">
-                        Rp {{ number_format($job->price, 0, ',', '.') }}
-                    </p>
-                    <p class="text-gray-500 text-sm">By {{ $job->user->nama_lengkap ?? 'Unknown' }}</p>
-                    <p class="text-xs text-gray-400 mt-1">Status: {{ $job->status }}</p>
-                </a>
-            </div>
+            @if($job->status == 'open') <!-- Cek apakah statusnya 'open' -->
+                <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200" data-status="{{ $job->status }}">
+                    <a href="{{ route('jobs.show', $job->id) }}">
+                        <p class="text-blue-600 font-semibold text-base sm:text-lg">{{ $job->title }}</p>
+                        <p class="text-black font-bold mt-2 text-sm sm:text-base">
+                            Rp {{ number_format($job->price, 0, ',', '.') }}
+                        </p>
+                        <p class="text-gray-500 text-sm">By {{ $job->user->nama_lengkap ?? 'Unknown' }}</p>
+                        <p class="text-xs text-gray-400 mt-1">Status: {{ $job->status }}</p>
+                    </a>
+                </div>
+            @endif
         @endforeach
+
     </div>
 </section>
 
