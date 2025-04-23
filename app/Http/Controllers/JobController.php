@@ -8,6 +8,9 @@ use App\Models\TaskApplication;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\WorkerProfile;
+use App\Models\User;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class JobController extends Controller
 {
@@ -254,30 +257,95 @@ class JobController extends Controller
     
         return back()->with('success', 'Lamaran berhasil dihapus.');
     }
-    // public function showApplicants($taskId)
-    // {
-    //     $applicants = TaskApplication::with(['profile.user', 'profile'])
-    //         ->where('task_id', $taskId)
-    //         ->get()
-    //         ->map(function ($application) {
-    //             return [
-    //                 'name' => $application->profile->user->nama_lengkap ?? '-',
-    //                 'note' => $application->catatan,
-    //                 'price' => (int) $application->bidPrice,
-    //                 'experience' => $application->profile->experience ?? 0,
-    //                 'skills' => explode(',', $application->profile->skills ?? ''),
-    //                 'education' => $application->profile->education ?? '',
-    //                 'cv' => $application->profile->cv ?? '',
-    //                 'empowrLabel' => (bool) $application->profile->empowr_label,
-    //                 'empowrAffiliate' => (bool) $application->profile->empowr_affiliate,
-    //                 'reviews' => [], // bisa ditambahkan relasi review jika ada
-    //                 'certImages' => [], // tambahkan jika punya
-    //                 'portfolios' => [] // tambahkan jika punya
-    //             ];
-    //         });
 
-    //     return view('manage', compact('applicants'));
-    // }
+    //pay
+    public function bayar(Request $request, Task $task)
+    {
+        try {
+            // Set Midtrans configuration
+            Config::$serverKey = config('midtrans.server_key');
+            Config::$isProduction = false;
+            Config::$isSanitized = true;
+            Config::$is3ds = true;
 
+            // Get data from request
+            $id = $request->id_order;
+            $amount = $request->amount;
+            
+            // Find the task and client
+            $task = Task::findOrFail($id);
+            $client = User::findOrFail($task->client_id);
+            
 
+            // Generate a unique order ID by appending timestamp
+            $uniqueOrderId = $id . '-' . time();
+
+            // Set Midtrans parameters
+            $params = array(
+                'transaction_details' => array(
+                    'order_id' => $uniqueOrderId,
+                    'gross_amount' => $amount,
+                ),
+                'customer_details' => array(
+                    'first_name' => $client->nama_lengkap,
+                    'last_name' => '',
+                    'email' => $client->email,
+                    'phone' => $client->nomor_telepon,
+                ),
+            );
+
+            // Get Snap Token
+            $snapToken = Snap::getSnapToken($params);
+            
+            // Return back to the same page with the snap token
+            return back()->with([
+                'snap_token' => $snapToken,
+                'order_id' => $uniqueOrderId,
+                'amount' => $amount
+            ]);
+        
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            
+            if (strpos($errorMessage, 'order_id sudah digunakan') !== false) {
+                return back()->with('error', 'Order ID sudah digunakan. Silakan coba lagi.');
+            }
+            
+            return back()->with('error', 'Terjadi kesalahan: ' . $errorMessage);
+        }
+    }
+
+    function callback(Request $request)
+    {
+        $serverKey = config('midtrans.server_key');
+        $hash = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
+
+        if ($hash === $request->signature_key) {
+            if($request->transaction_status === 'capture') {
+                $task = Task::where('id', $request->order_id)->first();
+                if ($task) {
+                    $task->bayar = true;
+                    $task->price = $request->gross_amount;
+                    $task->save();
+                }
+            } elseif ($request->transaction_status === 'pending') {
+                // Handle pending status
+            } elseif ($request->transaction_status === 'cancel' || $request->transaction_status === 'expire') {
+                // Handle cancel or expire status
+            }
+        } else {
+            return response()->json(['error' => 'Invalid signature'], 400);
+        }
+    }
+
+    function invoice($id)
+    {
+        $task = Task::where('id', $id)->first();
+
+        if (!$task) {
+            return redirect()->back()->with('error', 'Task not found.');
+        }
+
+        return view('client.Jobs.invoice', compact('task'));
+    }
 }
