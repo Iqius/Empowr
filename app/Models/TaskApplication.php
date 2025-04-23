@@ -16,6 +16,12 @@ class TaskApplication extends Model
         return $this->belongsTo(Task::class, 'task_id');
     }
 
+    public function profile()
+{
+    return $this->belongsTo(\App\Models\WorkerProfile::class, 'profile_id');
+}
+
+
     public function worker(): BelongsTo
     {
         return $this->belongsTo(WorkerProfile::class, 'profile_id');

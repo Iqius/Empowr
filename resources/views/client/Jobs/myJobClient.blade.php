@@ -1,6 +1,6 @@
-@include('client.header')
+@include('General.header')
 
-<section class="p-4 sm:p-6 md:p-8 lg:ml-64 mt-16">
+<section class="p-4 sm:p-6 md:p-8 mt-16">
 <div class="flex flex-col md:flex-row gap-4 mb-6">
     <!-- Search Input -->
     <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
@@ -13,15 +13,12 @@
         <option value="completed">Selesai Dikerjakan</option>
     </select>
 
-
-    <!-- Filter Button -->
-    <button class="p-2 border rounded bg-blue-600 text-white w-full md:w-auto">Filter</button>
 </div>
 
 
 
     <!-- Job List -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 w-full" id="jobContainer">
+    <div class="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full" id="jobContainer">
         @php
             $task = \App\Models\Task::with('user')->where('client_id', Auth::id())->get();
         @endphp
@@ -41,7 +38,7 @@
     </div>
 </section>
 
-@include('client.footer')
+@include('General.footer')
 
 <!-- Script: Filter Tab -->
 <script>

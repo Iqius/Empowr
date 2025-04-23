@@ -4,17 +4,30 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\CheckUserRole;
+use App\Http\Middleware\RoleMiddleware;
 
-// Landing Page
+
+// LANDING PAGE
 Route::get('/', function () {
     return view('Landing.landing');
 });
 
-// Authentication Routes
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
+
+
+// AUTHENTIKASI
+Route::get('/register', function () {return view('auth.register');})->name('register');
 Route::post('/register', [AuthController::class, 'register']);
+Route::get('/forgot-password', [AuthController::class, 'showForgotForm'])->name('forgot-password.form');
+Route::post('/forgot-password', [AuthController::class, 'sendOtp'])->name('forgot-password.send-otp');
+
+Route::get('/verify-otp', [AuthController::class, 'showOtpForm'])->name('forgot-password.otp-form');
+Route::post('/verify-otp-check', [AuthController::class, 'checkOtp'])->name('forgot-password.verify-otp-check');
+
+// Langkah 2: Set password baru
+Route::get('/set-password', [AuthController::class, 'showSetPasswordForm'])->name('forgot-password.set-password-form');
+Route::post('/verify-otp-set-password', [AuthController::class, 'setNewPassword'])->name('forgot-password.set-new-password');
+Route::post('/resend-otp', [AuthController::class, 'resendOtp'])->name('forgot-password.resend-otp');
 
 Route::get('/login', function () {
     return view('auth.login');
@@ -22,53 +35,96 @@ Route::get('/login', function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+
+// CLIENT
+// -- DASHBOARD
+Route::get('/client/dashboard', [AuthController::class, 'clientDashboard'])->middleware(['auth'])->name('client.dashboardClient');
+// --Show profile worker yang melamar
+Route::get('/profil/{id}', [ProfileController::class, 'showProfileWorkerLamar'])->name('profile.worker.lamar');
+// --Hire worker
+Route::post('/hire', [JobController::class, 'Clienthire'])->name('client.hire');
+// --Client Tolak Worker
+Route::post('/reject', [JobController::class, 'ClientReject'])->name('client.reject');
+// --bayar
+Route::post('/bayar/{task}', [JobController::class, 'bayar'])->name('client.bayar');
+
+// WORKER
+// -- DASHBOARD
+Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->middleware(['auth'])->name('worker.dashboardWorker');
+// MyJobs
+Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->name('jobs.Worker');
+
+
+// --Profile update
+Route::get('/profil', [ProfileController::class, 'showProfile'])->name('profil');
+Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
+
+
+
+
+
+####### GENERAL
+// List all Jobs
+Route::get('/dashboard/jobs', [JobController::class, 'index'])->name('jobs.index');
+// detail jobs di fitur jobs
+Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
+
+
+
+
+
+
+// Authentication Routes
+
+
 // Dashboard (Protected by Auth Middleware)
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
 
-    // Profil User
-    Route::get('/profil', function () {
-        return view('profil');
-    })->name('profil');
-    Route::post('/profil/update', [AuthController::class, 'updateProfile'])->name('profil.update');
+   
+    
 
     // Client & Worker Dashboard
-    Route::get('/client/dashboard', [AuthController::class, 'clientDashboard'])->name('client.dashboardClient');
-    Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->name('worker.dashboardWorker');
+   
     Route::get('/client/new', [AuthController::class, 'clientNew'])->name('client.new');
-    Route::get('/worker/jobs', [AuthController::class, 'workerJobs'])->name('worker.jobs');
-
+    
+    
     // Job Routes
-    Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index'); // Memastikan data dikirim ke view
+    // Memastikan data dikirim ke view
     Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
 
     //chat
     Route::get('/chat', [\Chatify\Http\Controllers\MessagesController::class, 'index'])->name('chat');
+    
 
 });
 // Route::post('/update-profile', [UserController::class, 'update']);
-Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
+
 Route::get('/my-jobs', [JobController::class, 'myJobs'])->name('jobs.my');
 Route::get('/jobs/manage/{id}', [JobController::class, 'manage'])->name('jobs.manage');
 Route::delete('/jobs/delete/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
 Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
 Route::get('/jobs/data', [JobController::class, 'getJobData'])->name('jobs.data');
+
 // Route::get('/jobs/{job}/chat/{user}', [ChatController::class, 'index'])->name('jobs.chat');
 // Route::post('/jobs/{job}/chat/{user}', [ChatController::class, 'send'])->name('jobs.chat.send');
-Route::get('/manage-worker', function () {return view('manageWorker');})->name('manage.worker');
+// Route::get('/manage-worker/{id}', [JobController::class, 'manage'])->name('manage');
 Route::get('/my-job-worker', function () {return view('myJobWorker');})->name('myjob.worker');
+Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->name('manage.worker');
+
 
 Route::post('/task/{task}/apply', [JobController::class, 'apply'])->name('task.apply');
 Route::post('/application/{id}/accept', [JobController::class, 'accept'])->name('application.accept');
 
 Route::get('/tasks/{id}/applicants', [JobController::class, 'showApplicants']);
 
+//arbitrae
+Route::get('/arbitrase', function () {return view('arbitrase');});
 
 
-Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
 Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage']);
 
-Route::get('/profil', [AuthController::class, 'showProfile'])->name('profil');
+

@@ -32,4 +32,17 @@ class WorkerProfile extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function reviews()
+    {
+        return $this->hasMany(\App\Models\Review::class, 'worker_id');
+    }
+    public function certifications()
+    {
+        return $this->hasMany(Sertifikasi::class, 'worker_id');
+    }
+    public function portfolios()
+    {
+        return $this->hasMany(\App\Models\Portofolio::class, 'worker_id');
+    }
+
 }
