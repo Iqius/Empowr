@@ -29,7 +29,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('profile_id')->references('user_id')->on('worker_profiles')->onDelete('set null');
+            $table->foreign('profile_id')->references('id')->on('worker_profiles')->onDelete('set null');
         });
     }
 

@@ -24,7 +24,7 @@ class ProfileController extends Controller
         $sertifikasi = Sertifikasi::with('images')->where('worker_id', $user->id)->get();
         $portofolio = Portofolio::with('images')->where('worker_id', $user->id)->get();
         
-        return view('profil', compact('workerProfile', 'sertifikasi', 'portofolio'));
+        return view('General.profil', compact('workerProfile', 'sertifikasi', 'portofolio'));
     }
 
 

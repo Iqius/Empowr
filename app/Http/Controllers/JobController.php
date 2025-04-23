@@ -8,6 +8,7 @@ use App\Models\TaskApplication;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\WorkerProfile;
+use App\Models\Notification;
 use App\Models\User;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -18,12 +19,12 @@ class JobController extends Controller
     public function index()
     {
         $jobs = task::all();
-        return view('jobs', compact('jobs'));
+        return view('General.jobs', compact('jobs'));
     }
 
 
     // Create job Client
-    public function store(Request $request)
+    public function createJobClient(Request $request)
     {
         $request->validate([
             //     'title' => 'required|string|max:255',
@@ -34,7 +35,7 @@ class JobController extends Controller
             //     'provisions' => 'nullable|string',
             //     'revisions' => 'required|integer',
             //     'taskType' => 'required|in:paid,free',
-            'job_file' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240',// max 2MB
+            'job_file' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240', // max 2MB
         ]);
 
         // Handle file upload jika ada
@@ -88,10 +89,10 @@ class JobController extends Controller
             'worker.certifications.images',
             'worker.portfolios.images',
         ])
-        ->where('task_id', $id)
-        ->get();
+            ->where('task_id', $id)
+            ->get();
         // Kirim ke view
-        return view('General.showJobsDetail', compact('job','applicants'));
+        return view('General.showJobsDetail', compact('job', 'applicants'));
     }
     public function myJobs()
     {
@@ -103,14 +104,20 @@ class JobController extends Controller
     {
         $user = Auth::user();
         $workerProfile = $user->workerProfile;
+        // Ambil TaskApplication yang berhubungan dengan workerProfile
         $taskApplied = TaskApplication::with(['task', 'profile'])
-        ->where('profile_id', $workerProfile->id)
-        ->get();
-        return view('Worker.Jobs.myJobWorker', compact('taskApplied'));
+            ->where('profile_id', $workerProfile->id)
+            ->get(); // Semua lamaran yang diterima oleh workerProfile
+
+        // Ambil Task yang berhubungan dengan workerProfile (task yang dikerjakan oleh worker)
+        $task = Task::with('worker')
+            ->where('profile_id', $workerProfile->id) // Asumsi profile_id di task adalah id dari workerProfile
+            ->get(); 
+        return view('Worker.Jobs.myJobWorker', compact('taskApplied','task'));
     }
 
 
-    
+
     public function manage($id, Request $request)
     {
         $task = Task::with('user')->findOrFail($id);
@@ -127,18 +134,18 @@ class JobController extends Controller
             'worker.certifications.images',
             'worker.portfolios.images',
         ])
-        ->where('task_id', $id)
-        ->get()
-        ->sortBy(function ($applicant) use ($sortBy) {
-            if ($sortBy === 'experience') {
-                return $applicant->worker->pengalaman_kerja ?? 0;
-            }
-            return $applicant->{$sortBy} ?? 0;
-        }, SORT_REGULAR, $request->get('dir') === 'desc')
-        ->values(); // reset index
+            ->where('task_id', $id)
+            ->get()
+            ->sortBy(function ($applicant) use ($sortBy) {
+                if ($sortBy === 'experience') {
+                    return $applicant->worker->pengalaman_kerja ?? 0;
+                }
+                return $applicant->{$sortBy} ?? 0;
+            }, SORT_REGULAR, $request->get('dir') === 'desc')
+            ->values(); // reset index
         return view('client.jobs.manage', compact('task', 'applicants'));
     }
-    
+
 
     public function manageWorker($id)
     {
@@ -148,10 +155,10 @@ class JobController extends Controller
         $application = TaskApplication::where('task_id', $id)
             ->where('profile_id', Auth::id())
             ->first();
-    
+
         return view('manageWorker', compact('task', 'application'));
     }
-    
+
     public function destroy($id)
     {
         $task = Task::findOrFail($id);
@@ -226,9 +233,9 @@ class JobController extends Controller
             'task_id' => 'required|exists:task,id',
             'worker_profile_id' => 'required|exists:worker_profiles,id',
         ]);
-    
+
         $task = Task::find($request->task_id);
-    
+
         // 1. Cek apakah sudah bayar
         if (!$task->bayar) {
             return back()->with('error', 'Silakan bayar terlebih dahulu sebelum merekrut worker.');
@@ -237,10 +244,10 @@ class JobController extends Controller
         $profile = WorkerProfile::findOrFail($request->worker_profile_id);
 
         // 2. Update task
-        $task->profile_id = $profile->user_id;
+        $task->profile_id = $profile->id;
         $task->status = 'in progress';
         $task->save();
-        
+
         TaskApplication::where('task_id', $task->id)->delete();
 
         return back()->with('success', 'Worker berhasil direkrut, dan semua lamaran lainnya telah dihapus.');
@@ -252,9 +259,21 @@ class JobController extends Controller
         $request->validate([
             'application_id' => 'required|exists:task_applications,id',
         ]);
-    
-        TaskApplication::where('id', $request->application_id)->delete();
-    
+
+        $application = TaskApplication::findOrFail($request->application_id);
+        // $task = Task::findOrFail($request->task_id);
+        $user = Auth::user();
+
+        // Simpan notifikasi untuk worker
+        Notification::create([
+            'user_id' => $application->worker->user_id,
+            'sender_name' => $user->nama_lengkap,
+            'message' => 'Lamaran kamu untuk task <b>"' . $application->task->title . '"</b> telah ditolak.',
+            'is_read' => false,
+        ]);
+
+        $application->delete();
+
         return back()->with('success', 'Lamaran berhasil dihapus.');
     }
 
@@ -271,11 +290,11 @@ class JobController extends Controller
             // Get data from request
             $id = $request->id_order;
             $amount = $request->amount;
-            
+
             // Find the task and client
             $task = Task::findOrFail($id);
             $client = User::findOrFail($task->client_id);
-            
+
 
             // Generate a unique order ID by appending timestamp
             $uniqueOrderId = $id . '-' . time();
@@ -296,21 +315,20 @@ class JobController extends Controller
 
             // Get Snap Token
             $snapToken = Snap::getSnapToken($params);
-            
+
             // Return back to the same page with the snap token
             return back()->with([
                 'snap_token' => $snapToken,
                 'order_id' => $uniqueOrderId,
                 'amount' => $amount
             ]);
-        
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
-            
+
             if (strpos($errorMessage, 'order_id sudah digunakan') !== false) {
                 return back()->with('error', 'Order ID sudah digunakan. Silakan coba lagi.');
             }
-            
+
             return back()->with('error', 'Terjadi kesalahan: ' . $errorMessage);
         }
     }
@@ -321,11 +339,14 @@ class JobController extends Controller
         $hash = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
 
         if ($hash === $request->signature_key) {
-            if($request->transaction_status === 'capture') {
+            if ($request->transaction_status === 'capture') {
                 $task = Task::where('id', $request->order_id)->first();
-                if ($task) {
+                if ($task->bayar==0) {
                     $task->bayar = true;
                     $task->price = $request->gross_amount;
+                    $task->save();
+                }else if($task->bayar==1){
+                    $task->price = $task->price + $request->gross_amount;
                     $task->save();
                 }
             } elseif ($request->transaction_status === 'pending') {
@@ -347,5 +368,18 @@ class JobController extends Controller
         }
 
         return view('client.Jobs.invoice', compact('task'));
+    }
+
+    // Fungsi tampilan detail Job yang sudah in progres
+    public function DetailJobsInProgress(){
+        #DUMMY
+        $steps = [
+            'step1' => 'approved',  // Step 1 disetujui
+            'step2' => 'approved',  // Step 2 ditolak
+            'step3' => 'rejected',   // Step 3 belum diproses
+            'step4' => 'pending',   // Step 4 belum diproses
+        ];
+
+        return view('General.detailProgressionJobs', compact('steps'));
     }
 }

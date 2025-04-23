@@ -1,33 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ✅ responsive meta -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .background-blue {
+            background-color: #1F4482;
+        }
+
+        /* Animation for sliding in */
+        .slide-left {
+            animation: slideInLeft 1s ease-out forwards;
+        }
+
+        .slide-right {
+            animation: slideInRight 1s ease-out forwards;
+        }
+
+        /* Keyframes for the slide-in effect */
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+    </style>
 </head>
-<body class="min-h-screen flex items-center justify-center bg-gray-100 px-4 sm:px-6 lg:px-8">
-    <div class="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-md xl:max-w-md p-6 sm:p-8 bg-white rounded-lg shadow-md text-center">
-        <h2 class="text-2xl sm:text-3xl font-semibold text-gray-700 mb-6">Forgot Password</h2>
 
-        @if(session('success'))
-            <div class="mb-4 text-green-600 text-sm">{{ session('success') }}</div>
-        @endif
+<body class="bg-gray-100">
 
-        <form method="POST" action="{{ route('forgot-password.send-otp') }}">
-            @csrf
-            <input type="email" name="email" placeholder="Masukkan email"
-                   class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4 text-sm sm:text-base"
-                   value="{{ old('email') }}" required>
-            @error('email')
-                <div class="text-red-500 text-sm mb-2">{{ $message }}</div>
-            @enderror
+    <div class="flex w-full h-screen">
 
-            <button type="submit"
-                    class="w-full bg-blue-600 hover:bg-blue-700 transition-colors text-white py-2 rounded-lg text-sm sm:text-base">
-                Kirim OTP
-            </button>
-        </form>
+        <!-- Left Section with Image and Text (Full Height) -->
+        <div class="hidden md:flex w-1/2 background-blue p-12 justify-center items-center text-white slide-left">
+            <div class="flex flex-col justify-center items-center space-y-6">
+                <!-- Logo Placeholder -->
+                <img src="assets/images/Login 1.png" alt="Logo" class="w-240 mb-4">
+                <!-- Connect, Collaborate, Succeed Text as Image -->
+            </div>
+        </div>
+
+        <!-- Right Section with Forgot Password Form (Full Height) -->
+        <div class="w-full md:w-1/2 p-8 flex flex-col justify-center items-center slide-right overflow-y-auto">
+            <form method="POST" action="{{ route('forgot-password.send-otp') }}" class="w-full max-w-md">
+                @csrf
+                <h2 class="text-4xl font-extrabold text-[#1F4482] mb-4 text-center">Forgot Password</h2>
+                <p class="block text-sm font-medium text-gray-600 mb-6 text-center">Enter your email to receive a reset
+                    link</p>
+
+                <!-- Email Input -->
+                <div class="relative mb-8">
+                    <label for="email" class="block text-sm font-medium text-gray-600 mb-1">Email Address</label>
+                    <input id="email" type="email" name="email" placeholder="Enter Email"
+                        class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 @error('email') border-red-500 @enderror"
+                        value="{{ old('email') }}" required>
+                    @error('email') <p class="text-red-500 text-sm absolute mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit"
+                    class="w-full mt-4 inline-block bg-[#183E74] font-semibold hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">Send
+                    OTP</button>
+
+                <!-- Back to Login Link -->
+                <p class="text-sm text-gray-600 mt-3 text-center">Remember your password? <a href="{{ route('login') }}"
+                        class="text-sm font-semibold text-[#1F4482] hover:underline">Login</a></p>
+            </form>
+        </div>
     </div>
+
+    <script>
+        document.getElementById("closeModal")?.addEventListener("click", function () {
+            window.location.href = "{{ route('login') }}";
+        });
+
+        // SweetAlert2 for success message
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'OTP Sent Successfully!',
+                text: "{{ session('success') }}",
+                confirmButtonColor: '#2563EB',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = "{{ route('forgot-password.form') }}"; // Redirect after alert
+            });
+        @endif
+    </script>
 </body>
+
 </html>
