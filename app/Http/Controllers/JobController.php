@@ -28,14 +28,6 @@ class JobController extends Controller
     public function createJobClient(Request $request)
     {
         $request->validate([
-            //     'title' => 'required|string|max:255',
-            //     'description' => 'required|string',
-            //     'price' => 'required|numeric',
-            //     'deadline' => 'required|date',
-            //     'deadline_promotion' => 'required|date',
-            //     'provisions' => 'nullable|string',
-            //     'revisions' => 'required|integer',
-            //     'taskType' => 'required|in:paid,free',
             'job_file' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240', // max 2MB
         ]);
 
@@ -44,14 +36,6 @@ class JobController extends Controller
         if ($request->hasFile('job_file')) {
             $path = $request->file('job_file')->store('task_files', 'public');
         }
-
-        // dd($request->hasFile('job_file'), $path);
-        // dd($request->all());
-        // dd([
-        //     'path' => $path,
-        //     'job_file_input' => $request->file('job_file'),
-        //     'job_file_name' => $request->file('job_file')?->getClientOriginalName(),
-        // ]);
 
         $task = Task::create([
             // 'id' => Str::uuid(),
