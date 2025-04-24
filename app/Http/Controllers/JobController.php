@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\WorkerProfile;
 use App\Models\Notification;
+use App\Models\Progression;
 use App\Models\User;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -371,15 +372,29 @@ class JobController extends Controller
     }
 
     // Fungsi tampilan detail Job yang sudah in progres
-    public function DetailJobsInProgress(){
-        #DUMMY
-        $steps = [
-            'step1' => 'approved',  // Step 1 disetujui
-            'step2' => 'approved',  // Step 2 ditolak
-            'step3' => 'rejected',   // Step 3 belum diproses
-            'step4' => 'pending',   // Step 4 belum diproses
-        ];
+    public function DetailJobsInProgress($id)
+    {
+        // Ambil task beserta relasi user
+        $task = Task::with('user')->findOrFail($id);
 
-        return view('General.detailProgressionJobs', compact('steps'));
+        // Ambil semua progression dan kelompokkan berdasarkan progression_ke
+        $progressionsByStep = Progression::with('task')
+            ->where('task_id', $task->id)
+            ->get()
+            ->keyBy('progression_ke');
+
+        $progressions = $progressionsByStep->values();
+        // Mapping status approve ke masing-masing step
+        $steps = [];
+        for ($i = 1; $i <= 4; $i++) {
+            $steps['step' . $i] = $progressionsByStep[$i]->status_approve ?? 'pending';
+        }
+
+        return view('General.detailProgressionJobs', compact(
+            'task',
+            'steps',
+            'progressionsByStep',
+            'progressions'
+        ));
     }
 }

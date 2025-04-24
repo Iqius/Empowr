@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\CheckUserRole;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProgressionController;
 
 
 // LANDING PAGE
@@ -50,6 +51,8 @@ Route::post('/reject', [JobController::class, 'ClientReject'])->name('client.rej
 Route::post('/bayar/{task}', [JobController::class, 'bayar'])->name('client.bayar');
 // --Buat job
 Route::post('/jobs', [JobController::class, 'createJobClient'])->name('jobs.store');
+// --review progress
+Route::post('/task-progression/{progress}/review', [ProgressionController::class, 'review'])->name('task-progression.review');
 
 
 
@@ -58,7 +61,8 @@ Route::post('/jobs', [JobController::class, 'createJobClient'])->name('jobs.stor
 Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->middleware(['auth'])->name('worker.dashboardWorker');
 // MyJobs
 Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->name('jobs.Worker');
-
+// Upload Progress
+Route::post('/task-progression/{task}', [ProgressionController::class, 'create'])->name('task-progression.store');
 
 
 ####### GENERAL
@@ -73,7 +77,8 @@ Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->nam
 // --CHAT MASIH BELUM PASTI
 Route::get('/chat', [\Chatify\Http\Controllers\MessagesController::class, 'index'])->name('chat');
 // --In progress jobs
-Route::get('/In-progress-jobs', [JobController::class, 'DetailJobsInProgress'])->name('inProgress.jobs');
+Route::get('/in-progress-jobs/{task_id}', [JobController::class, 'DetailJobsInProgress'])->name('inProgress.jobs');
+
 
 
 

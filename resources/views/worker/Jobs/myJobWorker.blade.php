@@ -32,7 +32,7 @@
 @endforeach
 @foreach ($task as $job)
     <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200" data-status="{{ $job->status }}">
-        <a href="{{ $job->status === 'in progress' ? route('inProgress.jobs', $job->id) : route('manage.worker', $job->id) }}">
+        <a href="{{ route('inProgress.jobs', $job->id) }}">
             <p class="text-blue-600 font-semibold text-base sm:text-lg">{{ $job->title }}</p>
             <p class="text-black font-bold mt-2 text-sm sm:text-base">
                 Rp {{ number_format($job->price, 0, ',', '.') }}

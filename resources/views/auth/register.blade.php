@@ -177,6 +177,18 @@
                 eyeIconConfirm.classList.add("fa-eye");
             }
         }
+
+        @if (session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil Register!',
+            text: "{{ session('success') }}",
+            confirmButtonColor: '#2563EB',
+            confirmButtonText: 'OK'
+        }).then(() => {
+            window.location.href = '{{ route('login') }}';
+        });
+        @endif
     </script>
 </body>
 
