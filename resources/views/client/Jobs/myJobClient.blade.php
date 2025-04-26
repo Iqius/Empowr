@@ -10,7 +10,7 @@
         <option value="">Semua Status</option>
         <option value="open">Belum Dikerjakan</option>
         <option value="in progress">Sedang Dikerjakan</option>
-        <option value="completed">Selesai Dikerjakan</option>
+        <option value="completed">Selesai Dikerjakann</option>
     </select>
 
 </div>
@@ -64,7 +64,7 @@
 
         <!-- Description -->
         <div class="col-span-3">
-          <label class="block text-gray-700">Description</label>
+          <label class="block text-gray-700">Descriptionn</label>
           <textarea name="description" class="w-full p-2 border rounded" required></textarea>
         </div>
 
