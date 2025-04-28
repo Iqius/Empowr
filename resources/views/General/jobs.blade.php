@@ -301,6 +301,19 @@
             window.location.href = window.location.href;
         });
     @endif
+
+
+    @if (session('success-updated'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Pekerjaan kamu telah terselesaikan',
+            text: "{{ session('success') }}",
+            confirmButtonColor: '#2563EB',
+            confirmButtonText: 'OK'
+        }).then(() => {
+            window.location.href = window.location.href;
+        });
+    @endif
     });
 </script>
 
