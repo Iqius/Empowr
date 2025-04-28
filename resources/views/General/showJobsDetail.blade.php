@@ -79,17 +79,23 @@
                 <div class="space-y-6">
                     <div>
                         <h2 class="text-xl font-semibold text-gray-800 mb-2">About Task</h2>
-                        <p class="text-sm text-gray-600 leading-relaxed">{{ $job->description }}</p>
+                        <div class="text-sm text-gray-600 leading-relaxed">
+                            {!! $job->description ?? '-' !!}
+                        </div>
                     </div>
 
                     <div>
                         <h2 class="text-xl font-semibold text-gray-800 mb-2">Qualification</h2>
-                        <p class="text-sm text-gray-600 leading-relaxed">{{ $job->qualification ?? '-' }}</p>
+                        <div class="text-sm text-gray-600 leading-relaxed">
+                            {!! $job->qualification ?? '-' !!}
+                        </div>
                     </div>
 
                     <div>
                         <h2 class="text-xl font-semibold text-gray-800 mb-2">Rules Task</h2>
-                        <p class="text-sm text-gray-600 leading-relaxed">{{ $job->rules ?? '-' }}</p>
+                        <div class="text-sm text-gray-600 leading-relaxed">
+                            {!! $job->rules ?? '-' !!}
+                        </div>
                     </div>
 
                     <div>
@@ -111,43 +117,42 @@
         <div>
             <div class="bg-white p-6 rounded-xl shadow-sm border space-y-4">
                 <h2 class="text-lg font-semibold text-gray-800">Task Details</h2>
-                <div class="text-sm text-gray-600 space-y-3">
-                    <div>
-                        <p class="text-gray-400">Task Period (Deadline)</p>
-                        <p class="font-semibold">
-                            {{ \Carbon\Carbon::parse($job->start_date)->translatedFormat('d F Y') }} -
-                            {{ \Carbon\Carbon::parse($job->deadline)->translatedFormat('d F Y') }}
-                        </p>
-                        <p class="text-xs text-gray-400">
-                            ({{ \Carbon\Carbon::parse($job->start_date)->diffInDays($job->deadline) }} Days)</p>
-                    </div>
+                <div>
+                    <p class="text-gray-400">Task Period (Deadline)</p>
+                    <p class="font-semibold">
+                        {{ \Carbon\Carbon::parse($job->start_date)->translatedFormat('d F Y') }} -
+                        {{ \Carbon\Carbon::parse($job->deadline)->translatedFormat('d F Y') }}
+                    </p>
+                    <p class="font-semibold">
+                        ({{ \Carbon\Carbon::parse($job->start_date)->diffInDays($job->deadline) }} Days)
+                    </p>
+                </div>
 
-                    <div>
-                        <p class="text-gray-400">Task Closed</p>
-                        <p class="font-semibold">
-                            {{ \Carbon\Carbon::parse($job->deadline_promotion)->translatedFormat('d F Y') }}
-                        </p>
-                    </div>
+                <div>
+                    <p class="text-gray-400">Task Closed</p>
+                    <p class="font-semibold">
+                        {{ \Carbon\Carbon::parse($job->deadline_promotion)->translatedFormat('d F Y') }}
+                    </p>
+                </div>
 
-                    <div>
-                        <p class="text-gray-400">Task Type</p>
-                        <p class="font-semibold capitalize">{{ str_replace('_', ' ', $job->taskType) }}</p>
-                    </div>
+                <div>
+                    <p class="text-gray-400">Task Type</p>
+                    <p class="font-semibold capitalize">{{ str_replace('_', ' ', $job->taskType) }}</p>
+                </div>
 
-                    <div>
-                        <p class="text-gray-400">Category</p>
-                        <p class="font-semibold">{{ $job->category ?? '-' }}</p>
-                    </div>
+                <div>
+                    <p class="text-gray-400">Task Model</p>
+                    <p class="font-semibold capitalize">{{ str_replace('_', ' ', $job->taskModel) }}</p>
+                </div>
 
-                    <div>
-                        <p class="text-gray-400">Revision</p>
-                        <p class="font-semibold">{{ $job->revisions ?? '-' }}</p>
-                    </div>
+                <div>
+                    <p class="text-gray-400">Category</p>
+                    <p class="font-semibold">{{ $job->category ?? '-' }}</p>
+                </div>
 
-                    <div>
-                        <p class="text-gray-400">Location</p>
-                        <p class="font-semibold">{{ $job->location ?? '-' }}</p>
-                    </div>
+                <div>
+                    <p class="text-gray-400">Location</p>
+                    <p class="font-semibold">{{ $job->location ?? '-' }}</p>
                 </div>
             </div>
         </div>

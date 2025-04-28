@@ -2,13 +2,12 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- midtrans -->
-    <script type="text/javascript"
-		src="https://app.stg.midtrans.com/snap/snap.js"
-    data-client-key="{{config('midtrans.client_key')}}"></script>
-    <title>Empowr - Connect, Collaborate, Succeed!</title>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <!-- midtrans -->
+   <script type="text/javascript" src="https://app.stg.midtrans.com/snap/snap.js"
+      data-client-key="{{config('midtrans.client_key')}}"></script>
+   <title>Empowr - Connect, Collaborate, Succeed!</title>
 
    <!-- Tailwind menggunakan vite -->
    @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -25,6 +24,7 @@
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
       crossorigin="anonymous">
 
@@ -36,6 +36,10 @@
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
    <!-- Swiper JS -->
    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+   <!-- Quill Editor CSS -->
+   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
 
    <!-- style -->
    <style>
@@ -72,7 +76,7 @@
             </div>
 
             <!-- Tengah: Search Bar -->
-           
+
 
             <!-- Kanan: Ikon & Profile -->
             <div class="flex items-center space-x-3">
@@ -88,22 +92,24 @@
                      class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center relative">
                      <i class="bi bi-bell"></i>
                      @if ($unreadCount > 0)
-                     <span class="absolute -top-1 -right-1 bg-red-400 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center border border-white">
-                        {{ $unreadCount }}
-                     </span>
-                     @endif
+                   <span
+                     class="absolute -top-1 -right-1 bg-red-400 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center border border-white">
+                     {{ $unreadCount }}
+                   </span>
+                @endif
                   </button>
                   <div id="dropdown-notif"
                      class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
                      <div class="px-4 py-2 font-semibold text-blue-600 border-b">Notification</div>
                      @foreach ($notifications as $notif)
-                     <div class="px-4 py-2 border-b">
-                        <p class="font-semibold">{{ $notif->sender_name }}</p>
-                        <p class="text-sm text-gray-700">{!! $notif->message !!}</p>
-                        <p class="text-xs text-gray-400">{{ $notif->created_at->diffForHumans() }}</p>
-                     </div>
-                     @endforeach
-                     <a href="{{ route('notifications.index') }}" class="block px-4 py-2 text-center text-blue-500 hover:underline">
+                   <div class="px-4 py-2 border-b">
+                     <p class="font-semibold">{{ $notif->sender_name }}</p>
+                     <p class="text-sm text-gray-700">{!! $notif->message !!}</p>
+                     <p class="text-xs text-gray-400">{{ $notif->created_at->diffForHumans() }}</p>
+                   </div>
+                @endforeach
+                     <a href="{{ route('notifications.index') }}"
+                        class="block px-4 py-2 text-center text-blue-500 hover:underline">
                         Lihat Semua Notifikasi
                      </a>
                   </div>

@@ -18,7 +18,9 @@ Route::get('/', function () {
 
 
 // AUTHENTIKASI
-Route::get('/register', function () {return view('auth.register');})->name('register');
+Route::get('/register', function () {
+    return view('auth.register');
+})->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/forgot-password', [AuthController::class, 'showForgotForm'])->name('forgot-password.form');
 Route::post('/forgot-password', [AuthController::class, 'sendOtp'])->name('forgot-password.send-otp');
@@ -53,8 +55,13 @@ Route::post('/bayar/{task}', [JobController::class, 'bayar'])->name('client.baya
 Route::post('/jobs', [JobController::class, 'createJobClient'])->name('jobs.store');
 // --review progress
 Route::post('/task-progression/{progress}/review', [ProgressionController::class, 'review'])->name('task-progression.review');
-//  --Client complte job
+// --Client complete job
 Route::post('/{task}/complite', [ProgressionController::class, 'CompliteJob'])->name('complite.job');
+// --Tampilkan halaman Add Job New
+Route::get('/client/add-job', function () {
+    return view('client.addJobNew');
+})->middleware(['auth'])->name('client.addJobNew');
+
 
 
 
@@ -93,14 +100,15 @@ Route::get('/in-progress-jobs/{task_id}', [JobController::class, 'DetailJobsInPr
 
 
 
-
 Route::get('/jobs/manage/{id}', [JobController::class, 'manage'])->name('jobs.manage');
 Route::delete('/jobs/delete/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
 Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
 Route::get('/jobs/data', [JobController::class, 'getJobData'])->name('jobs.data');
 
 
-Route::get('/my-job-worker', function () {return view('myJobWorker');})->name('myjob.worker');
+Route::get('/my-job-worker', function () {
+    return view('myJobWorker');
+})->name('myjob.worker');
 Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->name('manage.worker');
 
 
@@ -110,7 +118,9 @@ Route::post('/application/{id}/accept', [JobController::class, 'accept'])->name(
 Route::get('/tasks/{id}/applicants', [JobController::class, 'showApplicants']);
 
 //arbitrae
-Route::get('/arbitrase', function () {return view('arbitrase');});
+Route::get('/arbitrase', function () {
+    return view('arbitrase');
+});
 
 
 

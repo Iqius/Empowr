@@ -2,10 +2,11 @@
 
 <div class="p-4 ">
   <div class="p-4 mt-14">
-    <button id="openModalBtn"
+    <a href="{{ route('client.addJobNew') }}"
       class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow mb-6">
       Add New Job
-    </button>
+    </a>
+
     <h2 class="text-xl font-semibold mb-2 flex items-center gap-1">
       Your Tasks
       <span class="text-gray-400 text-base">
@@ -254,86 +255,86 @@
 
         <!-- Task Type -->
         <div class="col-span-1">
-            <label class="block text-gray-700">Task Type</label>
-                <select name="taskType" class="w-full p-2 border rounded" required>
-                    <option value="web_development">Web Development</option>
-                    <option value="mobile_development">Mobile Development</option>
-                    <option value="game_development">Game Development</option>
-                    <option value="software_engineering">Software Engineering</option>
-                    <option value="frontend_development">Frontend Development</option>
-                    <option value="backend_development">Backend Development</option>
-                    <option value="full_stack_development">Full Stack Development</option>
-                    <option value="devops">DevOps</option>
-                    <option value="qa_testing">QA Testing</option>
-                    <option value="automation_testing">Automation Testing</option>
-                    <option value="api_integration">API Integration</option>
-                    <option value="wordpress_development">WordPress Development</option>
-                    <option value="data_science">Data Science</option>
-                    <option value="machine_learning">Machine Learning</option>
-                    <option value="ai_development">AI Development</option>
-                    <option value="data_engineering">Data Engineering</option>
-                    <option value="data_entry">Data Entry</option>
-                    <option value="seo">SEO</option>
-                    <option value="content_writing">Content Writing</option>
-                    <option value="technical_writing">Technical Writing</option>
-                    <option value="blog_writing">Blog Writing</option>
-                    <option value="copywriting">Copywriting</option>
-                    <option value="scriptwriting">Scriptwriting</option>
-                    <option value="proofreading">Proofreading</option>
-                    <option value="translation">Translation</option>
-                    <option value="transcription">Transcription</option>
-                    <option value="resume_writing">Resume Writing</option>
-                    <option value="ghostwriting">Ghostwriting</option>
-                    <option value="creative_writing">Creative Writing</option>
-                    <option value="social_media_management">Social Media Management</option>
-                    <option value="digital_marketing">Digital Marketing</option>
-                    <option value="email_marketing">Email Marketing</option>
-                    <option value="affiliate_marketing">Affiliate Marketing</option>
-                    <option value="influencer_marketing">Influencer Marketing</option>
-                    <option value="community_management">Community Management</option>
-                    <option value="search_engine_marketing">Search Engine Marketing</option>
-                    <option value="branding">Branding</option>
-                    <option value="graphic_design">Graphic Design</option>
-                    <option value="ui_ux_design">UI/UX Design</option>
-                    <option value="logo_design">Logo Design</option>
-                    <option value="motion_graphics">Motion Graphics</option>
-                    <option value="illustration">Illustration</option>
-                    <option value="video_editing">Video Editing</option>
-                    <option value="video_production">Video Production</option>
-                    <option value="animation">Animation</option>
-                    <option value="3d_modeling">3D Modeling</option>
-                    <option value="video_game_design">Video Game Design</option>
-                    <option value="audio_editing">Audio Editing</option>
-                    <option value="photography">Photography</option>
-                    <option value="photo_editing">Photo Editing</option>
-                    <option value="presentation_design">Presentation Design</option>
-                    <option value="project_management">Project Management</option>
-                    <option value="virtual_assistant">Virtual Assistant</option>
-                    <option value="customer_service">Customer Service</option>
-                    <option value="lead_generation">Lead Generation</option>
-                    <option value="market_research">Market Research</option>
-                    <option value="business_analysis">Business Analysis</option>
-                    <option value="human_resources">Human Resources</option>
-                    <option value="event_planning">Event Planning</option>
-                    <option value="bookkeeping">Bookkeeping</option>
-                    <option value="accounting">Accounting</option>
-                    <option value="tax_preparation">Tax Preparation</option>
-                    <option value="financial_analysis">Financial Analysis</option>
-                    <option value="legal_advice">Legal Advice</option>
-                    <option value="contract_drafting">Contract Drafting</option>
-                    <option value="startup_consulting">Startup Consulting</option>
-                    <option value="investment_research">Investment Research</option>
-                    <option value="real_estate_consulting">Real Estate Consulting</option>
-                    <option value="personal_assistant">Personal Assistant</option>
-                    <option value="clerical_work">Clerical Work</option>
-                    <option value="data_analysis">Data Analysis</option>
-                    <option value="business_coaching">Business Coaching</option>
-                    <option value="career_coaching">Career Coaching</option>
-                    <option value="life_coaching">Life Coaching</option>
-                    <option value="consulting">Consulting</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
+          <label class="block text-gray-700">Task Type</label>
+          <select name="taskType" class="w-full p-2 border rounded" required>
+            <option value="web_development">Web Development</option>
+            <option value="mobile_development">Mobile Development</option>
+            <option value="game_development">Game Development</option>
+            <option value="software_engineering">Software Engineering</option>
+            <option value="frontend_development">Frontend Development</option>
+            <option value="backend_development">Backend Development</option>
+            <option value="full_stack_development">Full Stack Development</option>
+            <option value="devops">DevOps</option>
+            <option value="qa_testing">QA Testing</option>
+            <option value="automation_testing">Automation Testing</option>
+            <option value="api_integration">API Integration</option>
+            <option value="wordpress_development">WordPress Development</option>
+            <option value="data_science">Data Science</option>
+            <option value="machine_learning">Machine Learning</option>
+            <option value="ai_development">AI Development</option>
+            <option value="data_engineering">Data Engineering</option>
+            <option value="data_entry">Data Entry</option>
+            <option value="seo">SEO</option>
+            <option value="content_writing">Content Writing</option>
+            <option value="technical_writing">Technical Writing</option>
+            <option value="blog_writing">Blog Writing</option>
+            <option value="copywriting">Copywriting</option>
+            <option value="scriptwriting">Scriptwriting</option>
+            <option value="proofreading">Proofreading</option>
+            <option value="translation">Translation</option>
+            <option value="transcription">Transcription</option>
+            <option value="resume_writing">Resume Writing</option>
+            <option value="ghostwriting">Ghostwriting</option>
+            <option value="creative_writing">Creative Writing</option>
+            <option value="social_media_management">Social Media Management</option>
+            <option value="digital_marketing">Digital Marketing</option>
+            <option value="email_marketing">Email Marketing</option>
+            <option value="affiliate_marketing">Affiliate Marketing</option>
+            <option value="influencer_marketing">Influencer Marketing</option>
+            <option value="community_management">Community Management</option>
+            <option value="search_engine_marketing">Search Engine Marketing</option>
+            <option value="branding">Branding</option>
+            <option value="graphic_design">Graphic Design</option>
+            <option value="ui_ux_design">UI/UX Design</option>
+            <option value="logo_design">Logo Design</option>
+            <option value="motion_graphics">Motion Graphics</option>
+            <option value="illustration">Illustration</option>
+            <option value="video_editing">Video Editing</option>
+            <option value="video_production">Video Production</option>
+            <option value="animation">Animation</option>
+            <option value="3d_modeling">3D Modeling</option>
+            <option value="video_game_design">Video Game Design</option>
+            <option value="audio_editing">Audio Editing</option>
+            <option value="photography">Photography</option>
+            <option value="photo_editing">Photo Editing</option>
+            <option value="presentation_design">Presentation Design</option>
+            <option value="project_management">Project Management</option>
+            <option value="virtual_assistant">Virtual Assistant</option>
+            <option value="customer_service">Customer Service</option>
+            <option value="lead_generation">Lead Generation</option>
+            <option value="market_research">Market Research</option>
+            <option value="business_analysis">Business Analysis</option>
+            <option value="human_resources">Human Resources</option>
+            <option value="event_planning">Event Planning</option>
+            <option value="bookkeeping">Bookkeeping</option>
+            <option value="accounting">Accounting</option>
+            <option value="tax_preparation">Tax Preparation</option>
+            <option value="financial_analysis">Financial Analysis</option>
+            <option value="legal_advice">Legal Advice</option>
+            <option value="contract_drafting">Contract Drafting</option>
+            <option value="startup_consulting">Startup Consulting</option>
+            <option value="investment_research">Investment Research</option>
+            <option value="real_estate_consulting">Real Estate Consulting</option>
+            <option value="personal_assistant">Personal Assistant</option>
+            <option value="clerical_work">Clerical Work</option>
+            <option value="data_analysis">Data Analysis</option>
+            <option value="business_coaching">Business Coaching</option>
+            <option value="career_coaching">Career Coaching</option>
+            <option value="life_coaching">Life Coaching</option>
+            <option value="consulting">Consulting</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
 
         <!-- Provisions -->
         <div class="col-span-3">

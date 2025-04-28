@@ -13,8 +13,23 @@ class Task extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'id', 'client_id', 'profile_id', 'title', 'description', 'deadline',
-        'deadline_promotion', 'provisions', 'price', 'status', 'revisions', 'taskType', 'job_file',
+        'client_id',
+        'profile_id',
+        'title',
+        'description',
+        'price',
+        'status',
+        'revisions',
+        'taskType',
+        'taskModel',
+        'job_file',
+        'start_date',
+        'category',
+        'location',
+        'qualification',
+        'rules',
+        'deadline',
+        'deadline_promotion'
     ];
 
     public function user()

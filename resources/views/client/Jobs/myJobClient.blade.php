@@ -1,213 +1,88 @@
 @include('General.header')
 
 <section class="p-4 sm:p-6 md:p-8 mt-16">
-<div class="flex flex-col md:flex-row gap-4 mb-6">
-    <!-- Search Input -->
-    <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
+    <a href="{{ route('client.addJobNew') }}"
+        class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow mb-6">
+        Add New Job
+    </a>
+    <div class="flex flex-col md:flex-row gap-4 mb-6">
+        <!-- Search Input -->
+        <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
 
-    <!-- Status Dropdown -->
-    <select class="p-2 border rounded w-full md:w-auto" id="statusFilter">
-        <option value="">Semua Status</option>
-        <option value="open">Belum Dikerjakan</option>
-        <option value="in progress">Sedang Dikerjakan</option>
-        <option value="completed">Selesai Dikerjakann</option>
-    </select>
+        <!-- Status Dropdown -->
+        <select class="p-2 border rounded w-full md:w-auto" id="statusFilter">
+            <option value="">Semua Status</option>
+            <option value="open">Belum Dikerjakan</option>
+            <option value="in progress">Sedang Dikerjakan</option>
+            <option value="completed">Selesai Dikerjakann</option>
+        </select>
 
-</div>
-
-
-
+    </div>
     <!-- Job List -->
-    <div class="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full" id="jobContainer">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full" id="jobContainer">
         @php
             $task = \App\Models\Task::with('user')->where('client_id', Auth::id())->get();
         @endphp
 
         @foreach ($task as $job)
-            <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200" data-status="{{ $job->status }}">
+            <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition relative"
+                data-status="{{ $job->status }}" data-price="{{ $job->price }}">
+                <!-- Save Button -->
+                <button class="absolute top-3 right-3 text-gray-400 hover:text-[#1F4482] transition">
+                    <i class="fa-regular fa-bookmark text-lg"></i>
+                </button>
 
-                <!-- Cek status job -->
-                @if ($job->status === 'in progress' || $job->status === 'completed')
-                    <a href="{{ route('inProgress.jobs', $job->id) }}">
-                @else
-                    <a href="{{ route('jobs.manage', $job->id) }}">
-                @endif
-                
-                    <p class="text-blue-600 font-semibold text-base sm:text-lg">{{ $job->title }}</p>
-                    <p class="text-black font-bold mt-2 text-sm sm:text-base">
-                        Rp {{ number_format($job->price, 0, ',', '.') }}
+                <!-- User Info -->
+                <div class="flex items-center gap-3 mb-3">
+                    <img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}"
+                        alt="User" class="w-9 h-9 rounded-full object-cover" />
+                    <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
+                        {{ $job->user->nama_lengkap ?? 'Unknown' }}
+                        <span class="text-[#1F4482]">✔</span>
                     </p>
-                    <p class="text-gray-500 text-sm">By {{ $job->user->nama_lengkap ?? 'Unknown' }}</p>
-                    <p class="text-xs text-gray-400 mt-1">Status: {{ $job->status }}</p>
-                </a>
+                </div>
 
+                <!-- Job Title -->
+                <h3 class="text-sm font-semibold text-gray-900 mb-1">
+                    {{ $job->title }}
+                </h3>
+
+                <!-- Description -->
+                <p class="text-xs text-gray-500 mb-4 leading-relaxed">
+                    {{ Str::limit($job->description, 80, '...') }}
+                </p>
+
+                <!-- Bottom Row: Price + Button -->
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-800">
+                            Rp {{ number_format($job->price, 0, ',', '.') }}
+                        </p>
+                        <p class="text-xs text-gray-400 capitalize">
+                            Status: {{ $job->status }}
+                        </p>
+                    </div>
+
+                    @if ($job->status === 'in progress' || $job->status === 'completed')
+                        <a href="{{ route('inProgress.jobs', $job->id) }}">
+                    @else
+                        <a href="{{ route('jobs.manage', $job->id) }}">
+                    @endif
+                            <button
+                                class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
+                                View
+                            </button>
+                        </a>
+                </div>
             </div>
         @endforeach
     </div>
 </section>
 
-<!-- add job -->
-<button id="openModalBtn"
-    class="fixed bottom-6 right-6 bg-blue-600 text-white w-12 h-12 flex items-center justify-center rounded-full shadow-lg hover:bg-blue-700 transition duration-300">
-    +
-</button>
-<!-- Modal -->
-<div id="jobModal" class="fixed inset-0 z-50 flex justify-center items-start overflow-y-auto py-10 bg-gray-800 bg-opacity-50 hidden transition-opacity duration-300 opacity-0">
-  <div class="bg-white p-6 rounded shadow-md w-full max-w-lg mx-4">
-    <h1 class="text-2xl font-semibold mb-4">Add New Job</h1>
-    <form action="{{ route('jobs.store') }}" method="POST" enctype="multipart/form-data">
-      @csrf
-      <div class="grid grid-cols-3 gap-4">
-        <!-- Title -->
-        <div class="col-span-2">
-          <label class="block text-gray-700">Title</label>
-          <input type="text" name="title" class="w-full p-2 border rounded" required>
-        </div>
-
-        <!-- Price -->
-        <div class="col-span-1">
-          <label class="block text-gray-700">Price (Rp)</label>
-          <input type="number" name="price" class="w-full p-2 border rounded" required>
-        </div>
-
-        <!-- Description -->
-        <div class="col-span-3">
-          <label class="block text-gray-700">Descriptionn</label>
-          <textarea name="description" class="w-full p-2 border rounded" required></textarea>
-        </div>
-
-        <!-- Revisions -->
-        <div class="col-span-1">
-          <label class="block text-gray-700">Revisions</label>
-          <input type="number" name="revisions" class="w-full p-2 border rounded" required>
-        </div>
-
-        <!-- Deadline -->
-        <div class="col-span-1">
-          <label class="block text-gray-700">Deadline</label>
-          <input type="date" name="deadline" class="w-full p-2 border rounded" required>
-        </div>
-
-        <!-- Deadline Promotion -->
-        <div class="col-span-1">
-          <label class="block text-gray-700">Deadline Promotion</label>
-          <input type="date" name="deadline_promotion" class="w-full p-2 border rounded" required>
-        </div>
-
-        <!-- Task Type -->
-        <div class="col-span-1">
-            <label class="block text-gray-700">Task Type</label>
-                <select name="taskType" class="w-full p-2 border rounded" required>
-                    <option value="web_development">Web Development</option>
-                    <option value="mobile_development">Mobile Development</option>
-                    <option value="game_development">Game Development</option>
-                    <option value="software_engineering">Software Engineering</option>
-                    <option value="frontend_development">Frontend Development</option>
-                    <option value="backend_development">Backend Development</option>
-                    <option value="full_stack_development">Full Stack Development</option>
-                    <option value="devops">DevOps</option>
-                    <option value="qa_testing">QA Testing</option>
-                    <option value="automation_testing">Automation Testing</option>
-                    <option value="api_integration">API Integration</option>
-                    <option value="wordpress_development">WordPress Development</option>
-                    <option value="data_science">Data Science</option>
-                    <option value="machine_learning">Machine Learning</option>
-                    <option value="ai_development">AI Development</option>
-                    <option value="data_engineering">Data Engineering</option>
-                    <option value="data_entry">Data Entry</option>
-                    <option value="seo">SEO</option>
-                    <option value="content_writing">Content Writing</option>
-                    <option value="technical_writing">Technical Writing</option>
-                    <option value="blog_writing">Blog Writing</option>
-                    <option value="copywriting">Copywriting</option>
-                    <option value="scriptwriting">Scriptwriting</option>
-                    <option value="proofreading">Proofreading</option>
-                    <option value="translation">Translation</option>
-                    <option value="transcription">Transcription</option>
-                    <option value="resume_writing">Resume Writing</option>
-                    <option value="ghostwriting">Ghostwriting</option>
-                    <option value="creative_writing">Creative Writing</option>
-                    <option value="social_media_management">Social Media Management</option>
-                    <option value="digital_marketing">Digital Marketing</option>
-                    <option value="email_marketing">Email Marketing</option>
-                    <option value="affiliate_marketing">Affiliate Marketing</option>
-                    <option value="influencer_marketing">Influencer Marketing</option>
-                    <option value="community_management">Community Management</option>
-                    <option value="search_engine_marketing">Search Engine Marketing</option>
-                    <option value="branding">Branding</option>
-                    <option value="graphic_design">Graphic Design</option>
-                    <option value="ui_ux_design">UI/UX Design</option>
-                    <option value="logo_design">Logo Design</option>
-                    <option value="motion_graphics">Motion Graphics</option>
-                    <option value="illustration">Illustration</option>
-                    <option value="video_editing">Video Editing</option>
-                    <option value="video_production">Video Production</option>
-                    <option value="animation">Animation</option>
-                    <option value="3d_modeling">3D Modeling</option>
-                    <option value="video_game_design">Video Game Design</option>
-                    <option value="audio_editing">Audio Editing</option>
-                    <option value="photography">Photography</option>
-                    <option value="photo_editing">Photo Editing</option>
-                    <option value="presentation_design">Presentation Design</option>
-                    <option value="project_management">Project Management</option>
-                    <option value="virtual_assistant">Virtual Assistant</option>
-                    <option value="customer_service">Customer Service</option>
-                    <option value="lead_generation">Lead Generation</option>
-                    <option value="market_research">Market Research</option>
-                    <option value="business_analysis">Business Analysis</option>
-                    <option value="human_resources">Human Resources</option>
-                    <option value="event_planning">Event Planning</option>
-                    <option value="bookkeeping">Bookkeeping</option>
-                    <option value="accounting">Accounting</option>
-                    <option value="tax_preparation">Tax Preparation</option>
-                    <option value="financial_analysis">Financial Analysis</option>
-                    <option value="legal_advice">Legal Advice</option>
-                    <option value="contract_drafting">Contract Drafting</option>
-                    <option value="startup_consulting">Startup Consulting</option>
-                    <option value="investment_research">Investment Research</option>
-                    <option value="real_estate_consulting">Real Estate Consulting</option>
-                    <option value="personal_assistant">Personal Assistant</option>
-                    <option value="clerical_work">Clerical Work</option>
-                    <option value="data_analysis">Data Analysis</option>
-                    <option value="business_coaching">Business Coaching</option>
-                    <option value="career_coaching">Career Coaching</option>
-                    <option value="life_coaching">Life Coaching</option>
-                    <option value="consulting">Consulting</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
-
-        <!-- Provisions -->
-        <div class="col-span-3">
-          <label class="block text-gray-700">Provisions</label>
-          <textarea name="provisions" class="w-full p-2 border rounded"></textarea>
-        </div>
-
-        <!-- File Upload -->
-        <div class="col-span-3">
-          <label class="block text-gray-700">Upload File</label>
-          <div id="drop-area-job" class="border-2 border-dashed p-4 text-center cursor-pointer">
-            <p id="drop-text-job">Drag & Drop file here or click to select</p>
-            <input type="file" name="job_file" id="fileInputJob" class="hidden">
-            <p id="file-name-job" class="text-gray-500 text-sm mt-2"></p>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex justify-end gap-2 mt-4">
-        <button type="button" id="closeModalBtn" class="bg-gray-400 text-white p-2 rounded">Cancel</button>
-        <button type="submit" class="bg-blue-600 text-white p-2 rounded">Post</button>
-      </div>
-    </form>
-  </div>
-</div>
-
 @include('General.footer')
 
-<!-- add modal -->
-
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         const openModalBtn = document.getElementById("openModalBtn");
         const closeModalBtn = document.getElementById("closeModalBtn");
         const jobModal = document.getElementById("jobModal");
@@ -219,23 +94,23 @@
 
         // 🟦 Modal Open/Close
         openModalBtn?.addEventListener("click", () => {
-        jobModal?.classList.remove("hidden");
+            jobModal?.classList.remove("hidden");
 
             // ⏫ Tambahkan animasi buka
-        setTimeout(() => {
-              jobModal?.classList.replace("opacity-0", "opacity-100");
-              jobModal?.classList.replace("scale-95", "scale-100");
-          }, 10);
+            setTimeout(() => {
+                jobModal?.classList.replace("opacity-0", "opacity-100");
+                jobModal?.classList.replace("scale-95", "scale-100");
+            }, 10);
         });
 
         closeModalBtn?.addEventListener("click", () => {
-          // ⏬ Tambahkan animasi tutup
-          jobModal?.classList.replace("opacity-100", "opacity-0");
-          jobModal?.classList.replace("scale-100", "scale-95");
+            // ⏬ Tambahkan animasi tutup
+            jobModal?.classList.replace("opacity-100", "opacity-0");
+            jobModal?.classList.replace("scale-100", "scale-95");
 
-          setTimeout(() => {
-              jobModal?.classList.add("hidden");
-          }, 300);
+            setTimeout(() => {
+                jobModal?.classList.add("hidden");
+            }, 300);
         });
 
         jobModal?.addEventListener("click", (e) => {
@@ -298,4 +173,3 @@
         });
     });
 </script>
-
