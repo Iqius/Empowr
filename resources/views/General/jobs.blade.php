@@ -309,29 +309,42 @@
             const value = this.value;
             if (!jobContainer) return;
 
-            const cards = Array.from(jobContainer.children);
-            const sorted = cards.sort((a, b) => {
-                const priceA = parseInt(a.dataset.price || "0");
-                const priceB = parseInt(b.dataset.price || "0");
-                return value === "price-asc" ? priceA - priceB : priceB - priceA;
-            });
-
-            jobContainer.innerHTML = "";
-            sorted.forEach(card => jobContainer.appendChild(card));
+        const cards = Array.from(jobContainer.children);
+        const sorted = cards.sort((a, b) => {
+            const priceA = parseInt(a.dataset.price || "0");
+            const priceB = parseInt(b.dataset.price || "0");
+            return value === "price-asc" ? priceA - priceB : priceB - priceA;
         });
 
-        // ✅ SweetAlert for Success Message
-        @if (session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil Diposting!',
-                text: "{{ session('success') }}",
-                confirmButtonColor: '#2563EB',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                window.location.href = window.location.href;
-            });
-        @endif
+        jobContainer.innerHTML = "";
+        sorted.forEach(card => jobContainer.appendChild(card));
+    });
+
+    // ✅ SweetAlert for Success Message
+    @if (session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil Diposting!',
+            text: "{{ session('success') }}",
+            confirmButtonColor: '#2563EB',
+            confirmButtonText: 'OK'
+        }).then(() => {
+            window.location.href = window.location.href;
+        });
+    @endif
+
+
+    @if (session('success-updated'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Pekerjaan kamu telah terselesaikan',
+            text: "{{ session('success') }}",
+            confirmButtonColor: '#2563EB',
+            confirmButtonText: 'OK'
+        }).then(() => {
+            window.location.href = window.location.href;
+        });
+    @endif
     });
 </script>
 

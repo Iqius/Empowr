@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Progression extends Model
 {
@@ -20,6 +21,8 @@ class Progression extends Model
         'date_upload',
         'date_approve',
         'progression_ke',
+        'action_by_client',
+        'action_by_worker',
     ];
 
     protected $casts = [
@@ -31,5 +34,15 @@ class Progression extends Model
     public function task()
     {
         return $this->belongsTo(Task::class);
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(User::class, 'action_by_client');
+    }
+
+    public function worker(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'action_by_worker');
     }
 }

@@ -53,6 +53,8 @@ Route::post('/bayar/{task}', [JobController::class, 'bayar'])->name('client.baya
 Route::post('/jobs', [JobController::class, 'createJobClient'])->name('jobs.store');
 // --review progress
 Route::post('/task-progression/{progress}/review', [ProgressionController::class, 'review'])->name('task-progression.review');
+//  --Client complte job
+Route::post('/{task}/complite', [ProgressionController::class, 'CompliteJob'])->name('complite.job');
 
 
 
@@ -62,7 +64,7 @@ Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->mid
 // MyJobs
 Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->name('jobs.Worker');
 // Upload Progress
-Route::post('/task-progression/{task}', [ProgressionController::class, 'create'])->name('task-progression.store');
+Route::post('/task-progression/{task}', [ProgressionController::class, 'create'])->middleware(['auth'])->name('task-progression.store');
 
 
 ####### GENERAL

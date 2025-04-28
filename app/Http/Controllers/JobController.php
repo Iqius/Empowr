@@ -128,7 +128,9 @@ class JobController extends Controller
                 return $applicant->{$sortBy} ?? 0;
             }, SORT_REGULAR, $request->get('dir') === 'desc')
             ->values(); // reset index
-        return view('client.jobs.manage', compact('task', 'applicants'));
+
+            return view('client.jobs.manage', compact('task', 'applicants'));
+        
     }
 
 
@@ -358,27 +360,87 @@ class JobController extends Controller
     // Fungsi tampilan detail Job yang sudah in progres
     public function DetailJobsInProgress($id)
     {
-        // Ambil task beserta relasi user
         $task = Task::with('user')->findOrFail($id);
 
-        // Ambil semua progression dan kelompokkan berdasarkan progression_ke
         $progressionsByStep = Progression::with('task')
             ->where('task_id', $task->id)
             ->get()
             ->keyBy('progression_ke');
 
         $progressions = $progressionsByStep->values();
-        // Mapping status approve ke masing-masing step
+
         $steps = [];
         for ($i = 1; $i <= 4; $i++) {
-            $steps['step' . $i] = $progressionsByStep[$i]->status_approve ?? 'pending';
+            if (isset($progressionsByStep[$i])) {
+                $steps['step' . $i] = $progressionsByStep[$i]->status_approve ?? 'pending';
+            } else {
+                $steps['step' . $i] = 'pending';
+            }
         }
 
-        return view('General.detailProgressionJobs', compact(
-            'task',
-            'steps',
-            'progressionsByStep',
-            'progressions'
-        ));
+        // Tentukan apakah worker bisa mengunggah file
+        $currentStep = $progressionsByStep->keys()->max() + 1;
+        $canSubmit = $this->determineCanSubmit($currentStep, $progressionsByStep);
+
+        if ($task->status !== 'completed'){
+            return view('General.detailProgressionJobs', compact(
+                'task',
+                'steps',
+                'progressionsByStep',
+                'progressions',
+                'canSubmit' // jangan lupa lempar ke view kalau mau dipakai
+            ));
+        }else{
+            return view('General.detailProgressionComplite', compact(
+                'task','progressions',
+            ));
+        }
+        
     }
+
+
+    private function determineCanSubmit($step, $progressionsByStep)
+    {
+        $canSubmit = false;
+    
+        $third = $progressionsByStep[3] ?? null;
+        $fourth = $progressionsByStep[4] ?? null;
+    
+        // Ambil data task terkait
+        $task = $third?->task ?? null;
+    
+        // Cek jika task ada dan memiliki kolom revisions
+        $taskRevisions = $task ? $task->revisions : 0;
+    
+        // Hitung revisi yang sudah ada di progression (dari step 4 dan seterusnya)
+        $currentRevisions = Progression::where('task_id', $third->task_id ?? null)
+            ->where('progression_ke', '>=', 4) // Memperhitungkan revisi setelah step 3
+            ->count();
+    
+        // Jika ini adalah step pertama, cek apakah progression pertama sudah disetujui
+        if ($step == 1) {
+            if (isset($progressionsByStep[1]) && $progressionsByStep[1]->status_approve == 'approved') {
+                $canSubmit = true;
+            }
+        }
+    
+        // Special rules for step 4 (revisi)
+        if ($step == 4) {
+            // Cek apakah revisi masih diizinkan
+            if (!$fourth && $third && $third->status_approve === 'rejected' && $currentRevisions < $taskRevisions) {
+                $canSubmit = true;
+            }
+        }
+    
+        // Jika revisi yang sudah dilakukan lebih sedikit dari yang diizinkan, tombol submit harus muncul
+        if ($currentRevisions < $taskRevisions) {
+            $canSubmit = true;
+        }
+    
+        return $canSubmit;
+    }
+    
+        
+
+
 }

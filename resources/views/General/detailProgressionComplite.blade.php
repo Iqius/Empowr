@@ -1,0 +1,173 @@
+@include('General.header')
+
+
+<div class="p-4 mt-14">
+    <div class="p-4 rounded h-full">
+        <div class="grid grid-cols-1 min-h-screen">
+            <div class="p-4 rounded h-full">
+                <div class="p-6 bg-white rounded-lg shadow-md my-5">
+                    <h1 class="text-xl font-semibold text-gray-700 mt-6">Deskripsi</h1>
+                    <hr class="border-t-1 border-gray-300 mb-7 mt-4">
+                    <p class="text-gray-600 mt-1">{{$task->description}}</p>
+                    <h1 class="text-xl font-semibold text-gray-700 mt-10">Ketentuan</h1>
+                    <hr class="border-t-1 border-gray-300 mb-7 mt-4">
+                    <p class="text-gray-600 mt-1">{{$task->provisions}}</p>
+                    <h1 class="text-xl font-semibold text-gray-700 mt-10">File Terkait tugas</h1>
+                    <hr class="border-t-1 border-gray-300 mb-7 mt-4">
+                </div>
+
+                @if(auth()->user()->role == 'client')
+                    <div class="p-6 bg-white rounded-lg shadow-md my-5">
+                        <div class="flex items-center justify-between">
+                            <!-- Card Profile (Kiri) -->
+                            <div class="flex items-center space-x-4">
+                                <!-- Avatar -->
+                                <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
+                                    <img src="https://via.placeholder.com/150" alt="" class="w-full h-full object-cover rounded-full">
+                                </div>
+
+                                <!-- User Info -->
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-800">$task-></h3>
+                                    <p class="text-gray-600">Frontend Developer</p>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons (Di sebelah kanan Profil) -->
+                            <div class="flex flex-col gap-2">
+
+                                <!-- Cek Button -->
+                                <button class="w-32 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                    Cek Profile
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                <!-- TABEL SECTION -->
+                <div class="p-6 bg-white rounded-lg shadow-md mb-5">
+                    <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white">
+                        <h1 class="text-2xl font-semibold text-gray-700 mt-6">Log Aktivitas</h1>
+                        <hr class="border-t-1 border-gray-300 mb-7 mt-4">
+                        <label for="table-search" class="sr-only">Search</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                                </svg>
+                            </div>
+                            <input type="text" id="table-search-users" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-white focus:ring-blue-500 focus:border-blue-500" placeholder="Search for users">
+                        </div>
+                    </div>
+                    <div class="overflow-hidden rounded-lg">
+                        <table class="w-full text-sm text-left rtl:text-right text-black bg-white">
+                            <thead class="text-xs bg-gray-100 text-black border-b border-gray-300">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 w-1/4">Nama</th>
+                                    <th scope="col" class="px-6 py-3 w-1/7">Aksi</th>
+                                    <th scope="col" class="px-6 py-3 w-1/3">Note atau file terkirim</th>
+                                    <th scope="col" class="px-6 py-3 w-1/7">Progress</th>
+                                    <th scope="col" class="px-6 py-3 w-1/6">Tanggal dan waktu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($progressions as $progress)
+                                    {{-- Worker submission --}}
+                                    @if($progress->action_by_worker)
+                                        <tr class="text-sm text-gray-700">
+                                            <td class="py-2 px-4 border-b">
+                                                <div class="flex items-center gap-2">
+                                                    <img src="{{ asset('storage/' . ($progress->worker->profile_image ?? 'default.jpg')) }}" alt="" class="w-8 h-8 rounded-full object-cover">
+                                                    <span>{{ $progress->worker->nama_lengkap ?? 'Unknown User' }}</span>
+                                                </div>
+                                            </td>
+                                            <td class="py-2 px-2 border-b">{{ $progress->status_upload }}</td>
+                                            <td class="py-2 px-2 border-b">
+                                                <a href="{{ asset('storage/' . $progress->path_file) }}" class="text-blue-500 underline" target="_blank">
+                                                    {{ basename($progress->path_file) }}
+                                                </a>
+                                            </td>
+                                            <td class="py-2 px-4 border-b">{{ $progress->progression_ke }}</td>
+                                            <td class="py-2 px-4 border-b">{{ $progress->date_upload->format('d M Y H:i') }}</td>
+                                        </tr>
+                                    @endif
+                                    {{-- Client approval/rejection --}}
+                                    @if($progress->action_by_client)
+                                        <tr class="text-sm text-gray-700">
+                                            <td class="py-2 px-4 border-b">
+                                                <div class="flex items-center gap-2">
+                                                    <img src="{{ asset('storage/' . ($progress->client->profile_image ?? 'default.jpg')) }}" alt="" class="w-8 h-8 rounded-full object-cover">
+                                                    <span>{{ $progress->client->nama_lengkap ?? 'Unknown User' }}</span>
+                                                </div>
+                                            </td>
+                                            <td class="py-2 px-2 border-b">
+                                                {{ ucfirst($progress->status_approve) }}
+                                            </td>
+                                            <td class="py-2 px-2 border-b">
+                                                {{ $progress->note ?? '-' }}
+                                            </td>
+                                            <td class="py-2 px-4 border-b">{{ $progress->progression_ke }}</td>
+                                            <td class="py-2 px-4 border-b">{{ $progress->date_approve?->format('d M Y H:i') ?? '-' }}</td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Form Submit-->
+<div id="modal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center hidden opacity-0 transition-opacity duration-500 ease-in-out">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+    <h2 class="text-xl font-semibold mb-4">Enter Note</h2>
+    <textarea id="noteInput" class="w-full p-2 border rounded mb-4" placeholder="Write your note here..."></textarea>
+    <div class="flex justify-end">
+      <button id="submitNote" class="bg-blue-500 text-white py-2 px-4 rounded">Submit</button>
+      <button id="closeModal" class="ml-2 bg-gray-500 text-white py-2 px-4 rounded">Close</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+    function openModalWithStatus(status, id) {
+        approvalStatus = status;
+        currentProgressId = id;
+        document.getElementById('modal').classList.remove('hidden');
+        setTimeout(() => document.getElementById('modal').classList.remove('opacity-0'), 10);
+    }
+
+    document.getElementById('submitNote').addEventListener('click', () => {
+        document.getElementById('statusApprove-' + currentProgressId).value = approvalStatus;
+        document.getElementById('noteHidden-' + currentProgressId).value = document.getElementById('noteInput').value;
+        document.getElementById('reviewForm-' + currentProgressId).submit();
+    });
+</script>
+
+
+<script>
+    // Display filename when selected
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('file-upload');
+        const fileNameDisplay = document.getElementById('file-name-display');
+        const selectedFileName = document.getElementById('selected-file-name');
+        
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    fileNameDisplay.classList.remove('hidden');
+                    selectedFileName.textContent = this.files[0].name;
+                } else {
+                    fileNameDisplay.classList.add('hidden');
+                }
+            });
+        }
+    });
+</script>
+@include('General.footer')

@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('task_id');
             $table->string('path_file')->nullable();
+            $table->unsignedBigInteger('action_by_client')->nullable(); 
+            $table->unsignedBigInteger('action_by_worker')->nullable(); 
             $table->enum('status_upload', ['null', 'uploaded'])->default('null');
             $table->enum('status_approve', ['waiting', 'approved', 'rejected'])->default('waiting');
             $table->text('note')->nullable();
@@ -25,11 +27,13 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('task_id')->references('id')->on('task')->onDelete('cascade');
+            $table->foreign('action_by_client')->references('id')->on('users');
+            $table->foreign('action_by_worker')->references('id')->on('users');  
         });
     }
-
+   
     /**
-     * Reverse the migrations.
+     * Reverse the migrationas.
      */
     public function down(): void
     {
