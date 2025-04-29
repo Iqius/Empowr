@@ -26,7 +26,7 @@
 
                     <!-- User Info -->
                     <div class="flex items-center gap-3 mb-3">
-                        <img src="{{ asset('assets/images/avatar.png') }}" alt="User"
+                        <img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}" alt="User"
                             class="w-9 h-9 rounded-full object-cover" />
                         <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
                             {{ $job->user->nama_lengkap ?? 'Unknown' }}
@@ -54,10 +54,10 @@
                             // Create the preview - if there are lists, add ellipsis
                             if ($hasLists) {
                                 // Limit the text before the list and add ellipsis
-                                $previewText = Str::limit($plainTextBeforeLists, 77, '...');
+                                $previewText = Str::limit($plainTextBeforeLists, 10, '...');
                             } else {
                                 // If no lists, just use normal limit
-                                $previewText = Str::limit(strip_tags($job->description), 80, '...');
+                                $previewText = Str::limit(strip_tags($job->description), 30, '...');
                             }
                         @endphp
                         {{ $previewText }}

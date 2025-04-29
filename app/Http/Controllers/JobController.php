@@ -57,7 +57,7 @@ class JobController extends Controller
             'price' => $request->price,
             'status' => 'open',
             'revisions' => $request->revisions,
-            'category' => $request->category,
+            'kategory' => json_encode($request->kategoriWorker),
             'job_file' => $path,
         ]);
 

@@ -68,21 +68,21 @@
                         <div>
                             <h2 class="text-xl font-semibold text-gray-800 mb-2">About Task</h2>
                             <div class="job-description text-sm text-gray-600 leading-relaxed">
-                                {!! $job->description ?? '-' !!}
+                                {!! $job->description !!}
                             </div>
                         </div>
 
                         <div>
                             <h2 class="text-xl font-semibold text-gray-800 mb-2">Qualification</h2>
                             <div class="job-qualification text-sm text-gray-600 leading-relaxed">
-                                {!! $job->qualification ?? '-' !!}
+                                {!! $job->qualification !!}
                             </div>
                         </div>
 
                         <div>
                             <h2 class="text-xl font-semibold text-gray-800 mb-2">Rules Task</h2>
                             <div class="rules text-sm text-gray-600 leading-relaxed">
-                                {!! $job->provisions ?? '-' !!}
+                                {!! $job->provisions !!}
                             </div>
                         </div>
 
@@ -125,18 +125,22 @@
                     </div>
 
                     <div>
-                        <p class="text-gray-400">Task Type</p>
-                        <p class="font-semibold capitalize">{{ str_replace('_', ' ', $job->taskType) }}</p>
+                        <p class="text-gray-400">Revisi sebanyak</p>
+                        <p class="font-semibold capitalize">{{ $job->revisions }} kali revisi</p>
                     </div>
 
                     <div>
-                        <p class="text-gray-400">Category</p>
-                        <p class="font-semibold">{{ $job->category ?? '-' }}</p>
-                    </div>
-
-                    <div>
-                        <p class="text-gray-400">Location</p>
-                        <p class="font-semibold">{{ $job->location ?? '-' }}</p>
+                        <p class="text-gray-400 mb-2">Category</p>
+                        <div>
+                            @php
+                                $categories = json_decode($job->kategory, true) ?? [];
+                            @endphp
+                            @foreach($categories as $category)
+                                <span class="inline-block bg-blue-800 text-white px-3 py-1 rounded-full text-sm mr-2 mb-2">
+                                    {{ $category }}
+                                </span>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>
@@ -193,6 +197,7 @@
     </div>
 </div>
 
+<!-- buat quilbot -->
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
 

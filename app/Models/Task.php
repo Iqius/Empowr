@@ -14,7 +14,7 @@ class Task extends Model
 
     protected $fillable = [
         'id', 'client_id', 'profile_id', 'title', 'description', 'qualification', 'deadline',
-        'deadline_promotion', 'provisions', 'price', 'status', 'revisions', 'taskType', 'job_file', 'start_date','category'
+        'deadline_promotion', 'provisions', 'price', 'status', 'revisions', 'taskType', 'job_file', 'start_date','category','kategory'
     ];
 
     public function user()

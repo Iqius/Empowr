@@ -66,87 +66,41 @@
 
                     <div>
                         <label class="text-sm font-medium text-gray-600 mb-1 block">Category</label>
-                        <select name="category"
-                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            required>
-                            <option value="">Select Category</option>
-                            <option value="Web Development">Web Development</option>
-                            <option value="Mobile Development">Mobile Development</option>
-                            <option value="Game Development">Game Development</option>
-                            <option value="Software Engineering">Software Engineering</option>
-                            <option value="Frontend Development">Frontend Development</option>
-                            <option value="Backend Development">Backend Development</option>
-                            <option value="Full Stack Development">Full Stack Development</option>
-                            <option value="DevOps">DevOps</option>
-                            <option value="QA Testing">QA Testing</option>
-                            <option value="Automation Testing">Automation Testing</option>
-                            <option value="API Integration">API Integration</option>
-                            <option value="WordPress Development">WordPress Development</option>
-                            <option value="Data Science">Data Science</option>
-                            <option value="Machine Learning">Machine Learning</option>
-                            <option value="AI Development">AI Development</option>
-                            <option value="Data Engineering">Data Engineering</option>
-                            <option value="Data Entry">Data Entry</option>
-                            <option value="SEO">SEO</option>
-                            <option value="Content Writing">Content Writing</option>
-                            <option value="Technical Writing">Technical Writing</option>
-                            <option value="Blog Writing">Blog Writing</option>
-                            <option value="Copywriting">Copywriting</option>
-                            <option value="Scriptwriting">Scriptwriting</option>
-                            <option value="Proofreading">Proofreading</option>
-                            <option value="Translation">Translation</option>
-                            <option value="Transcription">Transcription</option>
-                            <option value="Resume Writing">Resume Writing</option>
-                            <option value="Ghostwriting">Ghostwriting</option>
-                            <option value="Creative Writing">Creative Writing</option>
-                            <option value="Social Media Management">Social Media Management</option>
-                            <option value="Digital Marketing">Digital Marketing</option>
-                            <option value="Email Marketing">Email Marketing</option>
-                            <option value="Affiliate Marketing">Affiliate Marketing</option>
-                            <option value="Influencer Marketing">Influencer Marketing</option>
-                            <option value="Community Management">Community Management</option>
-                            <option value="Search Engine Marketing">Search Engine Marketing</option>
-                            <option value="Branding">Branding</option>
-                            <option value="Graphic Design">Graphic Design</option>
-                            <option value="UI/UX Design">UI/UX Design</option>
-                            <option value="Logo Design">Logo Design</option>
-                            <option value="Motion Graphics">Motion Graphics</option>
-                            <option value="Illustration">Illustration</option>
-                            <option value="Video Editing">Video Editing</option>
-                            <option value="Video Production">Video Production</option>
-                            <option value="Animation">Animation</option>
-                            <option value="3D Modeling">3D Modeling</option>
-                            <option value="Video Game Design">Video Game Design</option>
-                            <option value="Audio Editing">Audio Editing</option>
-                            <option value="Photography">Photography</option>
-                            <option value="Photo Editing">Photo Editing</option>
-                            <option value="Presentation Design">Presentation Design</option>
-                            <option value="Project Management">Project Management</option>
-                            <option value="Virtual Assistant">Virtual Assistant</option>
-                            <option value="Customer Service">Customer Service</option>
-                            <option value="Lead Generation">Lead Generation</option>
-                            <option value="Market Research">Market Research</option>
-                            <option value="Business Analysis">Business Analysis</option>
-                            <option value="Human Resources">Human Resources</option>
-                            <option value="Event Planning">Event Planning</option>
-                            <option value="Bookkeeping">Bookkeeping</option>
-                            <option value="Accounting">Accounting</option>
-                            <option value="Tax Preparation">Tax Preparation</option>
-                            <option value="Financial Analysis">Financial Analysis</option>
-                            <option value="Legal Advice">Legal Advice</option>
-                            <option value="Contract Drafting">Contract Drafting</option>
-                            <option value="Startup Consulting">Startup Consulting</option>
-                            <option value="Investment Research">Investment Research</option>
-                            <option value="Real Estate Consulting">Real Estate Consulting</option>
-                            <option value="Personal Assistant">Personal Assistant</option>
-                            <option value="Clerical Work">Clerical Work</option>
-                            <option value="Data Analysis">Data Analysis</option>
-                            <option value="Business Coaching">Business Coaching</option>
-                            <option value="Career Coaching">Career Coaching</option>
-                            <option value="Life Coaching">Life Coaching</option>
-                            <option value="Consulting">Consulting</option>
-                            <option value="Other">Other</option>
-                        </select>
+                        <div class="grid grid-cols-3 items-start gap-4">
+                        <div class="col-span-2">
+                            @php
+                                $selectedSkills = json_decode(optional(Auth::user()->keahlian)->keahlian, true) ?? [];
+                                $categories = [
+                                    "Web Development", "Mobile Development", "Game Development", "Software Engineering",
+                                    "Frontend Development", "Backend Development", "Full Stack Development", "DevOps",
+                                    "QA Testing", "Automation Testing", "API Integration", "WordPress Development",
+                                    "Data Science", "Machine Learning", "AI Development", "Data Engineering", "Data Entry",
+                                    "SEO", "Content Writing", "Technical Writing", "Blog Writing", "Copywriting",
+                                    "Scriptwriting", "Proofreading", "Translation", "Transcription", "Resume Writing",
+                                    "Ghostwriting", "Creative Writing", "Social Media Management", "Digital Marketing",
+                                    "Email Marketing", "Affiliate Marketing", "Influencer Marketing", "Community Management",
+                                    "Search Engine Marketing", "Branding", "Graphic Design", "UI/UX Design", "Logo Design",
+                                    "Motion Graphics", "Illustration", "Video Editing", "Video Production", "Animation",
+                                    "3D Modeling", "Video Game Design", "Audio Editing", "Photography", "Photo Editing",
+                                    "Presentation Design", "Project Management", "Virtual Assistant", "Customer Service",
+                                    "Lead Generation", "Market Research", "Business Analysis", "Human Resources",
+                                    "Event Planning", "Bookkeeping", "Accounting", "Tax Preparation", "Financial Analysis",
+                                    "Legal Advice", "Contract Drafting", "Startup Consulting", "Investment Research",
+                                    "Real Estate Consulting", "Personal Assistant", "Clerical Work", "Data Analysis",
+                                    "Business Coaching", "Career Coaching", "Life Coaching", "Consulting", "Other"
+                                ];
+                            @endphp
+
+                            <select id="keahlian-select" name="kategoriWorker[]" multiple class="w-full p-2 border rounded">
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category }}" {{ in_array($category, $selectedSkills) ? 'selected' : '' }}>
+                                        {{ $category }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600 mb-1 block">Revisions</label>
@@ -286,6 +240,16 @@ document.addEventListener("DOMContentLoaded", function () {
         return delta;
     });
 });
+</script>
+
+<script>
+    new TomSelect('#keahlian-select', {
+        plugins: ['remove_button'],
+        placeholder: 'Pilih keahlian...',
+        persist: false,
+        create: false,
+        maxItems: null
+    });
 </script>
 
 
