@@ -1,6 +1,7 @@
 @include('General.header')
 
 
+
 <div class="p-4 mt-14">
     <div class="p-4 rounded h-full">
         <div class="grid grid-cols-1 min-h-screen">
@@ -8,14 +9,10 @@
                 <div class="flex justify-end space-x-4 mb-7">
                     <!-- Button Complete -->
                     @if(auth()->user()->role == 'client')
-                        <form action="{{ route('complite.job', $task->id) }}" method="POST" class="inline">
-                            @csrf
-                            @method('POST') <!-- Karena ini POST, jadi kita perjelas menggunakan method POST -->
-
-                            <button type="submit" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4">
-                                Selesaikan pekerjaan
-                            </button>
-                        </form>
+                        <button type="button" onclick="openModal()"
+                            class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4">
+                            Selesaikan pekerjaan
+                        </button>
                     @endif
 
                 </div>
@@ -268,44 +265,81 @@
                 <div class="p-6 bg-white rounded-lg shadow-md my-5">
                     <h1 class="text-xl font-semibold text-gray-700 mt-6">Deskripsi</h1>
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
-                    <p class="text-gray-600 mt-1">{{$task->description}}</p>
+                    <div class="job-description text-gray-600 mt-1">{!!$task->description!!}</div>
                     <h1 class="text-xl font-semibold text-gray-700 mt-10">Ketentuan</h1>
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
-                    <p class="text-gray-600 mt-1">{{$task->provisions}}</p>
-                    <h1 class="text-xl font-semibold text-gray-700 mt-10">File Terkait tugas</h1>
+                    <div class="job-qualification text-gray-600 mt-1">{!!$task->qualification!!}</div>
+                    <h1 class="text-xl font-semibold text-gray-700 mt-10">Rules</h1>
+                    <hr class="border-t-1 border-gray-300 mb-7 mt-4">
+                    <div class="rules text-gray-600 mt-1">{!!$task->provisions!!}</div>
+                    <h1 class="text-xl font-semibold text-gray-700 mt-10">File Terkait tugas</>
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
                 </div>
 
-                <div class="p-6 bg-white rounded-lg shadow-md my-5">
-                    <div class="flex items-center justify-between">
-                        <!-- Card Profile (Kiri) -->
-                        <div class="flex items-center space-x-4">
-                            <!-- Avatar -->
-                            <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
-                                <img src="https://via.placeholder.com/150" alt="" class="w-full h-full object-cover rounded-full">
+                @if(auth()->user()->role == 'client')
+                    <div class="p-6 bg-white rounded-lg shadow-md my-5">
+                        <div class="flex items-center justify-between">
+                            <!-- Card Profile (Kiri) -->
+                            <div class="flex items-center space-x-4">
+                                <!-- Avatar -->
+                                <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
+                                    <img src="https://via.placeholder.com/150" alt="" class="w-full h-full object-cover rounded-full">
+                                </div>
+
+                                <!-- User Info -->
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-800">{{$task->client->nama_lengkap}}</h3>
+                                    <p class="text-gray-600">{{$task->client->role}}</p>
+                                </div>
                             </div>
 
-                            <!-- User Info -->
-                            <div>
-                                <h3 class="text-xl font-semibold text-gray-800">John Doe</h3>
-                                <p class="text-gray-600">Frontend Developer</p>
+                            <!-- Action Buttons (Di sebelah kanan Profil) -->
+                            <div class="flex flex-col gap-2">
+                                <!-- Laporkan Button -->
+                                <button class="w-32 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
+                                    Laporkan
+                                </button>
+
+                                <!-- Chat Button -->
+                                <button class="w-32 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                    Chat
+                                </button>
                             </div>
-                        </div>
-
-                        <!-- Action Buttons (Di sebelah kanan Profil) -->
-                        <div class="flex flex-col gap-2">
-                            <!-- Laporkan Button -->
-                            <button class="w-32 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
-                                Laporkan
-                            </button>
-
-                            <!-- Chat Button -->
-                            <button class="w-32 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                                Chat
-                            </button>
                         </div>
                     </div>
-                </div>
+                @endif
+                @if(auth()->user()->role == 'worker')
+                    <div class="p-6 bg-white rounded-lg shadow-md my-5">
+                        <div class="flex items-center justify-between">
+                            <!-- Card Profile (Kiri) -->
+                            <div class="flex items-center space-x-4">
+                                <!-- Avatar -->
+                                <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
+                                    <img src="https://via.placeholder.com/150" alt="" class="w-full h-full object-cover rounded-full">
+                                </div>
+
+                                <!-- User Info -->
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-800">{{$task->worker->nama_lengkap}}</h3>
+                                    <p class="text-gray-600">{{$task->worker->role}}</p>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons (Di sebelah kanan Profil) -->
+                            <div class="flex flex-col gap-2">
+                                <!-- Laporkan Button -->
+                                <button class="w-32 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
+                                    Laporkan
+                                </button>
+
+                                <!-- Chat Button -->
+                                <button class="w-32 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                    Chat
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
 
 
@@ -385,6 +419,44 @@
     </div>
 </div>
 
+<!-- Modal Review -->
+<div id="ratingModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center transition-opacity duration-300">
+    <div id="modalContent" class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 opacity-0 scale-95 transform transition-all duration-300 relative">
+        <!-- Close Modal -->
+        <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600" onclick="closeModal()">
+            <i class="bi bi-x-lg text-xl"></i>
+        </button>
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Beri Rating & Ulasan Sebelum Menyelesaikan</h2>
+        <form id="completeJobForm" action="{{ route('complite.job', $task->id) }}" method="POST" class="space-y-4">
+            @csrf
+            @method('POST')
+
+            <!-- Rating -->
+            <div class="flex items-center gap-2">
+                @for ($i = 1; $i <= 5; $i++)
+                    <label>
+                        <input type="radio" name="rating" value="{{ $i }}" class="hidden" required>
+                        <i class="bi bi-star text-3xl text-gray-400 hover:text-yellow-400 cursor-pointer"></i>
+                    </label>
+                @endfor
+            </div>
+
+            <!-- Review -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Ulasan</label>
+                <textarea name="review" rows="4" class="w-full border border-gray-300 rounded-lg focus:ring focus:ring-green-200" placeholder="Tulis ulasanmu..." required></textarea>
+            </div>
+
+            <!-- Submit -->
+            <div class="flex justify-end">
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                    Kirim & Selesaikan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 
 <!-- Modal Form Submit-->
 <div id="modal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center hidden opacity-0 transition-opacity duration-500 ease-in-out">
@@ -398,6 +470,82 @@
   </div>
 </div>
 
+
+
+<!-- buat quilbot -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("Quill Editor Initialized");
+
+        // 🔹 Konfigurasi toolbar Quill
+        const toolbarOptions = [
+            [{ 'header': [1, 2, false] }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            ['bold', 'italic', 'underline'],
+            ['link', 'image'],
+            ['clean']
+        ];
+
+        // 🔹 Inisialisasi Quill Editor di halaman ini
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: { toolbar: toolbarOptions }
+        });
+
+        // Jika ingin memuat data yang sudah ada (misalnya dari database)
+        const contentFromDB = "{!! $dataFromDB ?? '' !!}"; // Misalnya isi dari database
+        quill.root.innerHTML = contentFromDB; // Menyisipkan HTML dari database
+    });
+</script>
+
+
+
+<!-- script untuk modal review -->
+<script>
+    function openModal() {
+        const modal = document.getElementById('ratingModal');
+        const content = document.getElementById('modalContent');
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.add('opacity-100');
+            content.classList.remove('opacity-0', 'scale-95');
+            content.classList.add('opacity-100', 'scale-100');
+        }, 10); // tunggu sedikit supaya transisinya jalan
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('ratingModal');
+        const content = document.getElementById('modalContent');
+
+        modal.classList.remove('opacity-100');
+        content.classList.remove('opacity-100', 'scale-100');
+        content.classList.add('opacity-0', 'scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300); // tunggu animasi selesai dulu (300ms)
+    }
+
+    // Highlight stars saat pilih rating
+    document.querySelectorAll('input[name="rating"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const stars = document.querySelectorAll('#ratingModal i.bi-star');
+            stars.forEach((star, index) => {
+                if (index < this.value) {
+                    star.classList.add('text-yellow-400');
+                    star.classList.remove('text-gray-400');
+                } else {
+                    star.classList.remove('text-yellow-400');
+                    star.classList.add('text-gray-400');
+                }
+            });
+        });
+    });
+</script>
 
 <script>
     function openModalWithStatus(status, id) {

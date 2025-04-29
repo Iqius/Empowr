@@ -2,6 +2,8 @@
 <!-- Quill Editor JS -->
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+<!-- Quill Editor JS -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // === Logout Logic ===
@@ -45,6 +47,7 @@
         document.getElementById("dropdown-notif").classList.toggle("hidden");
     }
 </script>
+
 
 </body>
 

@@ -15,10 +15,8 @@ return new class extends Migration {
             $table->unsignedBigInteger('client_id');
             $table->unsignedBigInteger('profile_id')->nullable();
             $table->string(column: 'title');
-            $table->string('location')->nullable();
             $table->longText('description')->nullable();
             $table->longText('qualification')->nullable();
-            $table->longText('rules')->nullable();
             $table->date('start_date');
             $table->date('deadline');
             $table->date('deadline_promotion');
@@ -26,6 +24,7 @@ return new class extends Migration {
             $table->decimal('price', 15, 2);
             $table->enum('status', ['open', 'in progress', 'completed']);
             $table->integer('revisions');
+            $table->text('kategory')->nullable();
             $table->enum('category', [
                 'Web Development',
                 'Mobile Development',
@@ -102,16 +101,6 @@ return new class extends Migration {
                 'Career Coaching',
                 'Life Coaching',
                 'Consulting',
-                'Other'
-            ])->nullable();
-            $table->enum('taskType', [
-                'Contract',
-                'Project',
-                'Other'
-            ])->nullable();
-            $table->enum('taskModel', [
-                'WFA',
-                'WFO',
                 'Other'
             ])->nullable();
             $table->string('job_file')->nullable();

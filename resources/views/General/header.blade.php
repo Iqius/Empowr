@@ -39,6 +39,7 @@
 
    <!-- Quill Editor CSS -->
    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+   <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
 
    <!-- style -->
@@ -46,7 +47,65 @@
       body {
          font-family: "Poppins", sans-serif;
       }
+      
    </style>
+
+   <style>
+      /* General list styles */
+      .job-description ol,
+      .job-qualification ol,
+      .rules ol {
+         list-style-type: decimal;
+         margin-left: 1.5rem;
+      }
+
+      .job-description ul,
+      .job-qualification ul,
+      .rules ul {
+         list-style-type: disc;
+         margin-left: 1.5rem;
+      }
+
+      .job-description li,
+      .job-qualification li,
+      .rules li {
+         margin-top: 0.25rem;
+         margin-bottom: 0.25rem;
+      }
+
+      /* Enhanced styling within Tailwind-style paragraphs if needed */
+      .job-description.text-gray-600.leading-relaxed ol,
+      .job-qualification.text-gray-600.leading-relaxed ol,
+      .rules.text-gray-600.leading-relaxed ol,
+      .job-description.text-gray-600.leading-relaxed ul,
+      .job-qualification.text-gray-600.leading-relaxed ul,
+      .rules.text-gray-600.leading-relaxed ul {
+         list-style-position: outside !important;
+         padding-left: 2rem !important;
+         margin-top: 0.5rem !important;
+         margin-bottom: 0.5rem !important;
+      }
+
+      .job-description.text-gray-600.leading-relaxed li,
+      .job-qualification.text-gray-600.leading-relaxed li,
+      .rules.text-gray-600.leading-relaxed li {
+         margin-bottom: 0.5rem !important;
+         display: list-item !important;
+      }
+
+      .job-description.text-gray-600.leading-relaxed ol,
+      .job-qualification.text-gray-600.leading-relaxed ol,
+      .rules.text-gray-600.leading-relaxed ol {
+         list-style-type: decimal !important;
+      }
+
+      .job-description.text-gray-600.leading-relaxed ul,
+      .job-qualification.text-gray-600.leading-relaxed ul,
+      .rules.text-gray-600.leading-relaxed ul {
+         list-style-type: disc !important;
+      }
+   </style>
+   
    <link rel="icon" href="{{ asset('assets/images/logosaja.png') }}" type="image/png">
 
 </head>
@@ -114,38 +173,6 @@
                      </a>
                   </div>
                </div>
-
-               <!-- js -->
-               <!-- <script src="//unpkg.com/alpinejs" defer></script> -->
-
-               <!-- <div x-data="{ openNotifModal: false }">
-                  <div x-show="openNotifModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50" x-cloak>
-                     <div class="bg-white w-full max-w-xl mx-4 rounded-lg shadow-lg relative">
-                        <button class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-lg" @click="openNotifModal = false">&times;</button>
-
-                        <div class="p-6 max-h-[70vh] overflow-y-auto">
-                           <h2 class="text-xl font-bold mb-4">Semua Notifikasi</h2>
-
-                           <form method="POST" action="{{ route('notifications.markAllAsRead') }}">
-                              @csrf
-                              <button type="submit" class="text-blue-600 hover:underline mb-4">Tandai Semua sebagai Dibaca</button>
-                           </form>
-
-                           <div class="bg-white shadow rounded-md">
-                              @forelse ($notifications as $notif)
-                              <div class="border-b p-4 {{ !$notif->is_read ? 'bg-gray-50' : '' }}">
-                                 <p class="font-semibold">{{ $notif->sender_name }}</p>
-                                 <p class="text-gray-700">{!! $notif->message !!}</p>
-                                 <p class="text-xs text-gray-500">{{ $notif->created_at->diffForHumans() }}</p>
-                              </div>
-                              @empty
-                              <p class="p-4 text-gray-500">Tidak ada notifikasi.</p>
-                              @endforelse
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div> -->
 
                <!-- User -->
                <div class="relative">

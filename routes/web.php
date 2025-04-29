@@ -53,6 +53,7 @@ Route::post('/reject', [JobController::class, 'ClientReject'])->name('client.rej
 Route::post('/bayar/{task}', [JobController::class, 'bayar'])->name('client.bayar');
 // --Buat job
 Route::post('/jobs', [JobController::class, 'createJobClient'])->name('jobs.store');
+Route::get('/jobs', [JobController::class, 'addJobView'])->name('add-job-view');
 // --review progress
 Route::post('/task-progression/{progress}/review', [ProgressionController::class, 'review'])->name('task-progression.review');
 // --Client complete job
@@ -72,6 +73,8 @@ Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->mid
 Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->name('jobs.Worker');
 // Upload Progress
 Route::post('/task-progression/{task}', [ProgressionController::class, 'create'])->middleware(['auth'])->name('task-progression.store');
+// Post ulasan worker pada saat complite task
+Route::post('/task-progression/ulasan/{task}', [ProgressionController::class, 'ulasanWorker'])->middleware(['auth'])->name('task-progression.store');
 
 
 ####### GENERAL

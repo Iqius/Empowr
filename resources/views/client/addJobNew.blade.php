@@ -1,7 +1,7 @@
 @include('General.header')
 
 <div class="p-6 mt-16">
-    <form action="{{ route('jobs.store') }}" method="POST" enctype="multipart/form-data">
+    <form id="job-form" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Left Section -->
@@ -17,26 +17,14 @@
                         </div>
 
                         <!-- About Task -->
-                        <div>
-                            <label class="text-sm font-medium text-gray-600 mb-1 block">About Task</label>
-                            <div id="editor-about" class="bg-white p-2 border rounded-md" style="height: 200px;"></div>
-                            <input type="hidden" name="description">
-                        </div>
+                        <div id="editor-about" class="bg-white p-2 border rounded-md" style="height: 200px;"></div>
+                        <input type="hidden" name="description" id="description">
 
-                        <!-- Qualification -->
-                        <div>
-                            <label class="text-sm font-medium text-gray-600 mb-1 block">Qualification</label>
-                            <div id="editor-qualification" class="bg-white p-2 border rounded-md"
-                                style="height: 150px;"></div>
-                            <input type="hidden" name="qualification">
-                        </div>
+                        <div id="editor-qualification" class="bg-white p-2 border rounded-md" style="height: 200px;"></div>
+                        <input type="hidden" name="qualification" id="qualification">
 
-                        <!-- Rules -->
-                        <div>
-                            <label class="text-sm font-medium text-gray-600 mb-1 block">Rules</label>
-                            <div id="editor-rules" class="bg-white p-2 border rounded-md" style="height: 150px;"></div>
-                            <input type="hidden" name="rules">
-                        </div>
+                        <div id="editor-rules" class="bg-white p-2 border rounded-md" style="height: 200px;"></div>
+                        <input type="hidden" name="rules" id="rules">
 
                         <!-- Upload -->
                         <div>
@@ -77,124 +65,48 @@
                     </div>
 
                     <div>
-                        <label class="text-sm font-medium text-gray-600 mb-1 block">Task Type</label>
-                        <select name="taskType"
-                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            required>
-                            <option value="">Select Task Type</option>
-                            <option value="Contract">Contract</option>
-                            <option value="Project">Project</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-medium text-gray-600 mb-1 block">Task Model</label>
-                        <select name="taskModel"
-                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            required>
-                            <option value="">Select Task Model</option>
-                            <option value="WFA">WFA</option>
-                            <option value="WFO">WFO</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-
-                    <div>
                         <label class="text-sm font-medium text-gray-600 mb-1 block">Category</label>
-                        <select name="category"
-                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            required>
-                            <option value="">Select Category</option>
-                            <option value="Web Development">Web Development</option>
-                            <option value="Mobile Development">Mobile Development</option>
-                            <option value="Game Development">Game Development</option>
-                            <option value="Software Engineering">Software Engineering</option>
-                            <option value="Frontend Development">Frontend Development</option>
-                            <option value="Backend Development">Backend Development</option>
-                            <option value="Full Stack Development">Full Stack Development</option>
-                            <option value="DevOps">DevOps</option>
-                            <option value="QA Testing">QA Testing</option>
-                            <option value="Automation Testing">Automation Testing</option>
-                            <option value="API Integration">API Integration</option>
-                            <option value="WordPress Development">WordPress Development</option>
-                            <option value="Data Science">Data Science</option>
-                            <option value="Machine Learning">Machine Learning</option>
-                            <option value="AI Development">AI Development</option>
-                            <option value="Data Engineering">Data Engineering</option>
-                            <option value="Data Entry">Data Entry</option>
-                            <option value="SEO">SEO</option>
-                            <option value="Content Writing">Content Writing</option>
-                            <option value="Technical Writing">Technical Writing</option>
-                            <option value="Blog Writing">Blog Writing</option>
-                            <option value="Copywriting">Copywriting</option>
-                            <option value="Scriptwriting">Scriptwriting</option>
-                            <option value="Proofreading">Proofreading</option>
-                            <option value="Translation">Translation</option>
-                            <option value="Transcription">Transcription</option>
-                            <option value="Resume Writing">Resume Writing</option>
-                            <option value="Ghostwriting">Ghostwriting</option>
-                            <option value="Creative Writing">Creative Writing</option>
-                            <option value="Social Media Management">Social Media Management</option>
-                            <option value="Digital Marketing">Digital Marketing</option>
-                            <option value="Email Marketing">Email Marketing</option>
-                            <option value="Affiliate Marketing">Affiliate Marketing</option>
-                            <option value="Influencer Marketing">Influencer Marketing</option>
-                            <option value="Community Management">Community Management</option>
-                            <option value="Search Engine Marketing">Search Engine Marketing</option>
-                            <option value="Branding">Branding</option>
-                            <option value="Graphic Design">Graphic Design</option>
-                            <option value="UI/UX Design">UI/UX Design</option>
-                            <option value="Logo Design">Logo Design</option>
-                            <option value="Motion Graphics">Motion Graphics</option>
-                            <option value="Illustration">Illustration</option>
-                            <option value="Video Editing">Video Editing</option>
-                            <option value="Video Production">Video Production</option>
-                            <option value="Animation">Animation</option>
-                            <option value="3D Modeling">3D Modeling</option>
-                            <option value="Video Game Design">Video Game Design</option>
-                            <option value="Audio Editing">Audio Editing</option>
-                            <option value="Photography">Photography</option>
-                            <option value="Photo Editing">Photo Editing</option>
-                            <option value="Presentation Design">Presentation Design</option>
-                            <option value="Project Management">Project Management</option>
-                            <option value="Virtual Assistant">Virtual Assistant</option>
-                            <option value="Customer Service">Customer Service</option>
-                            <option value="Lead Generation">Lead Generation</option>
-                            <option value="Market Research">Market Research</option>
-                            <option value="Business Analysis">Business Analysis</option>
-                            <option value="Human Resources">Human Resources</option>
-                            <option value="Event Planning">Event Planning</option>
-                            <option value="Bookkeeping">Bookkeeping</option>
-                            <option value="Accounting">Accounting</option>
-                            <option value="Tax Preparation">Tax Preparation</option>
-                            <option value="Financial Analysis">Financial Analysis</option>
-                            <option value="Legal Advice">Legal Advice</option>
-                            <option value="Contract Drafting">Contract Drafting</option>
-                            <option value="Startup Consulting">Startup Consulting</option>
-                            <option value="Investment Research">Investment Research</option>
-                            <option value="Real Estate Consulting">Real Estate Consulting</option>
-                            <option value="Personal Assistant">Personal Assistant</option>
-                            <option value="Clerical Work">Clerical Work</option>
-                            <option value="Data Analysis">Data Analysis</option>
-                            <option value="Business Coaching">Business Coaching</option>
-                            <option value="Career Coaching">Career Coaching</option>
-                            <option value="Life Coaching">Life Coaching</option>
-                            <option value="Consulting">Consulting</option>
-                            <option value="Other">Other</option>
-                        </select>
+                        <div class="grid grid-cols-3 items-start gap-4">
+                        <div class="col-span-2">
+                            @php
+                                $selectedSkills = json_decode(optional(Auth::user()->keahlian)->keahlian, true) ?? [];
+                                $categories = [
+                                    "Web Development", "Mobile Development", "Game Development", "Software Engineering",
+                                    "Frontend Development", "Backend Development", "Full Stack Development", "DevOps",
+                                    "QA Testing", "Automation Testing", "API Integration", "WordPress Development",
+                                    "Data Science", "Machine Learning", "AI Development", "Data Engineering", "Data Entry",
+                                    "SEO", "Content Writing", "Technical Writing", "Blog Writing", "Copywriting",
+                                    "Scriptwriting", "Proofreading", "Translation", "Transcription", "Resume Writing",
+                                    "Ghostwriting", "Creative Writing", "Social Media Management", "Digital Marketing",
+                                    "Email Marketing", "Affiliate Marketing", "Influencer Marketing", "Community Management",
+                                    "Search Engine Marketing", "Branding", "Graphic Design", "UI/UX Design", "Logo Design",
+                                    "Motion Graphics", "Illustration", "Video Editing", "Video Production", "Animation",
+                                    "3D Modeling", "Video Game Design", "Audio Editing", "Photography", "Photo Editing",
+                                    "Presentation Design", "Project Management", "Virtual Assistant", "Customer Service",
+                                    "Lead Generation", "Market Research", "Business Analysis", "Human Resources",
+                                    "Event Planning", "Bookkeeping", "Accounting", "Tax Preparation", "Financial Analysis",
+                                    "Legal Advice", "Contract Drafting", "Startup Consulting", "Investment Research",
+                                    "Real Estate Consulting", "Personal Assistant", "Clerical Work", "Data Analysis",
+                                    "Business Coaching", "Career Coaching", "Life Coaching", "Consulting", "Other"
+                                ];
+                            @endphp
+
+                            <select id="keahlian-select" name="kategoriWorker[]" multiple class="w-full p-2 border rounded">
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category }}" {{ in_array($category, $selectedSkills) ? 'selected' : '' }}>
+                                        {{ $category }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600 mb-1 block">Revisions</label>
                         <input type="number" name="revisions" min="0"
                             class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                             required>
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-medium text-gray-600 mb-1 block">Location</label>
-                        <input type="text" name="location"
-                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
                     </div>
 
                     <div>
@@ -209,7 +121,7 @@
 
         <!-- Button Submit -->
         <div class="flex justify-end mt-6">
-            <button type="submit"
+            <button type="button" id="submit-btn"
                 class="bg-[#1F4482] hover:bg-[#18346a] text-white text-sm sm:text-base font-semibold px-6 py-3 rounded-md shadow transition">
                 Tambahkan
             </button>
@@ -218,18 +130,129 @@
 </div>
 
 <!-- Script Quill -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var quillAbout = new Quill('#editor-about', { theme: 'snow' });
-        var quillQualification = new Quill('#editor-qualification', { theme: 'snow' });
-        var quillRules = new Quill('#editor-rules', { theme: 'snow' });
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
-        document.querySelector('form').addEventListener('submit', function () {
-            document.getElementById('description').value = quillAbout.root.innerHTML;
-            document.getElementById('qualification').value = quillQualification.root.innerHTML;
-            document.getElementById('rules').value = quillRules.root.innerHTML;
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("Quill Editor Initialized");
+
+    // 🔹 Konfigurasi toolbar Quill
+    const toolbarOptions = [
+        [{ 'header': [1, 2, false] }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        ['bold', 'italic', 'underline'],
+        ['link', 'image'],
+        ['clean']
+    ];
+
+    // 🔹 Inisialisasi Quill Editor untuk semua bidang
+    var quillDescription = new Quill('#editor-about', {
+        theme: 'snow',
+        modules: { 
+            toolbar: toolbarOptions
+        }
+    });
+
+    var quillQualification = new Quill('#editor-qualification', {
+        theme: 'snow',
+        modules: { 
+            toolbar: toolbarOptions
+        }
+    });
+
+    var quillRules = new Quill('#editor-rules', {
+        theme: 'snow',
+        modules: { 
+            toolbar: toolbarOptions
+        }
+    });
+
+    // 🔹 Fungsi yang SANGAT diperbaiki untuk memastikan list terformat dengan benar
+    function cleanContent(content) {
+        // If content is empty, return empty string
+        if (!content.trim()) return '';
+        
+        var tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+        
+        // Special handling for ordered lists to ensure they're preserved properly
+        tempDiv.querySelectorAll('*').forEach(function (node) {
+            // Pertahankan atribut penting untuk list
+            if (node.tagName === 'OL' || node.tagName === 'UL') {
+                // Keep class attribute for list type but remove style
+                node.removeAttribute('style');
+            } 
+            else if (node.tagName === 'LI') {
+                // For list items, keep necessary attributes but remove style
+                node.removeAttribute('style');
+            }
+            else {
+                // For non-list elements, remove both class and style
+                node.removeAttribute('class');
+                node.removeAttribute('style');
+            }
         });
+
+        return tempDiv.innerHTML.trim();
+    }
+
+    // 🔹 Tombol submit event handler
+    document.querySelector('#submit-btn').addEventListener('click', function (event) {
+        event.preventDefault(); // ✅ Mencegah submit otomatis sebelum data tersimpan
+
+        console.log("Submit button clicked!");
+
+        // 🔹 Ambil isi dari Quill dan simpan di input hidden
+        document.querySelector('input[name="description"]').value = cleanContent(quillDescription.root.innerHTML);
+        document.querySelector('input[name="qualification"]').value = cleanContent(quillQualification.root.innerHTML);
+        document.querySelector('input[name="rules"]').value = cleanContent(quillRules.root.innerHTML);
+
+        // 🔹 Debugging untuk memastikan data benar sebelum submit
+        console.log('Description:', document.querySelector('input[name="description"]').value);
+        console.log('Qualification:', document.querySelector('input[name="qualification"]').value);
+        console.log('Rules:', document.querySelector('input[name="rules"]').value);
+
+        // 🔹 Validasi apakah semua input tidak kosong
+        if (
+            document.querySelector('input[name="description"]').value.trim() &&
+            document.querySelector('input[name="qualification"]').value.trim() &&
+            document.querySelector('input[name="rules"]').value.trim()
+        ) {
+            console.log("Form is valid, submitting...");
+            document.querySelector('#job-form').action = "{{ route('jobs.store') }}"; // ✅ Tentukan route
+            document.querySelector('#job-form').submit(); // ✅ Submit form
+        } else {
+            alert('Please complete all required fields before submitting.');
+            console.log("Form validation failed.");
+        }
+    });
+
+    // 🔹 Disable paste menjadi plaintext (untuk mencegah stripping format)
+    quillDescription.clipboard.addMatcher(Node.ELEMENT_NODE, function(node, delta) {
+        return delta;
+    });
+    
+    quillQualification.clipboard.addMatcher(Node.ELEMENT_NODE, function(node, delta) {
+        return delta;
+    });
+    
+    quillRules.clipboard.addMatcher(Node.ELEMENT_NODE, function(node, delta) {
+        return delta;
+    });
+});
+</script>
+
+<script>
+    new TomSelect('#keahlian-select', {
+        plugins: ['remove_button'],
+        placeholder: 'Pilih keahlian...',
+        persist: false,
+        create: false,
+        maxItems: null
     });
 </script>
+
+
+
 
 @include('General.footer')

@@ -24,6 +24,10 @@ class JobController extends Controller
     }
 
 
+    // Tampilan add newjob
+    public function addJobView(){
+        return view('Client.addJobNew');
+    }
     // Create job Client
     public function createJobClient(Request $request)
     {
@@ -31,34 +35,33 @@ class JobController extends Controller
             'job_file' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240', // max 2MB
         ]);
 
+        
         // Handle file upload jika ada
         $path = null;
         if ($request->hasFile('job_file')) {
             $path = $request->file('job_file')->store('task_files', 'public');
         }
 
+        
+        
         $task = Task::create([
-            // 'id' => Str::uuid(),
             'client_id' => Auth::id(),
             'profile_id' => null, // default null, nanti diassign saat ada worker apply
             'title' => $request->title,
-            'location' => $request->location,
             'description' => $request->description,
             'qualification' => $request->qualification,
-            'rules' => $request->rules,
+            'provisions' => $request->rules,
             'start_date' => $request->start_date,
             'deadline' => $request->deadline,
             'deadline_promotion' => $request->deadline_promotion,
-            'provisions' => $request->provisions,
             'price' => $request->price,
             'status' => 'open',
             'revisions' => $request->revisions,
-            'taskModel' => $request->taskModel,
-            'taskType' => $request->taskType,
-            'category' => $request->category,
+            'kategory' => json_encode($request->kategoriWorker),
             'job_file' => $path,
         ]);
 
+        
         return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
 
@@ -103,8 +106,8 @@ class JobController extends Controller
         // Ambil Task yang berhubungan dengan workerProfile (task yang dikerjakan oleh worker)
         $task = Task::with('worker')
             ->where('profile_id', $workerProfile->id) // Asumsi profile_id di task adalah id dari workerProfile
-            ->get();
-        return view('Worker.Jobs.myJobWorker', compact('taskApplied', 'task'));
+            ->get(); 
+        return view('Worker.Jobs.myJobWorker', compact('taskApplied','task'));
     }
 
 
@@ -135,8 +138,8 @@ class JobController extends Controller
             }, SORT_REGULAR, $request->get('dir') === 'desc')
             ->values(); // reset index
 
-        return view('client.jobs.manage', compact('task', 'applicants'));
-
+            return view('client.jobs.manage', compact('task', 'applicants'));
+        
     }
 
 
@@ -233,7 +236,7 @@ class JobController extends Controller
         if (!$task->bayar) {
             return back()->with('error', 'Silakan bayar terlebih dahulu sebelum merekrut worker.');
         }
-
+    
         $profile = WorkerProfile::findOrFail($request->worker_profile_id);
 
         // 2. Update task
@@ -334,11 +337,11 @@ class JobController extends Controller
         if ($hash === $request->signature_key) {
             if ($request->transaction_status === 'capture') {
                 $task = Task::where('id', $request->order_id)->first();
-                if ($task->bayar == 0) {
+                if ($task->bayar==0) {
                     $task->bayar = true;
                     $task->price = $request->gross_amount;
                     $task->save();
-                } else if ($task->bayar == 1) {
+                }else if($task->bayar==1){
                     $task->price = $task->price + $request->gross_amount;
                     $task->save();
                 }
@@ -388,7 +391,7 @@ class JobController extends Controller
         $currentStep = $progressionsByStep->keys()->max() + 1;
         $canSubmit = $this->determineCanSubmit($currentStep, $progressionsByStep);
 
-        if ($task->status !== 'completed') {
+        if ($task->status !== 'completed'){
             return view('General.detailProgressionJobs', compact(
                 'task',
                 'steps',
@@ -396,41 +399,40 @@ class JobController extends Controller
                 'progressions',
                 'canSubmit' // jangan lupa lempar ke view kalau mau dipakai
             ));
-        } else {
+        }else{
             return view('General.detailProgressionComplite', compact(
-                'task',
-                'progressions',
+                'task','progressions',
             ));
         }
-
+        
     }
 
 
     private function determineCanSubmit($step, $progressionsByStep)
     {
         $canSubmit = false;
-
+    
         $third = $progressionsByStep[3] ?? null;
         $fourth = $progressionsByStep[4] ?? null;
-
+    
         // Ambil data task terkait
         $task = $third?->task ?? null;
-
+    
         // Cek jika task ada dan memiliki kolom revisions
         $taskRevisions = $task ? $task->revisions : 0;
-
+    
         // Hitung revisi yang sudah ada di progression (dari step 4 dan seterusnya)
         $currentRevisions = Progression::where('task_id', $third->task_id ?? null)
             ->where('progression_ke', '>=', 4) // Memperhitungkan revisi setelah step 3
             ->count();
-
+    
         // Jika ini adalah step pertama, cek apakah progression pertama sudah disetujui
         if ($step == 1) {
             if (isset($progressionsByStep[1]) && $progressionsByStep[1]->status_approve == 'approved') {
                 $canSubmit = true;
             }
         }
-
+    
         // Special rules for step 4 (revisi)
         if ($step == 4) {
             // Cek apakah revisi masih diizinkan
@@ -438,16 +440,16 @@ class JobController extends Controller
                 $canSubmit = true;
             }
         }
-
+    
         // Jika revisi yang sudah dilakukan lebih sedikit dari yang diizinkan, tombol submit harus muncul
         if ($currentRevisions < $taskRevisions) {
             $canSubmit = true;
         }
-
+    
         return $canSubmit;
     }
-
-
+    
+        
 
 
 }
