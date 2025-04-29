@@ -48,9 +48,29 @@
                 </h3>
 
                 <!-- Description -->
-                <p class="text-xs text-gray-500 mb-4 leading-relaxed">
-                    {{ Str::limit($job->description, 80, '...') }}
-                </p>
+                <div class="text-xs text-gray-500 mb-4 leading-relaxed">
+                    @php
+                        // Check if the description contains ordered or unordered lists
+                        $hasLists = preg_match('/<ol[^>]*>|<ul[^>]*>/i', $job->description);
+                        
+                        // Get the text before any list appears
+                        $textBeforeLists = preg_split('/<ol[^>]*>|<ul[^>]*>/i', $job->description)[0];
+                        
+                        // Strip any HTML tags from this text
+                        $plainTextBeforeLists = strip_tags($textBeforeLists);
+                        
+                        // Create the preview - if there are lists, add ellipsis
+                        if ($hasLists) {
+                            // Limit the text before the list and add ellipsis
+                            $previewText = Str::limit($plainTextBeforeLists, 77, '...');
+                        } else {
+                            // If no lists, just use normal limit
+                            $previewText = Str::limit(strip_tags($job->description), 80, '...');
+                        }
+                    @endphp
+                    {{ $previewText }}
+                </div>
+
 
                 <!-- Bottom Row: Price + Button -->
                 <div class="flex justify-between items-center">

@@ -194,28 +194,49 @@ document.addEventListener("DOMContentLoaded", function () {
     // 🔹 Inisialisasi Quill Editor untuk semua bidang
     var quillDescription = new Quill('#editor-about', {
         theme: 'snow',
-        modules: { toolbar: toolbarOptions }
+        modules: { 
+            toolbar: toolbarOptions
+        }
     });
 
     var quillQualification = new Quill('#editor-qualification', {
         theme: 'snow',
-        modules: { toolbar: toolbarOptions }
+        modules: { 
+            toolbar: toolbarOptions
+        }
     });
 
     var quillRules = new Quill('#editor-rules', {
         theme: 'snow',
-        modules: { toolbar: toolbarOptions }
+        modules: { 
+            toolbar: toolbarOptions
+        }
     });
 
-    // 🔹 Fungsi untuk membersihkan atribut class/style dari Quill
+    // 🔹 Fungsi yang SANGAT diperbaiki untuk memastikan list terformat dengan benar
     function cleanContent(content) {
+        // If content is empty, return empty string
+        if (!content.trim()) return '';
+        
         var tempDiv = document.createElement('div');
         tempDiv.innerHTML = content;
         
-        // Hapus atribut class & style untuk menjaga kebersihan data
+        // Special handling for ordered lists to ensure they're preserved properly
         tempDiv.querySelectorAll('*').forEach(function (node) {
-            node.removeAttribute('class');
-            node.removeAttribute('style');
+            // Pertahankan atribut penting untuk list
+            if (node.tagName === 'OL' || node.tagName === 'UL') {
+                // Keep class attribute for list type but remove style
+                node.removeAttribute('style');
+            } 
+            else if (node.tagName === 'LI') {
+                // For list items, keep necessary attributes but remove style
+                node.removeAttribute('style');
+            }
+            else {
+                // For non-list elements, remove both class and style
+                node.removeAttribute('class');
+                node.removeAttribute('style');
+            }
         });
 
         return tempDiv.innerHTML.trim();
@@ -251,8 +272,23 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Form validation failed.");
         }
     });
+
+    // 🔹 Disable paste menjadi plaintext (untuk mencegah stripping format)
+    quillDescription.clipboard.addMatcher(Node.ELEMENT_NODE, function(node, delta) {
+        return delta;
+    });
+    
+    quillQualification.clipboard.addMatcher(Node.ELEMENT_NODE, function(node, delta) {
+        return delta;
+    });
+    
+    quillRules.clipboard.addMatcher(Node.ELEMENT_NODE, function(node, delta) {
+        return delta;
+    });
 });
 </script>
+
+
 
 
 @include('General.footer')

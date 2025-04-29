@@ -1,6 +1,7 @@
 @include('General.header')
 
 
+
 <div class="p-4 mt-14">
     <div class="p-4 rounded h-full">
         <div class="grid grid-cols-1 min-h-screen">
@@ -264,11 +265,14 @@
                 <div class="p-6 bg-white rounded-lg shadow-md my-5">
                     <h1 class="text-xl font-semibold text-gray-700 mt-6">Deskripsi</h1>
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
-                    <p class="text-gray-600 mt-1">{{$task->description}}</p>
+                    <div class="job-description text-gray-600 mt-1">{!!$task->description!!}</div>
                     <h1 class="text-xl font-semibold text-gray-700 mt-10">Ketentuan</h1>
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
-                    <p class="text-gray-600 mt-1">{{$task->provisions}}</p>
-                    <h1 class="text-xl font-semibold text-gray-700 mt-10">File Terkait tugas</h1>
+                    <div class="job-qualification text-gray-600 mt-1">{!!$task->qualification!!}</div>
+                    <h1 class="text-xl font-semibold text-gray-700 mt-10">Rules</h1>
+                    <hr class="border-t-1 border-gray-300 mb-7 mt-4">
+                    <div class="rules text-gray-600 mt-1">{!!$task->provisions!!}</div>
+                    <h1 class="text-xl font-semibold text-gray-700 mt-10">File Terkait tugas</>
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
                 </div>
 
@@ -465,6 +469,38 @@
     </div>
   </div>
 </div>
+
+
+
+<!-- buat quilbot -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("Quill Editor Initialized");
+
+        // 🔹 Konfigurasi toolbar Quill
+        const toolbarOptions = [
+            [{ 'header': [1, 2, false] }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            ['bold', 'italic', 'underline'],
+            ['link', 'image'],
+            ['clean']
+        ];
+
+        // 🔹 Inisialisasi Quill Editor di halaman ini
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: { toolbar: toolbarOptions }
+        });
+
+        // Jika ingin memuat data yang sudah ada (misalnya dari database)
+        const contentFromDB = "{!! $dataFromDB ?? '' !!}"; // Misalnya isi dari database
+        quill.root.innerHTML = contentFromDB; // Menyisipkan HTML dari database
+    });
+</script>
+
 
 
 <!-- script untuk modal review -->

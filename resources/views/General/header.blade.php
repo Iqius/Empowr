@@ -48,8 +48,64 @@
          font-family: "Poppins", sans-serif;
       }
       
-
    </style>
+
+   <style>
+      /* General list styles */
+      .job-description ol,
+      .job-qualification ol,
+      .rules ol {
+         list-style-type: decimal;
+         margin-left: 1.5rem;
+      }
+
+      .job-description ul,
+      .job-qualification ul,
+      .rules ul {
+         list-style-type: disc;
+         margin-left: 1.5rem;
+      }
+
+      .job-description li,
+      .job-qualification li,
+      .rules li {
+         margin-top: 0.25rem;
+         margin-bottom: 0.25rem;
+      }
+
+      /* Enhanced styling within Tailwind-style paragraphs if needed */
+      .job-description.text-gray-600.leading-relaxed ol,
+      .job-qualification.text-gray-600.leading-relaxed ol,
+      .rules.text-gray-600.leading-relaxed ol,
+      .job-description.text-gray-600.leading-relaxed ul,
+      .job-qualification.text-gray-600.leading-relaxed ul,
+      .rules.text-gray-600.leading-relaxed ul {
+         list-style-position: outside !important;
+         padding-left: 2rem !important;
+         margin-top: 0.5rem !important;
+         margin-bottom: 0.5rem !important;
+      }
+
+      .job-description.text-gray-600.leading-relaxed li,
+      .job-qualification.text-gray-600.leading-relaxed li,
+      .rules.text-gray-600.leading-relaxed li {
+         margin-bottom: 0.5rem !important;
+         display: list-item !important;
+      }
+
+      .job-description.text-gray-600.leading-relaxed ol,
+      .job-qualification.text-gray-600.leading-relaxed ol,
+      .rules.text-gray-600.leading-relaxed ol {
+         list-style-type: decimal !important;
+      }
+
+      .job-description.text-gray-600.leading-relaxed ul,
+      .job-qualification.text-gray-600.leading-relaxed ul,
+      .rules.text-gray-600.leading-relaxed ul {
+         list-style-type: disc !important;
+      }
+   </style>
+   
    <link rel="icon" href="{{ asset('assets/images/logosaja.png') }}" type="image/png">
 
 </head>

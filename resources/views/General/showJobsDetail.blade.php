@@ -1,6 +1,7 @@
 @include('General.header')
 
 
+
 <div class="p-4 mt-14">
     <div class="p-4 rounded h-full">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -66,21 +67,21 @@
                     <div class="space-y-6 flex-1">
                         <div>
                             <h2 class="text-xl font-semibold text-gray-800 mb-2">About Task</h2>
-                            <div class="text-sm text-gray-600 leading-relaxed">
+                            <div class="job-description text-sm text-gray-600 leading-relaxed">
                                 {!! $job->description ?? '-' !!}
                             </div>
                         </div>
 
                         <div>
                             <h2 class="text-xl font-semibold text-gray-800 mb-2">Qualification</h2>
-                            <div class="text-sm text-gray-600 leading-relaxed">
+                            <div class="job-qualification text-sm text-gray-600 leading-relaxed">
                                 {!! $job->qualification ?? '-' !!}
                             </div>
                         </div>
 
                         <div>
                             <h2 class="text-xl font-semibold text-gray-800 mb-2">Rules Task</h2>
-                            <div class="text-sm text-gray-600 leading-relaxed">
+                            <div class="rules text-sm text-gray-600 leading-relaxed">
                                 {!! $job->provisions ?? '-' !!}
                             </div>
                         </div>
@@ -255,24 +256,24 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-    // Masukkan ke input hidden
-    document.getElementById("formBidPrice").value = result.value.nego;
-    document.getElementById("formCatatan").value = result.value.note;
+                    // Masukkan ke input hidden
+                    document.getElementById("formBidPrice").value = result.value.nego;
+                    document.getElementById("formCatatan").value = result.value.note;
 
-    Swal.fire({
-    icon: 'success',
-    title: 'Berhasil!',
-    text: 'Lamaran berhasil dikirim.',
-    showConfirmButton: false,
-    timer: 1500
-});
+                    Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Lamaran berhasil dikirim.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
 
 
-    // Delay submit sedikit agar notifikasi bisa muncul
-    setTimeout(() => {
-        form.submit();
-    }, 800); // 800ms biar notif terlihat
-}
+                    // Delay submit sedikit agar notifikasi bisa muncul
+                    setTimeout(() => {
+                        form.submit();
+                    }, 800); // 800ms biar notif terlihat
+                }
 
             });
         });

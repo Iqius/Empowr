@@ -66,6 +66,8 @@ Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->mid
 Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->name('jobs.Worker');
 // Upload Progress
 Route::post('/task-progression/{task}', [ProgressionController::class, 'create'])->middleware(['auth'])->name('task-progression.store');
+// Post ulasan worker pada saat complite task
+Route::post('/task-progression/ulasan/{task}', [ProgressionController::class, 'ulasanWorker'])->middleware(['auth'])->name('task-progression.store');
 
 
 ####### GENERAL
