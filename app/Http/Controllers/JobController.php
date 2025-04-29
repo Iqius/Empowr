@@ -24,6 +24,10 @@ class JobController extends Controller
     }
 
 
+    // Tampilan add newjob
+    public function addJobView(){
+        return view('Client.addJobNew');
+    }
     // Create job Client
     public function createJobClient(Request $request)
     {
@@ -31,28 +35,33 @@ class JobController extends Controller
             'job_file' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240', // max 2MB
         ]);
 
+        
         // Handle file upload jika ada
         $path = null;
         if ($request->hasFile('job_file')) {
             $path = $request->file('job_file')->store('task_files', 'public');
         }
 
+        
+        
         $task = Task::create([
-            // 'id' => Str::uuid(),
             'client_id' => Auth::id(),
             'profile_id' => null, // default null, nanti diassign saat ada worker apply
             'title' => $request->title,
             'description' => $request->description,
+            'qualification' => $request->qualification,
+            'provisions' => $request->rules,
+            'start_date' => $request->start_date,
             'deadline' => $request->deadline,
             'deadline_promotion' => $request->deadline_promotion,
-            'provisions' => $request->provisions,
             'price' => $request->price,
             'status' => 'open',
             'revisions' => $request->revisions,
-            'taskType' => $request->taskType,
+            'category' => $request->category,
             'job_file' => $path,
         ]);
 
+        
         return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
 

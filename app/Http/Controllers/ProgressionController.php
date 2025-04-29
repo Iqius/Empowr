@@ -73,6 +73,23 @@ class ProgressionController extends Controller
         // Ambil task berdasarkan taskId
         $task = task::findOrFail($taskId);
 
+        if(auth()->user()->id === $task->client_id) { // Pastikan yang memberi review adalah client yang sesuai
+            // Validasi rating dan komentar
+            $request->validate([
+                'rating' => 'required|integer|between:1,5', // Rating 1 - 5
+                'comment' => 'nullable|string|max:500', // Komentar opsional
+            ]);
+    
+            // Simpan rating dan komentar ke dalam tabel task_reviews
+            TaskReview::create([
+                'task_id' => $task->id,
+                'user_id' => auth()->user()->id, // User yang memberikan ulasan (client)
+                'reviewed_user_id' => $worker->id, // Worker yang menerima ulasan
+                'rating' => $request->rating, // Rating
+                'comment' => $request->comment, // Komentar
+            ]);
+        }
+
         // Update task dengan data baru
         $task->update([
             'status' => 'completed', // Misal ada status yang bisa diubah

@@ -51,6 +51,7 @@ Route::post('/reject', [JobController::class, 'ClientReject'])->name('client.rej
 Route::post('/bayar/{task}', [JobController::class, 'bayar'])->name('client.bayar');
 // --Buat job
 Route::post('/jobs', [JobController::class, 'createJobClient'])->name('jobs.store');
+Route::get('/jobs', [JobController::class, 'addJobView'])->name('add-job-view');
 // --review progress
 Route::post('/task-progression/{progress}/review', [ProgressionController::class, 'review'])->name('task-progression.review');
 //  --Client complte job
