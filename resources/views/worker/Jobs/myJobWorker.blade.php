@@ -20,7 +20,7 @@
 
 @foreach ($taskApplied as $job)
     <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200" data-status="{{ $job->status }}">
-        <a href="{{ route('manage.worker', $job->id) }}">
+        <a href="{{ route('manage.worker', $job->task_id) }}">
             <p class="text-blue-600 font-semibold text-base sm:text-lg">{{ $job->task->title }}</p>
             <p class="text-black font-bold mt-2 text-sm sm:text-base">
                 Rp {{ number_format($job->bidPrice, 0, ',', '.') }}

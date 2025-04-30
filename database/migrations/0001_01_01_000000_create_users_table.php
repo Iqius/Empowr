@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('nomor_telepon')->nullable();
             $table->string('alamat')->nullable();
             $table->string('negara')->nullable();
+            $table->string('ewallet')->nullable();
             $table->timestamp('tanggal_bergabung')->useCurrent();
             $table->text('bio')->nullable();
             $table->timestamps();

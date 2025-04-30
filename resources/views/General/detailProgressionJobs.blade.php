@@ -1,10 +1,22 @@
 @include('General.header')
 
 
+
 <div class="p-4 mt-14">
     <div class="p-4 rounded h-full">
         <div class="grid grid-cols-1 min-h-screen">
             <div class="p-4 rounded h-full">
+                <div class="flex justify-end space-x-4 mb-7">
+                    <!-- Button Complete -->
+                    @if(auth()->user()->role == 'client')
+                        <button type="button" onclick="openModal()"
+                            class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4">
+                            Selesaikan pekerjaan
+                        </button>
+                    @endif
+
+                </div>
+
                 <div class="p-6 bg-white rounded-lg shadow-md">
                     <div class="flex flex-col gap-4">
                         <div class="flex flex-col md:flex-row items-center justify-center p-4 gap-4">
@@ -100,262 +112,238 @@
                         </div>
                     </div>
                     <!-- Card Section: selalu di bawah -->
-                    <div class="flex flex-col md:grid md:grid-cols-4 gap-4 p-4"> <!-- Ini kalau mau satu aja buttonnya <div class="flex flex-col gap-4 p-4">-->
-                        <!-- Card untuk Worker -->
-                        @if(auth()->user()->role == 'worker')
-                            @for($step = 1; $step <= 4; $step++)
-                                @php
-                                    $current = $progressionsByStep[$step] ?? null;
-                                    $prev = $progressionsByStep[$step - 1] ?? null;
+                    <div class="flex flex-col gap-4 p-4">
+                    <!-- Single Card for Worker -->
+                    @if(auth()->user()->role == 'worker')
+                        @php
+                            $currentStep = $progressionsByStep->count() + 1;
+                            $maxSteps = 3 + $task->revisions; // 3 progression + jumlah revisi yang dibolehkan
+                            $latestProgression = $progressionsByStep->last();
+                            
+                            // Fix for initial submission - ensure canSubmit is true for first submission
+                            $canSubmitInitial = ($progressionsByStep->isEmpty() || ($latestProgression && $latestProgression->status_approve !== 'waiting'));
+                        @endphp
 
-                                    // Default rules for step 1–3
-                                    $canSubmit = !$current && (
-                                        $step == 1 ||
-                                        ($step > 1 && $step <= 3 && $prev && $prev->status_approve === 'approved')
-                                    );
-
-                                    // Special rules for step 4 (revisi)
-                                    $third = $progressionsByStep[3] ?? null;
-                                    $fourth = $progressionsByStep[4] ?? null;
-                                    $taskRevisions = $third?->task?->revisions ?? 0;
-                                    $taskRevisions = $taskRevisions - 1;
-                                    if ($step == 4) {
-                                        $canSubmit = !$fourth && $third && $third->status_approve === 'rejected' && $taskRevisions > 0;
-                                    }
-                                @endphp
-
-                                @if($current)
-                                    <!-- Sudah Submit: tampilkan informasi file dan status -->
-                                    <div class="bg-white rounded-lg p-4 shadow w-full">
-                                        @if($step > 3 && $current->status_approve === 'rejected' && $taskRevisions+1 <= $task->revisions)
-                                            @if($taskRevisions != $task->revisions)
-                                                <!-- Form Upload -->
-                                                <h2 class="font-bold text-lg">Revisi Ke-{{ $taskRevisions }}</h2>
-                                                <form action="{{ route('task-progression.store', $task->id) }}" method="POST" enctype="multipart/form-data">
-                                                    @csrf
-                                                    <div class="bg-white rounded-lg p-4 shadow w-full">
-                                                        <h2 class="font-bold text-lg">Submit Revisi Ke-{{ $taskRevisions + 1 }}</h2>
-                                                        <label for="file-upload-{{ $step }}" class="group cursor-pointer bg-white rounded-lg p-4 shadow w-full flex items-center justify-start gap-4 transition-all duration-300 hover:bg-gray-100">
-                                                            <div class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">📄</div>
-                                                            <p class="text-gray-700 font-medium">Inputkan file Progress</p>
-                                                        </label>
-                                                        <input id="file-upload-{{ $step }}" type="file" name="file" class="hidden" required>
-                                                        <p class="pt-5">Tanggal di submit: {{ now()->format('d-m-Y H:i') }}</p>
-                                                        <button type="submit" class="mt-2 w-full py-3 bg-blue-500 rounded text-white">Submit</button>
-                                                    </div>
-                                                </form>
-                                            @elseif($taskRevisions+1 == $task->revisions)
-                                                <h2 class="font-bold text-lg">Revisi Ke-{{ $taskRevisions+1 }}</h2>
-                                                <p class="text-gray-700 mb-2">
-                                                    File:
-                                                    <a href="{{ asset('storage/' . $current->path_file) }}"
-                                                    class="text-blue-500 underline"
-                                                    target="_blank">
-                                                        {{ basename($current->path_file) }}
-                                                    </a>
-                                                </p>
-
-                                                <!-- Status Upload -->
-                                                <p class="text-gray-700">
-                                                    Status Upload:
-                                                    <span class="font-semibold {{ $current->status_upload === 'uploaded' ? 'text-green-600' : 'text-yellow-600' }}">
-                                                        {{ ucfirst($current->status_upload) }}
-                                                    </span>
-                                                </p>
-                                                <p class="text-gray-500 text-sm">Tanggal Upload: {{ $current->date_upload?->format('d M Y H:i') }}</p>
-
-                                                <!-- Status Approve -->
-                                                <p class="text-gray-700">
-                                                    Status Approve:
-                                                    <span class="font-semibold 
-                                                        {{ $current->status_approve === 'approved' ? 'text-green-600' : 
-                                                        ($current->status_approve === 'rejected' ? 'text-red-600' : 'text-yellow-600') }}">
-                                                        {{ ucfirst($current->status_approve) }}
-                                                    </span>
-                                                </p>
-                                                <p class="text-gray-500 text-sm">Tanggal Approve: {{ $current->date_approve?->format('d M Y H:i') ?? '-' }}</p>
-                                                <!-- Note -->
-                                                <p class="text-gray-700">Note: <span class="font-medium">{{ $current->note ?? '-' }}</span></p>
-                                                <p class="text-xs italic text-red-500 mt-1">
-                                                    Ini adalah revisi dari Progression Ke-{{ $taskRevisions+1 }}.
-                                                </p>
-                                            @endif
-                                        @else
-                                            @if($step > 3)
-                                                <h2 class="font-bold text-lg">Revisi Ke-{{ $taskRevisions }}</h2>
-                                            @else
-                                                <h2 class="font-bold text-lg">Progression Ke-{{ $step }}</h2>
-                                            @endif
-                                            <p class="text-gray-700 mb-2">
-                                                File:
-                                                <a href="{{ asset('storage/' . $current->path_file) }}"
-                                                class="text-blue-500 underline"
-                                                target="_blank">
-                                                    {{ basename($current->path_file) }}
-                                                </a>
-                                            </p>
-
-                                            <!-- Status Upload -->
-                                            <p class="text-gray-700">
-                                                Status Upload:
-                                                <span class="font-semibold {{ $current->status_upload === 'uploaded' ? 'text-green-600' : 'text-yellow-600' }}">
-                                                    {{ ucfirst($current->status_upload) }}
-                                                </span>
-                                            </p>
-                                            <p class="text-gray-500 text-sm">Tanggal Upload: {{ $current->date_upload?->format('d M Y H:i') }}</p>
-
-                                            <!-- Status Approve -->
-                                            <p class="text-gray-700">
-                                                Status Approve:
-                                                <span class="font-semibold 
-                                                    {{ $current->status_approve === 'approved' ? 'text-green-600' : 
-                                                    ($current->status_approve === 'rejected' ? 'text-red-600' : 'text-yellow-600') }}">
-                                                    {{ ucfirst($current->status_approve) }}
-                                                </span>
-                                            </p>
-                                            <p class="text-gray-500 text-sm">Tanggal Approve: {{ $current->date_approve?->format('d M Y H:i') ?? '-' }}</p>
-                                            <!-- Note -->
-                                            <p class="text-gray-700">Note: <span class="font-medium">{{ $current->note ?? '-' }}</span></p>
-                                        @endif
+                        <div class="bg-white rounded-lg p-4 shadow w-full">
+                            <!-- Current Status Section (simplified) -->
+                            <div class="mb-4">
+                                <h2 class="font-bold text-lg mb-2">Status Progres</h2>
+                                
+                                @if($progressionsByStep->count() > 0)
+                                    <div class="border-b pb-3 mb-3">
+                                        <p class="text-gray-700">Tahap saat ini: 
+                                            <span class="font-semibold">
+                                                @if($currentStep > 3)
+                                                    Revisi Ke-{{ $currentStep - 3 }}
+                                                @else
+                                                    Progression Ke-{{ $currentStep }}
+                                                @endif
+                                            </span>
+                                        </p>
                                         
+                                        @if($latestProgression)
+                                            <p class="text-gray-700 mt-2">Status terakhir: 
+                                                <span class="font-semibold {{ $latestProgression->status_approve === 'approved' ? 'text-green-600' : 
+                                                    ($latestProgression->status_approve === 'rejected' ? 'text-red-600' : 'text-yellow-600') }}">
+                                                    {{ ucfirst($latestProgression->status_approve) }}
+                                                </span>
+                                            </p>
+                                            
+                                            @if($latestProgression->note)
+                                                <p class="text-gray-700 mt-1">Note: {{ $latestProgression->note }}</p>
+                                            @endif
+                                        @endif
                                     </div>
+                                @else
+                                    <div class="border-b pb-3 mb-3">
+                                        <p class="text-gray-700">Tahap saat ini: 
+                                            <span class="font-semibold">Progression Ke-1</span>
+                                        </p>
+                                    </div>
+                                @endif
+                            </div>
+                            
+                            <!-- Submission Section -->
+                            @if($canSubmitInitial && $currentStep <= $maxSteps)
+                                <div>
+                                    <h2 class="font-bold text-lg mb-2">
+                                        @if($currentStep > 3)
+                                            Submit Revisi Ke-{{ $currentStep - 3 }}
+                                        @else
+                                            Submit Progression Ke-{{ $currentStep }}
+                                        @endif
+                                    </h2>
                                     
-                                @elseif($canSubmit)
-                                    <!-- Form Upload -->
                                     <form action="{{ route('task-progression.store', $task->id) }}" method="POST" enctype="multipart/form-data">
                                         @csrf
-                                        <div class="bg-white rounded-lg p-4 shadow w-full">
-                                            <h2 class="font-bold text-lg">Submit Progression Ke-{{ $step }}</h2>
-                                            <label for="file-upload-{{ $step }}" class="group cursor-pointer bg-white rounded-lg p-4 shadow w-full flex items-center justify-start gap-4 transition-all duration-300 hover:bg-gray-100">
-                                                <div class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">📄</div>
-                                                <p class="text-gray-700 font-medium">Inputkan file Progress</p>
-                                            </label>
-                                            <input id="file-upload-{{ $step }}" type="file" name="file" class="hidden" required>
-                                            <p class="pt-5">Tanggal di submit: {{ now()->format('d-m-Y H:i') }}</p>
-                                            <button type="submit" class="mt-2 w-full py-3 bg-blue-500 rounded text-white">Submit</button>
+                                        <label for="file-upload" class="group cursor-pointer bg-gray-50 rounded-lg p-4 border-2 border-dashed border-gray-300 w-full flex items-center justify-start gap-4 transition-all duration-300 hover:bg-gray-100">
+                                            <div class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">📄</div>
+                                            <p class="text-gray-700 font-medium">Klik untuk mengunggah file</p>
+                                        </label>
+                                        
+                                        <input id="file-upload" type="file" name="file" class="hidden" required>
+                                        
+                                        <div id="file-name-display" class="mt-2 text-sm text-gray-600 hidden">
+                                            File dipilih: <span id="selected-file-name" class="font-medium"></span>
                                         </div>
+                                        
+                                        <p class="mt-4 text-sm text-gray-600">Tanggal di submit: {{ now()->format('d-m-Y H:i') }}</p>
+                                        
+                                        <button type="submit" class="mt-4 w-full py-3 bg-blue-500 rounded text-white hover:bg-blue-600 transition-colors">Submit</button>
                                     </form>
-                                @endif
-                            @endfor
-                        @endif
-
-                        <!-- Card untuk Client -->
-                        @if(auth()->user()->role == 'client')
-                            @php
-                                $revisions = $progressions->filter(fn($p) => $p->progression_ke > 3);
-                                $grouped = $progressions->where('progression_ke', '<=', 3);
-                            @endphp
-
-                            {{-- Progression Ke-1 sampai Ke-3 --}}
-                            @foreach($grouped as $progress)
-                                <div class="bg-white rounded-lg p-4 shadow w-full">
-                                    <h2 class="font-bold text-lg">Review Progression Ke-{{ $progress->progression_ke }}</h2>
-                                    <a href="{{ asset('storage/' . $progress->path_file) }}" target="_blank"
-                                    class="group cursor-pointer bg-white rounded-lg p-4 shadow w-full flex items-center justify-start gap-4 transition-all duration-300 hover:bg-gray-100">
-                                        <div class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">📄</div>
-                                        <p class="text-gray-700 font-medium">{{ basename($progress->path_file) }}</p>
-                                    </a>
-                                    <p class="pt-5 text-sm text-gray-500">Tanggal Submit: {{ $progress->date_upload?->format('d M Y H:i') ?? '-' }}</p>
-                                    <p class="text-sm text-gray-500">Status Approve:
-                                        <span class="font-semibold {{ $progress->status_approve === 'approved' ? 'text-green-600' : ($progress->status_approve === 'rejected' ? 'text-red-600' : 'text-yellow-600') }}">
-                                            {{ ucfirst($progress->status_approve) }}
-                                        </span>
-                                    </p>
-                                    <p class="text-sm text-gray-500">Note: {{ $progress->note ?? '-' }}</p>
-                                    @if($progress->date_approve)
-                                        <p class="text-sm text-gray-500">Tanggal Approve: {{ $progress->date_approve->format('d M Y H:i') }}</p>
-                                    @endif
-                                    @if($progress->status_approve === 'waiting')
-                                        <form id="reviewForm-{{ $progress->id }}" method="POST" action="{{ route('task-progression.review', $progress->id) }}">
-                                            @csrf
-                                            <input type="hidden" name="status_approve" id="statusApprove-{{ $progress->id }}">
-                                            <input type="hidden" name="note" id="noteHidden-{{ $progress->id }}">
-                                        </form>
-                                        <button type="button" onclick="openModalWithStatus('approved', {{ $progress->id }})" class="w-full py-3 bg-blue-500 rounded text-white mt-2">Approve</button>
-                                        <button type="button" onclick="openModalWithStatus('rejected', {{ $progress->id }})" class="w-full py-3 bg-red-500 rounded text-white mt-2">Reject</button>
-                                    @endif
                                 </div>
-                            @endforeach
-
-                            {{-- Revisi dari Progression Ke-3 --}}
-                            @if($revisions->count())
-                                <div class="bg-white rounded-lg p-4 shadow w-full">
-                                    <h2 class="font-bold text-lg">Review Revisi dari Progression Ke-3</h2>
-                                    @foreach($revisions as $rev)
-                                        <div class="border-t pt-4 mt-4">
-                                            <a href="{{ asset('storage/' . $rev->path_file) }}" target="_blank"
-                                            class="group cursor-pointer bg-white rounded-lg p-4 shadow w-full flex items-center justify-start gap-4 transition-all duration-300 hover:bg-gray-100">
-                                                <div class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">📄</div>
-                                                <p class="text-gray-700 font-medium">{{ basename($rev->path_file) }}</p>
-                                            </a>
-                                            <p class="pt-2 text-sm text-gray-500">Tanggal Submit: {{ $rev->date_upload?->format('d M Y H:i') ?? '-' }}</p>
-                                            <p class="text-sm text-gray-500">Status Approve:
-                                                <span class="font-semibold {{ $rev->status_approve === 'approved' ? 'text-green-600' : ($rev->status_approve === 'rejected' ? 'text-red-600' : 'text-yellow-600') }}">
-                                                    {{ ucfirst($rev->status_approve) }}
-                                                </span>
-                                            </p>
-                                            <p class="text-sm text-gray-500">Note: {{ $rev->note ?? '-' }}</p>
-                                            @if($rev->date_approve)
-                                                <p class="text-sm text-gray-500">Tanggal Approve: {{ $rev->date_approve->format('d M Y H:i') }}</p>
-                                            @endif
-                                            @if($rev->status_approve === 'waiting')
-                                                <form id="reviewForm-{{ $rev->id }}" method="POST" action="{{ route('task-progression.review', $rev->id) }}">
-                                                    @csrf
-                                                    <input type="hidden" name="status_approve" id="statusApprove-{{ $rev->id }}">
-                                                    <input type="hidden" name="note" id="noteHidden-{{ $rev->id }}">
-                                                </form>
-                                                <button type="button" onclick="openModalWithStatus('approved', {{ $rev->id }})" class="w-full py-3 bg-blue-500 rounded text-white mt-2">Approve</button>
-                                                <button type="button" onclick="openModalWithStatus('rejected', {{ $rev->id }})" class="w-full py-3 bg-red-500 rounded text-white mt-2">Reject</button>
-                                            @endif
-                                        </div>
-                                    @endforeach
+                            @else
+                                <div class="bg-gray-100 rounded p-4 text-center">
+                                    @if($currentStep > $maxSteps)
+                                        <p class="text-gray-700">Semua tahap sudah diselesaikan</p>
+                                    @else
+                                        <p class="text-gray-700">Menunggu review dari client untuk melanjutkan</p>
+                                    @endif
                                 </div>
                             @endif
-                        @endif
-                    </div>
+                        </div>
+                    @endif
+
+                    <!-- Card untuk Client -->
+                    @if(auth()->user()->role == 'client')
+                        @php
+                            $lastProgression = $progressions->sortByDesc('progression_ke')->first();
+                        @endphp
+                        
+                        <div class="bg-white rounded-lg p-4 shadow w-full">
+                            <h2 class="font-bold text-lg mb-4">Review Progress</h2>
+                            
+                            @if($progressions->count() == 0)
+                                <p class="text-gray-700">Belum ada progress yang diupload.</p>
+                            @else
+                                <!-- Latest Submission Only -->
+                                <div>
+                                    <h3 class="font-semibold text-md">
+                                        @if($lastProgression->progression_ke > 3)
+                                            Revisi Ke-{{ $lastProgression->progression_ke - 3 }}
+                                        @else
+                                            Progression Ke-{{ $lastProgression->progression_ke }}
+                                        @endif
+                                    </h3>
+                                    
+                                    <a href="{{ asset('storage/' . $lastProgression->path_file) }}" target="_blank"
+                                    class="group cursor-pointer bg-white rounded-lg p-4 shadow w-full flex items-center justify-start gap-4 transition-all duration-300 hover:bg-gray-100 mt-2">
+                                        <div class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">📄</div>
+                                        <p class="text-gray-700 font-medium">{{ basename($lastProgression->path_file) }}</p>
+                                    </a>
+                                    
+                                    <p class="mt-2 text-sm text-gray-500">Tanggal Submit: {{ $lastProgression->date_upload?->format('d M Y H:i') ?? '-' }}</p>
+                                    
+                                    <p class="text-sm text-gray-500">Status:
+                                        <span class="font-semibold {{ $lastProgression->status_approve === 'approved' ? 'text-green-600' : ($lastProgression->status_approve === 'rejected' ? 'text-red-600' : 'text-yellow-600') }}">
+                                            {{ ucfirst($lastProgression->status_approve) }}
+                                        </span>
+                                    </p>
+                                    
+                                    @if($lastProgression->note)
+                                        <p class="text-sm text-gray-500">Note: {{ $lastProgression->note }}</p>
+                                    @endif
+                                    
+                                    @if($lastProgression->status_approve === 'waiting')
+                                        <form id="reviewForm-{{ $lastProgression->id }}" method="POST" action="{{ route('task-progression.review', $lastProgression->id) }}">
+                                            @csrf
+                                            <input type="hidden" name="status_approve" id="statusApprove-{{ $lastProgression->id }}">
+                                            <input type="hidden" name="note" id="noteHidden-{{ $lastProgression->id }}">
+                                        </form>
+                                        
+                                        <div class="flex gap-2 mt-4">
+                                            <button type="button" onclick="openModalWithStatus('approved', {{ $lastProgression->id }})" class="flex-1 py-3 bg-blue-500 rounded text-white hover:bg-blue-600 transition-colors">Approve</button>
+                                            <button type="button" onclick="openModalWithStatus('rejected', {{ $lastProgression->id }})" class="flex-1 py-3 bg-red-500 rounded text-white hover:bg-red-600 transition-colors">Reject</button>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+                </div>
                 </div>
                 <div class="p-6 bg-white rounded-lg shadow-md my-5">
                     <h1 class="text-xl font-semibold text-gray-700 mt-6">Deskripsi</h1>
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
-                    <p class="text-gray-600 mt-1">{{$task->description}}</p>
+                    <div class="job-description text-gray-600 mt-1">{!!$task->description!!}</div>
                     <h1 class="text-xl font-semibold text-gray-700 mt-10">Ketentuan</h1>
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
-                    <p class="text-gray-600 mt-1">{{$task->provisions}}</p>
-                    <h1 class="text-xl font-semibold text-gray-700 mt-10">File Terkait tugas</h1>
+                    <div class="job-qualification text-gray-600 mt-1">{!!$task->qualification!!}</div>
+                    <h1 class="text-xl font-semibold text-gray-700 mt-10">Rules</h1>
+                    <hr class="border-t-1 border-gray-300 mb-7 mt-4">
+                    <div class="rules text-gray-600 mt-1">{!!$task->provisions!!}</div>
+                    <h1 class="text-xl font-semibold text-gray-700 mt-10">File Terkait tugas</>
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
                 </div>
 
-                <div class="p-6 bg-white rounded-lg shadow-md my-5">
-                    <div class="flex items-center justify-between">
-                        <!-- Card Profile (Kiri) -->
-                        <div class="flex items-center space-x-4">
-                            <!-- Avatar -->
-                            <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
-                                <img src="https://via.placeholder.com/150" alt="" class="w-full h-full object-cover rounded-full">
+                @if(auth()->user()->role == 'client')
+                    <div class="p-6 bg-white rounded-lg shadow-md my-5">
+                        <div class="flex items-center justify-between">
+                            <!-- Card Profile (Kiri) -->
+                            <div class="flex items-center space-x-4">
+                                <!-- Avatar -->
+                                <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
+                                    <img src="{{ asset('storage/' . ($task->worker->user->profile_image ?? 'default.jpg')) }}" alt="" class="w-full h-full object-cover rounded-full">
+                                </div>
+
+                                <!-- User Info -->
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-800">{{$task->worker->user->nama_lengkap}}</h3>
+                                    <p class="text-gray-600">{{$task->worker->user->role}}</p>
+                                </div>
                             </div>
 
-                            <!-- User Info -->
-                            <div>
-                                <h3 class="text-xl font-semibold text-gray-800">John Doe</h3>
-                                <p class="text-gray-600">Frontend Developer</p>
+                            <!-- Action Buttons (Di sebelah kanan Profil) -->
+                            <div class="flex flex-col gap-2">
+                                <!-- Laporkan Button -->
+                                <button class="w-32 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
+                                    Laporkan
+                                </button>
+
+                                <!-- Chat Button -->
+                                <button class="w-32 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                    Chat
+                                </button>
                             </div>
-                        </div>
-
-                        <!-- Action Buttons (Di sebelah kanan Profil) -->
-                        <div class="flex flex-col gap-2">
-                            <!-- Laporkan Button -->
-                            <button class="w-32 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
-                                Laporkan
-                            </button>
-
-                            <!-- Chat Button -->
-                            <button class="w-32 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                                Chat
-                            </button>
                         </div>
                     </div>
-                </div>
+                @endif
+                @if(auth()->user()->role == 'worker')
+                    <div class="p-6 bg-white rounded-lg shadow-md my-5">
+                        <div class="flex items-center justify-between">
+                            <!-- Card Profile (Kiri) -->
+                            <div class="flex items-center space-x-4">
+                                <!-- Avatar -->
+                                <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
+                                    <img src="{{ asset('storage/' . ($task->client->profile_image ?? 'default.jpg')) }}" alt="" class="w-full h-full object-cover rounded-full">
+                                </div>
 
+                                <!-- User Info -->
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-800">{{$task->client->nama_lengkap}}</h3>
+                                    <p class="text-gray-600">{{$task->client->role}}</p>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons (Di sebelah kanan Profil) -->
+                            <div class="flex flex-col gap-2">
+                                <!-- Laporkan Button -->
+                                <button class="w-32 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
+                                    Laporkan
+                                </button>
+
+                                <!-- Chat Button -->
+                                <button class="w-32 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                    Chat
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+
+
+                <!-- TABEL SECTION -->
                 <div class="p-6 bg-white rounded-lg shadow-md mb-5">
                     <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white">
                         <h1 class="text-2xl font-semibold text-gray-700 mt-6">Log Aktivitas</h1>
@@ -372,28 +360,55 @@
                     </div>
                     <div class="overflow-hidden rounded-lg">
                         <table class="w-full text-sm text-left rtl:text-right text-black bg-white">
-                            <thead class="text-xs uppercase bg-gray-100 text-black border-b border-gray-300">
+                            <thead class="text-xs bg-gray-100 text-black border-b border-gray-300">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 w-1/3">Name</th>
-                                    <th scope="col" class="px-6 py-3 w-2/3">Note</th>
+                                    <th scope="col" class="px-6 py-3 w-1/4">Nama</th>
+                                    <th scope="col" class="px-6 py-3 w-1/7">Aksi</th>
+                                    <th scope="col" class="px-6 py-3 w-1/3">Note atau file terkirim</th>
+                                    <th scope="col" class="px-6 py-3 w-1/7">Progress</th>
+                                    <th scope="col" class="px-6 py-3 w-1/6">Tanggal dan waktu</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white">
-                                @foreach($progressionsByStep as $progress)
-                                    <tr class="border-b border-gray-300 hover:bg-gray-100">
-                                        <th scope="row" class="flex items-center px-2 py-4 whitespace-nowrap w-1/3">
-                                            <img class="w-10 h-10 ps-6 rounded-full" 
-                                                src="{{ asset('storage/' . ($progress->user->profile_image ?? 'default.jpg')) }}" 
-                                                alt="profile">
-                                            <div class="px-6">
-                                                <div class="text-base font-semibold">{{ $progress->task->user->name ?? 'Unknown User' }}</div>
-                                                <div class="font-normal text-gray-600">{{ $progress->task->user->email ?? '-' }}</div>
-                                            </div>  
-                                        </th>
-                                        <td class="px-6 py-3 w-1/3">
-                                            {{ $progress->note ?? 'Tidak ada catatan' }}
-                                        </td>
-                                    </tr>
+                            <tbody>
+                                @foreach($progressions as $progress)
+                                    {{-- Worker submission --}}
+                                    @if($progress->action_by_worker)
+                                        <tr class="text-sm text-gray-700">
+                                            <td class="py-2 px-4 border-b">
+                                                <div class="flex items-center gap-2">
+                                                    <img src="{{ asset('storage/' . ($progress->worker->profile_image ?? 'default.jpg')) }}" alt="" class="w-8 h-8 rounded-full object-cover">
+                                                    <span>{{ $progress->worker->nama_lengkap ?? 'Unknown User' }}</span>
+                                                </div>
+                                            </td>
+                                            <td class="py-2 px-2 border-b">{{ $progress->status_upload }}</td>
+                                            <td class="py-2 px-2 border-b">
+                                                <a href="{{ asset('storage/' . $progress->path_file) }}" class="text-blue-500 underline" target="_blank">
+                                                    {{ basename($progress->path_file) }}
+                                                </a>
+                                            </td>
+                                            <td class="py-2 px-4 border-b">{{ $progress->progression_ke }}</td>
+                                            <td class="py-2 px-4 border-b">{{ $progress->date_upload->format('d M Y H:i') }}</td>
+                                        </tr>
+                                    @endif
+                                    {{-- Client approval/rejection --}}
+                                    @if($progress->action_by_client)
+                                        <tr class="text-sm text-gray-700">
+                                            <td class="py-2 px-4 border-b">
+                                                <div class="flex items-center gap-2">
+                                                    <img src="{{ asset('storage/' . ($progress->client->profile_image ?? 'default.jpg')) }}" alt="" class="w-8 h-8 rounded-full object-cover">
+                                                    <span>{{ $progress->client->nama_lengkap ?? 'Unknown User' }}</span>
+                                                </div>
+                                            </td>
+                                            <td class="py-2 px-2 border-b">
+                                                {{ ucfirst($progress->status_approve) }}
+                                            </td>
+                                            <td class="py-2 px-2 border-b">
+                                                {{ $progress->note ?? '-' }}
+                                            </td>
+                                            <td class="py-2 px-4 border-b">{{ $progress->progression_ke }}</td>
+                                            <td class="py-2 px-4 border-b">{{ $progress->date_approve?->format('d M Y H:i') ?? '-' }}</td>
+                                        </tr>
+                                    @endif
                                 @endforeach
                             </tbody>
                         </table>
@@ -401,6 +416,44 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Modal Review -->
+<div id="ratingModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center transition-opacity duration-300">
+    <div id="modalContent" class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 opacity-0 scale-95 transform transition-all duration-300 relative">
+        <!-- Close Modal -->
+        <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600" onclick="closeModal()">
+            <i class="bi bi-x-lg text-xl"></i>
+        </button>
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Beri Rating & Ulasan Sebelum Menyelesaikan</h2>
+        <form id="completeJobForm" action="{{ route('complite.job', $task->id) }}" method="POST" class="space-y-4">
+            @csrf
+            @method('POST')
+
+            <!-- Rating -->
+            <div class="flex items-center gap-2">
+                @for ($i = 1; $i <= 5; $i++)
+                    <label>
+                        <input type="radio" name="rating" value="{{ $i }}" class="hidden" required>
+                        <i class="bi bi-star text-3xl text-gray-400 hover:text-yellow-400 cursor-pointer"></i>
+                    </label>
+                @endfor
+            </div>
+
+            <!-- Review -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Ulasan</label>
+                <textarea name="review" rows="4" class="w-full border border-gray-300 rounded-lg focus:ring focus:ring-green-200" placeholder="Tulis ulasanmu..." required></textarea>
+            </div>
+
+            <!-- Submit -->
+            <div class="flex justify-end">
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                    Kirim & Selesaikan
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -418,6 +471,82 @@
 </div>
 
 
+
+<!-- buat quilbot -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("Quill Editor Initialized");
+
+        // 🔹 Konfigurasi toolbar Quill
+        const toolbarOptions = [
+            [{ 'header': [1, 2, false] }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            ['bold', 'italic', 'underline'],
+            ['link', 'image'],
+            ['clean']
+        ];
+
+        // 🔹 Inisialisasi Quill Editor di halaman ini
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: { toolbar: toolbarOptions }
+        });
+
+        // Jika ingin memuat data yang sudah ada (misalnya dari database)
+        const contentFromDB = "{!! $dataFromDB ?? '' !!}"; // Misalnya isi dari database
+        quill.root.innerHTML = contentFromDB; // Menyisipkan HTML dari database
+    });
+</script>
+
+
+
+<!-- script untuk modal review -->
+<script>
+    function openModal() {
+        const modal = document.getElementById('ratingModal');
+        const content = document.getElementById('modalContent');
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.add('opacity-100');
+            content.classList.remove('opacity-0', 'scale-95');
+            content.classList.add('opacity-100', 'scale-100');
+        }, 10); // tunggu sedikit supaya transisinya jalan
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('ratingModal');
+        const content = document.getElementById('modalContent');
+
+        modal.classList.remove('opacity-100');
+        content.classList.remove('opacity-100', 'scale-100');
+        content.classList.add('opacity-0', 'scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300); // tunggu animasi selesai dulu (300ms)
+    }
+
+    // Highlight stars saat pilih rating
+    document.querySelectorAll('input[name="rating"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const stars = document.querySelectorAll('#ratingModal i.bi-star');
+            stars.forEach((star, index) => {
+                if (index < this.value) {
+                    star.classList.add('text-yellow-400');
+                    star.classList.remove('text-gray-400');
+                } else {
+                    star.classList.remove('text-yellow-400');
+                    star.classList.add('text-gray-400');
+                }
+            });
+        });
+    });
+</script>
+
 <script>
     function openModalWithStatus(status, id) {
         approvalStatus = status;
@@ -434,6 +563,23 @@
 </script>
 
 
-
-
+<script>
+    // Display filename when selected
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('file-upload');
+        const fileNameDisplay = document.getElementById('file-name-display');
+        const selectedFileName = document.getElementById('selected-file-name');
+        
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    fileNameDisplay.classList.remove('hidden');
+                    selectedFileName.textContent = this.files[0].name;
+                } else {
+                    fileNameDisplay.classList.add('hidden');
+                }
+            });
+        }
+    });
+</script>
 @include('General.footer')

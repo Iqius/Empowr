@@ -14,17 +14,19 @@ return new class extends Migration
         Schema::create('task_reviews', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('task_id');
-            $table->unsignedBigInteger('client_id');
-            $table->unsignedBigInteger('profile_id');
-            $table->float('rating');
-            $table->text('comment');
-            $table->dateTime('created_at');
+            $table->unsignedBigInteger('user_id');  // User yang memberikan ulasan (client atau worker)
+            $table->unsignedBigInteger('reviewed_user_id');  // User yang menerima ulasan (client atau worker)
+            $table->integer('rating');
+            $table->text('comment')->nullable();
+            $table->timestamps();  // untuk menyimpan waktu ulasan diberikan
 
+            // Foreign keys
             $table->foreign('task_id')->references('id')->on('task')->onDelete('cascade');
-            $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('profile_id')->references('user_id')->on('worker_profiles')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('reviewed_user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
+
 
     /**
      * Reverse the migrations.
