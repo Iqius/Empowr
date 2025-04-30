@@ -9,16 +9,16 @@ class PortofolioImage extends Model
 {
     use HasFactory;
 
-    protected $table = 'portfolio_images';
+    protected $table = 'portofolio_images';
 
     protected $fillable = [
-        'portfolio_id',
+        'portofolio_id',
         'image',
     ];
 
     public function portfolio()
     {
-        return $this->belongsTo(Portofolio::class, 'portfolio_id');
+        return $this->belongsTo(Portofolio::class, 'portofolio_id');
     }
 }
 

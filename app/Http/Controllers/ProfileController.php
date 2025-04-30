@@ -13,19 +13,44 @@ use App\Models\SertifikasiImage;
 use App\Models\Portofolio;
 use App\Models\PortofolioImage;
 use App\Models\WorkerProfile;
+use App\Models\task;
 
 class ProfileController extends Controller
 {
     public function showProfile()
     {
         $user = Auth::user();
+
+        if ($user->role === 'client') {
+            $tasks = Task::with('review')
+                ->where('client_id', $user->id)
+                ->where('status', 'completed')
+                ->latest()
+                ->get();
+
+            return view('General.profil', [
+                'workerProfile' => null,
+                'sertifikasi' => collect(),
+                'portofolio' => collect(),
+                'tasks' => $tasks,
+            ]);
+        }
+
         $workerProfile = $user->workerProfile;
 
-        $sertifikasi = Sertifikasi::with('images')->where('worker_id', $user->id)->get();
-        $portofolio = Portofolio::with('images')->where('worker_id', $user->id)->get();
-        
-        return view('General.profil', compact('workerProfile', 'sertifikasi', 'portofolio'));
+        $sertifikasi = Sertifikasi::with('images')->where('worker_id', $workerProfile->id)->get();
+        $portofolio = Portofolio::with('images')->where('worker_id', $workerProfile->id)->get();
+        $tasks = Task::with('review')
+            ->where('profile_id', $workerProfile->id)
+            ->where('status', 'completed')
+            ->latest()
+            ->get();
+
+
+        return view('General.profil', compact('workerProfile', 'sertifikasi', 'portofolio', 'tasks'));
     }
+
+
 
 
     public function showProfileWorkerLamar($id)
@@ -34,6 +59,7 @@ class ProfileController extends Controller
         $worker = WorkerProfile::with(['user', 'certifications.images'])->findOrFail($id);
         return view('client.Jobs.lamaranWorkerDetailProfile', compact('worker'));
     }
+
 
     // Update profile
     public function updateProfile(Request $request)
@@ -44,18 +70,19 @@ class ProfileController extends Controller
             'nama_lengkap' => 'nullable|string|max:255',
             'email' => 'nullable|email',
             'nomor_telepon' => 'nullable|string',
-            'alamat' => 'nullable|string',
-            'negara' => 'nullable|string',
             'bio' => 'nullable|string',
             'keahlian' => 'nullable|array',
             'tingkat_keahlian' => 'nullable|string',
             'pengalaman_kerja' => 'nullable|string',
             'pendidikan' => 'nullable|string',
             'cv' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240', // 10MB
-            'sertifikat' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'sertifikat_caption' => 'nullable|string',
-            'portofolio' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'portofolio_caption' => 'nullable|string',
+            'certificate_image' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'title_sertifikasi' => 'nullable|string',
+            'title' => 'nullable|string',
+            'portofolio' => 'nullable|array',
+            'portofolio.*' => 'file|mimes:jpg,jpeg,png|max:2048',
+            'description' => 'nullable|string',
+            'duration' => 'nullable|integer',
             'account_type' => 'nullable|string',
             'wallet_number' => 'nullable|string',
             'ewallet_name' => 'nullable|string',
@@ -65,91 +92,97 @@ class ProfileController extends Controller
             'ewallet_provider' => 'nullable|string',
         ]);
 
-
-        // Update data user
+        // Update user data only if present
         $user->nama_lengkap = $request->nama_lengkap ?? $user->nama_lengkap;
         $user->email = $request->email ?? $user->email;
         $user->nomor_telepon = $request->nomor_telepon ?? $user->nomor_telepon;
-        $user->alamat = $request->alamat ?? $user->alamat;
-        $user->negara = $request->negara ?? $user->negara;
         $user->bio = $request->bio ?? $user->bio;
-        $user->save();
-
-        // Update khusus role worker
-        // Update data user
-        $user->nama_lengkap = $request->nama_lengkap;
-        $user->email = $request->email;
-        $user->nomor_telepon = $request->nomor_telepon;
-        $user->alamat = $request->alamat;
-        $user->negara = $request->negara;
-        $user->bio = $request->bio;
         $user->save();
 
         $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
 
-        // Update path CV kalau file baru di-upload
-        $workerProfile->cv = $request->file('cv')
-            ? $request->file('cv')->store('cv', 'public')
-            : $workerProfile->cv; // jaga path lama kalau gak upload
+        // CV only if new file uploaded
+        if ($request->hasFile('cv')) {
+            $workerProfile->cv = $request->file('cv')->store('cv', 'public');
+        }
 
-        // Simpan data lain
-        $workerProfile->keahlian = json_encode($request->keahlian);
-        $workerProfile->tingkat_keahlian = $request->tingkat_keahlian;
-        $workerProfile->pengalaman_kerja = $request->pengalaman_kerja;
-        $workerProfile->pendidikan = $request->pendidikan;
+        if ($request->has('keahlian')) {
+            $workerProfile->keahlian = json_encode($request->keahlian);
+        }
+        $workerProfile->tingkat_keahlian = $request->tingkat_keahlian ?? $workerProfile->tingkat_keahlian;
+        $workerProfile->pengalaman_kerja = $request->pengalaman_kerja ?? $workerProfile->pengalaman_kerja;
+        $workerProfile->pendidikan = $request->pendidikan ?? $workerProfile->pendidikan;
+
+        // Boolean switches
         $workerProfile->empowr_label = $request->has('empowr_label');
         $workerProfile->empowr_affiliate = $request->has('empowr_affiliate');
 
-        // Simpan semuanya
         $workerProfile->save();
 
-        // Data rekening tetap bisa diisi semua role
-        UserPaymentAccount::updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'account_type' => $request->account_type,
-                'wallet_number' => $request->wallet_number,
-                'ewallet_provider' => $request->ewallet_name,
-                'bank_name' => $request->bank_name,
-                'account_number' => $request->bank_number,
-                'account_name' => $request->pemilik_bank,
-            ]
-        );
+        // Update or create rekening
+        $existingAccount = UserPaymentAccount::firstOrNew(['user_id' => $user->id]);
+        $existingAccount->account_type = $request->account_type ?? $existingAccount->account_type;
+        $existingAccount->wallet_number = $request->wallet_number ?? $existingAccount->wallet_number;
+        $existingAccount->ewallet_provider = $request->ewallet_name ?? $existingAccount->ewallet_provider;
+        $existingAccount->bank_name = $request->bank_name ?? $existingAccount->bank_name;
+        $existingAccount->account_number = $request->bank_number ?? $existingAccount->account_number;
+        $existingAccount->account_name = $request->pemilik_bank ?? $existingAccount->account_name;
+        $existingAccount->save();
 
-        // Upload Sertifikat
-        if ($request->hasFile('sertifikat')) {
-            $sertifikasi = Sertifikasi::create([
-                'worker_id' => $user->id,
-                'title' => $request->sertifikat_caption,
-            ]);
+        // Upload Sertifikat (jika ada)
+        if ($request->hasFile('certificate_image')) {
+            // If sertifikasi_id exists, we are editing an existing certificate
+            if ($request->has('sertifikasi_id')) {
+                $sertifikasi = Sertifikasi::find($request->sertifikasi_id);
+                $sertifikasi->title = $request->sertifikat_caption;
+                $sertifikasi->save();
+            } else {
+                // Create new sertifikasi if no ID is present
+                $sertifikasi = Sertifikasi::create([
+                    'worker_id' => $workerProfile->id,
+                    'title' => $request->title_sertifikasi,
+                ]);
+            }
 
-            $sertifImage = $request->file('sertifikat')->store('sertifikasi', 'public');
+            // Store sertifikat image
+            $sertifImage = $request->file('certificate_image')->store('sertifikasi', 'public');
 
+            // Create SertifikasiImage record
             SertifikasiImage::create([
                 'sertifikasi_id' => $sertifikasi->id,
                 'image' => $sertifImage,
             ]);
         }
 
-        // Upload Portofolio
+        // Update or Create Portofolio (jika ada perubahan)
         if ($request->hasFile('portofolio')) {
-            $portofolio = Portofolio::create([
-                'worker_id' => $user->id,
-                'title' => $request->portofolio_caption,
-                'description' => '',
-                'duration' => 0,
+            // Cek apakah sudah ada portofolio
+            $portofolio = Portofolio::firstOrNew([
+                'worker_id' => $workerProfile->id,
+                'title' => $request->title,
             ]);
 
-            $portoImage = $request->file('portofolio')->store('portofolio', 'public');
+            // Update portofolio data
+            $portofolio->description = $request->description ?? $portofolio->description;
+            $portofolio->duration = $request->duration ?? $portofolio->duration;
+            $portofolio->save();
 
-            PortofolioImage::create([
-                'portfolio_id' => $portofolio->id,
-                'image' => $portoImage,
-            ]);
+            // Upload gambar portofolio baru
+            foreach ($request->file('portofolio') as $file) {
+                $portoImagePath = $file->store('portofolio', 'public');
+
+                PortofolioImage::create([
+                    'portofolio_id' => $portofolio->id,
+                    'image' => $portoImagePath,
+                ]);
+            }
         }
+        
 
         return redirect()->route('profil')->with('success', 'Anda telah berhasil menyimpan.');
     }
+
+
 
     public function updateProfileImage(Request $request)
     {
