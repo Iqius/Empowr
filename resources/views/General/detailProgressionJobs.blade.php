@@ -283,13 +283,13 @@
                             <div class="flex items-center space-x-4">
                                 <!-- Avatar -->
                                 <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
-                                    <img src="https://via.placeholder.com/150" alt="" class="w-full h-full object-cover rounded-full">
+                                    <img src="{{ asset('storage/' . ($task->worker->user->profile_image ?? 'default.jpg')) }}" alt="" class="w-full h-full object-cover rounded-full">
                                 </div>
 
                                 <!-- User Info -->
                                 <div>
-                                    <h3 class="text-xl font-semibold text-gray-800">{{$task->client->nama_lengkap}}</h3>
-                                    <p class="text-gray-600">{{$task->client->role}}</p>
+                                    <h3 class="text-xl font-semibold text-gray-800">{{$task->worker->user->nama_lengkap}}</h3>
+                                    <p class="text-gray-600">{{$task->worker->user->role}}</p>
                                 </div>
                             </div>
 
@@ -315,13 +315,13 @@
                             <div class="flex items-center space-x-4">
                                 <!-- Avatar -->
                                 <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
-                                    <img src="https://via.placeholder.com/150" alt="" class="w-full h-full object-cover rounded-full">
+                                    <img src="{{ asset('storage/' . ($task->client->profile_image ?? 'default.jpg')) }}" alt="" class="w-full h-full object-cover rounded-full">
                                 </div>
 
                                 <!-- User Info -->
                                 <div>
-                                    <h3 class="text-xl font-semibold text-gray-800">{{$task->worker->nama_lengkap}}</h3>
-                                    <p class="text-gray-600">{{$task->worker->role}}</p>
+                                    <h3 class="text-xl font-semibold text-gray-800">{{$task->client->nama_lengkap}}</h3>
+                                    <p class="text-gray-600">{{$task->client->role}}</p>
                                 </div>
                             </div>
 
