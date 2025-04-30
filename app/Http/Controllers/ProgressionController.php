@@ -35,6 +35,7 @@ class ProgressionController extends Controller
             'date_approve' => null,
             'progression_ke' => Progression::where('task_id', $taskId)->count() + 1,
         ]);
+        
 
         return back()->with('success', 'Progress berhasil dikirim.');
     }

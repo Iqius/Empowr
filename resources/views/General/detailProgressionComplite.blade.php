@@ -40,7 +40,7 @@
                         <div class="flex items-center space-x-4">
                             <!-- Avatar -->
                             <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
-                                <img src="https://via.placeholder.com/150" alt="" class="w-full h-full object-cover rounded-full">
+                                <img src="{{ asset('storage/' . ($task->client->profile_image ?? 'default.jpg')) }}" alt="" class="w-full h-full object-cover rounded-full">
                             </div>
 
                             <!-- User Info -->
@@ -66,7 +66,7 @@
                         <div class="flex items-center space-x-4">
                             <!-- Avatar -->
                             <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
-                                <img src="https://via.placeholder.com/150" alt="" class="w-full h-full object-cover rounded-full">
+                                <img src="{{ asset('storage/' . ($task->worker->user->profile_image ?? 'default.jpg')) }}" alt="" class="w-full h-full object-cover rounded-full">
                             </div>
 
                             <!-- User Info -->
@@ -185,7 +185,7 @@
             <i class="bi bi-x-lg text-xl"></i>
         </button>
         <h2 class="text-xl font-semibold mb-4 text-gray-800">Beri Rating & Ulasan Sebelum Menyelesaikan</h2>
-        <form id="completeJobForm" action="{{ route('task-progression.store', $task->id) }}" method="POST" class="space-y-4">
+        <form id="completeJobForm" action="{{ route('task-ulasan.store', $task->id) }}" method="POST" class="space-y-4">
             @csrf
             @method('POST')
 
