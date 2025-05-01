@@ -26,8 +26,8 @@
 
                     <!-- User Info -->
                     <div class="flex items-center gap-3 mb-3">
-                        <img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}" alt="User"
-                            class="w-9 h-9 rounded-full object-cover" />
+                        <img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}"
+                            alt="User" class="w-9 h-9 rounded-full object-cover" />
                         <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
                             {{ $job->user->nama_lengkap ?? 'Unknown' }}
                             <span class="text-[#1F4482]">✔</span>
@@ -44,20 +44,20 @@
                         @php
                             // Check if the description contains ordered or unordered lists
                             $hasLists = preg_match('/<ol[^>]*>|<ul[^>]*>/i', $job->description);
-                            
+
                             // Get the text before any list appears
                             $textBeforeLists = preg_split('/<ol[^>]*>|<ul[^>]*>/i', $job->description)[0];
-                            
+
                             // Strip any HTML tags from this text
                             $plainTextBeforeLists = strip_tags($textBeforeLists);
-                            
+
                             // Create the preview - if there are lists, add ellipsis
                             if ($hasLists) {
                                 // Limit the text before the list and add ellipsis
                                 $previewText = Str::limit($plainTextBeforeLists, 10, '...');
                             } else {
                                 // If no lists, just use normal limit
-                                $previewText = Str::limit(strip_tags($job->description), 30, '...');
+                                $previewText = Str::limit(strip_tags($job->description), 150, '...');
                             }
                         @endphp
                         {{ $previewText }}
@@ -67,7 +67,9 @@
                     <div class="flex justify-between items-center">
                         <div>
                             <p class="text-sm font-semibold text-gray-800">Rp {{ number_format($job->price, 0, ',', '.') }}</p>
-                            <p class="text-xs text-gray-400">Tanggal</p>
+                            <p class="text-xs text-gray-400">Penutupan <span
+                                    class="font-semibold text-gray-500">{{ \Carbon\Carbon::parse($job->deadline_promotion)->translatedFormat('d F Y') }}
+                                </span></p>
                         </div>
                         <a href="{{ route('jobs.show', $job->id) }}">
                             <button
@@ -162,55 +164,55 @@
             const value = this.value;
             if (!jobContainer) return;
 
-        const cards = Array.from(jobContainer.children);
-        const sorted = cards.sort((a, b) => {
-            const priceA = parseInt(a.dataset.price || "0");
-            const priceB = parseInt(b.dataset.price || "0");
-            return value === "price-asc" ? priceA - priceB : priceB - priceA;
+            const cards = Array.from(jobContainer.children);
+            const sorted = cards.sort((a, b) => {
+                const priceA = parseInt(a.dataset.price || "0");
+                const priceB = parseInt(b.dataset.price || "0");
+                return value === "price-asc" ? priceA - priceB : priceB - priceA;
+            });
+
+            jobContainer.innerHTML = "";
+            sorted.forEach(card => jobContainer.appendChild(card));
         });
 
-        jobContainer.innerHTML = "";
-        sorted.forEach(card => jobContainer.appendChild(card));
-    });
-
-    // ✅ SweetAlert for Success Message
-    @if (session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil Diposting!',
-            text: "{{ session('success') }}",
-            confirmButtonColor: '#2563EB',
-            confirmButtonText: 'OK'
-        }).then(() => {
-            window.location.href = window.location.href;
-        });
-    @endif
+        // ✅ SweetAlert for Success Message
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil Diposting!',
+                text: "{{ session('success') }}",
+                confirmButtonColor: '#2563EB',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = window.location.href;
+            });
+        @endif
 
 
-    @if (session('success-updated'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Pekerjaan kamu telah terselesaikan',
-            text: "{{ session('success') }}",
-            confirmButtonColor: '#2563EB',
-            confirmButtonText: 'OK'
-        }).then(() => {
-            window.location.href = window.location.href;
-        });
-    @endif
+        @if (session('success-updated'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Pekerjaan kamu telah terselesaikan',
+                text: "{{ session('success') }}",
+                confirmButtonColor: '#2563EB',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = window.location.href;
+            });
+        @endif
 
 
-    @if (session('success-review'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Pekerjaan sudah diberikan ulasan terima kasih!',
-            text: "{{ session('success') }}",
-            confirmButtonColor: '#2563EB',
-            confirmButtonText: 'OK'
-        }).then(() => {
-            window.location.href = window.location.href;
-        });
-    @endif
+        @if (session('success-review'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Pekerjaan sudah diberikan ulasan terima kasih!',
+                text: "{{ session('success') }}",
+                confirmButtonColor: '#2563EB',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = window.location.href;
+            });
+        @endif
     });
 </script>
 
