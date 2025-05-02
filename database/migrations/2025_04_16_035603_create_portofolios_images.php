@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('portfolio_images', function (Blueprint $table) {
+        Schema::create('portofolio_images', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('portfolio_id');
+            $table->unsignedBigInteger('portofolio_id');
             $table->string('image');
             $table->timestamps();
 
-            $table->foreign('portfolio_id')->references('id')->on('portfolios')->onDelete('cascade');
+            $table->foreign('portofolio_id')->references('id')->on('portofolios')->onDelete('cascade');
         });
     }
 
