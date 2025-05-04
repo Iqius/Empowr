@@ -65,7 +65,7 @@
                             $previewText = Str::limit($plainTextBeforeLists, 77, '...');
                         } else {
                             // If no lists, just use normal limit
-                            $previewText = Str::limit(strip_tags($job->description), 80, '...');
+                            $previewText = Str::limit(strip_tags($job->description), 150, '...');
                         }
                     @endphp
                     {{ $previewText }}
@@ -79,7 +79,7 @@
                             Rp {{ number_format($job->price, 0, ',', '.') }}
                         </p>
                         <p class="text-xs text-gray-400 capitalize">
-                            Status: {{ $job->status }}
+                            Status: <span class="text-gray-500 font-semibold">{{ $job->status }}</span>
                         </p>
                     </div>
 

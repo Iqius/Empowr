@@ -47,7 +47,6 @@
       body {
          font-family: "Poppins", sans-serif;
       }
-      
    </style>
 
    <style>
@@ -105,7 +104,43 @@
          list-style-type: disc !important;
       }
    </style>
-   
+
+   <style>
+      /* Transisi pada item sidebar */
+      .sidebar-item {
+         transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      /* Style untuk menu yang aktif */
+      .sidebar-item.active {
+         background-color: #1F4482;
+         color: white;
+      }
+
+      /* Mengubah warna ikon menjadi putih saat item aktif */
+      .sidebar-item.active i {
+         color: white;
+      }
+
+      /* Hover dan focus efek */
+      .sidebar-item:hover,
+      .sidebar-item:focus {
+         background-color: #18346a;
+         color: white;
+      }
+
+      /* Mengubah warna ikon menjadi putih saat hover */
+      .sidebar-item:hover i {
+         color: white;
+      }
+
+      /* Mengubah warna ikon menjadi putih saat fokus */
+      .sidebar-item:focus i {
+         color: white;
+      }
+   </style>
+
+
    <link rel="icon" href="{{ asset('assets/images/logosaja.png') }}" type="image/png">
 
 </head>
@@ -140,16 +175,16 @@
             <!-- Kanan: Ikon & Profile -->
             <div class="flex items-center space-x-3">
                <!-- Icon Set -->
-               <button class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                  <i class="bi bi-bookmark"></i>
+               <button class="w-8 h-8 bg-gray-300 text-[#1F4482] rounded-full flex items-center justify-center">
+                  <i class="fa-solid fa-bookmark"></i>
                </button>
 
 
                <!-- Notifikasi -->
                <div class="relative inline-block">
                   <button onclick="toggleDropdown()"
-                     class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center relative">
-                     <i class="bi bi-bell"></i>
+                     class="w-8 h-8 bg-gray-300 text-[#1F4482] rounded-full flex items-center justify-center relative">
+                     <i class="fa-solid fa-bell"></i>
                      @if ($unreadCount > 0)
                    <span
                      class="absolute -top-1 -right-1 bg-red-400 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center border border-white">
@@ -228,7 +263,7 @@
             <!-- Dashboard -->
             <li>
                <a href="{{ Auth::user()->role === 'client' ? route('client.dashboardClient') : route('worker.dashboardWorker') }}"
-                  class="flex items-center p-2 rounded-lg hover:bg-gray-100 group">
+                  class="sidebar-item flex items-center p-2 rounded-lg">
                   <i class="bi bi-house text-lg text-[#1F4482]"></i>
                   <span class="ml-3">Dashboard</span>
                </a>
@@ -236,7 +271,7 @@
 
             <!-- Jobs -->
             <li>
-               <a href="{{ route('jobs.index') }}" class="flex items-center p-2 rounded-lg hover:bg-gray-100 group">
+               <a href="{{ route('jobs.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                   <i class="bi bi-briefcase text-lg text-[#1F4482]"></i>
                   <span class="ml-3">Jobs</span>
                </a>
@@ -245,7 +280,7 @@
             <!-- My Job -->
             <li>
                <a href="{{ Auth::user()->role === 'client' ? route('jobs.my') : route('jobs.Worker') }}"
-                  class="flex items-center p-2 rounded-lg hover:bg-gray-100 group">
+                  class="sidebar-item flex items-center p-2 rounded-lg">
                   <i class="bi bi-person-workspace text-lg text-[#1F4482]"></i>
                   <span class="ml-3">My Job</span>
                </a>
@@ -253,7 +288,7 @@
 
             <!-- Chat -->
             <li>
-               <a href="{{ url('/chatify') }}#" class="flex items-center p-2 rounded-lg hover:bg-gray-100 group">
+               <a href="{{ url('/chatify') }}#" class="sidebar-item flex items-center p-2 rounded-lg">
                   <i class="bi bi-chat-dots text-lg text-[#1F4482]"></i>
                   <span class="ml-3">Chat</span>
                </a>
@@ -261,7 +296,7 @@
 
             <!-- Arbitrase -->
             <li>
-               <a href="{{ url('/arbitrase') }}" class="flex items-center p-2 rounded-lg hover:bg-gray-100 group">
+               <a href="{{ url('/arbitrase') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                   <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
                   <span class="ml-3">Arbitrase</span>
                </a>
@@ -269,7 +304,7 @@
 
             <!-- Guide -->
             <li>
-               <a href="{{ url('/guide') }}" class="flex items-center p-2 rounded-lg hover:bg-gray-100 group">
+               <a href="{{ url('/guide') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                   <i class="bi bi-book text-lg text-[#1F4482]"></i>
                   <span class="ml-3">Guide</span>
                </a>
@@ -277,7 +312,7 @@
 
             <!-- Affiliate -->
             <li>
-               <a href="{{ url('/affiliate') }}" class="flex items-center p-2 rounded-lg hover:bg-gray-100 group">
+               <a href="{{ url('/affiliate') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                   <i class="bi bi-currency-dollar text-lg text-[#1F4482]"></i>
                   <span class="ml-3">Affiliate</span>
                </a>
@@ -285,7 +320,7 @@
 
             <!-- Contact Admin -->
             <li>
-               <a href="{{ url('/contact-admin') }}" class="flex items-center p-2 rounded-lg hover:bg-gray-100 group">
+               <a href="{{ url('/contact-admin') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                   <i class="bi bi-telephone text-lg text-[#1F4482]"></i>
                   <span class="ml-3">Contact Admin</span>
                </a>
@@ -293,6 +328,7 @@
          </ul>
       </div>
    </aside>
+
    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden" onclick="closeSidebar()">
    </div>
 
@@ -307,3 +343,25 @@
          </div>
       </div>
    </div>
+
+   <script>
+      document.addEventListener("DOMContentLoaded", function () {
+         // Ambil URL saat ini
+         const currentUrl = window.location.href;
+
+         // Pilih semua elemen dengan kelas 'sidebar-item'
+         const sidebarItems = document.querySelectorAll('.sidebar-item');
+
+         // Loop melalui item sidebar
+         sidebarItems.forEach(item => {
+            const link = item.getAttribute('href'); // Ambil href dari link
+
+            // Cek apakah href item sama dengan URL halaman saat ini
+            if (currentUrl.includes(link)) {
+               item.classList.add('active'); // Tambahkan kelas active pada item yang sesuai
+            } else {
+               item.classList.remove('active'); // Hapus kelas active pada item yang tidak sesuai
+            }
+         });
+      });
+   </script>

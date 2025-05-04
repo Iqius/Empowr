@@ -44,6 +44,8 @@
             }
         }
     </style>
+    <link rel="icon" href="{{ asset('assets/images/logosaja.png') }}" type="image/png">
+
 </head>
 
 <body class="flex justify-center items-center h-screen bg-gray-100 px-0 overflow-auto">
@@ -179,15 +181,15 @@
         }
 
         @if (session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil Register!',
-            text: "{{ session('success') }}",
-            confirmButtonColor: '#2563EB',
-            confirmButtonText: 'OK'
-        }).then(() => {
-            window.location.href = '{{ route('login') }}';
-        });
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil Register!',
+                text: "{{ session('success') }}",
+                confirmButtonColor: '#2563EB',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = '{{ route('login') }}';
+            });
         @endif
     </script>
 </body>
