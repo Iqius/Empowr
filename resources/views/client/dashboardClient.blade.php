@@ -16,15 +16,15 @@
     <div class="grid grid-cols-3 gap-4">
       <div class="flex flex-col items-center justify-center h-32 bg-white p-6 rounded border border-gray-300">
         <p class="text-3xl font-bold" style="color: #1F4482;">1</p>
-        <p class="text-base font-medium text-gray-600">Jobs Post</p>
+        <p class="text-base font-medium text-gray-600">Task Diposting</p>
       </div>
       <div class="flex flex-col items-center justify-center h-32 bg-white p-6 rounded border border-gray-300">
         <p class="text-3xl font-bold" style="color: #1F4482;">0</p>
-        <p class="text-base font-medium text-gray-600">On Going Jobs</p>
+        <p class="text-base font-medium text-gray-600">Sedang Berjalan</p>
       </div>
       <div class="flex flex-col items-center justify-center h-32 bg-white p-6 rounded border border-gray-300">
         <p class="text-3xl font-bold" style="color: #1F4482;">1</p>
-        <p class="text-base font-medium text-gray-600">Complete Jobs</p>
+        <p class="text-base font-medium text-gray-600">Task Selesai</p>
       </div>
     </div>
 
@@ -33,7 +33,7 @@
       <div class="bg-white border rounded p-4 shadow-sm col-span-1 sm:col-span-3">
         <!-- Chart  -->
         <div class="flex items-center justify-between mb-4">
-          <h3 class="font-semibold text-lg">Requests by Status</h3>
+          <h3 class="font-semibold text-lg">Grafik Task</h3>
           <span class="text-sm text-gray-500">2025 </span>
         </div>
         <div class="w-full h-64 relative">
@@ -45,7 +45,7 @@
     <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
       <!-- Jobs -->
       <div class="bg-white border rounded p-4 shadow-sm">
-        <h2 class="text-lg font-semibold mb-4">Jobs</h2>
+        <h2 class="text-lg font-semibold mb-4">Task</h2>
         <ul class="space-y-4">
           <li class="flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -108,7 +108,7 @@
       </div>
       <!-- On Going Jobs -->
       <div class="bg-white border rounded p-4 shadow-sm">
-        <h2 class="text-lg font-semibold mb-4">On Going Jobs</h2>
+        <h2 class="text-lg font-semibold mb-4">Sedang Berjalan</h2>
         <ul class="space-y-4">
           <li class="flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -142,7 +142,7 @@
 
       <!-- Worker Applications -->
       <div class="bg-white border rounded p-4 shadow-sm">
-        <h2 class="text-lg font-semibold mb-4">Worker Applications</h2>
+        <h2 class="text-lg font-semibold mb-4">Lamaran Worker</h2>
         <ul class="space-y-4">
           <li class="flex items-center justify-between">
             <div class="flex items-center gap-3">
