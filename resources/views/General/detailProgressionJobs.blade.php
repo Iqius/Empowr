@@ -276,7 +276,7 @@
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
                 </div>
 
-                @if(auth()->user()->role == 'client')
+                @if (auth()->user()->role == 'client')
                     <div class="p-6 bg-white rounded-lg shadow-md my-5">
                         <div class="flex items-center justify-between">
                             <!-- Card Profile (Kiri) -->
@@ -307,8 +307,68 @@
                             </div>
                         </div>
                     </div>
-                @endif
-                @if(auth()->user()->role == 'worker')
+                @elseif (auth()->user()->role == 'worker')
+                    <div class="p-6 bg-white rounded-lg shadow-md my-5">
+                        <div class="flex items-center justify-between">
+                            <!-- Card Profile (Kiri) -->
+                            <div class="flex items-center space-x-4">
+                                <!-- Avatar -->
+                                <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
+                                    <img src="{{ asset('storage/' . ($task->client->profile_image ?? 'default.jpg')) }}" alt="" class="w-full h-full object-cover rounded-full">
+                                </div>
+
+                                <!-- User Info -->
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-800">{{$task->client->nama_lengkap}}</h3>
+                                    <p class="text-gray-600">{{$task->client->role}}</p>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons (Di sebelah kanan Profil) -->
+                            <div class="flex flex-col gap-2">
+                                <!-- Laporkan Button -->
+                                <button class="w-32 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
+                                    Laporkan
+                                </button>
+
+                                <!-- Chat Button -->
+                                <button class="w-32 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                    Chat
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @elseif (auth()->user()->role == 'admin')
+                    <div class="p-6 bg-white rounded-lg shadow-md my-5">
+                        <div class="flex items-center justify-between">
+                            <!-- Card Profile (Kiri) -->
+                            <div class="flex items-center space-x-4">
+                                <!-- Avatar -->
+                                <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
+                                    <img src="{{ asset('storage/' . ($task->worker->user->profile_image ?? 'default.jpg')) }}" alt="" class="w-full h-full object-cover rounded-full">
+                                </div>
+
+                                <!-- User Info -->
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-800">{{$task->worker->user->nama_lengkap}}</h3>
+                                    <p class="text-gray-600">{{$task->worker->user->role}}</p>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons (Di sebelah kanan Profil) -->
+                            <div class="flex flex-col gap-2">
+                                <!-- Laporkan Button -->
+                                <button class="w-32 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
+                                    Laporkan
+                                </button>
+
+                                <!-- Chat Button -->
+                                <button class="w-32 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                    Chat
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="p-6 bg-white rounded-lg shadow-md my-5">
                         <div class="flex items-center justify-between">
                             <!-- Card Profile (Kiri) -->
