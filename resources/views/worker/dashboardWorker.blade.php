@@ -128,265 +128,67 @@
             <!-- Header -->
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-semibold">Browse Tasks</h2>
-                <a href="#" class="text-sm text-[#1F4482] font-medium hover:underline">View More</a>
+                <a href="{{ route('jobs.index') }}" class="text-sm text-[#1F4482] font-medium hover:underline">View
+                    More</a>
             </div>
+
 
             <!-- Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
                 <!-- Task Card -->
-                <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition">
-                    <!-- User Info -->
-                    <div class="flex items-center gap-3 mb-3">
-                        <img src="https://via.placeholder.com/40" alt="User"
-                            class="w-9 h-9 rounded-full object-cover" />
-                        <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
-                            Andi Santoso
-                            <span class="text-[#1F4482]">✔</span>
-                        </p>
-                    </div>
+                <!-- Job Card -->
+                @php
+                    $task = \App\Models\Task::all();
+                @endphp
 
-                    <!-- Job Title -->
-                    <h3 class="text-sm font-semibold text-gray-900 mb-1">Looking for Backend Programmer</h3>
+                @foreach ($task as $job)
+                    @if($job->status == 'open') <!-- Cek apakah statusnya 'open' -->
+                        <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition relative"
+                            data-price="{{ $job->price }}">
+                            <!-- Save Button -->
+                            <button class="absolute top-3 right-3 text-gray-400 hover:text-[#1F4482] transition">
+                                <i class="fa-regular fa-bookmark text-lg"></i>
+                            </button>
 
-                    <!-- Description -->
-                    <p class="text-xs text-gray-500 mb-4 leading-relaxed">
-                        Lórem ipsum åskade spesad eurobel liksom posevis även om intrasm gsast ren bidårade ren...
-                    </p>
+                            <!-- User Info -->
+                            <div class="flex items-center gap-3 mb-3">
+                                <img src="{{ asset('assets/images/avatar.png') }}" alt="User"
+                                    class="w-9 h-9 rounded-full object-cover" />
+                                <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
+                                    {{ $job->user->nama_lengkap ?? 'Unknown' }}
+                                    <span class="text-[#1F4482]">✔</span>
+                                </p>
+                            </div>
 
-                    <!-- Bottom Row: Price + Button -->
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm font-semibold text-gray-800">IDR 500.000</p>
-                            <p class="text-xs text-gray-400">Non-Negotiable</p>
+                            <!-- Job Title -->
+                            <h3 class="text-sm font-semibold text-gray-900 mb-1">
+                                {{ $job->title }}
+                            </h3>
+
+                            <!-- Description -->
+                            <p class="text-xs text-gray-500 mb-4 leading-relaxed">
+                                {{ Str::limit($job->description, 80, '...') }}
+                            </p>
+
+                            <!-- Bottom Row: Price + Button -->
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800">Rp
+                                        {{ number_format($job->price, 0, ',', '.') }}
+                                    </p>
+                                    <p class="text-xs text-gray-400">Non-Negotiable</p>
+                                </div>
+                                <a href="{{ route('jobs.show', $job->id) }}">
+                                    <button
+                                        class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
+                                        View
+                                    </button>
+                                </a>
+                            </div>
                         </div>
-                        <button
-                            class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                            View
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition">
-                    <!-- User Info -->
-                    <div class="flex items-center gap-3 mb-3">
-                        <img src="https://via.placeholder.com/40" alt="User"
-                            class="w-9 h-9 rounded-full object-cover" />
-                        <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
-                            Andi Santoso
-                            <span class="text-[#1F4482]">✔</span>
-                        </p>
-                    </div>
-
-                    <!-- Job Title -->
-                    <h3 class="text-sm font-semibold text-gray-900 mb-1">Looking for Backend Programmer</h3>
-
-                    <!-- Description -->
-                    <p class="text-xs text-gray-500 mb-4 leading-relaxed">
-                        Lórem ipsum åskade spesad eurobel liksom posevis även om intrasm gsast ren bidårade ren...
-                    </p>
-
-                    <!-- Bottom Row: Price + Button -->
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm font-semibold text-gray-800">IDR 500.000</p>
-                            <p class="text-xs text-gray-400">Non-Negotiable</p>
-                        </div>
-                        <button
-                            class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                            View
-                        </button>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition">
-                    <!-- User Info -->
-                    <div class="flex items-center gap-3 mb-3">
-                        <img src="https://via.placeholder.com/40" alt="User"
-                            class="w-9 h-9 rounded-full object-cover" />
-                        <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
-                            Andi Santoso
-                            <span class="text-[#1F4482]">✔</span>
-                        </p>
-                    </div>
-
-                    <!-- Job Title -->
-                    <h3 class="text-sm font-semibold text-gray-900 mb-1">Looking for Backend Programmer</h3>
-
-                    <!-- Description -->
-                    <p class="text-xs text-gray-500 mb-4 leading-relaxed">
-                        Lórem ipsum åskade spesad eurobel liksom posevis även om intrasm gsast ren bidårade ren...
-                    </p>
-
-                    <!-- Bottom Row: Price + Button -->
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm font-semibold text-gray-800">IDR 500.000</p>
-                            <p class="text-xs text-gray-400">Non-Negotiable</p>
-                        </div>
-                        <button
-                            class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                            View
-                        </button>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition">
-                    <!-- User Info -->
-                    <div class="flex items-center gap-3 mb-3">
-                        <img src="https://via.placeholder.com/40" alt="User"
-                            class="w-9 h-9 rounded-full object-cover" />
-                        <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
-                            Andi Santoso
-                            <span class="text-[#1F4482]">✔</span>
-                        </p>
-                    </div>
-
-                    <!-- Job Title -->
-                    <h3 class="text-sm font-semibold text-gray-900 mb-1">Looking for Backend Programmer</h3>
-
-                    <!-- Description -->
-                    <p class="text-xs text-gray-500 mb-4 leading-relaxed">
-                        Lórem ipsum åskade spesad eurobel liksom posevis även om intrasm gsast ren bidårade ren...
-                    </p>
-
-                    <!-- Bottom Row: Price + Button -->
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm font-semibold text-gray-800">IDR 500.000</p>
-                            <p class="text-xs text-gray-400">Non-Negotiable</p>
-                        </div>
-                        <button
-                            class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                            View
-                        </button>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition">
-                    <!-- User Info -->
-                    <div class="flex items-center gap-3 mb-3">
-                        <img src="https://via.placeholder.com/40" alt="User"
-                            class="w-9 h-9 rounded-full object-cover" />
-                        <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
-                            Andi Santoso
-                            <span class="text-[#1F4482]">✔</span>
-                        </p>
-                    </div>
-
-                    <!-- Job Title -->
-                    <h3 class="text-sm font-semibold text-gray-900 mb-1">Looking for Backend Programmer</h3>
-
-                    <!-- Description -->
-                    <p class="text-xs text-gray-500 mb-4 leading-relaxed">
-                        Lórem ipsum åskade spesad eurobel liksom posevis även om intrasm gsast ren bidårade ren...
-                    </p>
-
-                    <!-- Bottom Row: Price + Button -->
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm font-semibold text-gray-800">IDR 500.000</p>
-                            <p class="text-xs text-gray-400">Non-Negotiable</p>
-                        </div>
-                        <button
-                            class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                            View
-                        </button>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition">
-                    <!-- User Info -->
-                    <div class="flex items-center gap-3 mb-3">
-                        <img src="https://via.placeholder.com/40" alt="User"
-                            class="w-9 h-9 rounded-full object-cover" />
-                        <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
-                            Andi Santoso
-                            <span class="text-[#1F4482]">✔</span>
-                        </p>
-                    </div>
-
-                    <!-- Job Title -->
-                    <h3 class="text-sm font-semibold text-gray-900 mb-1">Looking for Backend Programmer</h3>
-
-                    <!-- Description -->
-                    <p class="text-xs text-gray-500 mb-4 leading-relaxed">
-                        Lórem ipsum åskade spesad eurobel liksom posevis även om intrasm gsast ren bidårade ren...
-                    </p>
-
-                    <!-- Bottom Row: Price + Button -->
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm font-semibold text-gray-800">IDR 500.000</p>
-                            <p class="text-xs text-gray-400">Non-Negotiable</p>
-                        </div>
-                        <button
-                            class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                            View
-                        </button>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition">
-                    <!-- User Info -->
-                    <div class="flex items-center gap-3 mb-3">
-                        <img src="https://via.placeholder.com/40" alt="User"
-                            class="w-9 h-9 rounded-full object-cover" />
-                        <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
-                            Andi Santoso
-                            <span class="text-[#1F4482]">✔</span>
-                        </p>
-                    </div>
-
-                    <!-- Job Title -->
-                    <h3 class="text-sm font-semibold text-gray-900 mb-1">Looking for Backend Programmer</h3>
-
-                    <!-- Description -->
-                    <p class="text-xs text-gray-500 mb-4 leading-relaxed">
-                        Lórem ipsum åskade spesad eurobel liksom posevis även om intrasm gsast ren bidårade ren...
-                    </p>
-
-                    <!-- Bottom Row: Price + Button -->
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm font-semibold text-gray-800">IDR 500.000</p>
-                            <p class="text-xs text-gray-400">Non-Negotiable</p>
-                        </div>
-                        <button
-                            class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                            View
-                        </button>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition">
-                    <!-- User Info -->
-                    <div class="flex items-center gap-3 mb-3">
-                        <img src="https://via.placeholder.com/40" alt="User"
-                            class="w-9 h-9 rounded-full object-cover" />
-                        <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
-                            Andi Santoso
-                            <span class="text-[#1F4482]">✔</span>
-                        </p>
-                    </div>
-
-                    <!-- Job Title -->
-                    <h3 class="text-sm font-semibold text-gray-900 mb-1">Looking for Backend Programmer</h3>
-
-                    <!-- Description -->
-                    <p class="text-xs text-gray-500 mb-4 leading-relaxed">
-                        Lórem ipsum åskade spesad eurobel liksom posevis även om intrasm gsast ren bidårade ren...
-                    </p>
-
-                    <!-- Bottom Row: Price + Button -->
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm font-semibold text-gray-800">IDR 500.000</p>
-                            <p class="text-xs text-gray-400">Non-Negotiable</p>
-                        </div>
-                        <button
-                            class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                            View
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Duplikat card sesuai kebutuhan -->
-                <!-- ... -->
+                    @endif
+                @endforeach
             </div>
         </div>
 
@@ -396,6 +198,22 @@
         <button class="bg-green-500 text-white px-4 py-2 rounded-lg">Join Affiliate</button>
     </div>
 </div>
-</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // ✅ SweetAlert for Success Message
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil Login!',
+                text: "{{ session('success') }}",
+                confirmButtonColor: '#1F4482',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = window.location.href;
+            });
+        @endif
+    });
+</script>
 
 @include('General.footer')

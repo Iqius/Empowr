@@ -1,7 +1,5 @@
 @include('General.header')
 
-
-
 <div class="p-4 mt-14">
     <div class="p-4 rounded h-full">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -9,7 +7,7 @@
             <div class="lg:col-span-2 flex flex-col h-full">
                 <div class="bg-white p-6 rounded-xl shadow-sm border flex flex-col h-full space-y-6">
                     <!-- Header -->
-                    <div class="flex justify-between items-center mb-6">
+                    <div class="flex justify-between items-center mb-4">
                         <div>
                             <h1 class="text-2xl font-bold text-gray-800">{{ $job->title }}</h1>
                         </div>
@@ -17,7 +15,8 @@
                         <div class="flex items-center gap-3 flex-wrap">
                             @auth
                                 @if (Auth::user()->role === 'worker')
-                                    <form id="applyForm" action="{{ route('task.apply', $job->id) }}" method="POST" class="flex items-center gap-2">
+                                    <form id="applyForm" action="{{ route('task.apply', $job->id) }}" method="POST"
+                                        class="flex items-center gap-2">
                                         @csrf
                                         <button type="button" id="applyBtn"
                                             class="bg-[#1F4482] text-white text-sm px-8 py-2 rounded-md hover:bg-[#18346a] focus:outline-none">
@@ -29,12 +28,14 @@
                                 @endif
                             @endauth
 
-                            <button class="w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300 transition">
-                                <i class="fa-regular fa-bookmark text-gray-600 text-lg"></i>
+                            <button
+                                class="w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300 transition">
+                                <i class="fa-regular fa-bookmark text-[#1F4482] text-lg"></i>
                             </button>
 
-                            <button class="w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300 transition">
-                                <i class="fa-solid fa-share-nodes text-gray-600 text-lg"></i>
+                            <button
+                                class="w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300 transition">
+                                <i class="fa-solid fa-share-nodes text-[#1F4482] text-lg"></i>
                             </button>
                         </div>
                     </div>
@@ -43,45 +44,51 @@
                     <div class="flex justify-between items-center mb-6">
                         <div class="flex items-center gap-4">
                             <img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}"
-                                alt="User" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover">
+                                alt="User" class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover">
 
                             <div>
-                                <p class="font-semibold text-gray-800 flex items-center gap-1">
+                                <p class="font-semibold text-gray-800 flex items-center gap-1 mb-2">
                                     {{ $job->user->nama_lengkap }}
                                     <span class="text-[#1F4482]">&#10004;</span>
                                 </p>
-                                <p class="text-xs text-gray-400 flex items-center gap-1">
-                                    <i class="fa-solid fa-pen text-gray-400"></i>
-                                    Task Posted {{ \Carbon\Carbon::parse($job->created_at)->translatedFormat('d F Y') }}
+                                <p class="text-xs flex items-center gap-1">
+                                    <i class="fa-solid fa-pen text-gray-500"></i>
+                                    <span class="text-gray-500">Task diposting</span>
+                                    <span class="text-gray-600 font-semibold">
+                                        {{ \Carbon\Carbon::parse($job->created_at)->translatedFormat('d F Y') }}
+                                    </span>
                                 </p>
                             </div>
+
                         </div>
 
-                        <div class="text-right">
+                        <div class="text-left mr-6">
                             <p class="text-sm font-medium text-gray-500">Budget</p>
-                            <p class="text-lg font-semibold text-gray-800">IDR {{ number_format($job->price, 0, ',', '.') }}</p>
+                            <p class="text-lg font-semibold text-gray-800">IDR
+                                {{ number_format($job->price, 0, ',', '.') }}
+                            </p>
                         </div>
                     </div>
 
                     <!-- About Task -->
                     <div class="space-y-6 flex-1">
                         <div>
-                            <h2 class="text-xl font-semibold text-gray-800 mb-2">About Task</h2>
-                            <div class="job-description text-sm text-gray-600 leading-relaxed">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-2">Tentang Task</h2>
+                            <div class="job-description text-sm text-gray-800 leading-relaxed">
                                 {!! $job->description !!}
                             </div>
                         </div>
 
                         <div>
-                            <h2 class="text-xl font-semibold text-gray-800 mb-2">Qualification</h2>
-                            <div class="job-qualification text-sm text-gray-600 leading-relaxed">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-2">Kualifikasi</h2>
+                            <div class="job-qualification text-sm text-gray-800 leading-relaxed">
                                 {!! $job->qualification !!}
                             </div>
                         </div>
 
                         <div>
-                            <h2 class="text-xl font-semibold text-gray-800 mb-2">Rules Task</h2>
-                            <div class="rules text-sm text-gray-600 leading-relaxed">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-2">Aturan Task</h2>
+                            <div class="rules text-sm text-gray-800 leading-relaxed">
                                 {!! $job->provisions !!}
                             </div>
                         </div>
@@ -102,41 +109,42 @@
             </div>
 
             <!-- Right Section -->
-            <div class="flex flex-col h-full">
-                <div class="bg-white p-6 rounded-xl shadow-sm border flex flex-col h-full space-y-4">
-                    <h2 class="text-lg font-semibold text-gray-800">Task Details</h2>
+            <div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border space-y-4">
+                    <h2 class="text-lg font-semibold text-gray-800">Task Detail</h2>
 
                     <div>
-                        <p class="text-gray-400">Task Period (Deadline)</p>
+                        <p class="text-gray-500">Masa Pengerjaan Task (Deadline)</p>
                         <p class="font-semibold">
                             {{ \Carbon\Carbon::parse($job->start_date)->translatedFormat('d F Y') }} -
                             {{ \Carbon\Carbon::parse($job->deadline)->translatedFormat('d F Y') }}
                         </p>
                         <p class="font-semibold">
-                            ({{ \Carbon\Carbon::parse($job->start_date)->diffInDays($job->deadline) }} Days)
+                            ({{ \Carbon\Carbon::parse($job->start_date)->diffInDays($job->deadline) }} Hari)
                         </p>
                     </div>
 
                     <div>
-                        <p class="text-gray-400">Task Closed</p>
+                        <p class="text-gray-500">Penutupan Lamaran</p>
                         <p class="font-semibold">
                             {{ \Carbon\Carbon::parse($job->deadline_promotion)->translatedFormat('d F Y') }}
                         </p>
                     </div>
 
                     <div>
-                        <p class="text-gray-400">Revisi sebanyak</p>
+                        <p class="text-gray-500">Permintaan Jatah Revisi</p>
                         <p class="font-semibold capitalize">{{ $job->revisions }} kali revisi</p>
                     </div>
 
                     <div>
-                        <p class="text-gray-400 mb-2">Category</p>
+                        <p class="text-gray-500 mb-2">Kategori Task</p>
                         <div>
                             @php
                                 $categories = json_decode($job->kategory, true) ?? [];
                             @endphp
                             @foreach($categories as $category)
-                                <span class="inline-block bg-blue-800 text-white px-3 py-1 rounded-full text-sm mr-2 mb-2">
+                                <span
+                                    class="inline-block bg-gradient-to-b from-[#1F4482] to-[#2A5DB2] text-white px-3 py-1 rounded-full text-sm mr-2 mb-2">
                                     {{ $category }}
                                 </span>
                             @endforeach
@@ -152,42 +160,36 @@
 
             <div id="applicants-list" class="space-y-4">
                 @forelse ($applicants as $applicant)
-                    @php
-                        $worker = $applicant->worker;
-                        $user = $worker->user;
-                        $avgRating = 0; // default
-                    @endphp
+                                @php
+                                    $worker = $applicant->worker;
+                                    $user = $worker->user;
+                                    $avgRating = 0; // default
+                                @endphp
 
-                    <a href="{{ route('profile.worker.lamar', $worker->id) }}" 
-                    class="block p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition hover:bg-gray-100"
-                    data-index="{{ $loop->index }}"
-                    data-name="{{ $user->nama_lengkap }}"
-                    data-note="{{ $applicant->catatan }}"
-                    data-price="{{ $applicant->bidPrice }}"
-                    data-experience="{{ $worker->pengalaman_kerja }}"
-                    data-rating="{{ number_format($avgRating, 1) }}"
-                    data-education="{{ $worker->pendidikan }}"
-                    data-cv="{{ $worker->cv }}"
-                    data-label="{{ $worker->empowr_label }}"
-                    data-affiliate="{{ $worker->empowr_affiliate }}">
+                                <a href="{{ route('profile.worker.lamar', $worker->id) }}"
+                                    class="block p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition hover:bg-gray-100"
+                                    data-index="{{ $loop->index }}" data-name="{{ $user->nama_lengkap }}"
+                                    data-note="{{ $applicant->catatan }}" data-price="{{ $applicant->bidPrice }}"
+                                    data-experience="{{ $worker->pengalaman_kerja }}" data-rating="{{ number_format($avgRating, 1) }}"
+                                    data-education="{{ $worker->pendidikan }}" data-cv="{{ $worker->cv }}"
+                                    data-label="{{ $worker->empowr_label }}" data-affiliate="{{ $worker->empowr_affiliate }}">
 
-                        <div class="flex items-center justify-between gap-4 mb-4">
-                            <!-- Left: Profile Section -->
-                            <div class="flex items-center gap-4">
-                                <img src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : asset('assets/images/avatar.png') }}"
-                                    alt="Profile Image"
-                                    class="w-16 h-16 rounded-full object-cover border border-gray-300">
-                                <div>
-                                    <p class="text-lg font-semibold text-gray-800">{{ $user->nama_lengkap }}</p>
-                                    <p class="text-sm text-gray-500">
-                                        Pengalaman: {{ $worker->pengalaman_kerja ?? '-' }} tahun | 
-                                        Rating: {{ number_format($avgRating, 1) }}
-                                    </p>
-                                </div>
-                            </div>
+                                    <div class="flex items-center justify-between gap-4 mb-4">
+                                        <!-- Left: Profile Section -->
+                                        <div class="flex items-center gap-4">
+                                            <img src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : asset('assets/images/avatar.png') }}"
+                                                alt="Profile Image" class="w-16 h-16 rounded-full object-cover border border-gray-300">
+                                            <div>
+                                                <p class="text-lg font-semibold text-gray-800">{{ $user->nama_lengkap }}</p>
+                                                <p class="text-sm text-gray-500">
+                                                    Pengalaman: {{ $worker->pengalaman_kerja ?? '-' }} tahun |
+                                                    Rating: {{ number_format($avgRating, 1) }}
+                                                </p>
+                                            </div>
+                                        </div>
 
-                        </div>
-                    </a>
+                                    </div>
+                                </a>
 
                 @empty
                     <p class="text-gray-500 text-sm">Belum ada pelamar untuk task ini.</p>
@@ -196,6 +198,8 @@
         </div>
     </div>
 </div>
+
+
 
 <!-- buat quilbot -->
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
@@ -231,10 +235,10 @@
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("applyForm");
 
-        document.getElementById("applyBtn")?.addEventListener("click", function() {
+        document.getElementById("applyBtn")?.addEventListener("click", function () {
             Swal.fire({
                 title: 'Ajukan Pendaftaran',
                 html: `
@@ -266,12 +270,12 @@
                     document.getElementById("formCatatan").value = result.value.note;
 
                     Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Lamaran berhasil dikirim.',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Lamaran berhasil dikirim.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
 
 
                     // Delay submit sedikit agar notifikasi bisa muncul
@@ -284,5 +288,3 @@
         });
     });
 </script>
-
-

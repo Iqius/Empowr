@@ -6,6 +6,8 @@
     <title>Verifikasi OTP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Penting untuk mobile -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="{{ asset('assets/images/logosaja.png') }}" type="image/png">
+
 </head>
 
 <body class="min-h-screen flex items-center justify-center bg-[#1F4482] text-black px-4 sm:px-6 lg:px-8">
