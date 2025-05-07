@@ -51,17 +51,18 @@ Route::post('/hire', [JobController::class, 'Clienthire'])->name('client.hire');
 Route::post('/reject', [JobController::class, 'ClientReject'])->name('client.reject');
 // --bayar
 Route::post('/bayar/{task}', [JobController::class, 'bayar'])->name('client.bayar');
-// --Buat job
-Route::post('/jobs', [JobController::class, 'createJobClient'])->name('jobs.store');
-Route::get('/jobs', [JobController::class, 'addJobView'])->name('add-job-view');
 // --review progress
 Route::post('/task-progression/{progress}/review', [ProgressionController::class, 'review'])->name('task-progression.review');
 // --Client complete job
 Route::post('/{task}/complite', [ProgressionController::class, 'CompliteJob'])->name('complite.job');
 // --Tampilkan halaman Add Job New
-Route::get('/client/add-job', function () {
+Route::post('/jobs', [JobController::class, 'createJobClient'])->name('jobs.store');
+Route::get('/add-job', function () {
     return view('client.addJobNew');
 })->middleware(['auth'])->name('client.addJobNew');
+// --Tampilkan halaman update dpake client dan admin
+Route::post('/progress/update-jobs/{id}', [JobController::class, 'updateJobClient'])->name('jobs.update');
+Route::get('/update-job/{id}', [JobController::class, 'updateJobView'])->middleware(['auth'])->name('client.update');
 
 
 
@@ -90,8 +91,17 @@ Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->nam
 Route::get('/chat', [\Chatify\Http\Controllers\MessagesController::class, 'index'])->name('chat');
 // --In progress jobs
 Route::get('/in-progress-jobs/{task_id}', [JobController::class, 'DetailJobsInProgress'])->name('inProgress.jobs');
+// --arbitrase
+Route::get('/arbitrase', function () {return view('General.arbitrase');});
+// --notif
+Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifications.index');
+Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
 
+####### ADMIN
+// Dashboard
+Route::get('/admin/dashboard', [AuthController::class, 'adminDashboard'])->middleware(['auth'])->name('admin.dashboardAdmin');
+// 
 
 
 
@@ -120,17 +130,8 @@ Route::post('/application/{id}/accept', [JobController::class, 'accept'])->name(
 
 Route::get('/tasks/{id}/applicants', [JobController::class, 'showApplicants']);
 
-//arbitrae
-Route::get('/arbitrase', function () {
-    return view('arbitrase');
-});
-
-
-
 Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage']);
+Route::get('/jobs', [JobController::class, 'addJobView'])->name('add-job-view');
 
 
-//notif
-Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifications.index');
-Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 

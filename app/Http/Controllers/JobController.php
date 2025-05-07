@@ -28,6 +28,8 @@ class JobController extends Controller
     public function addJobView(){
         return view('Client.addJobNew');
     }
+
+
     // Create job Client
     public function createJobClient(Request $request)
     {
@@ -64,6 +66,52 @@ class JobController extends Controller
         
         return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
+
+
+    // Tampilan add newjob
+    public function updateJobView($id){
+        $job = Task::findOrFail($id); 
+        return view('Client.updateJob', compact('job'));
+    }
+
+    public function updateJobClient(Request $request, $id)
+    {
+        $request->validate([
+            'job_file' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240', // max 10MB
+        ]);
+
+        // Cari task berdasarkan ID, atau gagal 404 jika tidak ada
+        $task = Task::findOrFail($id);
+
+        $oldFilePath = $task->job_file;
+        $newPath = $oldFilePath;
+
+        if ($request->hasFile('job_file')) {
+            $newPath = $request->file('job_file')->store('task_files', 'public');
+
+            if ($oldFilePath && \Storage::disk('public')->exists($oldFilePath)) {
+                \Storage::disk('public')->delete($oldFilePath);
+                \Log::info("File lama milik task ID {$task->id} telah dihapus: {$oldFilePath}");
+            }
+        }
+
+        $task->update([
+            'title' => $request->title ?? $task->title,
+            'description' => $request->description ?? $task->description,
+            'qualification' => $request->qualification ?? $task->qualification,
+            'provisions' => $request->rules ?? $task->provisions,
+            'start_date' => $request->start_date ?? $task->start_date,
+            'deadline' => $request->deadline ?? $task->deadline,
+            'deadline_promotion' => $request->deadline_promotion ?? $task->deadline_promotion,
+            'price' => $request->price ?? $task->price,
+            'revisions' => $request->revisions ?? $task->revisions,
+            'kategory' => $request->kategoriWorker ? json_encode($request->kategoriWorker) : $task->kategory,
+            'job_file' => $newPath,
+        ]);
+
+        return redirect()->route('jobs.index')->with('success-edit', "Job telah diperbarui!.");
+    }
+
 
 
     public function getJobData()
@@ -152,7 +200,7 @@ class JobController extends Controller
             ->where('profile_id', Auth::id())
             ->first();
 
-        return view('manageWorker', compact('task', 'application'));
+        return view('worker.manageWorker', compact('task', 'application'));
     }
 
     public function destroy($id)

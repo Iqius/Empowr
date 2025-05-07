@@ -254,80 +254,139 @@
       </div>
    </nav>
 
+   @if(auth()->check() && (auth()->user()->role === 'worker' || auth()->user()->role === 'client'))
+      <aside id="logo-sidebar"
+         class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200"
+         aria-label="Sidebar">
+         <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
+            <ul class="space-y-2 font-medium">
+               <!-- Dashboard -->
+               <li>
+                  <a href="{{ Auth::user()->role === 'client' ? route('client.dashboardClient') : route('worker.dashboardWorker') }}"
+                     class="sidebar-item flex items-center p-2 rounded-lg">
+                     <i class="bi bi-house text-lg text-[#1F4482]"></i>
+                     <span class="ml-3">Dashboard</span>
+                  </a>
+               </li>
 
-   <aside id="logo-sidebar"
-      class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200"
-      aria-label="Sidebar">
-      <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
-         <ul class="space-y-2 font-medium">
-            <!-- Dashboard -->
-            <li>
-               <a href="{{ Auth::user()->role === 'client' ? route('client.dashboardClient') : route('worker.dashboardWorker') }}"
-                  class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-house text-lg text-[#1F4482]"></i>
-                  <span class="ml-3">Dashboard</span>
-               </a>
-            </li>
+               <!-- Jobs -->
+               <li>
+                  <a href="{{ route('jobs.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
+                     <i class="bi bi-briefcase text-lg text-[#1F4482]"></i>
+                     <span class="ml-3">Jobs</span>
+                  </a>
+               </li>
 
-            <!-- Jobs -->
-            <li>
-               <a href="{{ route('jobs.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-briefcase text-lg text-[#1F4482]"></i>
-                  <span class="ml-3">Jobs</span>
-               </a>
-            </li>
+               <!-- My Job -->
+               <li>
+                  <a href="{{ Auth::user()->role === 'client' ? route('jobs.my') : route('jobs.Worker') }}"
+                     class="sidebar-item flex items-center p-2 rounded-lg">
+                     <i class="bi bi-person-workspace text-lg text-[#1F4482]"></i>
+                     <span class="ml-3">My Job</span>
+                  </a>
+               </li>
 
-            <!-- My Job -->
-            <li>
-               <a href="{{ Auth::user()->role === 'client' ? route('jobs.my') : route('jobs.Worker') }}"
-                  class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-person-workspace text-lg text-[#1F4482]"></i>
-                  <span class="ml-3">My Job</span>
-               </a>
-            </li>
+               <!-- Chat -->
+               <li>
+                  <a href="{{ url('/chatify') }}#" class="sidebar-item flex items-center p-2 rounded-lg">
+                     <i class="bi bi-chat-dots text-lg text-[#1F4482]"></i>
+                     <span class="ml-3">Chat</span>
+                  </a>
+               </li>
 
-            <!-- Chat -->
-            <li>
-               <a href="{{ url('/chatify') }}#" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-chat-dots text-lg text-[#1F4482]"></i>
-                  <span class="ml-3">Chat</span>
-               </a>
-            </li>
+               <!-- Arbitrase -->
+               <li>
+                  <a href="{{ url('/arbitrase') }}" class="sidebar-item flex items-center p-2 rounded-lg">
+                     <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
+                     <span class="ml-3">Arbitrase</span>
+                  </a>
+               </li>
 
-            <!-- Arbitrase -->
-            <li>
-               <a href="{{ url('/arbitrase') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
-                  <span class="ml-3">Arbitrase</span>
-               </a>
-            </li>
+               <!-- Guide -->
+               <li>
+                  <a href="{{ url('/guide') }}" class="sidebar-item flex items-center p-2 rounded-lg">
+                     <i class="bi bi-book text-lg text-[#1F4482]"></i>
+                     <span class="ml-3">Guide</span>
+                  </a>
+               </li>
 
-            <!-- Guide -->
-            <li>
-               <a href="{{ url('/guide') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-book text-lg text-[#1F4482]"></i>
-                  <span class="ml-3">Guide</span>
-               </a>
-            </li>
+               <!-- Affiliate -->
+               <li>
+                  <a href="{{ url('/affiliate') }}" class="sidebar-item flex items-center p-2 rounded-lg">
+                     <i class="bi bi-currency-dollar text-lg text-[#1F4482]"></i>
+                     <span class="ml-3">Affiliate</span>
+                  </a>
+               </li>
 
-            <!-- Affiliate -->
-            <li>
-               <a href="{{ url('/affiliate') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-currency-dollar text-lg text-[#1F4482]"></i>
-                  <span class="ml-3">Affiliate</span>
-               </a>
-            </li>
+               <!-- Contact Admin -->
+               <li>
+                  <a href="{{ url('/contact-admin') }}" class="sidebar-item flex items-center p-2 rounded-lg">
+                     <i class="bi bi-telephone text-lg text-[#1F4482]"></i>
+                     <span class="ml-3">Contact Admin</span>
+                  </a>
+               </li>
+            </ul>
+         </div>
+      </aside>
+   @elseif (auth()->check() && auth()->user()->role === 'admin')
+      <aside id="logo-sidebar"
+         class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200"
+         aria-label="Sidebar">
+         <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
+            <ul class="space-y-2 font-medium">
+               <!-- Dashboard -->
+               <li>
+                  <a href="{{ route('admin.dashboardAdmin') }}"
+                     class="sidebar-item flex items-center p-2 rounded-lg">
+                     <i class="bi bi-house text-lg text-[#1F4482]"></i>
+                     <span class="ml-3">Dashboard</span>
+                  </a>
+               </li>
 
-            <!-- Contact Admin -->
-            <li>
-               <a href="{{ url('/contact-admin') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-telephone text-lg text-[#1F4482]"></i>
-                  <span class="ml-3">Contact Admin</span>
-               </a>
-            </li>
-         </ul>
-      </div>
-   </aside>
+               <!-- Jobs -->
+               <li>
+                  <a href="{{ route('jobs.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
+                     <i class="bi bi-briefcase text-lg text-[#1F4482]"></i>
+                     <span class="ml-3">Jobs</span>
+                  </a>
+               </li>
+
+
+               <!-- Pencairan dana -->
+               <li>
+                  <a href="#" class="sidebar-item flex items-center p-2 rounded-lg">
+                     <i class="bi bi-currency-dollar text-lg text-[#1F4482]"></i>
+                     <span class="ml-3">Pencairan dana</span>
+                  </a>
+               </li>
+
+               <!-- Chat -->
+               <li>
+                  <a href="{{ url('/chatify') }}#" class="sidebar-item flex items-center p-2 rounded-lg">
+                     <i class="bi bi-chat-dots text-lg text-[#1F4482]"></i>
+                     <span class="ml-3">Chat</span>
+                  </a>
+               </li>
+
+               <!-- Arbitrase -->
+               <li>
+                  <a href="{{ url('/arbitrase') }}" class="sidebar-item flex items-center p-2 rounded-lg">
+                     <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
+                     <span class="ml-3">Arbitrase</span>
+                  </a>
+               </li>
+                                                                                 
+               <!-- Affiliate -->
+               <li>
+                  <a href="{{ url('/affiliate') }}" class="sidebar-item flex items-center p-2 rounded-lg">
+                     <i class="bi bi-people text-lg text-[#1F4482]"></i>
+                     <span class="ml-3">Affiliate</span>
+                  </a>
+               </li>
+            </ul>
+         </div>
+      </aside>
+   @endif
 
    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden" onclick="closeSidebar()">
    </div>
