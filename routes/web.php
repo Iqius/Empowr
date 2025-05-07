@@ -93,7 +93,9 @@ Route::get('/chat', [\Chatify\Http\Controllers\MessagesController::class, 'index
 // --In progress jobs
 Route::get('/in-progress-jobs/{task_id}', [JobController::class, 'DetailJobsInProgress'])->name('inProgress.jobs');
 // --arbitrase
-Route::get('/arbitrase', function () {return view('General.arbitrase');});
+// web.php
+Route::get('/arbitrase', [ArbitraseController::class, 'indexUser'])->name('arbitrase.user');
+
 // --notif
 Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifications.index');
 Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
@@ -103,10 +105,13 @@ Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAs
 // Dashboard
 Route::get('/admin/dashboard', [AuthController::class, 'adminDashboard'])->middleware(['auth'])->name('admin.dashboardAdmin');
 Route::get('/arbitraseget', [ArbitraseController::class, 'index'])->middleware(['auth'])->name('arbitrase.index');
+Route::get('/arbitraseDetail', [ArbitraseController::class, 'index'])->middleware(['auth'])->name('arbitrase.show');
+Route::post('/arbitrase/{id}/accept', [ArbitraseController::class, 'accept'])->name('arbitrase.accept');
+Route::post('/arbitrase/{id}/reject', [ArbitraseController::class, 'reject'])->name('arbitrase.reject');
 // 
 
-
-
+#### Arbitrase
+Route::post('/arbitrase/laporkan', [ArbitraseController::class, 'store'])->middleware(['auth'])->name('arbitrase.store');
 
 
 
@@ -134,6 +139,3 @@ Route::get('/tasks/{id}/applicants', [JobController::class, 'showApplicants']);
 
 Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage']);
 Route::get('/jobs', [JobController::class, 'addJobView'])->name('add-job-view');
-
-
-

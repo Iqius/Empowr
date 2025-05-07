@@ -37,8 +37,8 @@ class User extends Authenticatable
         'negara',  // Tambahkan ini
         // 'bio',     // Tambahkan ini
     ];
-    
-    
+
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -75,8 +75,6 @@ class User extends Authenticatable
 
     public function workerProfile()
     {
-        return $this->hasOne(WorkerProfile::class);
+        return $this->hasOne(WorkerProfile::class, 'user_id');
     }
-
-    
 }
