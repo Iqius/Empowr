@@ -26,7 +26,11 @@ class JobController extends Controller
 
     // Tampilan add newjob
     public function addJobView(){
-        return view('Client.addJobNew');
+        if(Auth::user()->role == 'client'){
+            return view('Client.addJobNew');
+        }else{
+            return view('admin.dashboardAdmin');
+        }
     }
 
 

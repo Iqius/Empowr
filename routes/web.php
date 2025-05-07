@@ -8,6 +8,7 @@ use App\Http\Middleware\CheckUserRole;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProgressionController;
+use App\Http\Controllers\ArbitraseController;
 
 
 // LANDING PAGE
@@ -101,6 +102,7 @@ Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAs
 ####### ADMIN
 // Dashboard
 Route::get('/admin/dashboard', [AuthController::class, 'adminDashboard'])->middleware(['auth'])->name('admin.dashboardAdmin');
+Route::get('/arbitraseget', [ArbitraseController::class, 'index'])->middleware(['auth'])->name('arbitrase.index');
 // 
 
 

@@ -86,6 +86,10 @@
     </section>
 @elseif (auth()->check() && auth()->user()->role === 'admin') <!-- UNTUK ADMIN -->
     <section class="p-4 md:p-8 mt-16">
+        <a href="{{ route('add-job-view') }}"
+            class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow mb-6">
+            Add New Job
+        </a>
         <div class="flex flex-col md:flex-row gap-4 mb-6">
             <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
             <select class="p-2 border rounded w-full md:w-auto" id="sortSelect">
