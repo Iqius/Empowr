@@ -4,9 +4,9 @@
 <div class="max-w-6xl mx-auto bg-white p-6 rounded shadow-md mt-20">
   <div class="flex justify-between items-center mb-4">
     <h1 class="text-2xl font-semibold">Daftar Arbitrase</h1>
-    <button onclick="document.getElementById('modal').classList.remove('hidden')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    <!-- <button onclick="document.getElementById('modal').classList.remove('hidden')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
       + Tambah Arbitrase
-    </button>
+    </button> -->
   </div>
   <!-- Tabel -->
   <div class="overflow-x-auto">

@@ -13,6 +13,13 @@
             </span>
         </h2>
 
+        @php
+        $worker = Auth::user()->workerProfile;
+        $lamarTasks = \App\Models\TaskApplication::where('profile_id', $worker->id)
+        ->where('status', 'pending')
+        ->count();
+        @endphp
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Task Dilamar -->
             <div
@@ -20,10 +27,16 @@
                 <i class="fa fa-desktop text-5xl ml-10"></i>
                 <div class="text-right mr-5">
                     <p class="text-base font-medium">Task Dilamar</p>
-                    <p class="text-4xl font-bold">1</p>
+                    <p class="text-4xl font-bold">{{ $lamarTasks }}</p>
                 </div>
             </div>
 
+            @php
+            $worker = Auth::user()->workerProfile;
+            $progressTasks = \App\Models\Task::where('profile_id', $worker->id)
+            ->where('status', 'in progress')
+            ->count();
+            @endphp
 
             <!-- Sedang Berjalan -->
             <div
@@ -31,9 +44,16 @@
                 <i class="fa fa-handshake text-5xl ml-10"></i>
                 <div class="text-right mr-5">
                     <p class="text-base font-medium">Sedang Berjalan</p>
-                    <p class="text-4xl font-bold">1</p>
+                    <p class="text-4xl font-bold">{{ $progressTasks }}</p>
                 </div>
             </div>
+
+            @php
+            $worker = Auth::user()->workerProfile;
+            $completedTasks = \App\Models\Task::where('profile_id', $worker->id)
+            ->where('status', 'completed')
+            ->count();
+            @endphp
 
             <!-- Task Selesai -->
             <div
@@ -41,11 +61,18 @@
                 <i class="fa fa-clipboard-check text-5xl ml-10"></i>
                 <div class="text-right mr-5">
                     <p class="text-base font-medium">Task Selesai</p>
-                    <p class="text-4xl font-bold">1</p>
+                    <p class="text-4xl font-bold">{{ $completedTasks }}</p>
                 </div>
             </div>
         </div>
 
+        @php
+        $worker = Auth::user()->workerProfile;
+
+        $appliedTasks = \App\Models\Task::whereIn('id',
+        \App\Models\TaskApplication::where('profile_id', $worker->id)->pluck('task_id')
+        )->get();
+        @endphp
 
 
         <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -53,54 +80,20 @@
             <div class="bg-white border rounded p-4 shadow-sm">
                 <h2 class="text-lg font-semibold mb-4">Task Dilamar</h2>
                 <ul class="space-y-4">
+                    @foreach ($appliedTasks as $job)
                     <li class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
                                 <i class="fas fa-briefcase text-gray-600"></i>
                             </div>
                             <div>
-                                <p class="font-medium text-sm md:text-base">Visual Designer</p>
-                                <p class="text-gray-400 text-xs">Applied 24 June 2024</p>
+                                <p class="font-medium text-sm md:text-base">{{ $job->title }}</p>
+                                <p class="text-gray-400 text-xs">Applied {{ \Carbon\Carbon::parse($job->updated_at)->format('d F Y') }}</p>
                             </div>
                         </div>
                         <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
                     </li>
-                    <li class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
-                                <i class="fas fa-briefcase text-gray-600"></i>
-                            </div>
-                            <div>
-                                <p class="font-medium text-sm md:text-base">Graphic Design for Billboard</p>
-                                <p class="text-gray-400 text-xs">Applied 24 June 2024</p>
-                            </div>
-                        </div>
-                        <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
-                    </li>
-                    <li class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
-                                <i class="fas fa-briefcase text-gray-600"></i>
-                            </div>
-                            <div>
-                                <p class="font-medium text-sm md:text-base">Logo Maker Non AI</p>
-                                <p class="text-gray-400 text-xs">Applied 24 June 2024</p>
-                            </div>
-                        </div>
-                        <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
-                    </li>
-                    <li class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
-                                <i class="fas fa-briefcase text-gray-600"></i>
-                            </div>
-                            <div>
-                                <p class="font-medium text-sm md:text-base">Designer for Content</p>
-                                <p class="text-gray-400 text-xs">Applied 24 June 2024</p>
-                            </div>
-                        </div>
-                        <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
-                    </li>
+                    @endforeach
                 </ul>
 
                 <!-- Pagination -->
@@ -114,34 +107,32 @@
                 </div>
             </div>
 
+            @php
+            $worker = Auth::user()->workerProfile;
+
+            $accTasks = \App\Models\Task::where('profile_id', $worker->id)
+            ->where('status', 'in progress') // pastikan status task diterima
+            ->get();
+            @endphp
+
             <!-- Accept Jobs -->
             <div class="bg-white border rounded p-4 shadow-sm">
                 <h2 class="text-lg font-semibold mb-4">Task Diterima</h2>
                 <ul class="space-y-4">
+                    @foreach ($accTasks as $job)
                     <li class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
                                 <i class="fas fa-briefcase text-gray-600"></i>
                             </div>
                             <div>
-                                <p class="font-medium text-sm md:text-base">Visual Designer</p>
-                                <p class="text-gray-400 text-xs">Applied 24 June 2024</p>
+                                <p class="font-medium text-sm md:text-base">{{ $job->title }}</p>
+                                <p class="text-gray-400 text-xs">Applied {{ \Carbon\Carbon::parse($job->updated_at)->format('d F Y') }}</p>
                             </div>
                         </div>
                         <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
                     </li>
-                    <li class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
-                                <i class="fas fa-briefcase text-gray-600"></i>
-                            </div>
-                            <div>
-                                <p class="font-medium text-sm md:text-base">Graphic Design for Billboard</p>
-                                <p class="text-gray-400 text-xs">Applied 24 June 2024</p>
-                            </div>
-                        </div>
-                        <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
-                    </li>
+                    @endforeach
                 </ul>
             </div>
         </div>
