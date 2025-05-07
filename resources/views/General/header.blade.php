@@ -370,7 +370,7 @@
 
                <!-- Arbitrase -->
                <li>
-                  <a href="{{ url('/arbitrase') }}" class="sidebar-item flex items-center p-2 rounded-lg">
+                  <a href="{{ route('arbitrase.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                      <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
                      <span class="ml-3">Arbitrase</span>
                   </a>

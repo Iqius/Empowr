@@ -9,7 +9,7 @@ class Portofolio extends Model
 {
     use HasFactory;
 
-    protected $table = 'portofolio';
+    protected $table = 'portofolios';
 
     protected $fillable = [
         'worker_id',
