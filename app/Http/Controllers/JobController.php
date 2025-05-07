@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\task;
+use App\Models\Task;
 use App\Models\TaskApplication;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -19,14 +19,14 @@ class JobController extends Controller
     // List All Jobs 
     public function index()
     {
-        $jobs = task::all();
+        $jobs = Task::all();
         return view('General.jobs', compact('jobs'));
     }
 
 
     // Tampilan add newjob
     public function addJobView(){
-        return view('Client.addJobNew');
+        return view('client.addJobNew');
     }
     // Create job Client
     public function createJobClient(Request $request)
@@ -68,7 +68,7 @@ class JobController extends Controller
 
     public function getJobData()
     {
-        $jobs = task::selectRaw('count(*) as count, category')
+        $jobs = Task::selectRaw('count(*) as count, category')
             ->groupBy('category')
             ->get();
 
@@ -77,7 +77,7 @@ class JobController extends Controller
     public function show($id)
     {
         // Ambil job berdasarkan ID dari URL
-        $job = task::with('user')->findOrFail($id); // Ambil juga relasi user jika ada
+        $job = Task::with('user')->findOrFail($id); // Ambil juga relasi user jika ada
         $applicants = TaskApplication::with([
             'worker.user',
             'worker.certifications.images',
@@ -107,7 +107,7 @@ class JobController extends Controller
         $task = Task::with('worker')
             ->where('profile_id', $workerProfile->id) // Asumsi profile_id di task adalah id dari workerProfile
             ->get(); 
-        return view('Worker.Jobs.myJobWorker', compact('taskApplied','task'));
+        return view('worker.Jobs.myJobWorker', compact('taskApplied','task'));
     }
 
 
