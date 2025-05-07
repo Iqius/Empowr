@@ -71,7 +71,7 @@ class ProfileController extends Controller
             'email' => 'nullable|email',
             'nomor_telepon' => 'nullable|string',
             'bio' => 'nullable|string',
-            'keahlian' => 'nullable|array',
+            'keahlian' => 'nullable|string',
             'tingkat_keahlian' => 'nullable|string',
             'pengalaman_kerja' => 'nullable|string',
             'pendidikan' => 'nullable|string',
@@ -106,10 +106,9 @@ class ProfileController extends Controller
             $workerProfile->cv = $request->file('cv')->store('cv', 'public');
         }
 
-        if ($request->has('keahlian')) {
-            $workerProfile->keahlian = json_encode($request->keahlian);
-        }
+        $workerProfile->keahlian = $request->keahlian ?? $workerProfile->keahlian;
         $workerProfile->tingkat_keahlian = $request->tingkat_keahlian ?? $workerProfile->tingkat_keahlian;
+        $workerProfile->linkedin = $request->linkedin ?? $workerProfile->linkedin;
         $workerProfile->pengalaman_kerja = $request->pengalaman_kerja ?? $workerProfile->pengalaman_kerja;
         $workerProfile->pendidikan = $request->pendidikan ?? $workerProfile->pendidikan;
 

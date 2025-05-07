@@ -2,33 +2,56 @@
 
 <div class="p-4 ">
     <div class="p-4 mt-14">
+        <a
+            class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow mb-6">
+            Bergabung Affiliator
+        </a>
         <h2 class="text-xl font-semibold mb-2 flex items-center gap-1">
-            Your Tasks
+            Task Kamu
             <span class="text-gray-400 text-base">
                 <i class="fas fa-info-circle"></i>
             </span>
         </h2>
 
-        <div class="grid grid-cols-3 gap-4">
-            <div class="flex flex-col items-center justify-center h-32 bg-white p-6 rounded border border-gray-300">
-                <p class="text-3xl font-bold" style="color: #1F4482;">1</p>
-                <p class="text-base font-medium text-gray-600">Applied Jobs</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Task Dilamar -->
+            <div
+                class="flex items-center justify-between h-32 bg-white text-[#1F4482] p-6 rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                <i class="fa fa-desktop text-5xl ml-10"></i>
+                <div class="text-right mr-5">
+                    <p class="text-base font-medium">Task Dilamar</p>
+                    <p class="text-4xl font-bold">1</p>
+                </div>
             </div>
-            <div class="flex flex-col items-center justify-center h-32 bg-white p-6 rounded border border-gray-300">
-                <p class="text-3xl font-bold" style="color: #1F4482;">0</p>
-                <p class="text-base font-medium text-gray-600">On Going Jobs</p>
+
+
+            <!-- Sedang Berjalan -->
+            <div
+                class="flex items-center justify-between h-32 bg-white text-[#1F4482] p-6 rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                <i class="fa fa-handshake text-5xl ml-10"></i>
+                <div class="text-right mr-5">
+                    <p class="text-base font-medium">Sedang Berjalan</p>
+                    <p class="text-4xl font-bold">1</p>
+                </div>
             </div>
-            <div class="flex flex-col items-center justify-center h-32 bg-white p-6 rounded border border-gray-300">
-                <p class="text-3xl font-bold" style="color: #1F4482;">1</p>
-                <p class="text-base font-medium text-gray-600">Complete Jobs</p>
+
+            <!-- Task Selesai -->
+            <div
+                class="flex items-center justify-between h-32 bg-white text-[#1F4482] p-6 rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                <i class="fa fa-clipboard-check text-5xl ml-10"></i>
+                <div class="text-right mr-5">
+                    <p class="text-base font-medium">Task Selesai</p>
+                    <p class="text-4xl font-bold">1</p>
+                </div>
             </div>
         </div>
+
 
 
         <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Applied Jobs -->
             <div class="bg-white border rounded p-4 shadow-sm">
-                <h2 class="text-lg font-semibold mb-4">Applied Jobs</h2>
+                <h2 class="text-lg font-semibold mb-4">Task Dilamar</h2>
                 <ul class="space-y-4">
                     <li class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
@@ -93,7 +116,7 @@
 
             <!-- Accept Jobs -->
             <div class="bg-white border rounded p-4 shadow-sm">
-                <h2 class="text-lg font-semibold mb-4">Accept Jobs</h2>
+                <h2 class="text-lg font-semibold mb-4">Task Diterima</h2>
                 <ul class="space-y-4">
                     <li class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
@@ -127,7 +150,7 @@
         <div class="mt-10">
             <!-- Header -->
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-semibold">Browse Tasks</h2>
+                <h2 class="text-lg font-semibold">Rekomendasi Task</h2>
                 <a href="{{ route('jobs.index') }}" class="text-sm text-[#1F4482] font-medium hover:underline">View
                     More</a>
             </div>
@@ -153,8 +176,8 @@
 
                             <!-- User Info -->
                             <div class="flex items-center gap-3 mb-3">
-                                <img src="{{ asset('assets/images/avatar.png') }}" alt="User"
-                                    class="w-9 h-9 rounded-full object-cover" />
+                                <img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}"
+                                    alt="User" class="w-9 h-9 rounded-full object-cover" />
                                 <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
                                     {{ $job->user->nama_lengkap ?? 'Unknown' }}
                                     <span class="text-[#1F4482]">✔</span>
@@ -167,17 +190,37 @@
                             </h3>
 
                             <!-- Description -->
-                            <p class="text-xs text-gray-500 mb-4 leading-relaxed">
-                                {{ Str::limit($job->description, 80, '...') }}
-                            </p>
+                            <div class="text-xs text-gray-500 mb-4 leading-relaxed">
+                                @php
+                                    // Check if the description contains ordered or unordered lists
+                                    $hasLists = preg_match('/<ol[^>]*>|<ul[^>]*>/i', $job->description);
+
+                                    // Get the text before any list appears
+                                    $textBeforeLists = preg_split('/<ol[^>]*>|<ul[^>]*>/i', $job->description)[0];
+
+                                    // Strip any HTML tags from this text
+                                    $plainTextBeforeLists = strip_tags($textBeforeLists);
+
+                                    // Create the preview - if there are lists, add ellipsis
+                                    if ($hasLists) {
+                                        // Limit the text before the list and add ellipsis
+                                        $previewText = Str::limit($plainTextBeforeLists, 10, '...');
+                                    } else {
+                                        // If no lists, just use normal limit
+                                        $previewText = Str::limit(strip_tags($job->description), 150, '...');
+                                    }
+                                @endphp
+                                {{ $previewText }}
+                            </div>
 
                             <!-- Bottom Row: Price + Button -->
                             <div class="flex justify-between items-center">
                                 <div>
                                     <p class="text-sm font-semibold text-gray-800">Rp
-                                        {{ number_format($job->price, 0, ',', '.') }}
-                                    </p>
-                                    <p class="text-xs text-gray-400">Non-Negotiable</p>
+                                        {{ number_format($job->price, 0, ',', '.') }}</p>
+                                    <p class="text-xs text-gray-400">Penutupan <span
+                                            class="font-semibold text-gray-500">{{ \Carbon\Carbon::parse($job->deadline_promotion)->translatedFormat('d F Y') }}
+                                        </span></p>
                                 </div>
                                 <a href="{{ route('jobs.show', $job->id) }}">
                                     <button
@@ -192,10 +235,6 @@
             </div>
         </div>
 
-    </div>
-
-    <div class="text-center mt-8">
-        <button class="bg-green-500 text-white px-4 py-2 rounded-lg">Join Affiliate</button>
     </div>
 </div>
 
