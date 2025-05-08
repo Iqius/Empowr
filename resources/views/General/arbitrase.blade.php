@@ -25,7 +25,7 @@
       <tbody>
         @forelse($arbitrases as $item)
         <tr>
-          <td class="px-4 py-2 border">{{ $item->id }}</td>
+          <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
           <td class="px-4 py-2 border">{{ $item->task_id }}</td>
           <td class="px-4 py-2 border">{{ $item->client_id }}</td>
           <td class="px-4 py-2 border">{{ $item->worker_id }}</td>
@@ -106,9 +106,10 @@
         </tr>
       </thead>
       <tbody>
+
         @forelse($arbitrases as $item)
         <tr>
-          <td class="px-4 py-2 border">{{ $item->id }}</td>
+          <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
           <td class="px-4 py-2 border">{{ $item->task_id }}</td>
           <td class="px-4 py-2 border">{{ $item->client_id }}</td>
           <td class="px-4 py-2 border">{{ $item->worker_id }}</td>
@@ -117,11 +118,12 @@
           <td class="px-4 py-2 border">{{ $item->created_at }}</td>
           <td class="px-4 py-2 border text-center">
             <!-- Detail Button -->
-            <button
-              wire:click="$emit('showLog', {{ $item->task_id }})"
-              class="px-4 py-2 bg-blue-500 text-white rounded">
-              Detail
-            </button>
+            <a href="{{ route('inProgress.jobs', $item->task_id) }}">
+              <button
+                class="px-4 py-2 bg-blue-500 text-white rounded">
+                Detail
+              </button>
+            </a>
             @if ($item->status !== 'resolved')
             <!-- Terima Button -->
             <form action="{{ route('arbitrase.accept', $item->id) }}" method="POST" class="inline-block ml-2">
