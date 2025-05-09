@@ -208,42 +208,42 @@
         <!-- List Pelamar -->
         <div id="applicants-list" class="space-y-4">
             @foreach ($applicants as $applicant)
-                        @php
-                            $worker = $applicant->worker;
-                            $user = $worker->user;
-                            $avgRating = 0; // default
-                        @endphp
+                @php
+                    $worker = $applicant->worker;
+                    $user = $worker->user;
+                    $avgRating = 0; // default
+                @endphp
 
-                        <div class="border p-4 rounded" data-index="{{ $loop->index }}" data-name="{{ $user->nama_lengkap }}"
-                            data-note="{{ $applicant->catatan }}" data-price="{{ $applicant->bidPrice }}"
-                            data-experience="{{ $worker->pengalaman_kerja }}" data-rating="{{ number_format($avgRating, 1) }}"
-                            data-education="{{ $worker->pendidikan }}" data-cv="{{ $worker->cv }}"
-                            data-label="{{ $worker->empowr_label }}" data-affiliate="{{ $worker->empowr_affiliate }}">
-                            <p><strong>{{ $user->nama_lengkap }}</strong> - Rp{{ number_format($applicant->bidPrice) }}</p>
-                            <p class="text-gray-600 text-sm">Catatan: {{ $applicant->catatan }}</p>
-                            <p class="text-sm text-gray-500">
-                                Pengalaman: {{ $worker->pengalaman_kerja }} tahun |
-                                Rating: {{ number_format($avgRating, 1) }}
-                            </p>
-                            <div class="flex gap-2 mt-2">
-                                <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
-                                <form action="{{ route('client.hire') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="task_id" value="{{ $applicant->task_id }}">
-                                    <input type="hidden" name="worker_profile_id" value="{{ $worker->id }}">
-                                    <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
-                                </form>
-                                <form action="{{ route('client.reject') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="application_id" value="{{ $applicant->id }}">
-                                    <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
-                                </form>
-                                <a href="{{ route('profile.worker.lamar', $worker->id) }}"
-                                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow inline-block">
-                                    Lihat Profil Worker
-                                </a>
-                            </div>
-                        </div>
+                <div class="border p-4 rounded" data-index="{{ $loop->index }}" data-name="{{ $user->nama_lengkap }}"
+                    data-note="{{ $applicant->catatan }}" data-price="{{ $applicant->bidPrice }}"
+                    data-experience="{{ $worker->pengalaman_kerja }}" data-rating="{{ number_format($avgRating, 1) }}"
+                    data-education="{{ $worker->pendidikan }}" data-cv="{{ $worker->cv }}"
+                    data-label="{{ $worker->empowr_label }}" data-affiliate="{{ $worker->empowr_affiliate }}">
+                    <p><strong>{{ $user->nama_lengkap }}</strong> - Rp{{ number_format($applicant->bidPrice) }}</p>
+                    <p class="text-gray-600 text-sm">Catatan: {{ $applicant->catatan }}</p>
+                    <p class="text-sm text-gray-500">
+                        Pengalaman: {{ $worker->pengalaman_kerja }} tahun |
+                        Rating: {{ number_format($avgRating, 1) }}
+                    </p>
+                    <div class="flex gap-2 mt-2">
+                        <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
+                        <form action="{{ route('client.hire') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="task_id" value="{{ $applicant->task_id }}">
+                            <input type="hidden" name="worker_profile_id" value="{{ $worker->id }}">
+                            <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
+                        </form>
+                        <form action="{{ route('client.reject') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="application_id" value="{{ $applicant->id }}">
+                            <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
+                        </form>
+                        <a href="{{ route('profile.worker.lamar', $worker->id) }}"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow inline-block">
+                            Lihat Profil Worker
+                        </a>
+                    </div>
+                </div>
             @endforeach
         </div>
     </div>
@@ -317,274 +317,273 @@
             </div>
         </div>
     @endif
-    <!-- Snap -->
-    <div id="snap-container"></div>
-    </section>
+</div>
 
-    @include('General.footer')
+@include('General.footer')
 
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js"
-        data-client-key="{{ config('midtrans.client_key') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const buttons = document.querySelectorAll('.tab-button');
-            const tabs = document.querySelectorAll('.tab-content');
 
-            // Set the first tab as default active
-            buttons[0].classList.add('bg-[#1F4482]', 'text-white');
-            tabs[0].classList.remove('hidden');
+<script src="https://app.sandbox.midtrans.com/snap/snap.js"
+    data-client-key="{{ config('midtrans.client_key') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.tab-button');
+        const tabs = document.querySelectorAll('.tab-content');
 
-            buttons.forEach((button, index) => {
-                button.addEventListener('click', () => {
-                    // Reset all tabs
-                    buttons.forEach((btn) => {
-                        btn.classList.remove('bg-[#1F4482]', 'text-white');
-                        btn.classList.add('text-gray-600');
-                    });
-                    tabs.forEach((tab) => tab.classList.add('hidden'));
+        // Set the first tab as default active
+        buttons[0].classList.add('bg-[#1F4482]', 'text-white');
+        tabs[0].classList.remove('hidden');
 
-                    // Set clicked tab as active
-                    button.classList.add('bg-[#1F4482]', 'text-white');
-                    tabs[index].classList.remove('hidden');
+        buttons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                // Reset all tabs
+                buttons.forEach((btn) => {
+                    btn.classList.remove('bg-[#1F4482]', 'text-white');
+                    btn.classList.add('text-gray-600');
                 });
+                tabs.forEach((tab) => tab.classList.add('hidden'));
+
+                // Set clicked tab as active
+                button.classList.add('bg-[#1F4482]', 'text-white');
+                tabs[index].classList.remove('hidden');
             });
         });
+    });
 
-        @if(session('snap_token'))
-            // Close modal if open
-            if (document.getElementById('bayarModal')) {
-                document.getElementById('bayarModal').classList.add('hidden');
-                document.getElementById('bayarModal').classList.remove('opacity-100');
-                document.getElementById('bayarModal').classList.add('opacity-0');
-                document.getElementById('modalContent').classList.remove('scale-100');
-                document.getElementById('modalContent').classList.add('scale-95');
+    @if(session('snap_token'))
+        // Close modal if open
+        if (document.getElementById('bayarModal')) {
+            document.getElementById('bayarModal').classList.add('hidden');
+            document.getElementById('bayarModal').classList.remove('opacity-100');
+            document.getElementById('bayarModal').classList.add('opacity-0');
+            document.getElementById('modalContent').classList.remove('scale-100');
+            document.getElementById('modalContent').classList.add('scale-95');
+        }
+
+        // Open Snap payment page
+        snap.pay('{{ session('snap_token') }}', {
+            onSuccess: function (result) {
+                alert('Pembayaran berhasil!');
+                window.location.href = '{{ route('jobs.my') }}';
+                // window.location.href = '{{route('invoice', $task->id)}}';
+            },
+            onPending: function (result) {
+                alert('Pembayaran tertunda, silakan selesaikan pembayaran Anda');
+                window.location.reload();
+            },
+            onError: function (result) {
+                alert('Pembayaran gagal, silakan coba lagi');
+                window.location.reload();
+            },
+            onClose: function () {
+                alert('Anda menutup popup tanpa menyelesaikan pembayaran');
             }
-
-            // Open Snap payment page
-            snap.pay('{{ session('snap_token') }}', {
-                onSuccess: function (result) {
-                    alert('Pembayaran berhasil!');
-                    window.location.href = '{{ route('jobs.my') }}';
-                    // window.location.href = '{{route('invoice', $task->id)}}';
-                },
-                onPending: function (result) {
-                    alert('Pembayaran tertunda, silakan selesaikan pembayaran Anda');
-                    window.location.reload();
-                },
-                onError: function (result) {
-                    alert('Pembayaran gagal, silakan coba lagi');
-                    window.location.reload();
-                },
-                onClose: function () {
-                    alert('Anda menutup popup tanpa menyelesaikan pembayaran');
-                }
-            });
-        @endif
-            function openModal() {
-                const modal = document.getElementById('bayarModal');
-                const content = document.getElementById('modalContent');
-
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    modal.classList.replace('opacity-0', 'opacity-100');
-                    content.classList.replace('scale-95', 'scale-100');
-                }, 10);
-            }
-
-        function closeModal() {
+        });
+    @endif
+        function openModal() {
             const modal = document.getElementById('bayarModal');
             const content = document.getElementById('modalContent');
 
-            modal.classList.replace('opacity-100', 'opacity-0');
-            content.classList.replace('scale-100', 'scale-95');
-
+            modal.classList.remove('hidden');
             setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+                modal.classList.replace('opacity-0', 'opacity-100');
+                content.classList.replace('scale-95', 'scale-100');
+            }, 10);
         }
 
-        // Tampilkan opsi berdasarkan pilihan
-        function togglePaymentOptions() {
-            const selected = document.getElementById('payment_method').value;
-            const bank = document.getElementById('bankOptions');
-            const ewallet = document.getElementById('ewalletOptions');
+    function closeModal() {
+        const modal = document.getElementById('bayarModal');
+        const content = document.getElementById('modalContent');
 
-            bank.classList.add('hidden');
-            ewallet.classList.add('hidden');
+        modal.classList.replace('opacity-100', 'opacity-0');
+        content.classList.replace('scale-100', 'scale-95');
 
-            if (selected === 'bank') {
-                bank.classList.remove('hidden');
-            } else if (selected === 'ewallet') {
-                ewallet.classList.remove('hidden');
-            }
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    // Tampilkan opsi berdasarkan pilihan
+    function togglePaymentOptions() {
+        const selected = document.getElementById('payment_method').value;
+        const bank = document.getElementById('bankOptions');
+        const ewallet = document.getElementById('ewalletOptions');
+
+        bank.classList.add('hidden');
+        ewallet.classList.add('hidden');
+
+        if (selected === 'bank') {
+            bank.classList.remove('hidden');
+        } else if (selected === 'ewallet') {
+            ewallet.classList.remove('hidden');
         }
+    }
 
-        // Tutup modal saat klik area luar
-        window.onclick = function (event) {
-            const modal = document.getElementById('bayarModal');
-            if (event.target === modal) {
-                closeModal();
-            }
+    // Tutup modal saat klik area luar
+    window.onclick = function (event) {
+        const modal = document.getElementById('bayarModal');
+        if (event.target === modal) {
+            closeModal();
         }
+    }
 
 
-        if (document.getElementById('globalAlert')) {
-            setTimeout(function () {
-                document.getElementById('globalAlert').style.display = 'none';
-            }, 5000);
-        }
-    </script>
+    if (document.getElementById('globalAlert')) {
+        setTimeout(function () {
+            document.getElementById('globalAlert').style.display = 'none';
+        }, 5000);
+    }
+</script>
 
 
 
-    <script>
-        function sortApplicants() {
-            const sortBy = document.getElementById("sortBy").value;
-            const container = document.getElementById("applicants-list");
-            const items = Array.from(container.children);
+<script>
+    function sortApplicants() {
+        const sortBy = document.getElementById("sortBy").value;
+        const container = document.getElementById("applicants-list");
+        const items = Array.from(container.children);
 
-            // Mapping nilai dropdown ke atribut data HTML
-            const dataAttrMap = {
-                'price': 'price',
-                'experience': 'experience',
-                'rating': 'rating',
-            };
+        // Mapping nilai dropdown ke atribut data HTML
+        const dataAttrMap = {
+            'price': 'price',
+            'experience': 'experience',
+            'rating': 'rating',
+        };
 
-            if (sortBy === 'default') {
-                items.sort((a, b) => parseInt(a.dataset.index) - parseInt(b.dataset.index));
-            } else {
-                const attr = dataAttrMap[sortBy];
-                items.sort((a, b) => {
-                    const aVal = parseFloat(a.getAttribute(`data-${attr}`)) || 0;
-                    const bVal = parseFloat(b.getAttribute(`data-${attr}`)) || 0;
-                    return aVal - bVal;
-                });
-            }
-
-            container.innerHTML = '';
-            items.forEach(item => container.appendChild(item));
-        }
-
-
-        function confirmCancel(taskId) {
-            Swal.fire({
-                title: 'Yakin ingin membatalkan?',
-                text: "Tindakan ini tidak bisa dikembalikan!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#aaa',
-                confirmButtonText: 'Ya, batalkan!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Task berhasil dibatalkan!',
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#3085d6'
-                    }).then(() => {
-                        document.getElementById(`cancelTaskForm${taskId}`).submit();
-                    });
-                }
+        if (sortBy === 'default') {
+            items.sort((a, b) => parseInt(a.dataset.index) - parseInt(b.dataset.index));
+        } else {
+            const attr = dataAttrMap[sortBy];
+            items.sort((a, b) => {
+                const aVal = parseFloat(a.getAttribute(`data-${attr}`)) || 0;
+                const bVal = parseFloat(b.getAttribute(`data-${attr}`)) || 0;
+                return aVal - bVal;
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const sortSelect = document.getElementById("sortBy");
-            if (sortSelect) {
-                sortSelect.addEventListener("change", sortApplicants);
+        container.innerHTML = '';
+        items.forEach(item => container.appendChild(item));
+    }
+
+
+    function confirmCancel(taskId) {
+        Swal.fire({
+            title: 'Yakin ingin membatalkan?',
+            text: "Tindakan ini tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Ya, batalkan!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Task berhasil dibatalkan!',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6'
+                }).then(() => {
+                    document.getElementById(`cancelTaskForm${taskId}`).submit();
+                });
             }
+        });
+    }
 
-            document.querySelectorAll('.tab-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    console.log("Tab clicked:", button.dataset.tab);
-                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('text-blue-600', 'font-semibold'));
-                    button.classList.add('text-blue-600', 'font-semibold');
-                    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-                    document.getElementById(button.dataset.tab)?.classList.remove('hidden');
-                });
-            });
+    document.addEventListener('DOMContentLoaded', function () {
+        const sortSelect = document.getElementById("sortBy");
+        if (sortSelect) {
+            sortSelect.addEventListener("change", sortApplicants);
+        }
 
-            document.querySelectorAll('.btn-worker-info').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    renderWorkerModal(workerData);
-                    showWorkerTab('keahlianTab');
-                    document.getElementById('workerDetailModal').classList.remove('hidden');
-                });
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                console.log("Tab clicked:", button.dataset.tab);
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('text-blue-600', 'font-semibold'));
+                button.classList.add('text-blue-600', 'font-semibold');
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+                document.getElementById(button.dataset.tab)?.classList.remove('hidden');
             });
         });
-        function calculateAverageRating(reviews) {
-            if (!reviews || reviews.length === 0) return 0;
 
-            const total = reviews.reduce((sum, r) => sum + r.rating, 0);
-            return total / reviews.length;
-        }
+        document.querySelectorAll('.btn-worker-info').forEach(btn => {
+            btn.addEventListener('click', () => {
+                renderWorkerModal(workerData);
+                showWorkerTab('keahlianTab');
+                document.getElementById('workerDetailModal').classList.remove('hidden');
+            });
+        });
+    });
+    function calculateAverageRating(reviews) {
+        if (!reviews || reviews.length === 0) return 0;
 
-        function openWorkerModalFromElement(el) {
-            const data = el.closest('div');
+        const total = reviews.reduce((sum, r) => sum + r.rating, 0);
+        return total / reviews.length;
+    }
 
-            const name = data.getAttribute('data-name');
-            const note = data.getAttribute('data-note');
-            const price = data.getAttribute('data-price');
-            const experience = data.getAttribute('data-experience');
-            const rating = data.getAttribute('data-rating');
-            const education = data.getAttribute('data-education');
-            const cv = data.getAttribute('data-cv');
-            const label = data.getAttribute('data-label') === '1' ? 'Ya' : 'Tidak';
-            const affiliate = data.getAttribute('data-affiliate') === '1' ? 'Ya' : 'Tidak';
+    function openWorkerModalFromElement(el) {
+        const data = el.closest('div');
 
-            // Inject ke modal
-            document.getElementById("worker-name").textContent = name;
-            document.getElementById("worker-skills-value").textContent = "-"; // dari backend belum ada
-            document.getElementById("worker-label").textContent = label;
-            document.getElementById("worker-affiliate").textContent = affiliate;
-            document.getElementById("worker-education").textContent = education;
-            document.getElementById("worker-experience").textContent = `${experience} tahun`;
-            document.getElementById("worker-cv").href = cv ?? "#";
+        const name = data.getAttribute('data-name');
+        const note = data.getAttribute('data-note');
+        const price = data.getAttribute('data-price');
+        const experience = data.getAttribute('data-experience');
+        const rating = data.getAttribute('data-rating');
+        const education = data.getAttribute('data-education');
+        const cv = data.getAttribute('data-cv');
+        const label = data.getAttribute('data-label') === '1' ? 'Ya' : 'Tidak';
+        const affiliate = data.getAttribute('data-affiliate') === '1' ? 'Ya' : 'Tidak';
 
-            // Rating Summary
-            document.getElementById("worker-rating-summary").innerHTML = `
+        // Inject ke modal
+        document.getElementById("worker-name").textContent = name;
+        document.getElementById("worker-skills-value").textContent = "-"; // dari backend belum ada
+        document.getElementById("worker-label").textContent = label;
+        document.getElementById("worker-affiliate").textContent = affiliate;
+        document.getElementById("worker-education").textContent = education;
+        document.getElementById("worker-experience").textContent = `${experience} tahun`;
+        document.getElementById("worker-cv").href = cv ?? "#";
+
+        // Rating Summary
+        document.getElementById("worker-rating-summary").innerHTML = `
         <h3 class="text-2xl font-semibold">${rating}</h3>
         <p class="text-yellow-500 text-xl">${"⭐".repeat(Math.floor(rating))}</p>
         <p class="text-sm text-gray-500">Dari rating user</p>
     `;
 
-            // Show modal
-            showWorkerTab('keahlianTab');
-            document.getElementById('workerDetailModal').classList.remove('hidden');
-        }
+        // Show modal
+        showWorkerTab('keahlianTab');
+        document.getElementById('workerDetailModal').classList.remove('hidden');
+    }
 
 
 
-        // Modal Worker
-        function openWorkerModal(index) {
-            const worker = applicants[index];
-            document.getElementById("worker-name").textContent = worker.name;
-            document.getElementById("worker-skills-value").textContent = worker.skills.join(", ");
-            document.getElementById("worker-label").textContent = worker.empowrLabel ? "Ya" : "Tidak";
-            document.getElementById("worker-affiliate").textContent = worker.empowrAffiliate ? "Ya" : "Tidak";
-            document.getElementById("worker-education").textContent = worker.education;
-            document.getElementById("worker-experience").textContent = `${worker.experience} tahun`;
-            document.getElementById("worker-cv").href = worker.cv || "#";
+    // Modal Worker
+    function openWorkerModal(index) {
+        const worker = applicants[index];
+        document.getElementById("worker-name").textContent = worker.name;
+        document.getElementById("worker-skills-value").textContent = worker.skills.join(", ");
+        document.getElementById("worker-label").textContent = worker.empowrLabel ? "Ya" : "Tidak";
+        document.getElementById("worker-affiliate").textContent = worker.empowrAffiliate ? "Ya" : "Tidak";
+        document.getElementById("worker-education").textContent = worker.education;
+        document.getElementById("worker-experience").textContent = `${worker.experience} tahun`;
+        document.getElementById("worker-cv").href = worker.cv || "#";
 
-            // Summary
-            const avgRating = calculateAverageRating(worker.reviews);
-            document.getElementById("worker-rating-summary").innerHTML = `
+        // Summary
+        const avgRating = calculateAverageRating(worker.reviews);
+        document.getElementById("worker-rating-summary").innerHTML = `
   <h3 class="text-2xl font-semibold">${avgRating.toFixed(1)}</h3>
   <p class="text-yellow-500 text-xl">${"⭐".repeat(Math.floor(avgRating))}${avgRating % 1 >= 0.5 ? "✩" : ""}</p>
   <p class="text-sm text-gray-500">Berdasarkan ${worker.reviews.length} rating</p>
 `;
 
 
-            // Distribusi
-            const dist = calculateRatingDistribution(worker.reviews);
-            const distEl = document.getElementById("worker-rating-distribution");
-            distEl.innerHTML = "";
-            for (let i = 5; i >= 1; i--) {
-                const count = dist[i];
-                const percent = (count / worker.reviews.length) * 100;
-                distEl.innerHTML += `
+        // Distribusi
+        const dist = calculateRatingDistribution(worker.reviews);
+        const distEl = document.getElementById("worker-rating-distribution");
+        distEl.innerHTML = "";
+        for (let i = 5; i >= 1; i--) {
+            const count = dist[i];
+            const percent = (count / worker.reviews.length) * 100;
+            distEl.innerHTML += `
     <div class="flex items-center space-x-2">
       <span class="w-6 text-sm">${i}★</span>
       <div class="w-full bg-gray-200 h-3 rounded">
@@ -593,13 +592,13 @@
       <span class="w-10 text-sm text-gray-600 text-right">${count}</span>
     </div>
   `;
-            }
+        }
 
-            // Reviews
-            const reviewEl = document.getElementById("worker-rating-reviews");
-            reviewEl.innerHTML = "";
-            worker.reviews.forEach(r => {
-                reviewEl.innerHTML += `
+        // Reviews
+        const reviewEl = document.getElementById("worker-rating-reviews");
+        reviewEl.innerHTML = "";
+        worker.reviews.forEach(r => {
+            reviewEl.innerHTML += `
     <div class="border rounded p-4">
       <div class="flex justify-between items-center mb-2">
         <span class="font-semibold">${r.name}</span>
@@ -608,67 +607,68 @@
       <p class="text-sm text-gray-700">“${r.comment}”</p>
     </div>
   `;
+        });
+
+        // Sertifikat Dropdown
+        const certSelect = document.getElementById("certSelect");
+        const certPreview = document.getElementById("certPreview");
+        certSelect.innerHTML = `<option disabled selected>Lihat Sertifikasi</option>`;
+
+        // Cek apakah worker punya sertifikat
+        if (worker.certImages && worker.certImages.length > 0) {
+            worker.certImages.forEach((cert, i) => {
+                const option = document.createElement("option");
+                option.value = i;
+                option.textContent = cert.caption;
+                certSelect.appendChild(option);
             });
 
-            // Sertifikat Dropdown
-            const certSelect = document.getElementById("certSelect");
-            const certPreview = document.getElementById("certPreview");
-            certSelect.innerHTML = `<option disabled selected>Lihat Sertifikasi</option>`;
-
-            // Cek apakah worker punya sertifikat
-            if (worker.certImages && worker.certImages.length > 0) {
-                worker.certImages.forEach((cert, i) => {
-                    const option = document.createElement("option");
-                    option.value = i;
-                    option.textContent = cert.caption;
-                    certSelect.appendChild(option);
-                });
-
-                certSelect.onchange = () => {
-                    const selected = worker.certImages[certSelect.value];
-                    document.getElementById("certImage").src = selected.image;
-                    document.getElementById("certCaptionLink").href = selected.image;
-                    document.getElementById("certCaptionLink").textContent = selected.caption;
-                    certPreview.classList.remove("hidden");
-                };
-            } else {
-                certPreview.classList.add("hidden");
-            }
-
-            // Portofolio Dropdown
-            const portfolioSelect = document.getElementById("portfolioSelect");
-            const portfolioPreview = document.getElementById("portfolioPreview");
-
-            portfolioSelect.innerHTML = `<option disabled selected>Lihat Portofolio</option>`;
-
-            if (worker.portfolios && worker.portfolios.length > 0) {
-                worker.portfolios.forEach((item, i) => {
-                    const option = document.createElement("option");
-                    option.value = i;
-                    option.textContent = item.caption;
-                    portfolioSelect.appendChild(option);
-                });
-
-                portfolioSelect.onchange = () => {
-                    const selected = worker.portfolios[portfolioSelect.value];
-                    document.getElementById("portfolioImage").src = selected.image;
-                    document.getElementById("portfolioCaptionLink").href = selected.image;
-                    document.getElementById("portfolioCaptionLink").textContent = selected.caption;
-                    portfolioPreview.classList.remove("hidden");
-                };
-            } else {
-                portfolioPreview.classList.add("hidden");
-            }
-
-            showWorkerTab('keahlianTab');
-            document.getElementById('workerDetailModal').classList.remove('hidden');
+            certSelect.onchange = () => {
+                const selected = worker.certImages[certSelect.value];
+                document.getElementById("certImage").src = selected.image;
+                document.getElementById("certCaptionLink").href = selected.image;
+                document.getElementById("certCaptionLink").textContent = selected.caption;
+                certPreview.classList.remove("hidden");
+            };
+        } else {
+            certPreview.classList.add("hidden");
         }
 
-        // Tab Switch Modal
-        function showWorkerTab(tabId) {
-            document.querySelectorAll(".worker-tab-content").forEach(el => el.classList.add("hidden"));
-            document.getElementById(tabId).classList.remove("hidden");
+        // Portofolio Dropdown
+        const portfolioSelect = document.getElementById("portfolioSelect");
+        const portfolioPreview = document.getElementById("portfolioPreview");
+
+        portfolioSelect.innerHTML = `<option disabled selected>Lihat Portofolio</option>`;
+
+        if (worker.portfolios && worker.portfolios.length > 0) {
+            worker.portfolios.forEach((item, i) => {
+                const option = document.createElement("option");
+                option.value = i;
+                option.textContent = item.caption;
+                portfolioSelect.appendChild(option);
+            });
+
+            portfolioSelect.onchange = () => {
+                const selected = worker.portfolios[portfolioSelect.value];
+                document.getElementById("portfolioImage").src = selected.image;
+                document.getElementById("portfolioCaptionLink").href = selected.image;
+                document.getElementById("portfolioCaptionLink").textContent = selected.caption;
+                portfolioPreview.classList.remove("hidden");
+            };
+        } else {
+            portfolioPreview.classList.add("hidden");
         }
 
-        // Inisialisasi awal
-    </script>
+        showWorkerTab('keahlianTab');
+        document.getElementById('workerDetailModal').classList.remove('hidden');
+    }
+
+    // Tab Switch Modal
+    function showWorkerTab(tabId) {
+        document.querySelectorAll(".worker-tab-content").forEach(el => el.classList.add("hidden"));
+        document.getElementById(tabId).classList.remove("hidden");
+        
+    }
+
+    // Inisialisasi awal
+</script>
