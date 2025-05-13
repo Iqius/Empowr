@@ -20,36 +20,64 @@
 
         @foreach ($taskApplied as $job)
 
-        <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200" data-status="{{ $job->status }}">
-            <a href="{{ route('manage.worker', $job->task_id) }}">
-                <p class="text-blue-600 font-semibold text-base sm:text-lg">{{ $job->task->title }}</p>
-                <p class="text-black font-bold mt-2 text-sm sm:text-base">
-                    Rp {{ number_format($job->bidPrice, 0, ',', '.') }}
-                </p>
-                <p class="text-gray-500 text-sm">By {{ $job->task->client->nama_lengkap ?? 'Unknown' }}</p>
-                <p class="text-xs text-gray-400 mt-1">Status: {{ ucfirst($job->status) }}</p>
-            </a>
-        </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition relative"
+                data-status="{{ $job->status }}">
+                <div class="flex items-center gap-3 mb-3">
+                    <img src="{{ $job->task->client->profile_image ? asset('storage/' . $job->task->client->profile_image) : asset('assets/images/avatar.png') }}"
+                        alt="Client Profile" class="w-9 h-9 rounded-full object-cover">
+                    <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
+                        {{ $job->task->client->nama_lengkap ?? 'Unknown' }}
+                        <span class="text-[#1F4482]">✔</span>
+                    </p>
+                </div>
+                <h3 class="text-sm font-semibold text-gray-900 mb-1">
+                    {{ $job->task->title }}
+                </h3>
+                <div class="text-xs text-gray-500 mb-4 leading-relaxed">
+                    @php
+                        // Check if the description contains ordered or unordered lists
+                        $hasLists = preg_match('/<ol[^>]*>|<ul[^>]*>/i', $job->description);
 
-        @endforeach
-        @foreach ($task as $job)
-        @if ($job->status !== 'completed')
-        <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200" data-status="{{ $job->status }}">
-            <a href="{{ route('inProgress.jobs', $job->id) }}">
-                <p class="text-blue-600 font-semibold text-base sm:text-lg">{{ $job->title }}</p>
-                <p class="text-black font-bold mt-2 text-sm sm:text-base">
-                    Rp {{ number_format($job->price, 0, ',', '.') }}
-                </p>
-                <p class="text-gray-500 text-sm">By {{ $job->user->nama_lengkap ?? 'Unknown' }}</p>
-                <p class="text-xs text-gray-400 mt-1">Status: {{ $job->status }}</p>
-            </a>
-        </div>
-        @endif
-        @endforeach
+                        // Get the text before any list appears
+                        $textBeforeLists = preg_split('/<ol[^>]*>|<ul[^>]*>/i', $job->description)[0];
 
+                        // Strip any HTML tags from this text
+                        $plainTextBeforeLists = strip_tags($textBeforeLists);
+
+                        // Create the preview - if there are lists, add ellipsis
+                        if ($hasLists) {
+                            // Limit the text before the list and add ellipsis
+                            $previewText = Str::limit($plainTextBeforeLists, 77, '...');
+                        } else {
+                            // If no lists, just use normal limit
+                            $previewText = Str::limit(strip_tags($job->task->description), 150, '...');
+                        }
+                    @endphp
+                    {{ $previewText }}
+                </div>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-800">
+                            Rp {{ number_format($job->bidPrice, 0, ',', '.') }}
+                        </p>
+                        <p class="text-xs text-gray-400 capitalize">
+                            Status: <span class="text-gray-500 font-semibold">{{ $job->status }}</span>
+                        </p>
+                    </div>
+                    @if ($job->status === 'in progress')
+                        <a href="{{ route('inProgress.jobs', $job->id) }}">
+                    @else
+                            <a href="{{ route('manage.worker', $job->task_id) }}">
+                        @endif
+                            <button
+                                class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
+                                View
+                            </button>
+                        </a>
+                </div>
+            </div>
+        @endforeach
     </div>
-
-
 </section>
 
 @include('General.footer')

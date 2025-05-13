@@ -185,28 +185,29 @@
 
     <!-- Tab 2: Lamaran Worker -->
     <div id="applicants" class="tab-content hidden mt-4">
-        <h2 class="text-xl font-bold mb-4">Lamaran Worker</h2>
-
-
         <!-- Filter -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
             <form method="GET" class="flex items-center gap-2">
                 <label for="sortBy" class="font-semibold">Urutkan Berdasarkan:</label>
-                <select name="sort" id="sortBy" class="p-2 border rounded" onchange="this.form.submit()">
+                <select name="sort" id="sortBy"
+                    class="p-2 border rounded bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1F4482]"
+                    onchange="this.form.submit()">
                     <option value="bidPrice" {{ request('sort') === 'bidPrice' ? 'selected' : '' }}>Harga</option>
                     <option value="experience" {{ request('sort') === 'experience' ? 'selected' : '' }}>Pengalaman
                     </option>
                 </select>
 
-                <select name="dir" class="p-2 border rounded" onchange="this.form.submit()">
+                <select name="dir"
+                    class="p-2 border rounded bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1F4482]"
+                    onchange="this.form.submit()">
                     <option value="asc" {{ request('dir') === 'asc' ? 'selected' : '' }}>Naik ↑</option>
                     <option value="desc" {{ request('dir') === 'desc' ? 'selected' : '' }}>Turun ↓</option>
                 </select>
             </form>
         </div>
 
-        <!-- List Pelamar -->
-        <div id="applicants-list" class="space-y-4">
+        <!-- List Pelamar (Daftar Pelamar) -->
+        <div id="applicants-list" class="space-y-6">
             @foreach ($applicants as $applicant)
                 @php
                     $worker = $applicant->worker;
@@ -214,39 +215,65 @@
                     $avgRating = 0; // default
                 @endphp
 
-                <div class="border p-4 rounded" data-index="{{ $loop->index }}" data-name="{{ $user->nama_lengkap }}"
-                    data-note="{{ $applicant->catatan }}" data-price="{{ $applicant->bidPrice }}"
-                    data-experience="{{ $worker->pengalaman_kerja }}" data-rating="{{ number_format($avgRating, 1) }}"
-                    data-education="{{ $worker->pendidikan }}" data-cv="{{ $worker->cv }}"
-                    data-label="{{ $worker->empowr_label }}" data-affiliate="{{ $worker->empowr_affiliate }}">
-                    <p><strong>{{ $user->nama_lengkap }}</strong> - Rp{{ number_format($applicant->bidPrice) }}</p>
-                    <p class="text-gray-600 text-sm">Catatan: {{ $applicant->catatan }}</p>
-                    <p class="text-sm text-gray-500">
-                        Pengalaman: {{ $worker->pengalaman_kerja }} tahun |
-                        Rating: {{ number_format($avgRating, 1) }}
-                    </p>
-                    <div class="flex gap-2 mt-2">
-                        <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
-                        <form action="{{ route('client.hire') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="task_id" value="{{ $applicant->task_id }}">
-                            <input type="hidden" name="worker_profile_id" value="{{ $worker->id }}">
-                            <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
-                        </form>
-                        <form action="{{ route('client.reject') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="application_id" value="{{ $applicant->id }}">
-                            <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
-                        </form>
-                        <a href="{{ route('profile.worker.lamar', $worker->id) }}"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow inline-block">
-                            Lihat Profil Worker
-                        </a>
+                <!-- Kartu Pelamar -->
+                <div
+                    class="flex flex-col lg:flex-row gap-4 bg-white border rounded-lg shadow-lg p-6 hover:bg-gray-50 transition-all duration-300 hover:shadow-xl">
+
+                    <!-- Kiri: Detail Pelamar -->
+                    <div class="flex-1">
+                        <div class="flex items-center gap-4">
+                            <img src="{{ asset('storage/' . ($worker->profile_image ?? 'default.jpg')) }}" alt="Profile"
+                                class="w-16 h-16 rounded-full object-cover">
+                            <div class="mt-4 text-gray-600 text-sm">
+                                <p class="font-semibold text-lg text-gray-800">{{ $user->nama_lengkap }}</p>
+                                <p class="text-gray-500 text-sm"><strong>Negoisasi</strong>
+                                    Rp{{ number_format($applicant->bidPrice) }}</p>
+                                <p class="text-gray-500 text-sm"><strong>Pengalaman</strong>
+                                    {{ $worker->pengalaman_kerja ?? 0 }} tahun</p>
+                                <p class="text-gray-500 text-sm"><strong>Rating</strong> {{ number_format($avgRating, 1) }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 text-gray-600 text-sm">
+                            <p><strong>Catatan: </strong> {{ $applicant->catatan }}</p>
+                        </div>
+                    </div>
+
+
+                    <!-- Kanan: Tombol-Tombol Aksi -->
+                    <div class="flex flex-col justify-between items-end">
+                        <div class="flex gap-2 mt-4">
+                            <a href="{{ route('profile.worker.lamar', $worker->id) }}"
+                                class="bg-[#1F4482] hover:bg-[#18346a] text-white px-4 py-2 rounded-md shadow inline-block">
+                                Lihat Profil
+                            </a>
+                            <button class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a]">Chat</button>
+
+                            <form action="{{ route('client.hire') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="task_id" value="{{ $applicant->task_id }}">
+                                <input type="hidden" name="worker_profile_id" value="{{ $worker->id }}">
+                                <button type="submit"
+                                    class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800">
+                                    Terima
+                                </button>
+                            </form>
+
+                            <form action="{{ route('client.reject') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="application_id" value="{{ $applicant->id }}">
+                                <button type="submit" class="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-800">
+                                    Tolak
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             @endforeach
         </div>
     </div>
+
 
     <!-- Tab 3: Chat -->
     <div id="chat" class="tab-content hidden mt-4">
@@ -662,13 +689,33 @@
         showWorkerTab('keahlianTab');
         document.getElementById('workerDetailModal').classList.remove('hidden');
     }
-
-    // Tab Switch Modal
-    function showWorkerTab(tabId) {
-        document.querySelectorAll(".worker-tab-content").forEach(el => el.classList.add("hidden"));
-        document.getElementById(tabId).classList.remove("hidden");
-        
-    }
-
-    // Inisialisasi awal
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const tabId = this.getAttribute('data-tab');
+
+                // Sembunyikan semua tab
+                tabContents.forEach(content => content.classList.add('hidden'));
+
+                // Tampilkan tab yang sesuai
+                document.getElementById(tabId).classList.remove('hidden');
+
+                // Update gaya tombol
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('bg-[#1F4482]', 'text-white');
+                    btn.classList.add('text-gray-600');
+                });
+                this.classList.remove('text-gray-600');
+                this.classList.add('bg-[#1F4482]', 'text-white');
+            });
+        });
+    });
+</script>
+
+@include('General.footer')
