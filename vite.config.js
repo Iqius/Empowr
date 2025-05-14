@@ -5,11 +5,7 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/js/jobs.js',    // File JS yang kamu gunakan
-                'resources/js/new.js',
-                // File JS yang kamu gunakan
-                'resources/css/app.css', 
-                'resources/js/app.js'
+
             ],
             refresh: true,
         }),
@@ -19,4 +15,3 @@ export default defineConfig({
         port: 5173,        // Port default Vite
     },
 });
-

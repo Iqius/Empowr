@@ -17,12 +17,16 @@
                         </div>
 
                         <!-- About Task -->
+                         
+                        <label class="text-sm font-medium text-gray-600 mb-1 block">About Task</label>
                         <div id="editor-about" class="bg-white p-2 border rounded-md" style="height: 200px;"></div>
                         <input type="hidden" name="description" id="description">
 
+                        <label class="text-sm font-medium text-gray-600 mb-1 block">qualification</label>
                         <div id="editor-qualification" class="bg-white p-2 border rounded-md" style="height: 200px;"></div>
                         <input type="hidden" name="qualification" id="qualification">
-
+                        
+                        <label class="text-sm font-medium text-gray-600 mb-1 block">rule</label>
                         <div id="editor-rules" class="bg-white p-2 border rounded-md" style="height: 200px;"></div>
                         <input type="hidden" name="rules" id="rules">
 

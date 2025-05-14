@@ -5,7 +5,6 @@
     <div class="flex flex-wrap gap-4 border-b pb-2 text-sm sm:text-base overflow-x-auto">
         <button class="tab-button text-blue-600 font-semibold" data-tab="info">Informasi Lengkap</button>
         <button class="tab-button text-gray-600 hover:text-blue-600" data-tab="applicants">Lamaran Worker</button>
-        <button class="tab-button text-gray-600 hover:text-blue-600" data-tab="chat">Chat</button>
     </div>
 
     <!-- Flash Message -->
@@ -134,33 +133,31 @@
                         Pengalaman: {{ $worker->pengalaman_kerja }} tahun |
                         Rating: {{ number_format($avgRating, 1) }}
                     </p>
-                    <div class="flex gap-2 mt-2">
-                        <button class="bg-blue-500 text-white px-3 py-1 rounded">Chat</button>
+                    <div class="flex flex-wrap gap-2">
+                        <a href="{{ url('/chat/' . $user->id) }}" class="bg-blue-500 text-white px-4 py-2 rounded text-sm min-w-[120px] text-center inline-block">Chat</a>
+
                         <form action="{{ route('client.hire') }}" method="POST">
                             @csrf
                             <input type="hidden" name="task_id" value="{{ $applicant->task_id }}">
                             <input type="hidden" name="worker_profile_id" value="{{ $worker->id }}">
-                            <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded">Terima</button>
+                            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded text-sm min-w-[120px]">Terima</button>
                         </form>
+
                         <form action="{{ route('client.reject') }}" method="POST">
                             @csrf
                             <input type="hidden" name="application_id" value="{{ $applicant->id }}">
-                            <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded">Tolak</button>
+                            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded text-sm min-w-[120px]">Tolak</button>
                         </form>
+
                         <a href="{{ route('profile.worker.lamar', $worker->id) }}"
-                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow inline-block">
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow inline-block text-sm min-w-[120px] text-center">
                             Lihat Profil Worker
                         </a>
                     </div>
+
                 </div>
             @endforeach
         </div>
-    </div>
-
-    <!-- Tab 3: Chat -->
-    <div id="chat" class="tab-content hidden mt-4">
-        <h2 class="text-xl font-bold mb-4">Chat</h2>
-        <iframe src="{{ route('chat') }}" class="w-full h-[500px] border rounded shadow"></iframe>
     </div>
 
     <!-- button delete task -->

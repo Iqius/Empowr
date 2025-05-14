@@ -73,7 +73,6 @@
          margin-bottom: 0.25rem;
       }
 
-      /* Enhanced styling within Tailwind-style paragraphs if needed */
       .job-description.text-gray-600.leading-relaxed ol,
       .job-qualification.text-gray-600.leading-relaxed ol,
       .rules.text-gray-600.leading-relaxed ol,
@@ -129,7 +128,7 @@
                      </path>
                   </svg>
                </button>
-               <a href="#" class="flex items-center ms-2">
+               <a href="{{ Auth::user()->role === 'client' ? route('client.dashboardClient') : route('worker.dashboardWorker') }}" class="flex items-center ms-2">
                   <img src="{{ asset('assets/images/Logo.png') }}" class="h-5" alt="Empowr Logo">
                </a>
             </div>
@@ -185,11 +184,11 @@
                      <div class="ml-2 text-left hidden sm:block">
                         <div class="text-sm font-medium text-gray-900 leading-none">{{ Auth::user()->nama_lengkap }}
                         </div>
-                        <div class="text-xs text-gray-500">{{ Auth::user()->role }}</div>
+                        <div class="text-xs text-gray-500"> IDR {{ Auth::user()->ewallet }}</div>
                      </div>
                   </button>
                   <div
-                     class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-sm shadow-sm"
+                     class="z-50 min-w-[200px] max-w-[300px] hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-sm shadow-sm"
                      id="dropdown-user">
                      <div class="px-4 py-3" role="none">
                         <p class="text-sm text-gray-900" role="none">
@@ -203,6 +202,11 @@
                         <li>
                            <a href="{{route('profil')}}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                               role="menuitem">Profile</a>
+                        </li>
+                        <li>
+                           <a href="{{ route('profil') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
+                              Wallet <span class="text-blue-500">IDR {{ Auth::user()->ewallet }}</span> 
+                           </a>
                         </li>
                         <li>
                            <form id="logoutForm" action="{{ route('logout') }}" method="POST">@csrf</form>
@@ -253,7 +257,7 @@
 
             <!-- Chat -->
             <li>
-               <a href="{{ url('/chatify') }}#" class="flex items-center p-2 rounded-lg hover:bg-gray-100 group">
+               <a href="{{ route('chat.index') }}" class="flex items-center p-2 rounded-lg hover:bg-gray-100 group">
                   <i class="bi bi-chat-dots text-lg text-[#1F4482]"></i>
                   <span class="ml-3">Chat</span>
                </a>
@@ -264,6 +268,14 @@
                <a href="{{ url('/arbitrase') }}" class="flex items-center p-2 rounded-lg hover:bg-gray-100 group">
                   <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
                   <span class="ml-3">Arbitrase</span>
+               </a>
+            </li>
+
+            <!-- wallet -->
+            <li>
+               <a href="{{ url('/wallet') }}" class="flex items-center p-2 rounded-lg hover:bg-gray-100 group">
+                  <i class="bi bi-wallet text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">wallet</span>
                </a>
             </li>
 

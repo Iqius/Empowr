@@ -8,7 +8,7 @@ use App\Http\Middleware\CheckUserRole;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProgressionController;
-
+use App\Http\Controllers\ChatController;
 
 // LANDING PAGE
 Route::get('/', function () {
@@ -84,17 +84,20 @@ Route::get('/chat', [\Chatify\Http\Controllers\MessagesController::class, 'index
 // --In progress jobs
 Route::get('/in-progress-jobs/{task_id}', [JobController::class, 'DetailJobsInProgress'])->name('inProgress.jobs');
 
+// routes/web.php
+Route::get('/ewallet', function () {
+    return view('wallet');
+})->name('ewallet');
 
-
-
-
-
-
-
-
-
-
-
+//chat
+Route::get('/chat/search', [ChatController::class, 'search'])->middleware(['auth', 'admin'])->name('chat.search');
+Route::get('/chat', [ChatController::class, 'index'])->middleware(['auth'])->name('chat.index'); // Ubah dari 'chat.show' ke 'chat.index'
+Route::get('/chat/{user}', [ChatController::class, 'show'])->middleware(['auth'])->name('chat.show');
+Route::post('/chat', [ChatController::class, 'store'])->middleware(['auth'])->name('chat.store');
+Route::delete('/chat/{conversation}', [ChatController::class, 'destroy'])->middleware(['auth'])->name('chat.destroy');
+Route::post('/chat/finish/{id}', [ChatController::class, 'finishConversation'])->name('chat.finish');
+Route::delete('/chat/destroy/{id}', [ChatController::class, 'destroyConversation'])->name('chat.destroy');
+// Route::get('/chat/messages', [ChatController::class, 'fetchMessages']);
 
 
 Route::get('/jobs/manage/{id}', [JobController::class, 'manage'])->name('jobs.manage');

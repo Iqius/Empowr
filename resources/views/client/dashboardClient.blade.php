@@ -2,10 +2,10 @@
 
 <div class="p-4 ">
   <div class="p-4 mt-14">
-    <button id="openModalBtn"
-      class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow mb-6">
-      Add New Job
-    </button>
+  <a href="{{ route('add-job-view') }}"
+        class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow mb-6">
+        Add New Job
+    </a>
     <h2 class="text-xl font-semibold mb-2 flex items-center gap-1">
       Your Tasks
       <span class="text-gray-400 text-base">

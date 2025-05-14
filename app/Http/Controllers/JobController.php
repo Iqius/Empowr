@@ -60,7 +60,6 @@ class JobController extends Controller
             'category' => $request->category,
             'job_file' => $path,
         ]);
-
         
         return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
