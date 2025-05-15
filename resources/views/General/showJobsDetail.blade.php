@@ -1,5 +1,20 @@
 @include('General.header')
 
+@if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                timer: 2500,
+                timerProgressBar: true,
+                showConfirmButton: false,
+            });
+        });
+    </script>
+@endif
+
 <div class="p-4 mt-14">
     <div class="p-4 rounded h-full">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -18,15 +33,26 @@
                                     <form id="applyForm" action="{{ route('task.apply', $job->id) }}" method="POST"
                                         class="flex items-center gap-2">
                                         @csrf
-                                        <button type="button" id="applyBtn"
-                                            class="bg-[#1F4482] text-white text-sm px-8 py-2 rounded-md hover:bg-[#18346a] focus:outline-none">
-                                            Apply Now
-                                        </button>
+
+                                        @if($hasApplied)
+                                            <button type="button"
+                                                class="bg-gray-400 cursor-not-allowed text-white text-sm px-8 py-2 rounded-md"
+                                                disabled>
+                                                Task telah dilamar!
+                                            </button>
+                                        @else
+                                            <button type="button" id="openApplyModalBtn"
+                                                class="bg-[#1F4482] text-white text-sm px-8 py-2 rounded-md hover:bg-[#18346a] focus:outline-none">
+                                                Apply Now
+                                            </button>
+                                        @endif
+
                                         <input type="hidden" name="bidPrice" id="formBidPrice">
                                         <input type="hidden" name="catatan" id="formCatatan">
                                     </form>
                                 @endif
                             @endauth
+
 
                             <button
                                 class="w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300 transition">
@@ -160,36 +186,36 @@
 
             <div id="applicants-list" class="space-y-4">
                 @forelse ($applicants as $applicant)
-                                @php
-                                    $worker = $applicant->worker;
-                                    $user = $worker->user;
-                                    $avgRating = 0; // default
-                                @endphp
+                    @php
+                        $worker = $applicant->worker;
+                        $user = $worker->user;
+                        $avgRating = 0; // default
+                    @endphp
 
-                                <a href="{{ route('profile.worker.lamar', $worker->id) }}"
-                                    class="block p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition hover:bg-gray-100"
-                                    data-index="{{ $loop->index }}" data-name="{{ $user->nama_lengkap }}"
-                                    data-note="{{ $applicant->catatan }}" data-price="{{ $applicant->bidPrice }}"
-                                    data-experience="{{ $worker->pengalaman_kerja }}" data-rating="{{ number_format($avgRating, 1) }}"
-                                    data-education="{{ $worker->pendidikan }}" data-cv="{{ $worker->cv }}"
-                                    data-label="{{ $worker->empowr_label }}" data-affiliate="{{ $worker->empowr_affiliate }}">
+                    <a href="{{ route('profile.worker.lamar', $worker->id) }}"
+                        class="block p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition hover:bg-gray-100"
+                        data-index="{{ $loop->index }}" data-name="{{ $user->nama_lengkap }}"
+                        data-note="{{ $applicant->catatan }}" data-price="{{ $applicant->bidPrice }}"
+                        data-experience="{{ $worker->pengalaman_kerja }}" data-rating="{{ number_format($avgRating, 1) }}"
+                        data-education="{{ $worker->pendidikan }}" data-cv="{{ $worker->cv }}"
+                        data-label="{{ $worker->empowr_label }}" data-affiliate="{{ $worker->empowr_affiliate }}">
 
-                                    <div class="flex items-center justify-between gap-4 mb-4">
-                                        <!-- Left: Profile Section -->
-                                        <div class="flex items-center gap-4">
-                                            <img src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : asset('assets/images/avatar.png') }}"
-                                                alt="Profile Image" class="w-16 h-16 rounded-full object-cover border border-gray-300">
-                                            <div>
-                                                <p class="text-lg font-semibold text-gray-800">{{ $user->nama_lengkap }}</p>
-                                                <p class="text-sm text-gray-500">
-                                                    Pengalaman: {{ $worker->pengalaman_kerja ?? '-' }} tahun |
-                                                    Rating: {{ number_format($avgRating, 1) }}
-                                                </p>
-                                            </div>
-                                        </div>
+                        <div class="flex items-center justify-between gap-4 mb-4">
+                            <!-- Left: Profile Section -->
+                            <div class="flex items-center gap-4">
+                                <img src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : asset('assets/images/avatar.png') }}"
+                                    alt="Profile Image" class="w-16 h-16 rounded-full object-cover border border-gray-300">
+                                <div>
+                                    <p class="text-lg font-semibold text-gray-800">{{ $user->nama_lengkap }}</p>
+                                    <p class="text-sm text-gray-500">
+                                        Pengalaman: {{ $worker->pengalaman_kerja ?? '-' }} tahun |
+                                        Rating: {{ number_format($avgRating, 1) }}
+                                    </p>
+                                </div>
+                            </div>
 
-                                    </div>
-                                </a>
+                        </div>
+                    </a>
 
                 @empty
                     <p class="text-gray-500 text-sm">Belum ada pelamar untuk task ini.</p>
@@ -198,6 +224,28 @@
         </div>
     </div>
 </div>
+
+<div id="applyModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        <h2 class="text-xl font-semibold mb-4">Ajukan Pendaftaran</h2>
+
+        <label for="negoHargaModal" class="block text-sm font-semibold text-gray-700 mb-1">Nego Harga (IDR)</label>
+        <input type="text" id="negoHargaModal" placeholder="Masukkan harga tawaran"
+            class="w-full p-2 border rounded-lg mb-4" value="{{ number_format($job->price, 0, ',', '.') }}" />
+
+        <label for="noteInputModal" class="block text-sm font-semibold text-gray-700 mb-1">Catatan (opsional)</label>
+        <textarea id="noteInputModal" rows="4" placeholder="Tulis catatan tambahan di sini..."
+            class="w-full p-2 border rounded-lg mb-4"></textarea>
+
+        <div class="flex justify-end">
+            <button id="submitApplyModal"
+                class="py-2 px-4 bg-[#1F4482] text-white rounded-lg hover:bg-[#18346a] focus:outline-none focus:ring-2 focus:ring-blue-300">Daftar</button>
+            <button id="closeApplyModal"
+                class="ml-2 py-2 px-4 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-300">Batal</button>
+        </div>
+    </div>
+</div>
+
 
 
 
@@ -236,55 +284,64 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        const openBtn = document.getElementById("openApplyModalBtn");
+        const modal = document.getElementById("applyModal");
+        const closeBtn = document.getElementById("closeApplyModal");
+        const submitBtn = document.getElementById("submitApplyModal");
         const form = document.getElementById("applyForm");
+        const negoInput = document.getElementById("negoHargaModal");
+        const noteInput = document.getElementById("noteInputModal");
+        const hiddenBidPrice = document.getElementById("formBidPrice");
+        const hiddenNote = document.getElementById("formCatatan");
 
-        document.getElementById("applyBtn")?.addEventListener("click", function () {
-            Swal.fire({
-                title: 'Ajukan Pendaftaran',
-                html: `
-                    <div class="text-left space-y-4">
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">Nego Harga</label>
-                            <input id="negoHarga" type="number" class="swal2-input" value="{{ $job->price }}" />
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">Catatan (opsional)</label>
-                            <textarea id="noteField" class="swal2-textarea" placeholder="Tulis catatan tambahan di sini..."></textarea>
-                        </div>
-                    </div>
-                `,
-                showCancelButton: true,
-                confirmButtonText: 'Daftar',
-                cancelButtonText: 'Batal',
-                confirmButtonColor: '#2563EB',
-                preConfirm: () => {
-                    return {
-                        nego: document.getElementById('negoHarga').value,
-                        note: document.getElementById('noteField').value
-                    };
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Masukkan ke input hidden
-                    document.getElementById("formBidPrice").value = result.value.nego;
-                    document.getElementById("formCatatan").value = result.value.note;
+        // Fungsi buka modal
+        function openModal() {
+            modal.classList.remove("hidden");
+        }
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: 'Lamaran berhasil dikirim.',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
+        // Fungsi tutup modal dan reset input
+        function closeModal() {
+            modal.classList.add("hidden");
+            // Optional reset inputs
+            // negoInput.value = "{{ number_format($job->price, 0, ',', '.') }}";
+            // noteInput.value = "";
+        }
 
+        // Format input harga dengan pemisah ribuan saat ketik
+        negoInput.addEventListener("input", function (e) {
+            let value = e.target.value.replace(/[^0-9]/g, "");
+            if (value) {
+                e.target.value = Number(value).toLocaleString("id-ID");
+            } else {
+                e.target.value = "";
+            }
+        });
 
-                    // Delay submit sedikit agar notifikasi bisa muncul
-                    setTimeout(() => {
-                        form.submit();
-                    }, 800); // 800ms biar notif terlihat
-                }
+        // Buka modal saat klik tombol
+        openBtn.addEventListener("click", openModal);
 
-            });
+        // Tutup modal saat klik tombol batal
+        closeBtn.addEventListener("click", closeModal);
+
+        // Submit form saat klik tombol daftar
+        submitBtn.addEventListener("click", function () {
+            const rawNego = negoInput.value.replace(/[.,]/g, "");
+            if (!rawNego || isNaN(rawNego) || Number(rawNego) <= 0) {
+                alert("Harga tawaran harus berupa angka lebih dari 0");
+                return;
+            }
+
+            hiddenBidPrice.value = rawNego;
+            hiddenNote.value = noteInput.value.trim();
+
+            form.submit();
+        });
+
+        // Opsional: tutup modal dengan ESC key
+        window.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+                closeModal();
+            }
         });
     });
 </script>

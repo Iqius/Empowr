@@ -86,7 +86,7 @@
                             @endif
                                 <button
                                     class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                                    View
+                                    Lihat Detail
                                 </button>
                             </a>
                     </div>

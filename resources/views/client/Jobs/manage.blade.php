@@ -490,17 +490,17 @@
         container.innerHTML = '';
         items.forEach(item => container.appendChild(item));
     }
-
+    <!-- Untuk hapus task admin -->
 
     function confirmCancel(taskId) {
         Swal.fire({
-            title: 'Yakin ingin membatalkan?',
+            title: 'Yakin ingin menghapus task?',
             text: "Tindakan ini tidak bisa dikembalikan!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#aaa',
-            confirmButtonText: 'Ya, batalkan!',
+            confirmButtonText: 'Hapus Task',
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
@@ -508,7 +508,7 @@
                     icon: 'success',
                     title: 'Task berhasil dibatalkan!',
                     confirmButtonText: 'OK',
-                    confirmButtonColor: '#3085d6'
+                    confirmButtonColor: '#1F4482'
                 }).then(() => {
                     document.getElementById(`cancelTaskForm${taskId}`).submit();
                 });
@@ -526,7 +526,7 @@
             button.addEventListener('click', () => {
                 console.log("Tab clicked:", button.dataset.tab);
                 document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('text-blue-600', 'font-semibold'));
-                button.classList.add('text-blue-600', 'font-semibold');
+                button.classList.add('text-white', 'font-semibold');
                 document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
                 document.getElementById(button.dataset.tab)?.classList.remove('hidden');
             });

@@ -140,6 +140,8 @@ class JobController extends Controller
     {
         // Ambil job berdasarkan ID dari URL
         $job = task::with('user')->findOrFail($id); // Ambil juga relasi user jika ada
+
+        // Ambil semua pelamar
         $applicants = TaskApplication::with([
             'worker.user',
             'worker.certifications.images',
@@ -147,8 +149,17 @@ class JobController extends Controller
         ])
             ->where('task_id', $id)
             ->get();
-        // Kirim ke view
-        return view('General.showJobsDetail', compact('job', 'applicants'));
+
+        // Dapatkan profile_id worker yang sedang login
+        $profileId = WorkerProfile::where('user_id', Auth::id())->value('id');
+
+        // Cek apakah user ini sudah melamar task tersebut
+        $hasApplied = TaskApplication::where('task_id', $id)
+            ->where('profile_id', $profileId)
+            ->exists();
+
+        // Kirim ke view, tambahkan variabel $hasApplied
+        return view('General.showJobsDetail', compact('job', 'applicants', 'hasApplied'));
     }
     public function myJobs()
     {
@@ -258,7 +269,6 @@ class JobController extends Controller
             'status' => 'pending',
             'applied_at' => now(),
         ]);
-
         return back()->with('success', 'Lamaran berhasil dikirim.');
     }
     public function accept($applicationId)

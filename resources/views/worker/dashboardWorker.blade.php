@@ -320,5 +320,4 @@
         @endif
     });
 </script>
-
 @include('General.footer')

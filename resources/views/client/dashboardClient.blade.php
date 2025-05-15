@@ -241,7 +241,20 @@
 @include('General.footer')
 
 <script>
-
+  document.addEventListener("DOMContentLoaded", function () {
+    // ✅ SweetAlert for Success Message
+    @if(session('success'))
+    Swal.fire({
+      icon: 'success',
+      title: 'Berhasil Login!',
+      text: "{{ session('success') }}",
+      confirmButtonColor: '#1F4482',
+      confirmButtonText: 'OK'
+    }).then(() => {
+      window.location.href = window.location.href;
+    });
+  @endif
+    });
   const statusCtx = document.getElementById('statusChart').getContext('2d');
   new Chart(statusCtx, {
     type: 'line',

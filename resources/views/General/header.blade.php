@@ -4,45 +4,32 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <!-- midtrans -->
-   <script type="text/javascript" src="https://app.stg.midtrans.com/snap/snap.js"
-      data-client-key="{{config('midtrans.client_key')}}"></script>
    <title>Empowr - Connect, Collaborate, Succeed!</title>
 
-   <!-- Tailwind menggunakan vite -->
-   @vite(['resources/css/app.css', 'resources/js/app.js'])
-   <script src="https://cdn.tailwindcss.com"></script>
-
-   <!-- Font -->
    <link rel="preconnect" href="https://fonts.googleapis.com">
    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
    <link
       href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Liter&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Prata&display=swap"
       rel="stylesheet">
    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
-   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
       crossorigin="anonymous">
-
-
-   <!-- Bootstrap Icons CDN -->
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-
-   <!-- Swiper CSS -->
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-   <!-- Swiper JS -->
-   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-   <!-- Quill Editor CSS -->
    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+   <link rel="icon" href="{{ asset('assets/images/logosaja.png') }}" type="image/png">
+
+   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <script type="text/javascript" src="https://app.stg.midtrans.com/snap/snap.js"
+      data-client-key="{{config('midtrans.client_key')}}"></script>
+   @vite(['resources/css/app.css', 'resources/js/app.js'])
+   <script src="https://cdn.tailwindcss.com"></script>
 
-
-   <!-- style -->
    <style>
       body {
          font-family: "Poppins", sans-serif;
@@ -50,7 +37,6 @@
    </style>
 
    <style>
-      /* General list styles */
       .job-description ol,
       .job-qualification ol,
       .rules ol {
@@ -72,7 +58,6 @@
          margin-bottom: 0.25rem;
       }
 
-      /* Enhanced styling within Tailwind-style paragraphs if needed */
       .job-description.text-gray-600.leading-relaxed ol,
       .job-qualification.text-gray-600.leading-relaxed ol,
       .rules.text-gray-600.leading-relaxed ol,
@@ -106,48 +91,36 @@
    </style>
 
    <style>
-      /* Transisi pada item sidebar */
       .sidebar-item {
          transition: background-color 0.3s ease, color 0.3s ease;
       }
 
-      /* Style untuk menu yang aktif */
       .sidebar-item.active {
          background-color: #1F4482;
          color: white;
       }
 
-      /* Mengubah warna ikon menjadi putih saat item aktif */
       .sidebar-item.active i {
          color: white;
       }
 
-      /* Hover dan focus efek */
       .sidebar-item:hover,
       .sidebar-item:focus {
          background-color: #18346a;
          color: white;
       }
 
-      /* Mengubah warna ikon menjadi putih saat hover */
       .sidebar-item:hover i {
          color: white;
       }
 
-      /* Mengubah warna ikon menjadi putih saat fokus */
       .sidebar-item:focus i {
          color: white;
       }
    </style>
-
-
-   <link rel="icon" href="{{ asset('assets/images/logosaja.png') }}" type="image/png">
-
 </head>
 
 <body class="bg-gray-100" style="font-family: sans-serif;">
-
-
    <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200">
       <div class="px-3 py-3 lg:px-5 lg:pl-3">
          <div class="flex items-center justify-between">
@@ -169,18 +142,11 @@
                </a>
             </div>
 
-            <!-- Tengah: Search Bar -->
-
-
-            <!-- Kanan: Ikon & Profile -->
             <div class="flex items-center space-x-3">
-               <!-- Icon Set -->
                <button class="w-8 h-8 bg-gray-300 text-[#1F4482] rounded-full flex items-center justify-center">
                   <i class="fa-solid fa-bookmark"></i>
                </button>
 
-
-               <!-- Notifikasi -->
                <div class="relative inline-block">
                   <button onclick="toggleDropdown()"
                      class="w-8 h-8 bg-gray-300 text-[#1F4482] rounded-full flex items-center justify-center relative">
@@ -194,7 +160,7 @@
                   </button>
                   <div id="dropdown-notif"
                      class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
-                     <div class="px-4 py-2 font-semibold text-blue-600 border-b">Notification</div>
+                     <div class="px-4 py-2 font-semibold text-[#1F4482] border-b">Notification</div>
                      @foreach ($notifications as $notif)
                    <div class="px-4 py-2 border-b">
                      <p class="font-semibold">{{ $notif->sender_name }}</p>
@@ -203,7 +169,7 @@
                    </div>
                 @endforeach
                      <a href="{{ route('notifications.index') }}"
-                        class="block px-4 py-2 text-center text-blue-500 hover:underline">
+                        class="block px-4 py-2 text-center text-[#1F4482] hover:underline">
                         Lihat Semua Notifikasi
                      </a>
                   </div>
@@ -218,7 +184,8 @@
                         src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('assets/images/avatar.png') }}"
                         alt="User photo">
                      <div class="ml-2 text-left hidden sm:block">
-                        <div class="text-sm font-medium text-gray-900 leading-none font-semibold">{{ Auth::user()->nama_lengkap }}
+                        <div class="text-sm font-medium text-gray-900 leading-none font-semibold">
+                           {{ Auth::user()->nama_lengkap }}
                         </div>
                         <div class="text-xs text-gray-500">{{ Auth::user()->role }}</div>
                      </div>
@@ -390,28 +357,22 @@
    <!-- Logout Modal -->
    <div id="logoutModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden">
       <div class="bg-white p-6 rounded shadow-md w-80">
-         <h2 class="text-lg font-semibold mb-4">Confirm Logout</h2>
-         <p class="mb-4">Are you sure you want to log out?</p>
+         <h2 class="text-lg font-semibold mb-4">Konfirmasi Keluar</h2>
+         <p class="mb-4">Kamu yakin ingin keluar?</p>
          <div class="flex justify-end gap-2">
-            <button id="cancelLogout" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
-            <button id="confirmLogout" class="px-4 py-2 bg-red-600 text-white rounded">Log Out</button>
+            <button id="cancelLogout" class="px-4 py-2 bg-gray-300 rounded">Batal</button>
+            <button id="confirmLogout" class="px-4 py-2 bg-red-600 text-white rounded">Keluar</button>
          </div>
       </div>
    </div>
 
    <script>
       document.addEventListener("DOMContentLoaded", function () {
-         // Ambil URL saat ini
          const currentUrl = window.location.href;
-
-         // Pilih semua elemen dengan kelas 'sidebar-item'
          const sidebarItems = document.querySelectorAll('.sidebar-item');
 
-         // Loop melalui item sidebar
          sidebarItems.forEach(item => {
             const link = item.getAttribute('href'); // Ambil href dari link
-
-            // Cek apakah href item sama dengan URL halaman saat ini
             if (currentUrl.includes(link)) {
                item.classList.add('active'); // Tambahkan kelas active pada item yang sesuai
             } else {
@@ -419,4 +380,6 @@
             }
          });
       });
+
+      
    </script>

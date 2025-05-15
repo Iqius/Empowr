@@ -1,20 +1,19 @@
-<!-- JS FLOWBITE -->
-<!-- Quill Editor JS -->
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-<!-- Quill Editor JS -->
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // === Logout Logic ===
         document.getElementById("logoutBtn").addEventListener("click", function () {
             Swal.fire({
-                title: 'Yakin ingin logout?',
+                title: 'Kamu yakin ingin keluar?',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Ya, logout',
+                confirmButtonText: 'Keluar',
                 cancelButtonText: 'Batal',
-                confirmButtonColor: '#2563EB',
+                confirmButtonColor: '#1F4482',
                 cancelButtonColor: '#d1d5db'
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -43,6 +42,7 @@
             });
         }
     });
+
     function toggleDropdown() {
         document.getElementById("dropdown-notif").classList.toggle("hidden");
     }
