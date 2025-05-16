@@ -257,7 +257,7 @@
 
             <!-- Chat -->
             <li>
-               <a href="{{ route('chat.index') }}" class="flex items-center p-2 rounded-lg hover:bg-gray-100 group">
+               <a href="{{ route('chat.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                   <i class="bi bi-chat-dots text-lg text-[#1F4482]"></i>
                   <span class="ml-3">Chat</span>
                </a>
@@ -268,14 +268,6 @@
                <a href="{{ url('/arbitrase') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
                  <span class="ml-3">Arbitrase</span>
-               </a>
-            </li>
-
-            <!-- wallet -->
-            <li>
-               <a href="{{ url('/wallet') }}" class="flex items-center p-2 rounded-lg hover:bg-gray-100 group">
-                  <i class="bi bi-wallet text-lg text-[#1F4482]"></i>
-                  <span class="ml-3">wallet</span>
                </a>
             </li>
 

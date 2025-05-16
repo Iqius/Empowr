@@ -13,11 +13,6 @@
             data-tab="applicants">
             Lamaran Worker
         </button>
-        <button
-            class="tab-button text-gray-600 font-semibold py-2 px-4 rounded-md transition-all duration-300 hover:bg-[#1F4482] hover:text-white focus:outline-none active:bg-[#1F4482] active:text-white"
-            data-tab="chat">
-            Chat
-        </button>
     </div>
 
 
@@ -275,11 +270,6 @@
         </div>
     </div>
 
-    <!-- Tab 3: Chat -->
-    <div id="chat" class="tab-content hidden mt-4">
-        <h2 class="text-xl font-bold mb-4">Chat</h2>
-        <iframe src="{{ route('chat') }}" class="w-full h-[500px] border rounded shadow"></iframe>
-    </div>
     <!-- Modal bayar -->
     <div id="bayarModal"
         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden transition-opacity duration-300 opacity-0">
