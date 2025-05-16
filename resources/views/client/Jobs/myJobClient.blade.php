@@ -14,7 +14,7 @@
             <option value="">Semua Status</option>
             <option value="open">Belum Dikerjakan</option>
             <option value="in progress">Sedang Dikerjakan</option>
-            <option value="completed">Selesai Dikerjakann</option>
+            <!-- <option value="completed">Selesai Dikerjakann</option> -->
         </select>
 
     </div>
@@ -25,76 +25,73 @@
         @endphp
 
         @foreach ($task as $job)
-            <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition relative"
-                data-status="{{ $job->status }}" data-price="{{ $job->price }}">
-                <!-- Save Button -->
-                <button class="absolute top-3 right-3 text-gray-400 hover:text-[#1F4482] transition">
-                    <i class="fa-regular fa-bookmark text-lg"></i>
-                </button>
-
-                <!-- User Info -->
-                <div class="flex items-center gap-3 mb-3">
-                    <img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}"
-                        alt="User" class="w-9 h-9 rounded-full object-cover" />
-                    <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
-                        {{ $job->user->nama_lengkap ?? 'Unknown' }}
-                        <span class="text-[#1F4482]">✔</span>
-                    </p>
-                </div>
-
-                <!-- Job Title -->
-                <h3 class="text-sm font-semibold text-gray-900 mb-1">
-                    {{ $job->title }}
-                </h3>
-
-                <!-- Description -->
-                <div class="text-xs text-gray-500 mb-4 leading-relaxed">
-                    @php
-                        // Check if the description contains ordered or unordered lists
-                        $hasLists = preg_match('/<ol[^>]*>|<ul[^>]*>/i', $job->description);
-                        
-                        // Get the text before any list appears
-                        $textBeforeLists = preg_split('/<ol[^>]*>|<ul[^>]*>/i', $job->description)[0];
-                        
-                        // Strip any HTML tags from this text
-                        $plainTextBeforeLists = strip_tags($textBeforeLists);
-                        
-                        // Create the preview - if there are lists, add ellipsis
-                        if ($hasLists) {
-                            // Limit the text before the list and add ellipsis
-                            $previewText = Str::limit($plainTextBeforeLists, 77, '...');
-                        } else {
-                            // If no lists, just use normal limit
-                            $previewText = Str::limit(strip_tags($job->description), 80, '...');
-                        }
-                    @endphp
-                    {{ $previewText }}
-                </div>
-
-
-                <!-- Bottom Row: Price + Button -->
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-sm font-semibold text-gray-800">
-                            Rp {{ number_format($job->price, 0, ',', '.') }}
-                        </p>
-                        <p class="text-xs text-gray-400 capitalize">
-                            Status: {{ $job->status }}
+            @if ($job->status !== 'completed')
+                <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition relative"
+                    data-status="{{ $job->status }}" data-price="{{ $job->price }}">
+                    <!-- User Info -->
+                    <div class="flex items-center gap-3 mb-3">
+                        <img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}"
+                            alt="User" class="w-9 h-9 rounded-full object-cover" />
+                        <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
+                            {{ $job->user->nama_lengkap ?? 'Unknown' }}
+                            <span class="text-[#1F4482]">✔</span>
                         </p>
                     </div>
 
-                    @if ($job->status === 'in progress' || $job->status === 'completed')
-                        <a href="{{ route('inProgress.jobs', $job->id) }}">
-                    @else
-                        <a href="{{ route('jobs.manage', $job->id) }}">
-                    @endif
-                            <button
-                                class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                                View
-                            </button>
-                        </a>
+                    <!-- Job Title -->
+                    <h3 class="text-sm font-semibold text-gray-900 mb-1">
+                        {{ $job->title }}
+                    </h3>
+
+                    <!-- Description -->
+                    <div class="text-xs text-gray-500 mb-4 leading-relaxed">
+                        @php
+                            // Check if the description contains ordered or unordered lists
+                            $hasLists = preg_match('/<ol[^>]*>|<ul[^>]*>/i', $job->description);
+
+                            // Get the text before any list appears
+                            $textBeforeLists = preg_split('/<ol[^>]*>|<ul[^>]*>/i', $job->description)[0];
+
+                            // Strip any HTML tags from this text
+                            $plainTextBeforeLists = strip_tags($textBeforeLists);
+
+                            // Create the preview - if there are lists, add ellipsis
+                            if ($hasLists) {
+                                // Limit the text before the list and add ellipsis
+                                $previewText = Str::limit($plainTextBeforeLists, 77, '...');
+                            } else {
+                                // If no lists, just use normal limit
+                                $previewText = Str::limit(strip_tags($job->description), 150, '...');
+                            }
+                        @endphp
+                        {{ $previewText }}
+                    </div>
+
+
+                    <!-- Bottom Row: Price + Button -->
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-800">
+                                Rp {{ number_format($job->price, 0, ',', '.') }}
+                            </p>
+                            <p class="text-xs text-gray-400 capitalize">
+                                Status: <span class="text-gray-500 font-semibold">{{ $job->status }}</span>
+                            </p>
+                        </div>
+
+                        @if ($job->status === 'in progress')
+                            <a href="{{ route('inProgress.jobs', $job->id) }}">
+                        @else
+                                <a href="{{ route('jobs.manage', $job->id) }}">
+                            @endif
+                                <button
+                                    class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
+                                    Lihat Detail
+                                </button>
+                            </a>
+                    </div>
                 </div>
-            </div>
+            @endif
         @endforeach
     </div>
 </section>

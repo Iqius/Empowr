@@ -41,6 +41,7 @@
             }
         }
     </style>
+    <link rel="icon" href="{{ asset('assets/images/logosaja.png') }}" type="image/png">
 </head>
 
 <body class="bg-gray-100">

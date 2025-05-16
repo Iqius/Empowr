@@ -1,11 +1,27 @@
 @include('General.header')
 
-<section class="p-4 mt-16 ">
+<div class="p-4 mt-16 ">
     <!-- Tabs button -->
-    <div class="flex flex-wrap gap-4 border-b pb-2 text-sm sm:text-base overflow-x-auto">
-        <button class="tab-button text-blue-600 font-semibold" data-tab="info">Informasi Lengkap</button>
-        <button class="tab-button text-gray-600 hover:text-blue-600" data-tab="applicants">Lamaran Worker</button>
+    <div class="flex flex-wrap gap-4 pb-4 text-sm sm:text-base overflow-x-auto">
+        <button
+            class="tab-button text-white font-semibold py-2 px-4 rounded-md transition-all duration-300 bg-[#1F4482] focus:outline-none"
+            data-tab="info">
+            Informasi Lengkap
+        </button>
+        <button
+            class="tab-button text-gray-600 font-semibold py-2 px-4 rounded-md transition-all duration-300 hover:bg-[#1F4482] hover:text-white focus:outline-none active:bg-[#1F4482] active:text-white"
+            data-tab="applicants">
+            Lamaran Worker
+        </button>
+        <button
+            class="tab-button text-gray-600 font-semibold py-2 px-4 rounded-md transition-all duration-300 hover:bg-[#1F4482] hover:text-white focus:outline-none active:bg-[#1F4482] active:text-white"
+            data-tab="chat">
+            Chat
+        </button>
     </div>
+
+
+
 
     <!-- Flash Message -->
     @if (session('error'))
@@ -28,131 +44,230 @@
 
     <!-- Tab 1: Informasi Lengkap -->
     <div id="info" class="tab-content space-y-4 mt-4">
-        <h1 class="text-2xl font-bold text-blue-600">{{ $job->title ?? '[Judul belum diisi]' }}</h1>
-        <p class="text-black font-bold text-xl">
-            Rp {{ isset($job->price) ? number_format($job->price, 0, ',', '.') : '[Harga belum diisi]' }}
-        </p>
-        <p class="text-gray-500 text-sm">By {{ $job->user->nama_lengkap ?? 'Unknown' }}</p>
-        <hr>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Section -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border space-y-6">
+                    <!-- Header -->
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-4">
+                            <img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}"
+                                alt="User" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover">
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-800">{{ $job->title ?? '[Judul belum diisi]' }}
+                                </h1>
+                                <p class="text-xs flex items-center gap-1">
+                                    <i class="fa-solid fa-pen text-gray-500"></i>
+                                    <span class="text-gray-500">Task diposting</span>
+                                    <span class="text-gray-600 font-semibold">
+                                        {{ \Carbon\Carbon::parse($job->created_at)->translatedFormat('d F Y') }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-sm font-medium text-gray-500">Budget</p>
+                            <p class="text-lg font-semibold text-gray-800">IDR
+                                {{ number_format($job->price, 0, ',', '.') }}
+                            </p>
+                        </div>
+                    </div>
 
-        @php
-            $typeLabels = [
-                'it' => 'IT',
-                'nonIT' => 'Non IT',
-            ];
-        @endphp
+                    <!-- About Task -->
+                    <div class="space-y-6 flex-1">
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-800 mb-2">Tentang Task</h2>
+                            <div class="job-description text-sm text-gray-800 leading-relaxed">
+                                {!! $job->description !!}
+                            </div>
+                        </div>
 
-        @foreach ([
-            'Deskripsi' => 'description',
-            'Jumlah Revisi' => 'revisions',
-            'Tanggal Berakhir' => 'deadline',
-            'Tipe Pekerjaan' => 'taskType',
-            'Ketentuan' => 'provisions',
-        ] as $label => $field)
-            <div>
-                <h2 class="text-lg font-semibold text-gray-700">{{ $label }}</h2>
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-800 mb-2">Kualifikasi</h2>
+                            <div class="job-qualification text-sm text-gray-800 leading-relaxed">
+                                {!! $job->qualification !!}
+                            </div>
+                        </div>
 
-                @if ($field === 'taskType')
-                    <p class="text-gray-600 mt-1">{{ $typeLabels[$job->$field] ?? ucfirst($job->$field) }}</p>
-                @else
-                    <p class="text-gray-600 mt-1">{{ $job->$field ?? '[Belum ditentukan]' }}</p>
-                @endif
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-800 mb-2">Aturan Task</h2>
+                            <div class="rules text-sm text-gray-800 leading-relaxed">
+                                {!! $job->provisions !!}
+                            </div>
+                        </div>
+
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-800 mb-2">File Terkait</h2>
+                            @if ($job->job_file)
+                                <a href="{{ asset('storage/' . $job->job_file) }}" download
+                                    class="inline-block mt-2 px-4 py-2 bg-[#1F4482] text-white text-sm rounded-md hover:bg-[#18346a]">
+                                    Download File
+                                </a>
+                            @else
+                                <p class="text-sm text-gray-500">No attachment available.</p>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-end gap-2">
+                        @if ($job->status === 'open')
+                            <form id="cancelTaskForm{{ $job->id }}" action="{{ route('jobs.destroy', $job->id) }}"
+                                method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" onclick="confirmCancel({{ $job->id }})"
+                                    class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                                    Hapus Task
+                                </button>
+                            </form>
+                        @else
+                            <button class="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed" disabled>
+                                Tidak Bisa Dibatalkan Task Sudah Di Proses
+                            </button>
+                        @endif
+                        <button onclick="openModal()"
+                            class="bg-[#1F4482] text-white px-8 py-2 rounded hover:bg-[#18346a]">
+                            Bayar
+                        </button>
+                    </div>
+                </div>
             </div>
-        @endforeach
 
-        <div>
-            <h2 class="text-lg font-semibold text-gray-700">File Terkait</h2>
+            <!-- Right Section -->
+            <div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border space-y-4">
+                    <h2 class="text-lg font-semibold text-gray-800">Task Detail</h2>
 
-            @if ($job->job_file)
-                {{-- Cek apakah file adalah gambar --}}
-                @php
-                    $ext = pathinfo($job->job_file, PATHINFO_EXTENSION);
-                    $isImage = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
-                @endphp
+                    <div>
+                        <p class="text-gray-500">Masa Pengerjaan Task (Deadline)</p>
+                        <p class="font-semibold">
+                            {{ \Carbon\Carbon::parse($job->start_date)->translatedFormat('d F Y') }} -
+                            {{ \Carbon\Carbon::parse($job->deadline)->translatedFormat('d F Y') }}
+                        </p>
+                        <p class="font-semibold">
+                            ({{ \Carbon\Carbon::parse($job->start_date)->diffInDays($job->deadline) }} Hari)
+                        </p>
+                    </div>
 
-                @if ($isImage)
-                    <img src="{{ asset('storage/' . $job->job_file) }}" alt="Preview File" class="w-64 h-auto rounded shadow mt-2">
-                @endif
+                    <div>
+                        <p class="text-gray-500">Penutupan Lamaran</p>
+                        <p class="font-semibold">
+                            {{ \Carbon\Carbon::parse($job->deadline_promotion)->translatedFormat('d F Y') }}
+                        </p>
+                    </div>
 
-                <p class="mt-2">
-                    <a href="{{ asset('storage/' . $job->job_file) }}" download class="text-blue-600 hover:underline">
-                        Download File
-                    </a>
-                </p>
-            @else
-                <p class="text-gray-600 mt-1">[File belum diunggah]</p>
-            @endif
+                    <div>
+                        <p class="text-gray-500">Permintaan Jatah Revisi</p>
+                        <p class="font-semibold capitalize">{{ $job->revisions }} kali revisi</p>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-500 mb-2">Kategori Task</p>
+                        <div>
+                            @php
+                                $categories = json_decode($job->kategory, true) ?? [];
+                            @endphp
+                            @foreach($categories as $category)
+                                <span
+                                    class="inline-block bg-gradient-to-b from-[#1F4482] to-[#2A5DB2] text-white px-3 py-1 rounded-full text-sm mr-2 mb-2">
+                                    {{ $category }}
+                                </span>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
 
+
     <!-- Tab 2: Lamaran Worker -->
     <div id="applicants" class="tab-content hidden mt-4">
-        <h2 class="text-xl font-bold mb-4">Lamaran Worker</h2>
-
-
         <!-- Filter -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
             <form method="GET" class="flex items-center gap-2">
                 <label for="sortBy" class="font-semibold">Urutkan Berdasarkan:</label>
-                <select name="sort" id="sortBy" class="p-2 border rounded" onchange="this.form.submit()">
+                <select name="sort" id="sortBy"
+                    class="p-2 border rounded bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1F4482]"
+                    onchange="this.form.submit()">
                     <option value="bidPrice" {{ request('sort') === 'bidPrice' ? 'selected' : '' }}>Harga</option>
-                    <option value="experience" {{ request('sort') === 'experience' ? 'selected' : '' }}>Pengalaman</option>
+                    <option value="experience" {{ request('sort') === 'experience' ? 'selected' : '' }}>Pengalaman
+                    </option>
                 </select>
 
-                <select name="dir" class="p-2 border rounded" onchange="this.form.submit()">
+                <select name="dir"
+                    class="p-2 border rounded bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1F4482]"
+                    onchange="this.form.submit()">
                     <option value="asc" {{ request('dir') === 'asc' ? 'selected' : '' }}>Naik ↑</option>
                     <option value="desc" {{ request('dir') === 'desc' ? 'selected' : '' }}>Turun ↓</option>
                 </select>
             </form>
         </div>
 
-        <!-- List Pelamar -->
-        <div id="applicants-list" class="space-y-4">
+        <!-- List Pelamar (Daftar Pelamar) -->
+        <div id="applicants-list" class="space-y-6">
             @foreach ($applicants as $applicant)
                 @php
                     $worker = $applicant->worker;
                     $user = $worker->user;
                     $avgRating = 0; // default
-                    @endphp
+                @endphp
 
-                <div class="border p-4 rounded"
-                data-index="{{ $loop->index }}"
-                data-name="{{ $user->nama_lengkap }}"
-                    data-note="{{ $applicant->catatan }}"
-                    data-price="{{ $applicant->bidPrice }}"
-                    data-experience="{{ $worker->pengalaman_kerja }}"
-                    data-rating="{{ number_format($avgRating, 1) }}"
-                    data-education="{{ $worker->pendidikan }}"
-                    data-cv="{{ $worker->cv }}"
-                    data-label="{{ $worker->empowr_label }}"
-                    data-affiliate="{{ $worker->empowr_affiliate }}">
-                    <p><strong>{{ $user->nama_lengkap }}</strong> - Rp{{ number_format($applicant->bidPrice) }}</p>
-                    <p class="text-gray-600 text-sm">Catatan: {{ $applicant->catatan }}</p>
-                    <p class="text-sm text-gray-500">
-                        Pengalaman: {{ $worker->pengalaman_kerja }} tahun |
-                        Rating: {{ number_format($avgRating, 1) }}
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                        <a href="{{ url('/chat/' . $user->id) }}" class="bg-blue-500 text-white px-4 py-2 rounded text-sm min-w-[120px] text-center inline-block">Chat</a>
+                <!-- Kartu Pelamar -->
+                <div
+                    class="flex flex-col lg:flex-row gap-4 bg-white border rounded-lg shadow-lg p-6 hover:bg-gray-50 transition-all duration-300 hover:shadow-xl">
 
-                        <form action="{{ route('client.hire') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="task_id" value="{{ $applicant->task_id }}">
-                            <input type="hidden" name="worker_profile_id" value="{{ $worker->id }}">
-                            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded text-sm min-w-[120px]">Terima</button>
-                        </form>
+                    <!-- Kiri: Detail Pelamar -->
+                    <div class="flex-1">
+                        <div class="flex items-center gap-4">
+                            <img src="{{ asset('storage/' . ($worker->profile_image ?? 'default.jpg')) }}" alt="Profile"
+                                class="w-16 h-16 rounded-full object-cover">
+                            <div class="mt-4 text-gray-600 text-sm">
+                                <p class="font-semibold text-lg text-gray-800">{{ $user->nama_lengkap }}</p>
+                                <p class="text-gray-500 text-sm"><strong>Negoisasi</strong>
+                                    Rp{{ number_format($applicant->bidPrice) }}</p>
+                                <p class="text-gray-500 text-sm"><strong>Pengalaman</strong>
+                                    {{ $worker->pengalaman_kerja ?? 0 }} tahun</p>
+                                <p class="text-gray-500 text-sm"><strong>Rating</strong> {{ number_format($avgRating, 1) }}
+                                </p>
+                            </div>
+                        </div>
 
-                        <form action="{{ route('client.reject') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="application_id" value="{{ $applicant->id }}">
-                            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded text-sm min-w-[120px]">Tolak</button>
-                        </form>
+                        <div class="mt-4 text-gray-600 text-sm">
+                            <p><strong>Catatan: </strong> {{ $applicant->catatan }}</p>
+                        </div>
+                    </div>
 
-                        <a href="{{ route('profile.worker.lamar', $worker->id) }}"
-                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow inline-block text-sm min-w-[120px] text-center">
-                            Lihat Profil Worker
-                        </a>
+
+                    <!-- Kanan: Tombol-Tombol Aksi -->
+                    <div class="flex flex-col justify-between items-end">
+                        <div class="flex gap-2 mt-4">
+                            <a href="{{ route('profile.worker.lamar', $worker->id) }}"
+                                class="bg-[#1F4482] hover:bg-[#18346a] text-white px-4 py-2 rounded-md shadow inline-block">
+                                Lihat Profil
+                            </a>
+                            <button class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a]">Chat</button>
+
+                            <form action="{{ route('client.hire') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="task_id" value="{{ $applicant->task_id }}">
+                                <input type="hidden" name="worker_profile_id" value="{{ $worker->id }}">
+                                <button type="submit"
+                                    class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800">
+                                    Terima
+                                </button>
+                            </form>
+
+                            <form action="{{ route('client.reject') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="application_id" value="{{ $applicant->id }}">
+                                <button type="submit" class="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-800">
+                                    Tolak
+                                </button>
+                            </form>
+                        </div>
                     </div>
 
                 </div>
@@ -160,47 +275,36 @@
         </div>
     </div>
 
-    <!-- button delete task -->
-    <div class="flex justify-end gap-2 mt-6">
-        @if ($task->status === 'open')
-            <form id="cancelTaskForm{{ $task->id }}" action="{{ route('jobs.destroy', $task->id) }}" method="POST">
-                @csrf
-                @method('DELETE')
-                <button type="button" onclick="confirmCancel({{ $task->id }})" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-                    Batalkan
-                </button>
-            </form>
-        @else
-            <button class="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed" disabled>
-                Tidak Bisa Dibatalkan Task Sudah Di Proses
-            </button>
-        @endif
-        <button onclick="openModal()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-            Bayar
-        </button>
+    <!-- Tab 3: Chat -->
+    <div id="chat" class="tab-content hidden mt-4">
+        <h2 class="text-xl font-bold mb-4">Chat</h2>
+        <iframe src="{{ route('chat') }}" class="w-full h-[500px] border rounded shadow"></iframe>
     </div>
-
     <!-- Modal bayar -->
-    <div id="bayarModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden transition-opacity duration-300 opacity-0">
-        <div id="modalContent" class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative transform transition-all duration-300 scale-95">
+    <div id="bayarModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden transition-opacity duration-300 opacity-0">
+        <div id="modalContent"
+            class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative transform transition-all duration-300 scale-95">
             <h2 class="text-lg font-semibold mb-4">Pilih Metode Pembayaran</h2>
             <!-- Error Alert -->
             @if(session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 relative" role="alert">
-                <strong class="font-bold">Error!</strong>
-                <span class="block sm:inline">{{ session('error') }}</span>
-            </div>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 relative" role="alert">
+                    <strong class="font-bold">Error!</strong>
+                    <span class="block sm:inline">{{ session('error') }}</span>
+                </div>
             @endif
-            <form id="bayarForm" action="{{route('client.bayar',$task->id)}}" method="POST">
+            <form id="bayarForm" action="{{route('client.bayar', $task->id)}}" method="POST">
                 @csrf
                 <!-- Input Jumlah -->
                 <div class="mb-4">
                     <label for="id_order" class="block text-sm font-medium">Order ID</label>
-                    <input type="" name="id_order" id="" class="w-full border rounded px-3 py-2 mt-1" value="{{ $task->id }}" readonly>
+                    <input type="" name="id_order" id="" class="w-full border rounded px-3 py-2 mt-1"
+                        value="{{ $task->id }}" readonly>
                 </div>
                 <div class="mb-4">
                     <label for="amount" class="block text-sm font-medium">Jumlah Harga</label>
-                    <input type="number" name="amount" id="amount" class="w-full border rounded px-3 py-2 mt-1" placeholder="Contoh: 150000" required>
+                    <input type="number" name="amount" id="amount" class="w-full border rounded px-3 py-2 mt-1"
+                        placeholder="Contoh: 150000" required>
                 </div>
 
                 <!-- Tombol Submit -->
@@ -208,41 +312,70 @@
                     Bayar Sekarang
                 </button>
                 <!-- Tombol Close -->
-                <button onclick="closeModal()" class="py-2 px-4 mt-4 bg-red-600 rounded hover:bg-red-700 w-full text-white">
+                <button onclick="closeModal()"
+                    class="py-2 px-4 mt-4 bg-red-600 rounded hover:bg-red-700 w-full text-white">
                     Tutup
                 </button>
             </form>
         </div>
-    
+
     </div>
     @if(session('error'))
-    <div class="fixed top-4 right-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md z-50" id="globalAlert" role="alert">
-        <div class="flex">
-            <div class="py-1">
-                <svg class="h-6 w-6 text-red-500 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+        <div class="fixed top-4 right-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md z-50"
+            id="globalAlert" role="alert">
+            <div class="flex">
+                <div class="py-1">
+                    <svg class="h-6 w-6 text-red-500 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-bold">Error</p>
+                    <p class="text-sm">{{ session('error') }}</p>
+                </div>
+                <button onclick="document.getElementById('globalAlert').style.display='none'" class="ml-auto">
+                    <svg class="h-4 w-4 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
-            <div>
-                <p class="font-bold">Error</p>
-                <p class="text-sm">{{ session('error') }}</p>
-            </div>
-            <button onclick="document.getElementById('globalAlert').style.display='none'" class="ml-auto">
-                <svg class="h-4 w-4 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
         </div>
-    </div>
     @endif
-    <!-- Snap -->
-    <div id="snap-container"></div>
-</section>
+</div>
 
 @include('General.footer')
 
-<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+
+<script src="https://app.sandbox.midtrans.com/snap/snap.js"
+    data-client-key="{{ config('midtrans.client_key') }}"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.tab-button');
+        const tabs = document.querySelectorAll('.tab-content');
+
+        // Set the first tab as default active
+        buttons[0].classList.add('bg-[#1F4482]', 'text-white');
+        tabs[0].classList.remove('hidden');
+
+        buttons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                // Reset all tabs
+                buttons.forEach((btn) => {
+                    btn.classList.remove('bg-[#1F4482]', 'text-white');
+                    btn.classList.add('text-gray-600');
+                });
+                tabs.forEach((tab) => tab.classList.add('hidden'));
+
+                // Set clicked tab as active
+                button.classList.add('bg-[#1F4482]', 'text-white');
+                tabs[index].classList.remove('hidden');
+            });
+        });
+    });
+
     @if(session('snap_token'))
         // Close modal if open
         if (document.getElementById('bayarModal')) {
@@ -252,37 +385,37 @@
             document.getElementById('modalContent').classList.remove('scale-100');
             document.getElementById('modalContent').classList.add('scale-95');
         }
-        
+
         // Open Snap payment page
         snap.pay('{{ session('snap_token') }}', {
-            onSuccess: function(result) {
+            onSuccess: function (result) {
                 alert('Pembayaran berhasil!');
                 window.location.href = '{{ route('jobs.my') }}';
                 // window.location.href = '{{route('invoice', $task->id)}}';
             },
-            onPending: function(result) {
+            onPending: function (result) {
                 alert('Pembayaran tertunda, silakan selesaikan pembayaran Anda');
                 window.location.reload();
             },
-            onError: function(result) {
+            onError: function (result) {
                 alert('Pembayaran gagal, silakan coba lagi');
                 window.location.reload();
             },
-            onClose: function() {
+            onClose: function () {
                 alert('Anda menutup popup tanpa menyelesaikan pembayaran');
             }
         });
     @endif
-    function openModal() {
-        const modal = document.getElementById('bayarModal');
-        const content = document.getElementById('modalContent');
+        function openModal() {
+            const modal = document.getElementById('bayarModal');
+            const content = document.getElementById('modalContent');
 
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-            modal.classList.replace('opacity-0', 'opacity-100');
-            content.classList.replace('scale-95', 'scale-100');
-        }, 10); 
-    }
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.replace('opacity-0', 'opacity-100');
+                content.classList.replace('scale-95', 'scale-100');
+            }, 10);
+        }
 
     function closeModal() {
         const modal = document.getElementById('bayarModal');
@@ -293,7 +426,7 @@
 
         setTimeout(() => {
             modal.classList.add('hidden');
-        }, 300); 
+        }, 300);
     }
 
     // Tampilkan opsi berdasarkan pilihan
@@ -322,7 +455,7 @@
 
 
     if (document.getElementById('globalAlert')) {
-        setTimeout(function() {
+        setTimeout(function () {
             document.getElementById('globalAlert').style.display = 'none';
         }, 5000);
     }
@@ -357,96 +490,96 @@
         container.innerHTML = '';
         items.forEach(item => container.appendChild(item));
     }
+    <!-- Untuk hapus task admin -->
 
-
-function confirmCancel(taskId) {
-    Swal.fire({
-        title: 'Yakin ingin membatalkan?',
-        text: "Tindakan ini tidak bisa dikembalikan!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#aaa',
-        confirmButtonText: 'Ya, batalkan!',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Task berhasil dibatalkan!',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#3085d6'
-            }).then(() => {
-                document.getElementById(`cancelTaskForm${taskId}`).submit();
-            });
-        }
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    const sortSelect = document.getElementById("sortBy");
-    if (sortSelect) {
-        sortSelect.addEventListener("change", sortApplicants);
+    function confirmCancel(taskId) {
+        Swal.fire({
+            title: 'Yakin ingin menghapus task?',
+            text: "Tindakan ini tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Hapus Task',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Task berhasil dibatalkan!',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#1F4482'
+                }).then(() => {
+                    document.getElementById(`cancelTaskForm${taskId}`).submit();
+                });
+            }
+        });
     }
 
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.addEventListener('click', () => {
-            console.log("Tab clicked:", button.dataset.tab);
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('text-blue-600', 'font-semibold'));
-            button.classList.add('text-blue-600', 'font-semibold');
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-            document.getElementById(button.dataset.tab)?.classList.remove('hidden');
-        });
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const sortSelect = document.getElementById("sortBy");
+        if (sortSelect) {
+            sortSelect.addEventListener("change", sortApplicants);
+        }
 
-    document.querySelectorAll('.btn-worker-info').forEach(btn => {
-        btn.addEventListener('click', () => {
-            renderWorkerModal(workerData);
-            showWorkerTab('keahlianTab');
-            document.getElementById('workerDetailModal').classList.remove('hidden');
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                console.log("Tab clicked:", button.dataset.tab);
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('text-blue-600', 'font-semibold'));
+                button.classList.add('text-white', 'font-semibold');
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+                document.getElementById(button.dataset.tab)?.classList.remove('hidden');
+            });
+        });
+
+        document.querySelectorAll('.btn-worker-info').forEach(btn => {
+            btn.addEventListener('click', () => {
+                renderWorkerModal(workerData);
+                showWorkerTab('keahlianTab');
+                document.getElementById('workerDetailModal').classList.remove('hidden');
+            });
         });
     });
-});
     function calculateAverageRating(reviews) {
-    if (!reviews || reviews.length === 0) return 0;
+        if (!reviews || reviews.length === 0) return 0;
 
-    const total = reviews.reduce((sum, r) => sum + r.rating, 0);
-    return total / reviews.length;
-}
+        const total = reviews.reduce((sum, r) => sum + r.rating, 0);
+        return total / reviews.length;
+    }
 
     function openWorkerModalFromElement(el) {
-    const data = el.closest('div');
-    
-    const name = data.getAttribute('data-name');
-    const note = data.getAttribute('data-note');
-    const price = data.getAttribute('data-price');
-    const experience = data.getAttribute('data-experience');
-    const rating = data.getAttribute('data-rating');
-    const education = data.getAttribute('data-education');
-    const cv = data.getAttribute('data-cv');
-    const label = data.getAttribute('data-label') === '1' ? 'Ya' : 'Tidak';
-    const affiliate = data.getAttribute('data-affiliate') === '1' ? 'Ya' : 'Tidak';
+        const data = el.closest('div');
 
-    // Inject ke modal
-    document.getElementById("worker-name").textContent = name;
-    document.getElementById("worker-skills-value").textContent = "-"; // dari backend belum ada
-    document.getElementById("worker-label").textContent = label;
-    document.getElementById("worker-affiliate").textContent = affiliate;
-    document.getElementById("worker-education").textContent = education;
-    document.getElementById("worker-experience").textContent = `${experience} tahun`;
-    document.getElementById("worker-cv").href = cv ?? "#";
+        const name = data.getAttribute('data-name');
+        const note = data.getAttribute('data-note');
+        const price = data.getAttribute('data-price');
+        const experience = data.getAttribute('data-experience');
+        const rating = data.getAttribute('data-rating');
+        const education = data.getAttribute('data-education');
+        const cv = data.getAttribute('data-cv');
+        const label = data.getAttribute('data-label') === '1' ? 'Ya' : 'Tidak';
+        const affiliate = data.getAttribute('data-affiliate') === '1' ? 'Ya' : 'Tidak';
 
-    // Rating Summary
-    document.getElementById("worker-rating-summary").innerHTML = `
+        // Inject ke modal
+        document.getElementById("worker-name").textContent = name;
+        document.getElementById("worker-skills-value").textContent = "-"; // dari backend belum ada
+        document.getElementById("worker-label").textContent = label;
+        document.getElementById("worker-affiliate").textContent = affiliate;
+        document.getElementById("worker-education").textContent = education;
+        document.getElementById("worker-experience").textContent = `${experience} tahun`;
+        document.getElementById("worker-cv").href = cv ?? "#";
+
+        // Rating Summary
+        document.getElementById("worker-rating-summary").innerHTML = `
         <h3 class="text-2xl font-semibold">${rating}</h3>
         <p class="text-yellow-500 text-xl">${"⭐".repeat(Math.floor(rating))}</p>
         <p class="text-sm text-gray-500">Dari rating user</p>
     `;
 
-    // Show modal
-    showWorkerTab('keahlianTab');
-    document.getElementById('workerDetailModal').classList.remove('hidden');
-}
+        // Show modal
+        showWorkerTab('keahlianTab');
+        document.getElementById('workerDetailModal').classList.remove('hidden');
+    }
 
 
 
@@ -556,12 +689,33 @@ document.addEventListener('DOMContentLoaded', function () {
         showWorkerTab('keahlianTab');
         document.getElementById('workerDetailModal').classList.remove('hidden');
     }
-
-    // Tab Switch Modal
-    function showWorkerTab(tabId) {
-        document.querySelectorAll(".worker-tab-content").forEach(el => el.classList.add("hidden"));
-        document.getElementById(tabId).classList.remove("hidden");
-    }
-
-    // Inisialisasi awal
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const tabId = this.getAttribute('data-tab');
+
+                // Sembunyikan semua tab
+                tabContents.forEach(content => content.classList.add('hidden'));
+
+                // Tampilkan tab yang sesuai
+                document.getElementById(tabId).classList.remove('hidden');
+
+                // Update gaya tombol
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('bg-[#1F4482]', 'text-white');
+                    btn.classList.add('text-gray-600');
+                });
+                this.classList.remove('text-gray-600');
+                this.classList.add('bg-[#1F4482]', 'text-white');
+            });
+        });
+    });
+</script>
+
+@include('General.footer')

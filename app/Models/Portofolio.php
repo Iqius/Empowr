@@ -9,7 +9,7 @@ class Portofolio extends Model
 {
     use HasFactory;
 
-    protected $table = 'portfolios';
+    protected $table = 'portofolios';
 
     protected $fillable = [
         'worker_id',
@@ -25,6 +25,6 @@ class Portofolio extends Model
 
     public function images()
     {
-        return $this->hasMany(PortofolioImage::class, 'portfolio_id');
+        return $this->hasMany(PortofolioImage::class, 'portofolio_id');
     }
 }

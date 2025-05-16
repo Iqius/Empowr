@@ -19,15 +19,30 @@ class JobController extends Controller
     // List All Jobs 
     public function index()
     {
-        $jobs = task::all();
+
+        $jobs = Task::all();
         return view('General.jobs', compact('jobs'));
+    }
+
+    public function indexWorker()
+    {
+        $worker = Auth::user();
+        $workerProfile = $worker->workerProfile;
+        return view('worker.dashboardWorker', compact('workerProfile'));
     }
 
 
     // Tampilan add newjob
-    public function addJobView(){
-        return view('Client.addJobNew');
+    public function addJobView()
+    {
+        if (Auth::user()->role == 'client') {
+            return view('Client.addJobNew');
+        } else {
+            return view('admin.dashboardAdmin');
+        }
     }
+
+
     // Create job Client
     public function createJobClient(Request $request)
     {
@@ -35,15 +50,15 @@ class JobController extends Controller
             'job_file' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240', // max 2MB
         ]);
 
-        
+
         // Handle file upload jika ada
         $path = null;
         if ($request->hasFile('job_file')) {
             $path = $request->file('job_file')->store('task_files', 'public');
         }
 
-        
-        
+
+
         $task = Task::create([
             'client_id' => Auth::id(),
             'profile_id' => null, // default null, nanti diassign saat ada worker apply
@@ -57,12 +72,58 @@ class JobController extends Controller
             'price' => $request->price,
             'status' => 'open',
             'revisions' => $request->revisions,
-            'category' => $request->category,
+            'kategory' => json_encode($request->kategoriWorker),
             'job_file' => $path,
         ]);
-        
         return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
+
+
+    // Tampilan add newjob
+    public function updateJobView($id)
+    {
+        $job = Task::findOrFail($id);
+        return view('Client.updateJob', compact('job'));
+    }
+
+    public function updateJobClient(Request $request, $id)
+    {
+        $request->validate([
+            'job_file' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240', // max 10MB
+        ]);
+
+        // Cari task berdasarkan ID, atau gagal 404 jika tidak ada
+        $task = Task::findOrFail($id);
+
+        $oldFilePath = $task->job_file;
+        $newPath = $oldFilePath;
+
+        if ($request->hasFile('job_file')) {
+            $newPath = $request->file('job_file')->store('task_files', 'public');
+
+            if ($oldFilePath && \Storage::disk('public')->exists($oldFilePath)) {
+                \Storage::disk('public')->delete($oldFilePath);
+                \Log::info("File lama milik task ID {$task->id} telah dihapus: {$oldFilePath}");
+            }
+        }
+
+        $task->update([
+            'title' => $request->title ?? $task->title,
+            'description' => $request->description ?? $task->description,
+            'qualification' => $request->qualification ?? $task->qualification,
+            'provisions' => $request->rules ?? $task->provisions,
+            'start_date' => $request->start_date ?? $task->start_date,
+            'deadline' => $request->deadline ?? $task->deadline,
+            'deadline_promotion' => $request->deadline_promotion ?? $task->deadline_promotion,
+            'price' => $request->price ?? $task->price,
+            'revisions' => $request->revisions ?? $task->revisions,
+            'kategory' => $request->kategoriWorker ? json_encode($request->kategoriWorker) : $task->kategory,
+            'job_file' => $newPath,
+        ]);
+
+        return redirect()->route('jobs.index')->with('success-edit', "Job telah diperbarui!.");
+    }
+
 
 
     public function getJobData()
@@ -77,6 +138,8 @@ class JobController extends Controller
     {
         // Ambil job berdasarkan ID dari URL
         $job = task::with('user')->findOrFail($id); // Ambil juga relasi user jika ada
+
+        // Ambil semua pelamar
         $applicants = TaskApplication::with([
             'worker.user',
             'worker.certifications.images',
@@ -84,8 +147,17 @@ class JobController extends Controller
         ])
             ->where('task_id', $id)
             ->get();
-        // Kirim ke view
-        return view('General.showJobsDetail', compact('job', 'applicants'));
+
+        // Dapatkan profile_id worker yang sedang login
+        $profileId = WorkerProfile::where('user_id', Auth::id())->value('id');
+
+        // Cek apakah user ini sudah melamar task tersebut
+        $hasApplied = TaskApplication::where('task_id', $id)
+            ->where('profile_id', $profileId)
+            ->exists();
+
+        // Kirim ke view, tambahkan variabel $hasApplied
+        return view('General.showJobsDetail', compact('job', 'applicants', 'hasApplied'));
     }
     public function myJobs()
     {
@@ -105,8 +177,8 @@ class JobController extends Controller
         // Ambil Task yang berhubungan dengan workerProfile (task yang dikerjakan oleh worker)
         $task = Task::with('worker')
             ->where('profile_id', $workerProfile->id) // Asumsi profile_id di task adalah id dari workerProfile
-            ->get(); 
-        return view('Worker.Jobs.myJobWorker', compact('taskApplied','task'));
+            ->get();
+        return view('Worker.Jobs.myJobWorker', compact('taskApplied', 'task'));
     }
 
 
@@ -137,8 +209,7 @@ class JobController extends Controller
             }, SORT_REGULAR, $request->get('dir') === 'desc')
             ->values(); // reset index
 
-            return view('client.jobs.manage', compact('task', 'applicants'));
-        
+        return view('client.jobs.manage', compact('task', 'applicants'));
     }
 
 
@@ -151,7 +222,7 @@ class JobController extends Controller
             ->where('profile_id', Auth::id())
             ->first();
 
-        return view('manageWorker', compact('task', 'application'));
+        return view('worker.manageWorker', compact('task', 'application'));
     }
 
     public function destroy($id)
@@ -196,7 +267,6 @@ class JobController extends Controller
             'status' => 'pending',
             'applied_at' => now(),
         ]);
-
         return back()->with('success', 'Lamaran berhasil dikirim.');
     }
     public function accept($applicationId)
@@ -235,7 +305,7 @@ class JobController extends Controller
         if (!$task->bayar) {
             return back()->with('error', 'Silakan bayar terlebih dahulu sebelum merekrut worker.');
         }
-    
+
         $profile = WorkerProfile::findOrFail($request->worker_profile_id);
 
         // 2. Update task
@@ -336,11 +406,11 @@ class JobController extends Controller
         if ($hash === $request->signature_key) {
             if ($request->transaction_status === 'capture') {
                 $task = Task::where('id', $request->order_id)->first();
-                if ($task->bayar==0) {
+                if ($task->bayar == 0) {
                     $task->bayar = true;
                     $task->price = $request->gross_amount;
                     $task->save();
-                }else if($task->bayar==1){
+                } else if ($task->bayar == 1) {
                     $task->price = $task->price + $request->gross_amount;
                     $task->save();
                 }
@@ -390,7 +460,7 @@ class JobController extends Controller
         $currentStep = $progressionsByStep->keys()->max() + 1;
         $canSubmit = $this->determineCanSubmit($currentStep, $progressionsByStep);
 
-        if ($task->status !== 'completed'){
+        if ($task->status !== 'completed') {
             return view('General.detailProgressionJobs', compact(
                 'task',
                 'steps',
@@ -398,40 +468,40 @@ class JobController extends Controller
                 'progressions',
                 'canSubmit' // jangan lupa lempar ke view kalau mau dipakai
             ));
-        }else{
+        } else {
             return view('General.detailProgressionComplite', compact(
-                'task','progressions',
+                'task',
+                'progressions',
             ));
         }
-        
     }
 
 
     private function determineCanSubmit($step, $progressionsByStep)
     {
         $canSubmit = false;
-    
+
         $third = $progressionsByStep[3] ?? null;
         $fourth = $progressionsByStep[4] ?? null;
-    
+
         // Ambil data task terkait
         $task = $third?->task ?? null;
-    
+
         // Cek jika task ada dan memiliki kolom revisions
         $taskRevisions = $task ? $task->revisions : 0;
-    
+
         // Hitung revisi yang sudah ada di progression (dari step 4 dan seterusnya)
         $currentRevisions = Progression::where('task_id', $third->task_id ?? null)
             ->where('progression_ke', '>=', 4) // Memperhitungkan revisi setelah step 3
             ->count();
-    
+
         // Jika ini adalah step pertama, cek apakah progression pertama sudah disetujui
         if ($step == 1) {
             if (isset($progressionsByStep[1]) && $progressionsByStep[1]->status_approve == 'approved') {
                 $canSubmit = true;
             }
         }
-    
+
         // Special rules for step 4 (revisi)
         if ($step == 4) {
             // Cek apakah revisi masih diizinkan
@@ -439,16 +509,12 @@ class JobController extends Controller
                 $canSubmit = true;
             }
         }
-    
+
         // Jika revisi yang sudah dilakukan lebih sedikit dari yang diizinkan, tombol submit harus muncul
         if ($currentRevisions < $taskRevisions) {
             $canSubmit = true;
         }
-    
+
         return $canSubmit;
     }
-    
-        
-
-
 }
