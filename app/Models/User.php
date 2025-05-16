@@ -77,4 +77,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(WorkerProfile::class, 'user_id');
     }
+
+    public function getNameAttribute()
+    {
+        return $this->username;
+    }
+
+    public function isOnline()
+    {
+        return false; // Selalu kembalikan false
+    }
 }

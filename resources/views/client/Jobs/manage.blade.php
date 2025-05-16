@@ -269,11 +269,11 @@
                             </form>
                         </div>
                     </div>
+
                 </div>
             @endforeach
         </div>
     </div>
-
 
     <!-- Tab 3: Chat -->
     <div id="chat" class="tab-content hidden mt-4">

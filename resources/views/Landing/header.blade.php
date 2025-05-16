@@ -24,6 +24,8 @@
             font-family: "Poppins", sans-serif;
         }
     </style>
+    <link rel="icon" href="{{ asset('assets/images/logosaja.png') }}" type="image/png">
+
 </head>
 
 <body class="bg-grey" style="font-family: sans-serif;">
