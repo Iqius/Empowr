@@ -90,6 +90,8 @@ class ProfileController extends Controller
             'bank_number' => 'nullable|string',
             'pemilik_bank' => 'nullable|string',
             'ewallet_provider' => 'nullable|string',
+            'bank_account_name' => 'nullable|string',
+            'ewallet_account_name' => 'nullable|string',
         ]);
 
         // Update user data only if present
@@ -125,7 +127,8 @@ class ProfileController extends Controller
         $existingAccount->ewallet_provider = $request->ewallet_name ?? $existingAccount->ewallet_provider;
         $existingAccount->bank_name = $request->bank_name ?? $existingAccount->bank_name;
         $existingAccount->account_number = $request->bank_number ?? $existingAccount->account_number;
-        $existingAccount->account_name = $request->pemilik_bank ?? $existingAccount->account_name;
+        $existingAccount->bank_account_name = $request->pemilik_bank ?? $existingAccount->bank_account_name;
+        $existingAccount->ewallet_account_name = $request->pemilik_ewallet ?? $existingAccount->account_nameewallet_account_name;
         $existingAccount->save();
 
         // Upload Sertifikat (jika ada)

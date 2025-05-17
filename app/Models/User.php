@@ -87,4 +87,9 @@ class User extends Authenticatable
     {
         return false; // Selalu kembalikan false
     }
+
+    public function ewallet()
+    {
+        return $this->hasOne(Ewallet::class, 'user_id');
+    }
 }

@@ -121,10 +121,6 @@
                                 Tidak Bisa Dibatalkan Task Sudah Di Proses
                             </button>
                         @endif
-                        <button onclick="openModal()"
-                            class="bg-[#1F4482] text-white px-8 py-2 rounded hover:bg-[#18346a]">
-                            Bayar
-                        </button>
                     </div>
                 </div>
             </div>
@@ -245,15 +241,12 @@
                             </a>
                             <button class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a]">Chat</button>
 
-                            <form action="{{ route('client.hire') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="task_id" value="{{ $applicant->task_id }}">
-                                <input type="hidden" name="worker_profile_id" value="{{ $worker->id }}">
-                                <button type="submit"
-                                    class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800">
-                                    Terima
-                                </button>
-                            </form>
+                            <!-- Tombol yang membuka modal hire -->
+                            <button type="button"
+                                class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800"
+                                onclick="openPaymentModal()">
+                                Hire worker
+                            </button>
 
                             <form action="{{ route('client.reject') }}" method="POST">
                                 @csrf
@@ -270,7 +263,59 @@
         </div>
     </div>
 
-    <!-- Modal bayar -->
+    <!-- Modal hire pilih metode bayar-->
+    <div id="paymentModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 z-50"
+        onclick="handleOverlayClick(event)">
+        
+        <!-- Konten Modal -->
+        <div class="bg-white p-6 rounded-md w-full max-w-md transform scale-95 transition-all duration-300"id="modalContent">
+            <h2 class="text-lg font-bold mb-4">Pilih Metode Pembayaran</h2>
+            <div class="flex flex-col gap-2">
+                <button type="button" onclick="openEwalletModal()" class="bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+                    Bayar dengan E-Wallet
+                </button>
+                <button type="button" onclick="openModal()" class="bg-green-600 text-white py-2 rounded-md hover:bg-green-700">
+                    Bayar Langsung
+                </button>
+                <button type="button" onclick="closePaymentModal()" class="bg-gray-300 text-gray-700 py-2 rounded-md hover:bg-gray-400">
+                    Batal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal bayar ewallet -->
+    <div id="ewalletModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 opacity-0" onclick="handleOutsideClick(event)">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm transform transition-transform duration-300 scale-90" id="ewalletContent" onclick="event.stopPropagation()">
+            <h2 class="text-xl font-bold mb-4 text-center">Konfirmasi Pembayaran</h2>
+
+            <form id="ewalletPaymentForm" action="{{ route('client.bayar.ewallet', $task->id) }}" method="POST">
+                @csrf
+                <input type="hidden" name="task_id" value="{{ $task->id }}">
+                <input type="hidden" name="type" value="payment">
+                <input type="hidden" name="worker_profile_id" value="{{ $applicant->profile_id }}">
+                <input type="hidden" name="client_id" value="{{ Auth::id() }}">
+                <input type="hidden" name="payment_method" value="ewallet" />
+                <div class="mb-4">
+                    <p class="text-sm text-gray-600">Anda akan melakukan pembayaran menggunakan saldo E-Wallet.</p>
+                    <input type="number" class="mt-2 text-lg font-semibold" name="amount" value="{{ $applicant->bidPrice }}"></input>
+                    <p class="text-sm text-gray-500 mt-1">Saldo tersedia: Rp{{ number_format($ewallet->balance ?? 0, 0, ',', '.') }}</p>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+                    Bayar Sekarang
+                </button>
+
+                <button type="button" onclick="closeEwalletModal()" class="mt-2 w-full py-2 rounded bg-gray-400 text-white hover:bg-gray-500">
+                    Batal
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Modal bayar direct-->
     <div id="bayarModal"
         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden transition-opacity duration-300 opacity-0">
         <div id="modalContent"
@@ -283,32 +328,40 @@
                     <span class="block sm:inline">{{ session('error') }}</span>
                 </div>
             @endif
-            <form id="bayarForm" action="{{route('client.bayar', $task->id)}}" method="POST">
-                @csrf
-                <!-- Input Jumlah -->
-                <div class="mb-4">
-                    <label for="id_order" class="block text-sm font-medium">Order ID</label>
-                    <input type="" name="id_order" id="" class="w-full border rounded px-3 py-2 mt-1"
-                        value="{{ $task->id }}" readonly>
-                </div>
-                <div class="mb-4">
-                    <label for="amount" class="block text-sm font-medium">Jumlah Harga</label>
-                    <input type="number" name="amount" id="amount" class="w-full border rounded px-3 py-2 mt-1"
-                        placeholder="Contoh: 150000" required>
-                </div>
+            @if(!empty($applicant))
+                <form id="bayarForm" action="{{ route('client.bayar', $task->id) }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="id_order" value="{{ $task->id }}">
+                    <input type="hidden" name="worker_profile_id" value="{{ $applicant->profile_id }}">
+                    <input type="hidden" name="payment_method" value="direct" />
+                    <input type="hidden" name="type" value="payment" />
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium">Order ID</label>
+                        <input type="text" class="w-full border rounded px-3 py-2 mt-1" value="{{ $task->id }}" readonly>
+                    </div>
 
-                <!-- Tombol Submit -->
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full">
-                    Bayar Sekarang
-                </button>
-                <!-- Tombol Close -->
-                <button onclick="closeModal()"
-                    class="py-2 px-4 mt-4 bg-red-600 rounded hover:bg-red-700 w-full text-white">
-                    Tutup
-                </button>
-            </form>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium">Jumlah Harga</label>
+                        <input type="number" name="amount" class="w-full border rounded px-3 py-2 mt-1"
+                            value="{{ $applicant->bidPrice }}" readonly>
+                    </div>
+
+                    <button type="submit"
+                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full">
+                        Bayar Sekarang
+                    </button>
+                    <button onclick="closeModal()"
+                        class="py-2 px-4 mt-4 bg-red-600 rounded hover:bg-red-700 w-full text-white">
+                        Tutup
+                    </button>
+                </form>
+            @else
+                <div class="text-red-600 font-semibold">
+                    Tidak ada pelamar yang tersedia untuk dibayar.
+                </div>
+            @endif
         </div>
-
     </div>
     @if(session('error'))
         <div class="fixed top-4 right-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md z-50"
@@ -338,9 +391,89 @@
 
 @include('General.footer')
 
+<!-- untuk modal bayar pake ewallet -->
+<script>
+    function openEwalletModal() {
+        const modal = document.getElementById('ewalletModal');
+        modal.classList.remove('hidden');
+        setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    }
+
+    function closeEwalletModal() {
+        const modal = document.getElementById('ewalletModal');
+        modal.classList.add('opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+
+    function handleOutsideClick(event) {
+        if (event.target.id === 'ewalletModal') {
+            closeEwalletModal();
+        }
+    }
+</script>
 
 <script src="https://app.sandbox.midtrans.com/snap/snap.js"
     data-client-key="{{ config('midtrans.client_key') }}"></script>
+
+
+<!-- JS UNTUK MODAL HIRE -->
+<script>
+    function openPaymentModal() {
+        const modal = document.getElementById('paymentModal');
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100');
+    }
+
+    function closePaymentModal() {
+        const modal = document.getElementById('paymentModal');
+        modal.classList.remove('opacity-100');
+        modal.classList.add('opacity-0');
+
+        // Tunggu transisi selesai
+        setTimeout(() => {
+            modal.classList.add('pointer-events-none');
+        }, 300);
+    }
+
+    function submitWithMethod(method) {
+        document.getElementById('payment_method').value = method;
+        document.getElementById('paymentForm').submit();
+    }
+
+    function handleOverlayClick(event) {
+        const content = document.getElementById('modalContent');
+        if (!content.contains(event.target)) {
+            closePaymentModal();
+        }
+    }
+</script>
+
+
+<!-- JS UNTUK BAWA METODE PEMBAYARAN -->
+<script>
+    function submitWithMethod(method) {
+        // Set nilai payment_method di hidden input form bayar
+        document.querySelector('#bayarForm input[name="payment_method"]').value = method;
+
+        // Submit form bayar langsung (modal bayar muncul setelah)
+        document.getElementById('bayarForm').submit();
+    }
+
+    function openModal() {
+        // Contoh kalau kamu mau buka modal bayar langsung
+        const bayarModal = document.getElementById('bayarModal');
+        bayarModal.classList.remove('hidden');
+        bayarModal.classList.add('flex', 'opacity-100');
+    }
+
+    function closeModal() {
+        const bayarModal = document.getElementById('bayarModal');
+        bayarModal.classList.add('hidden');
+        bayarModal.classList.remove('flex', 'opacity-100');
+    }
+</script>
+
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const buttons = document.querySelectorAll('.tab-button');

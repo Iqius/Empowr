@@ -42,7 +42,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Kolom kanan untuk konten -->
         <div class="p-4 rounded h-full">
             <div class="p-6 bg-white rounded-lg shadow-md h-full">
@@ -260,7 +259,7 @@
                             <label class="font-semibold">Nama akun Bank</label>
                             <input type="text" readonly
                                 class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
-                                value="{{ strtoupper(Auth::user()->paymentAccount?->account_name) ?? '-' }}">
+                                value="{{ strtoupper(Auth::user()->paymentAccount?->bank_account_name) ?? '-' }}">
                         </div>
                         <div class="flex flex-col gap-4">
                             <label class="font-semibold">Nomor rekening</label>
@@ -274,6 +273,12 @@
                             <input type="text" readonly
                                 class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
                                 value="{{ strtoupper(Auth::user()->paymentAccount?->ewallet_provider) ?? '-' }}">
+                        </div>
+                        <div class="flex flex-col gap-4">
+                            <label class="font-semibold">Nama akun Ewallet</label>
+                            <input type="text" readonly
+                                class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
+                                value="{{ strtoupper(Auth::user()->paymentAccount?->ewallet_account_name) ?? '-' }}">
                         </div>
                         <div class="flex flex-col gap-4">
                             <label class="font-semibold">Nomor E-wallet</label>

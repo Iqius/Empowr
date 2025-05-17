@@ -51,11 +51,11 @@ Route::post('/hire', [JobController::class, 'Clienthire'])->name('client.hire');
 // --Client Tolak Worker
 Route::post('/reject', [JobController::class, 'ClientReject'])->name('client.reject');
 // --bayar
-Route::post('/bayar/{task}', [JobController::class, 'bayar'])->name('client.bayar');
+Route::post('/bayar/{task?}', [JobController::class, 'bayar'])->name('client.bayar');
 // --review progress
 Route::post('/task-progression/{progress}/review', [ProgressionController::class, 'review'])->name('task-progression.review');
 // --Client complete job
-Route::post('/{task}/complite', [ProgressionController::class, 'CompliteJob'])->name('complite.job');
+Route::post('/task/{task}/complite', [ProgressionController::class, 'CompliteJob'])->name('complite.job');
 // --Tampilkan halaman Add Job New
 Route::post('/jobs', [JobController::class, 'createJobClient'])->name('jobs.store');
 Route::get('/add-job', function () {
@@ -95,10 +95,7 @@ Route::get('/in-progress-jobs/{task_id}', [JobController::class, 'DetailJobsInPr
 // --arbitrase
 // web.php
 Route::get('/arbitrase', [ArbitraseController::class, 'indexUser'])->name('arbitrase.user');
-// routes/web.php
-Route::get('/ewallet', function () {
-    return view('wallet');
-})->name('ewallet');
+
 
 //chat
 Route::get('/chat/search', [ChatController::class, 'search'])->middleware(['auth', 'admin'])->name('chat.search');
@@ -112,6 +109,13 @@ Route::delete('/chat/destroy/{id}', [ChatController::class, 'destroyConversation
 // --notif
 Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifications.index');
 Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+// --Ewallet
+Route::get('/ewallet/{id}', [JobController::class, 'ewalletIndex'])->name('ewallet.index');
+Route::post('/ewallet/pembayaran/{id}', [JobController::class, 'bayarEwalletBase'])->name('client.bayar.ewallet');
+
+
+
+
 
 
 ####### ADMIN

@@ -104,7 +104,6 @@ return new class extends Migration {
                 'Other'
             ])->nullable();
             $table->string('job_file')->nullable();
-            $table->boolean('bayar')->default(false);
             $table->timestamps();
 
             $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');

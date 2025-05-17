@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\WorkerProfile;
 use App\Models\Notification;
 use App\Models\Progression;
+use App\Models\Transaction;
+use App\Models\UserPaymentAccount;
+use App\Models\Ewallet;
 use App\Models\User;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -187,6 +190,12 @@ class JobController extends Controller
     {
         $task = Task::with('user')->findOrFail($id);
 
+        $userId = Auth::id();
+
+        $ewallet = Ewallet::where('user_id', $userId)->first();
+        
+        // Contoh akses saldo ewallet dengan null safe
+        
         // Filter
         $sortBy = $request->get('sort', 'bidPrice'); // default: harga
         $sortDir = $request->get('dir', 'asc'); // default: naik
@@ -209,7 +218,7 @@ class JobController extends Controller
             }, SORT_REGULAR, $request->get('dir') === 'desc')
             ->values(); // reset index
 
-        return view('client.jobs.manage', compact('task', 'applicants'));
+        return view('client.jobs.manage', compact('task', 'applicants','ewallet'));
     }
 
 
@@ -291,33 +300,6 @@ class JobController extends Controller
         return back()->with('success', 'Worker berhasil diterima. Task dimulai.');
     }
 
-    //function hire
-    public function Clienthire(Request $request)
-    {
-        $request->validate([
-            'task_id' => 'required|exists:task,id',
-            'worker_profile_id' => 'required|exists:worker_profiles,id',
-        ]);
-
-        $task = Task::find($request->task_id);
-
-        // 1. Cek apakah sudah bayar
-        if (!$task->bayar) {
-            return back()->with('error', 'Silakan bayar terlebih dahulu sebelum merekrut worker.');
-        }
-
-        $profile = WorkerProfile::findOrFail($request->worker_profile_id);
-
-        // 2. Update task
-        $task->profile_id = $profile->id;
-        $task->status = 'in progress';
-        $task->save();
-
-        TaskApplication::where('task_id', $task->id)->delete();
-
-        return back()->with('success', 'Worker berhasil direkrut, dan semua lamaran lainnya telah dihapus.');
-    }
-
     //tolak worker
     public function ClientReject(Request $request)
     {
@@ -342,51 +324,114 @@ class JobController extends Controller
         return back()->with('success', 'Lamaran berhasil dihapus.');
     }
 
-    //pay
-    public function bayar(Request $request, Task $task)
+    //BAYAR
+    public function bayar(Request $request, Task $task = null)
     {
         try {
-            // Set Midtrans configuration
             Config::$serverKey = config('midtrans.server_key');
             Config::$isProduction = false;
             Config::$isSanitized = true;
             Config::$is3ds = true;
 
-            // Get data from request
-            $id = $request->id_order;
+            // Ambil data dari request
             $amount = $request->amount;
+            $paymentMethod = $request->input('payment_method');
+            $type = $request->input('type'); 
 
-            // Find the task and client
-            $task = Task::findOrFail($id);
-            $client = User::findOrFail($task->client_id);
+            // Untuk payment type 'payment', harus ada task dan worker_profile_id
+            if ($type === 'payment') {
+                $id = $request->id_order;
+                $workerProfileId = $request->worker_profile_id;
 
+                $task = Task::findOrFail($id);
+                $client = User::findOrFail($task->client_id);
 
-            // Generate a unique order ID by appending timestamp
-            $uniqueOrderId = $id . '-' . time();
+                $workerId = $workerProfileId; // sesuaikan jika perlu cari worker id
 
-            // Set Midtrans parameters
-            $params = array(
-                'transaction_details' => array(
+                $uniqueOrderId = $id . '-' . $workerProfileId . '-' . time();
+
+                $transaction = Transaction::create([
                     'order_id' => $uniqueOrderId,
-                    'gross_amount' => $amount,
-                ),
-                'customer_details' => array(
+                    'task_id' => $id,
+                    'worker_id' => $workerId,
+                    'client_id' => $client->id,
+                    'amount' => $amount,
+                    'status' => 'pending',
+                    'type' => 'payment',
+                    'payment_method' => $paymentMethod,
+                ]);
+                
+
+                // Customer details dari client
+                $customer = [
                     'first_name' => $client->nama_lengkap,
                     'last_name' => '',
                     'email' => $client->email,
                     'phone' => $client->nomor_telepon,
-                ),
-            );
+                ];
 
-            // Get Snap Token
+            } elseif ($type === 'topup') {
+                // Untuk topup, dapat client_id atau worker_id (misal lewat request)
+                // Contoh: topup untuk user tertentu (client/worker)
+
+                // Misal topup untuk client_id (harus ada di form/request)
+                $clientId = $request->input('client_id'); // boleh null
+                $workerId = $request->input('worker_id'); // boleh null
+
+                if (!$clientId && !$workerId) {
+                    return back()->with('error', 'Topup harus ditujukan ke client atau worker.');
+                }
+
+                // Generate order id unik
+                $uniqueOrderId = 'topup-' . ($clientId ?? $workerId) . '-' . time();
+
+                $transaction = Transaction::create([
+                    'order_id' => $uniqueOrderId,
+                    'task_id' => null,
+                    'worker_id' => $workerId,
+                    'client_id' => $clientId,
+                    'amount' => $amount,
+                    'status' => 'pending',
+                    'type' => 'topup',
+                ]);
+
+                
+
+                // Cari data customer agar bisa kirim ke Midtrans
+                if ($clientId) {
+                    $user = User::findOrFail($clientId);
+                } elseif ($workerId) {
+                    $workerProfile = WorkerProfile::findOrFail($workerId);
+                    $user = $workerProfile->user;  // Ini akan ngambil data user terkait
+                }
+
+                $customer = [
+                    'first_name' => $user->nama_lengkap ?? $user->name ?? 'User',
+                    'last_name' => '',
+                    'email' => $user->email ?? 'user@example.com',
+                    'phone' => $user->nomor_telepon ?? '08123456789',
+                ];
+            } else {
+                return back()->with('error', 'Tipe pembayaran tidak valid.');
+            }
+
+            // Set parameter Midtrans
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $uniqueOrderId,
+                    'gross_amount' => $amount,
+                ],
+                'customer_details' => $customer,
+            ];
+
             $snapToken = Snap::getSnapToken($params);
 
-            // Return back to the same page with the snap token
             return back()->with([
                 'snap_token' => $snapToken,
                 'order_id' => $uniqueOrderId,
-                'amount' => $amount
+                'amount' => $amount,
             ]);
+
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
 
@@ -398,42 +443,124 @@ class JobController extends Controller
         }
     }
 
-    function callback(Request $request)
+
+    public function callback(Request $request)
     {
         $serverKey = config('midtrans.server_key');
         $hash = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
 
-        if ($hash === $request->signature_key) {
-            if ($request->transaction_status === 'capture') {
-                $task = Task::where('id', $request->order_id)->first();
-                if ($task->bayar == 0) {
-                    $task->bayar = true;
-                    $task->price = $request->gross_amount;
-                    $task->save();
-                } else if ($task->bayar == 1) {
-                    $task->price = $task->price + $request->gross_amount;
-                    $task->save();
-                }
-            } elseif ($request->transaction_status === 'pending') {
-                // Handle pending status
-            } elseif ($request->transaction_status === 'cancel' || $request->transaction_status === 'expire') {
-                // Handle cancel or expire status
-            }
-        } else {
+        if ($hash !== $request->signature_key) {
             return response()->json(['error' => 'Invalid signature'], 400);
         }
-    }
 
-    function invoice($id)
-    {
-        $task = Task::where('id', $id)->first();
+        $transaction = Transaction::where('order_id', $request->order_id)->first();
 
-        if (!$task) {
-            return redirect()->back()->with('error', 'Task not found.');
+        if (!$transaction) {
+            return response()->json(['error' => 'Transaction not found'], 404);
         }
 
-        return view('client.Jobs.invoice', compact('task'));
+        if ($request->transaction_status === 'capture' || $request->transaction_status === 'settlement') {
+            if ($transaction->status !== 'success') {
+                $transaction->status = 'success';
+                $transaction->save();
+
+                if ($transaction->type === 'payment') {
+                    $task = $transaction->task;
+                    if ($task) {
+                        $task->price = $transaction->amount;
+                        $task->profile_id = $transaction->worker_id;
+                        $task->client_id = $transaction->client_id;
+                        $task->status = 'in progress';
+                        $task->save();
+
+                        TaskApplication::where('task_id', $task->id)->delete();
+                    }
+                } elseif ($transaction->type === 'topup') {
+                    $userId = $transaction->client_id ?? $transaction->worker_id;
+
+                    $ewalet = Ewallet::where('user_id', $userId)->first();
+                    if ($ewalet) {
+                        $ewalet->balance += $transaction->amount;
+                        $ewalet->save();
+                    } else {
+                        Ewallet::create([
+                            'user_id' => $userId,
+                            'balance' => $transaction->amount,
+                        ]);
+                    }
+                }
+            }
+        } elseif ($request->transaction_status === 'pending') {
+            $transaction->status = 'pending';
+            $transaction->save();
+        } elseif ($request->transaction_status === 'cancel' || $request->transaction_status === 'expire') {
+            $transaction->status = $request->transaction_status;
+            $transaction->save();
+        }
+
+        return response()->json(['success' => true]);
     }
+
+
+
+    public function bayarEwalletBase(Request $request)
+    {
+        // Ambil user yang login
+        $user = auth()->user();
+        $taskId = $request->input('task_id');
+        $task = Task::find($taskId);
+        // Ambil data yang diperlukan
+        $amount = $request->amount ?? $task->price;
+        $paymentMethod = $request->input('payment_method');
+        $type = $request->input('type');
+        $workerId = $request->worker_profile_id ?? $task->profile_id;
+        
+        
+        // Ambil ewallet user
+        $ewallet = Ewallet::where('user_id', $user->id)->first();
+
+        if (!$ewallet) {
+            return back()->with('error', 'Ewallet tidak ditemukan.');
+        }
+
+        // Cek saldo cukup
+        if ($ewallet->balance < $amount) {
+            return back()->with('error', 'Saldo tidak mencukupi.');
+        }
+
+        // Potong saldo ewallet
+        $ewallet->balance -= $amount;
+        $ewallet->save();
+
+        $task->update([
+            'price' => $amount,
+            'profile_id' => $workerId,
+            'client_id' => $user->id,
+            'status' => 'in progress',
+        ]);
+        
+
+        // Hapus semua aplikasi task
+        TaskApplication::where('task_id', $task->id)->delete();
+        
+        // Buat unique order ID dan transaksi pembayaran
+        $uniqueOrderId = $taskId . '-' . $workerId . '-' . time();
+        
+        Transaction::create([
+            'order_id' => $uniqueOrderId,
+            'task_id' => $taskId,
+            'worker_id' => $workerId,
+            'client_id' => $user->id,
+            'amount' => $amount,
+            'status' => 'success',
+            'type' => $type,
+            'payment_method' => $paymentMethod,
+        ]);
+
+        return redirect()->route('jobs.my')->with('success', 'Pembayaran berhasil menggunakan e-wallet.');
+    }
+
+
 
     // Fungsi tampilan detail Job yang sudah in progres
     public function DetailJobsInProgress($id)
@@ -517,4 +644,24 @@ class JobController extends Controller
 
         return $canSubmit;
     }
+
+
+    public function ewalletIndex()
+    {
+        $userId = Auth::id();
+
+        $ewallet = Ewallet::where('user_id', $userId)->first();
+
+        $paymentAccounts = UserPaymentAccount::where('user_id', $userId)->first();
+
+        $transactions = Transaction::where('worker_id', $userId)
+                        ->orWhere('client_id', $userId)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+
+        return view('General.ewallet', compact('ewallet', 'paymentAccounts', 'transactions'));
+    }
 }
+
+
+
