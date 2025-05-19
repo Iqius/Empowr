@@ -12,6 +12,9 @@ use App\Models\Progression;
 use App\Models\task;
 use App\Models\WorkerProfile;
 use App\Models\TaskReview;
+use App\Models\Ewallet;
+use App\Models\Transaction;
+use Illuminate\Support\Facades\DB;
 
 class ProgressionController extends Controller
 {
@@ -35,7 +38,7 @@ class ProgressionController extends Controller
             'date_approve' => null,
             'progression_ke' => Progression::where('task_id', $taskId)->count() + 1,
         ]);
-        
+
 
         return back()->with('success', 'Progress berhasil dikirim.');
     }
@@ -71,10 +74,8 @@ class ProgressionController extends Controller
 
     public function CompliteJob(Request $request, $taskId)
     {
-
         // Ambil task berdasarkan taskId
         $task = task::findOrFail($taskId);
-
         if(auth()->user()->id === $task->client_id) { // Pastikan yang memberi review adalah client yang sesuai
             // Validasi rating dan komentar
             $request->validate([
@@ -92,33 +93,39 @@ class ProgressionController extends Controller
             ]);
         }
 
-        // Update task dengan data baru
         $task->update([
-            'status' => 'completed', // Misal ada status yang bisa diubah
+            'status' => 'completed',
         ]);
-
         $workerProfile = WorkerProfile::findOrFail($task->profile_id);
-        $user = User::findOrFail($workerProfile->user_id);
+        $userId = $workerProfile->user_id;
+        $ewallet = Ewallet::where('user_id', $userId)->first();
+        if ($ewallet) {
+            $ewallet->balance += $task->price;
+            $ewallet->save();
+        }
 
-        $user->ewallet += $task->price; // atau sesuai nama kolom saldo kamu
-        $user->save();
-
-        // Ambil progression terakhir yang terkait dengan task
+        Transaction::create([
+            'task_id' => $task->id,                  // ID task
+            'worker_id' => $workerProfile->id,       // ID worker profile
+            'client_id' => auth()->user()->id,       // ID client
+            'amount' => $task->price,
+            'status' => 'success',
+            'type' => 'salary',
+        ]);
+        
         $lastProgression = Progression::where('task_id', $taskId)
-        ->orderBy('created_at', 'desc') // Ambil yang paling terbaru
-        ->first();
-
+            ->orderBy('created_at', 'desc')
+            ->first();
         if ($lastProgression) {
-            // Hapus progression lain kecuali yang terakhir
             Progression::where('task_id', $taskId)
                 ->where('id', '!=', $lastProgression->id)
                 ->delete();
         }
-
         return redirect()->route('jobs.index')->with('success-updated', 'Job updated successfully.');
     }
 
-    public function ulasanWorker(Request $request, $taskId){
+    public function ulasanWorker(Request $request, $taskId)
+    {
         $task = task::findOrFail($taskId);
 
         $request->validate([

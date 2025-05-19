@@ -61,15 +61,16 @@
         <div class="w-full md:w-1/2 p-8 flex flex-col justify-center items-center slide-right">
             <form method="POST" action="{{ route('login') }}" class="w-full max-w-md">
                 @csrf
-                <h2 class="text-4xl font-extrabold text-[#1F4482] mb-2 ">Welcome to Empowr</h2>
-                <p class="block text-sm font-medium text-gray-600 mb-11">Sign In to access the feature!</p>
+                <h2 class="text-4xl font-extrabold text-[#1F4482] mb-2 ">Selamat Datang di Empowr</h2>
+                <p class="block text-sm font-medium text-gray-600 mb-11">Masuk ke akunmu untuk mengakses layanan dari
+                    kami!</p>
 
                 <!-- Email Input -->
                 <div class="relative mb-8">
                     <!-- Email Label -->
                     <label for="email" class="block text-sm font-medium text-gray-600 mb-1">Email Address</label>
                     <!-- Email Input -->
-                    <input id="email" type="email" name="email" placeholder="Enter Email" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 
+                    <input id="email" type="email" name="email" placeholder="Masukkan Email" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 
                 @error('email') border-red-500 @enderror" value="{{ old('email') }}">
 
                     @error('email')
@@ -82,7 +83,7 @@
                     <!-- Password Label -->
                     <label for="password" class="block text-sm font-medium text-gray-600 mb-1">Password</label>
                     <!-- Password Input -->
-                    <input id="password" type="password" name="password" placeholder="Enter Password" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 
+                    <input id="password" type="password" name="password" placeholder="Masukkan Password" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 
                 @error('password') border-red-500 @enderror">
 
                     <!-- Eye Icon for password visibility toggle -->
@@ -100,7 +101,7 @@
                 <div class="text-right mb-4">
                     <a href="{{ route('forgot-password.form') }}"
                         class="text-sm font-semibold text-[#1F4482] hover:underline">
-                        Forgot Password?
+                        Lupa Password?
                     </a>
                 </div>
 
@@ -111,13 +112,12 @@
                 </button>
 
                 <!-- Register Link -->
-                <p class="text-sm text-gray-600 mt-3">Don't have an account?
+                <p class="text-sm text-gray-600 mt-3">Belum memiliki akun?
                     <a href="{{ route('register') }}"
                         class="text-sm font-semibold text-[#1F4482] hover:underline">Register</a>
                 </p>
             </form>
         </div>
-
 
         <script>
             document.getElementById("closeModal").addEventListener("click", function () {
@@ -138,6 +138,27 @@
                     eyeIcon.classList.add("fa-eye");
                 }
             }
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    confirmButtonColor: '#1F4482',
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops!',
+                    text: '{{ session('error') }}',
+                    confirmButtonColor: '#1F4482',
+                });
+            @endif
         </script>
 </body>
 

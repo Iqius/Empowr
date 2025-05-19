@@ -3,28 +3,56 @@
 <div class="p-4 ">
   <div class="p-4 mt-14">
     <a href="{{ route('add-job-view') }}"
-        class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow mb-6">
-        Add New Job
+      class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow mb-6">
+      Add New Job
     </a>
     <h2 class="text-xl font-semibold mb-2 flex items-center gap-1">
-      Your Tasks
+      Task Kamu
       <span class="text-gray-400 text-base">
         <i class="fas fa-info-circle"></i>
       </span>
     </h2>
 
-    <div class="grid grid-cols-3 gap-4">
-      <div class="flex flex-col items-center justify-center h-32 bg-white p-6 rounded border border-gray-300">
-        <p class="text-3xl font-bold" style="color: #1F4482;">1</p>
-        <p class="text-base font-medium text-gray-600">Task Diposting</p>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <!-- Task Dilamar -->
+      <div
+        class="flex items-center justify-between h-32 bg-white text-[#1F4482] p-6 rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl">
+        <i class="fa fa-square-plus text-5xl ml-10"></i>
+        <div class="text-right mr-5">
+          <p class="text-base font-medium">Task Diposting</p>
+          <p class="text-4xl font-bold">1</p>
+        </div>
       </div>
-      <div class="flex flex-col items-center justify-center h-32 bg-white p-6 rounded border border-gray-300">
-        <p class="text-3xl font-bold" style="color: #1F4482;">0</p>
-        <p class="text-base font-medium text-gray-600">Sedang Berjalan</p>
+
+
+      <!-- Sedang Berjalan -->
+      <div
+        class="flex items-center justify-between h-32 bg-white text-[#1F4482] p-6 rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl">
+        <i class="fa fa-handshake text-5xl ml-10"></i>
+        <div class="text-right mr-5">
+          <p class="text-base font-medium">Sedang Berjalan</p>
+          <p class="text-4xl font-bold">1</p>
+        </div>
       </div>
-      <div class="flex flex-col items-center justify-center h-32 bg-white p-6 rounded border border-gray-300">
-        <p class="text-3xl font-bold" style="color: #1F4482;">1</p>
-        <p class="text-base font-medium text-gray-600">Task Selesai</p>
+
+      <!-- Task Selesai -->
+      <div
+        class="flex items-center justify-between h-32 bg-white text-[#1F4482] p-6 rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl">
+        <i class="fa fa-clipboard-check text-5xl ml-10"></i>
+        <div class="text-right mr-5">
+          <p class="text-base font-medium">Task Selesai</p>
+          <p class="text-4xl font-bold">1</p>
+        </div>
+      </div>
+
+      <!-- Task Selesai -->
+      <div
+        class="flex items-center justify-between h-32 bg-white text-[#1F4482] p-6 rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl">
+        <i class="fa fa-user-tie text-5xl ml-10"></i>
+        <div class="text-right mr-5">
+          <p class="text-base font-medium">Total Lamaran</p>
+          <p class="text-4xl font-bold">1</p>
+        </div>
       </div>
     </div>
 
@@ -213,7 +241,20 @@
 @include('General.footer')
 
 <script>
-
+  document.addEventListener("DOMContentLoaded", function () {
+    // ✅ SweetAlert for Success Message
+    @if(session('success'))
+    Swal.fire({
+      icon: 'success',
+      title: 'Berhasil Login!',
+      text: "{{ session('success') }}",
+      confirmButtonColor: '#1F4482',
+      confirmButtonText: 'OK'
+    }).then(() => {
+      window.location.href = window.location.href;
+    });
+  @endif
+    });
   const statusCtx = document.getElementById('statusChart').getContext('2d');
   new Chart(statusCtx, {
     type: 'line',

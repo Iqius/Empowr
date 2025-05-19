@@ -8,8 +8,8 @@ use App\Http\Middleware\CheckUserRole;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProgressionController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ArbitraseController;
-
 
 // LANDING PAGE
 Route::get('/', function () {
@@ -51,11 +51,11 @@ Route::post('/hire', [JobController::class, 'Clienthire'])->name('client.hire');
 // --Client Tolak Worker
 Route::post('/reject', [JobController::class, 'ClientReject'])->name('client.reject');
 // --bayar
-Route::post('/bayar/{task}', [JobController::class, 'bayar'])->name('client.bayar');
+Route::post('/bayar/{task?}', [JobController::class, 'bayar'])->name('client.bayar');
 // --review progress
 Route::post('/task-progression/{progress}/review', [ProgressionController::class, 'review'])->name('task-progression.review');
 // --Client complete job
-Route::post('/{task}/complite', [ProgressionController::class, 'CompliteJob'])->name('complite.job');
+Route::post('/task/{task}/complite', [ProgressionController::class, 'CompliteJob'])->name('complite.job');
 // --Tampilkan halaman Add Job New
 Route::post('/jobs', [JobController::class, 'createJobClient'])->name('jobs.store');
 Route::get('/add-job', function () {
@@ -93,26 +93,42 @@ Route::get('/chat', [\Chatify\Http\Controllers\MessagesController::class, 'index
 // --In progress jobs
 Route::get('/in-progress-jobs/{task_id}', [JobController::class, 'DetailJobsInProgress'])->name('inProgress.jobs');
 // --arbitrase
-Route::get('/arbitrase', function () {return view('General.arbitrase');});
+// web.php
+Route::get('/arbitrase', [ArbitraseController::class, 'indexUser'])->name('arbitrase.user');
+
+
+//chat
+Route::get('/chat/search', [ChatController::class, 'search'])->middleware(['auth', 'admin'])->name('chat.search');
+Route::get('/chat', [ChatController::class, 'index'])->middleware(['auth'])->name('chat.index'); // Ubah dari 'chat.show' ke 'chat.index'
+Route::get('/chat/{user}', [ChatController::class, 'show'])->middleware(['auth'])->name('chat.show');
+Route::post('/chat', [ChatController::class, 'store'])->middleware(['auth'])->name('chat.store');
+Route::delete('/chat/{conversation}', [ChatController::class, 'destroy'])->middleware(['auth'])->name('chat.destroy');
+Route::post('/chat/finish/{id}', [ChatController::class, 'finishConversation'])->name('chat.finish');
+Route::delete('/chat/destroy/{id}', [ChatController::class, 'destroyConversation'])->name('chat.destroy');
+// Route::get('/chat/messages', [ChatController::class, 'fetchMessages']);
 // --notif
 Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifications.index');
 Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+// --Ewallet
+Route::get('/ewallet/{id}', [JobController::class, 'ewalletIndex'])->name('ewallet.index');
+Route::post('/ewallet/pembayaran/{id}', [JobController::class, 'bayarEwalletBase'])->name('client.bayar.ewallet');
+
+
+
+
 
 
 ####### ADMIN
 // Dashboard
 Route::get('/admin/dashboard', [AuthController::class, 'adminDashboard'])->middleware(['auth'])->name('admin.dashboardAdmin');
 Route::get('/arbitraseget', [ArbitraseController::class, 'index'])->middleware(['auth'])->name('arbitrase.index');
+Route::get('/arbitraseDetail', [ArbitraseController::class, 'index'])->middleware(['auth'])->name('arbitrase.show');
+Route::post('/arbitrase/{id}/accept', [ArbitraseController::class, 'accept'])->name('arbitrase.accept');
+Route::post('/arbitrase/{id}/reject', [ArbitraseController::class, 'reject'])->name('arbitrase.reject');
 // 
 
-
-
-
-
-
-
-
-
+#### Arbitrase
+Route::post('/arbitrase/laporkan', [ArbitraseController::class, 'store'])->middleware(['auth'])->name('arbitrase.store');
 
 
 Route::get('/jobs/manage/{id}', [JobController::class, 'manage'])->name('jobs.manage');
@@ -134,6 +150,3 @@ Route::get('/tasks/{id}/applicants', [JobController::class, 'showApplicants']);
 
 Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage']);
 Route::get('/jobs', [JobController::class, 'addJobView'])->name('add-job-view');
-
-
-

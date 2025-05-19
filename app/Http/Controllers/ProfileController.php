@@ -71,7 +71,7 @@ class ProfileController extends Controller
             'email' => 'nullable|email',
             'nomor_telepon' => 'nullable|string',
             'bio' => 'nullable|string',
-            'keahlian' => 'nullable|array',
+            'keahlian' => 'nullable|string',
             'tingkat_keahlian' => 'nullable|string',
             'pengalaman_kerja' => 'nullable|string',
             'pendidikan' => 'nullable|string',
@@ -90,6 +90,8 @@ class ProfileController extends Controller
             'bank_number' => 'nullable|string',
             'pemilik_bank' => 'nullable|string',
             'ewallet_provider' => 'nullable|string',
+            'bank_account_name' => 'nullable|string',
+            'ewallet_account_name' => 'nullable|string',
         ]);
 
         // Update user data only if present
@@ -106,10 +108,9 @@ class ProfileController extends Controller
             $workerProfile->cv = $request->file('cv')->store('cv', 'public');
         }
 
-        if ($request->has('keahlian')) {
-            $workerProfile->keahlian = json_encode($request->keahlian);
-        }
+        $workerProfile->keahlian = $request->keahlian ?? $workerProfile->keahlian;
         $workerProfile->tingkat_keahlian = $request->tingkat_keahlian ?? $workerProfile->tingkat_keahlian;
+        $workerProfile->linkedin = $request->linkedin ?? $workerProfile->linkedin;
         $workerProfile->pengalaman_kerja = $request->pengalaman_kerja ?? $workerProfile->pengalaman_kerja;
         $workerProfile->pendidikan = $request->pendidikan ?? $workerProfile->pendidikan;
 
@@ -126,7 +127,8 @@ class ProfileController extends Controller
         $existingAccount->ewallet_provider = $request->ewallet_name ?? $existingAccount->ewallet_provider;
         $existingAccount->bank_name = $request->bank_name ?? $existingAccount->bank_name;
         $existingAccount->account_number = $request->bank_number ?? $existingAccount->account_number;
-        $existingAccount->account_name = $request->pemilik_bank ?? $existingAccount->account_name;
+        $existingAccount->bank_account_name = $request->pemilik_bank ?? $existingAccount->bank_account_name;
+        $existingAccount->ewallet_account_name = $request->pemilik_ewallet ?? $existingAccount->account_nameewallet_account_name;
         $existingAccount->save();
 
         // Upload Sertifikat (jika ada)

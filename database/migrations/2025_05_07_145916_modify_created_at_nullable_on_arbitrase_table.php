@@ -9,20 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        Schema::table('tasks', function (Blueprint $table) {
-            //
+        Schema::table('arbitrase', function (Blueprint $table) {
+            $table->timestamp('created_at')->nullable()->change();
         });
     }
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('tasks', function (Blueprint $table) {
-            //
-        });
+        //
     }
 };
