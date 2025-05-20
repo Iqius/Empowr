@@ -125,6 +125,11 @@
               </button>
             </a>
             @if ($item->status !== 'resolved')
+            <!-- Tolak Button -->
+            <form action="{{ route('arbitrase.reject', $item->id) }}" method="POST" class="inline-block ml-2">
+              @csrf
+              <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded">Tolak</button>
+            </form>
             <!-- Tindak Lanjut Button -->
             <button type="button" 
                     class="px-4 py-2 bg-green-500 text-white rounded open-modal" 

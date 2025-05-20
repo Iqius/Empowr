@@ -82,6 +82,48 @@ class ArbitraseController extends Controller
 
     public function show() {}
 
+
+    public function reject($id)
+    {
+        $arbitrase = Arbitrase::find($id);
+
+        if (!$arbitrase) {
+            return back()->withErrors(['message' => 'Data arbitrase tidak ditemukan.']);
+        }
+
+        // Set status menjadi rejected
+        $arbitrase->status = 'rejected';
+        $arbitrase->save();
+
+        $user = Auth::user();
+        $worker = $arbitrase->worker;
+        $client = $arbitrase->client;
+
+        $message = 'Arbitrase dengan reason <b>"' . $arbitrase->reason . '"</b> telah ditolak oleh admin.';
+
+        // Notifikasi untuk worker
+        if ($worker) {
+            Notification::create([
+                'user_id' => $worker->id,
+                'sender_name' => $user->nama_lengkap,
+                'message' => $message,
+                'is_read' => false,
+            ]);
+        }
+
+        // Notifikasi untuk client
+        if ($client) {
+            Notification::create([
+                'user_id' => $client->id,
+                'sender_name' => $user->nama_lengkap,
+                'message' => $message,
+                'is_read' => false,
+            ]);
+        }
+
+        return back()->with('success', 'Arbitrase ditolak dan status telah diubah ke "rejected".');
+    }
+
     public function accept($id, Request $request)
     {
         // Validasi input
