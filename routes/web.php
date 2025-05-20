@@ -124,7 +124,6 @@ Route::get('/admin/dashboard', [AuthController::class, 'adminDashboard'])->middl
 Route::get('/arbitraseget', [ArbitraseController::class, 'index'])->middleware(['auth'])->name('arbitrase.index');
 Route::get('/arbitraseDetail', [ArbitraseController::class, 'index'])->middleware(['auth'])->name('arbitrase.show');
 Route::post('/arbitrase/{id}/accept', [ArbitraseController::class, 'accept'])->name('arbitrase.accept');
-Route::post('/arbitrase/{id}/reject', [ArbitraseController::class, 'reject'])->name('arbitrase.reject');
 // 
 
 #### Arbitrase

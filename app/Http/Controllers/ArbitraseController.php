@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\DB;
 use App\Models\Arbitrase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Notification;
+use App\Models\Ewallet;
+use App\Models\Transaction;
 
 class ArbitraseController extends Controller
 {
@@ -80,87 +82,96 @@ class ArbitraseController extends Controller
 
     public function show() {}
 
-    public function accept($id)
+    public function accept($id, Request $request)
     {
+        // Validasi input
+        $request->validate([
+            'persentase' => 'required|numeric|min:0|max:100',
+        ]);
+
         $arbitrase = Arbitrase::find($id);
-        if ($arbitrase) {
+        if (!$arbitrase) {
+            return back()->withErrors(['message' => 'Arbitrase tidak ditemukan.']);
+        }
+
+        DB::beginTransaction();
+
+        try {
             // Ubah status arbitrase
             $arbitrase->status = 'resolved';
             $arbitrase->save();
 
-            // Ambil task terkait
-            $task = $arbitrase->task; // Pastikan ada relasi 'task' di model Arbitrase
+            // Ubah status task jika perlu
+            $task = $arbitrase->task;
             if ($task && $task->status === 'in progress') {
                 $task->status = 'completed';
                 $task->save();
             }
 
             $user = Auth::user();
-
-            // Ambil worker dan client terkait
             $worker = $arbitrase->worker;
             $client = $arbitrase->client;
+            $total = $task->price;
 
-            // Buat notifikasi untuk worker
-            Notification::create([
-                'user_id' => $worker->id,
-                'sender_name' => $user->nama_lengkap,
-                'message' => 'Arbitrase dengan reason <b>"' . $arbitrase->reason . '"</b> telah diterima dan akan ditindak lanjuti sesuai kesepakatan.',
-                'is_read' => false,
+            // Hitung pembagian dana
+            $persentaseWorker = (int) $request->persentase;
+            $amountToWorker = $total * ($persentaseWorker / 100);
+            $amountToClient = $total - $amountToWorker;
+
+            // Update ewallet worker
+            $ewalletWorker = Ewallet::where('user_id', $worker->id)->firstOrFail();
+            $ewalletWorker->balance += $amountToWorker;
+            $ewalletWorker->save();
+
+            // Update ewallet client
+            $ewalletClient = Ewallet::where('user_id', $client->id)->firstOrFail();
+            $ewalletClient->balance += $amountToClient;
+            $ewalletClient->save();
+
+            // Buat order ID unik
+            $orderId = 'pengembalian-' . $task->id . '-' . $client->id . $worker->id . '-' . time();
+            // Simpan transaksi untuk worker
+            Transaction::create([
+                'order_id' => $orderId,
+                'task_id' => $task->id,
+                'worker_id' => $worker->id,
+                'client_id' => null,
+                'amount' => $amountToWorker,
+                'status' => 'success',
+                'payment_method' => 'ewallet',
+                'type' => 'refund',
             ]);
 
-            // Buat notifikasi untuk client
-            Notification::create([
-                'user_id' => $client->id,
-                'sender_name' => $user->nama_lengkap,
-                'message' => 'Arbitrase dengan reason <b>"' . $arbitrase->reason . '"</b> telah diterima dan akan ditindak lanjuti sesuai kesepakatan.',
-                'is_read' => false,
+            Transaction::create([
+                'order_id' => $orderId . '-client',
+                'task_id' => $task->id,
+                'worker_id' => null,
+                'client_id' => $client->id,
+                'amount' => $amountToClient,
+                'status' => 'success',
+                'payment_method' => 'ewallet',
+                'type' => 'refund',
             ]);
 
-            return back()->with('success', 'Arbitrase diterima dan task diselesaikan.');
+
+            
+            // Kirim notifikasi
+            $notifMessage = 'Arbitrase dengan reason ' . $arbitrase->reason . ' telah diterima dan akan ditindaklanjuti sesuai kesepakatan.';
+            foreach ([$worker, $client] as $u) {
+                $notif = Notification::create([
+                    'user_id' => $u->id,
+                    'sender_name' => $user->nama_lengkap,
+                    'message' => $notifMessage,
+                    'is_read' => false,
+                ]);
+            }
+            DB::commit();
+            // Kirim notifikasi ke admin
+            return back()->with('success', 'Arbitrase diterima dan dana dibagi sesuai persentase.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['message' => 'Terjadi kesalahan: ' . $e->getMessage()]);
         }
-
-        return back()->withErrors(['message' => 'Arbitrase tidak ditemukan.']);
     }
 
-
-    public function reject($id)
-    {
-        $arbitrase = Arbitrase::find($id);
-        if ($arbitrase) {
-            // Update status menjadi 'under review'
-            $arbitrase->status = 'under review';
-            $arbitrase->save();
-
-            // Simulasikan proses setelah status menjadi 'resolved'
-            $arbitrase->status = 'resolved';
-            $arbitrase->save();
-
-            $user = Auth::user();
-
-            // Ambil worker dan client terkait
-            $worker = $arbitrase->worker;
-            $client = $arbitrase->client;
-
-            // Buat notifikasi untuk worker
-            Notification::create([
-                'user_id' => $worker->id,
-                'sender_name' => $user->nama_lengkap,
-                'message' => 'Arbitrase dengan reason <b>"' . $arbitrase->reason . '"</b> telah ditolak.',
-                'is_read' => false,
-            ]);
-
-            // Buat notifikasi untuk client
-            Notification::create([
-                'user_id' => $client->id,
-                'sender_name' => $user->nama_lengkap,
-                'message' => 'Arbitrase dengan reason <b>"' . $arbitrase->reason . '"</b> telah ditolak.',
-                'is_read' => false,
-            ]);
-
-            return back()->with('success', 'Arbitrase ditolak dan status telah diubah.');
-        }
-
-        return back()->withErrors(['message' => 'Arbitrase tidak ditemukan.']);
-    }
 }

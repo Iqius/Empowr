@@ -37,6 +37,11 @@ class AuthController extends Controller
             'tanggal_bergabung' => now(),
             'password' => Hash::make($request->password),
         ]);
+        
+        Ewallet::create([
+            'user_id' => $user->id,
+            'balance' => $transaction->amount,
+        ]);
 
         if ($request->role == 'worker') {
             WorkerProfile::create([

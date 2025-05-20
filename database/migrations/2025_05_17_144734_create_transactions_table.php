@@ -20,7 +20,7 @@ class CreateTransactionsTable extends Migration
 
             $table->enum('status', ['pending', 'success', 'cancel', 'expire']);
             $table->enum('payment_method', ['direct', 'ewallet']);
-            $table->enum('type', ['payment', 'payout', 'topup', 'salary']);
+            $table->enum('type', ['payment', 'payout', 'topup', 'salary', 'refund']);
 
             $table->timestamps();
 

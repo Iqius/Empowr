@@ -17,7 +17,10 @@
                 @else
                     <p class="text-xl font-bold">Saldo belum tersedia.</p>
                 @endif
-                <button class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm" onclick="openTopupModal()" >Withdraw</button>
+                <div class="flex flex-col space-y-2">
+                <button class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm" onclick="openTopupModal()">Withdraw</button>
+                <button class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm" onclick="openTopupModal()">Top Up</button>
+                </div>
             </div>  
         </div>
 
@@ -147,6 +150,8 @@
                         Pembayaran: {{ $transaction->task->title ?? 'Task tidak ditemukan' }}
                     @elseif($transaction->type === 'topup')
                         Top Up
+                    @elseif($transaction->type === 'refund')
+                        Refund
                     @else
                         Transaksi
                     @endif
