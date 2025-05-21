@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Message;
 use App\Models\Conversation;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -57,59 +58,65 @@ class ChatController extends Controller
 }
     
 //menyimpan pesan
-    public function store(Request $request)
-    {
-        $request->validate([
-            'receiver_id' => 'required|exists:users,id',
-            'message' => 'nullable|string',
-            'attachment' => 'nullable|file|max:10240', // Max 10MB
-        ]);
-        
-        // Cannot send message to yourself
-        if ($request->receiver_id == Auth::id()) {
-            return redirect()->back()->with('error', 'You cannot send a message to yourself');
-        }
-        
-        // Create the message
-        $message = new Message();
-        $message->sender_id = Auth::id();
-        $message->receiver_id = $request->receiver_id;
-        
-        // Handle file upload
-        if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-            $path = $file->store('attachments', 'public');
-            $message->attachment = $path;
-            
-            // Determine attachment type based on file mime type
-            $mime = $file->getMimeType();
-            if (strstr($mime, 'image/')) {
-                $message->attachment_type = 'image';
-            } else {
-                $message->attachment_type = 'file';
-            }
-        } 
-        // Handle text message
-        elseif ($request->has('message')) {
-            $message->message = $request->message;
-        }
-        
-        $message->save();
-        
-        // Update or create conversations for both users
-        $this->updateConversations(Auth::id(), $request->receiver_id);
-        
-        // For AJAX requests, return JSON
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => $message->load('sender')
-            ]);
-        }
-        
-        // For traditional form submissions, redirect
-        return redirect()->back();
+   public function store(Request $request)
+{
+    $request->validate([
+        'receiver_id' => 'required|exists:users,id',
+        'message' => 'nullable|string',
+        'attachment' => 'nullable|file|max:10240',
+    ]);
+
+    if ($request->receiver_id == Auth::id()) {
+        return redirect()->back()->with('error', 'You cannot send a message to yourself');
     }
+
+    $user = Auth::user(); // ✅ Didefinisikan
+    $messageText = $request->message; // ✅ Didefinisikan
+$taskId = $request->input('task_id');
+    $message = new Message();
+    $message->sender_id = $user->id;
+    $message->receiver_id = $request->receiver_id;
+
+    if ($request->hasFile('attachment')) {
+        $file = $request->file('attachment');
+        $path = $file->store('attachments', 'public');
+        $message->attachment = $path;
+
+        $mime = $file->getMimeType();
+        if (strstr($mime, 'image/')) {
+            $message->attachment_type = 'image';
+            $messageText = '[Image] ' . $path;
+        } else {
+            $message->attachment_type = 'file';
+            $messageText = '[File] ' . $path;
+        }
+    } elseif ($request->has('message')) {
+        $message->message = $messageText;
+    }
+
+    $message->save();
+
+    //  Simpan notifikasi 
+    Notification::create([
+        'user_id' => $request->receiver_id,
+        'sender_name' => $user->nama_lengkap,
+        'message' => $messageText ?? '[No message]',
+        'is_read' => false,
+        'jenis' => 'chat',
+    ]);
+
+    $this->updateConversations($user->id, $request->receiver_id);
+
+    if ($request->ajax()) {
+        return response()->json([
+            'success' => true,
+            'message' => $message->load('sender')
+        ]);
+    }
+
+    return redirect()->back();
+}
+
     
 //search user admin
     public function search(Request $request)

@@ -240,7 +240,7 @@
                                 Lihat Profil
                             </a>
                             <a href="{{ url('chat/' . $user->id) }}"
-                                class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a] inline-block">
+                                class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a] inline-block " data-task-id="{{ $applicant->task->id }}">
                                 Chat
                             </a>
 
@@ -292,8 +292,11 @@
     
 
     <!-- modal bayar ewallet -->
-    <div id="ewalletModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 opacity-0" onclick="handleOutsideClick(event)">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm transform transition-transform duration-300 scale-90" id="ewalletContent" onclick="event.stopPropagation()">
+    <div id="ewalletModal" 
+        class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 opacity-0"
+        onclick="handleOutsideClick(event)">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-4 sm:mx-0 transform transition-transform duration-300 scale-90"
+            id="ewalletContent" onclick="event.stopPropagation()">
             <h2 class="text-xl font-bold mb-4 text-center">Konfirmasi Pembayaran</h2>
 
             <form id="ewalletPaymentForm" action="{{ route('client.bayar.ewallet', $task->id) }}" method="POST">
@@ -319,6 +322,7 @@
             </form>
         </div>
     </div>
+
 
 
     <!-- Modal bayar direct-->
