@@ -252,23 +252,21 @@ class ChatController extends Controller
         
         return redirect()->route('chat.chat_index')->with('success', 'Conversation deleted');
     }
-//     public function fetchMessages(Request $request)
-// {
-//     $receiverId = $request->receiver_id;
-//     $lastId = $request->last_id ?? 0;
+    public function fetchMessages(Request $request, $chatId)
+    {
+        $afterId = $request->query('after');
 
-//     $messages = Message::with('sender') // penting: agar bisa akses msg.sender.name
-//         ->where(function ($q) use ($receiverId) {
-//             $q->where('sender_id', auth()->id())->where('receiver_id', $receiverId);
-//         })
-//         ->orWhere(function ($q) use ($receiverId) {
-//             $q->where('sender_id', $receiverId)->where('receiver_id', auth()->id());
-//         })
-//         ->where('id', '>', $lastId)
-//         ->orderBy('id')
-//         ->get();
+        $query = Message::where('chat_id', $chatId)
+                        ->orderBy('id', 'asc');
 
-//     return response()->json($messages);
-// }
+        if ($afterId) {
+            $query->where('id', '>', $afterId);
+        }
+
+        $messages = $query->get();
+
+        return response()->json($messages);
+    }
+
 
 }
