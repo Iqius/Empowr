@@ -263,31 +263,33 @@
                     </div>
 
                 </div>
+
+                <!-- Modal hire pilih metode bayar-->
+                <div id="paymentModal"
+                    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 z-50"
+                    onclick="handleOverlayClick(event)">
+                    
+                    <!-- Konten Modal -->
+                    <div class="bg-white p-6 rounded-md w-full max-w-md transform scale-95 transition-all duration-300"id="modalContent">
+                        <h2 class="text-lg font-bold mb-4">Pilih Metode Pembayaran</h2>
+                        <div class="flex flex-col gap-2">
+                            <button type="button" onclick="openEwalletModal(this)" class="bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"data-profile-id="{{ $applicant->profile_id }}"data-bid-price="{{ $applicant->bidPrice }}">
+                                Bayar dengan E-Wallet
+                            </button>
+                            <button type="button" onclick="openModal()" class="bg-green-600 text-white py-2 rounded-md hover:bg-green-700">
+                                Bayar Langsung
+                            </button>
+                            <button type="button" onclick="closePaymentModal()" class="bg-gray-300 text-gray-700 py-2 rounded-md hover:bg-gray-400">
+                                Batal
+                            </button>
+                        </div>
+                    </div>
+                </div>
             @endforeach
         </div>
     </div>
 
-    <!-- Modal hire pilih metode bayar-->
-    <div id="paymentModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 z-50"
-        onclick="handleOverlayClick(event)">
-        
-        <!-- Konten Modal -->
-        <div class="bg-white p-6 rounded-md w-full max-w-md transform scale-95 transition-all duration-300"id="modalContent">
-            <h2 class="text-lg font-bold mb-4">Pilih Metode Pembayaran</h2>
-            <div class="flex flex-col gap-2">
-                <button type="button" onclick="openEwalletModal()" class="bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
-                    Bayar dengan E-Wallet
-                </button>
-                <button type="button" onclick="openModal()" class="bg-green-600 text-white py-2 rounded-md hover:bg-green-700">
-                    Bayar Langsung
-                </button>
-                <button type="button" onclick="closePaymentModal()" class="bg-gray-300 text-gray-700 py-2 rounded-md hover:bg-gray-400">
-                    Batal
-                </button>
-            </div>
-        </div>
-    </div>
+    
 
     <!-- modal bayar ewallet -->
     <div id="ewalletModal" 
@@ -301,13 +303,12 @@
                 @csrf
                 <input type="hidden" name="task_id" value="{{ $task->id }}">
                 <input type="hidden" name="type" value="payment">
-                <input type="hidden" name="worker_profile_id" value="{{ $applicant->profile_id }}">
+                <input type="hidden" name="worker_profile_id" id="worker_profile_id" value="">
                 <input type="hidden" name="client_id" value="{{ Auth::id() }}">
                 <input type="hidden" name="payment_method" value="ewallet" />
                 <div class="mb-4">
                     <p class="text-sm text-gray-600">Anda akan melakukan pembayaran menggunakan saldo E-Wallet.</p>
-                    <input type="number" class="mt-2 text-lg font-semibold w-full border border-gray-300 rounded px-3 py-2"
-                        name="amount" value="{{ $applicant->bidPrice }}">
+                    <input type="number" class="mt-2 text-lg font-semibold" name="amount" value=""></input>
                     <p class="text-sm text-gray-500 mt-1">Saldo tersedia: Rp{{ number_format($ewallet->balance ?? 0, 0, ',', '.') }}</p>
                 </div>
 
@@ -402,10 +403,18 @@
 
 <!-- untuk modal bayar pake ewallet -->
 <script>
-    function openEwalletModal() {
+    function openEwalletModal(button) {
         const modal = document.getElementById('ewalletModal');
         modal.classList.remove('hidden');
         setTimeout(() => modal.classList.remove('opacity-0'), 10);
+
+        // Ambil data dari tombol
+        const profileId = button.getAttribute('data-profile-id');
+        const bidPrice = button.getAttribute('data-bid-price');
+
+        // Set value ke input hidden dan input amount
+        document.getElementById('worker_profile_id').value = profileId;
+        document.querySelector('input[name="amount"]').value = bidPrice;
     }
 
     function closeEwalletModal() {
@@ -420,6 +429,7 @@
         }
     }
 </script>
+
 
 <script src="https://app.sandbox.midtrans.com/snap/snap.js"
     data-client-key="{{ config('midtrans.client_key') }}"></script>
@@ -613,8 +623,8 @@
         } else {
             const attr = dataAttrMap[sortBy];
             items.sort((a, b) => {
-                const aVal = parseFloat(a.getAttribute(`data-${attr}`)) || 0;
-                const bVal = parseFloat(b.getAttribute(`data-${attr}`)) || 0;
+                const aVal = parseFloat(a.getAttribute(data-${attr})) || 0;
+                const bVal = parseFloat(b.getAttribute(data-${attr})) || 0;
                 return aVal - bVal;
             });
         }
@@ -642,7 +652,7 @@
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#1F4482'
                 }).then(() => {
-                    document.getElementById(`cancelTaskForm${taskId}`).submit();
+                    document.getElementById(cancelTaskForm${taskId}).submit();
                 });
             }
         });
@@ -698,7 +708,7 @@
         document.getElementById("worker-label").textContent = label;
         document.getElementById("worker-affiliate").textContent = affiliate;
         document.getElementById("worker-education").textContent = education;
-        document.getElementById("worker-experience").textContent = `${experience} tahun`;
+        document.getElementById("worker-experience").textContent = ${experience} tahun;
         document.getElementById("worker-cv").href = cv ?? "#";
 
         // Rating Summary
@@ -723,7 +733,7 @@
         document.getElementById("worker-label").textContent = worker.empowrLabel ? "Ya" : "Tidak";
         document.getElementById("worker-affiliate").textContent = worker.empowrAffiliate ? "Ya" : "Tidak";
         document.getElementById("worker-education").textContent = worker.education;
-        document.getElementById("worker-experience").textContent = `${worker.experience} tahun`;
+        document.getElementById("worker-experience").textContent = ${worker.experience} tahun;
         document.getElementById("worker-cv").href = worker.cv || "#";
 
         // Summary
@@ -771,7 +781,7 @@
         // Sertifikat Dropdown
         const certSelect = document.getElementById("certSelect");
         const certPreview = document.getElementById("certPreview");
-        certSelect.innerHTML = `<option disabled selected>Lihat Sertifikasi</option>`;
+        certSelect.innerHTML = <option disabled selected>Lihat Sertifikasi</option>;
 
         // Cek apakah worker punya sertifikat
         if (worker.certImages && worker.certImages.length > 0) {
@@ -797,7 +807,7 @@
         const portfolioSelect = document.getElementById("portfolioSelect");
         const portfolioPreview = document.getElementById("portfolioPreview");
 
-        portfolioSelect.innerHTML = `<option disabled selected>Lihat Portofolio</option>`;
+        portfolioSelect.innerHTML = <option disabled selected>Lihat Portofolio</option>;
 
         if (worker.portfolios && worker.portfolios.length > 0) {
             worker.portfolios.forEach((item, i) => {
