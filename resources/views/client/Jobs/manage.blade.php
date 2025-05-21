@@ -244,7 +244,9 @@
                             <!-- Tombol yang membuka modal hire -->
                             <button type="button"
                                 class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800"
-                                onclick="openPaymentModal()">
+                                onclick="openPaymentModal(this)"
+                                data-profile-id="{{ $applicant->profile_id }}"
+                                data-bid-price="{{ $applicant->bidPrice }}">
                                 Hire worker
                             </button>
 
@@ -294,12 +296,12 @@
                 @csrf
                 <input type="hidden" name="task_id" value="{{ $task->id }}">
                 <input type="hidden" name="type" value="payment">
-                <input type="hidden" name="worker_profile_id" value="{{ $applicant->profile_id }}">
+                <input type="hidden" name="worker_profile_id" value="">
                 <input type="hidden" name="client_id" value="{{ Auth::id() }}">
                 <input type="hidden" name="payment_method" value="ewallet" />
                 <div class="mb-4">
                     <p class="text-sm text-gray-600">Anda akan melakukan pembayaran menggunakan saldo E-Wallet.</p>
-                    <input type="number" class="mt-2 text-lg font-semibold" name="amount" value="{{ $applicant->bidPrice }}"></input>
+                    <input type="number" class="mt-2 text-lg font-semibold" name="amount" value=""></input>
                     <p class="text-sm text-gray-500 mt-1">Saldo tersedia: Rp{{ number_format($ewallet->balance ?? 0, 0, ',', '.') }}</p>
                 </div>
 
@@ -418,10 +420,17 @@
 
 <!-- JS UNTUK MODAL HIRE -->
 <script>
+    let selectedProfileId = null;
+    let selectedBidPrice = null;
+
     function openPaymentModal() {
         const modal = document.getElementById('paymentModal');
         modal.classList.remove('opacity-0', 'pointer-events-none');
         modal.classList.add('opacity-100');
+
+        selectedProfileId = button.getAttribute('data-profile-id');
+        selectedBidPrice = button.getAttribute('data-bid-price');
+
     }
 
     function closePaymentModal() {
@@ -583,6 +592,31 @@
         }, 5000);
     }
 </script>
+
+<script>
+    function openEwalletModal() {
+        if (!selectedProfileId || !selectedBidPrice) {
+            alert("Data pelamar tidak ditemukan.");
+            return;
+        }
+
+        document.querySelector('#ewalletModal input[name="worker_profile_id"]').value = selectedProfileId;
+        document.querySelector('#ewalletModal input[name="amount"]').value = selectedBidPrice;
+
+        closePaymentModal(); // Tutup modal pilih metode
+
+        const modal = document.getElementById('ewalletModal');
+        modal.classList.remove('hidden');
+        setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    }
+
+    function closeEwalletModal() {
+        const modal = document.getElementById('ewalletModal');
+        modal.classList.add('opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+</script>
+
 
 
 
