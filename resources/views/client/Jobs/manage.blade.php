@@ -239,7 +239,11 @@
                                 class="bg-[#1F4482] hover:bg-[#18346a] text-white px-4 py-2 rounded-md shadow inline-block">
                                 Lihat Profil
                             </a>
-                            <button class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a]">Chat</button>
+                            <a href="{{ url('chat/' . $user->id) }}"
+                                class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a] inline-block">
+                                Chat
+                            </a>
+
 
                             <!-- Tombol yang membuka modal hire -->
                             <button type="button"
