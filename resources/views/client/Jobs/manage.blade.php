@@ -290,8 +290,11 @@
     </div>
 
     <!-- modal bayar ewallet -->
-    <div id="ewalletModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 opacity-0" onclick="handleOutsideClick(event)">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm transform transition-transform duration-300 scale-90" id="ewalletContent" onclick="event.stopPropagation()">
+    <div id="ewalletModal" 
+        class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 opacity-0"
+        onclick="handleOutsideClick(event)">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-4 sm:mx-0 transform transition-transform duration-300 scale-90"
+            id="ewalletContent" onclick="event.stopPropagation()">
             <h2 class="text-xl font-bold mb-4 text-center">Konfirmasi Pembayaran</h2>
 
             <form id="ewalletPaymentForm" action="{{ route('client.bayar.ewallet', $task->id) }}" method="POST">
@@ -303,7 +306,8 @@
                 <input type="hidden" name="payment_method" value="ewallet" />
                 <div class="mb-4">
                     <p class="text-sm text-gray-600">Anda akan melakukan pembayaran menggunakan saldo E-Wallet.</p>
-                    <input type="number" class="mt-2 text-lg font-semibold" name="amount" value="{{ $applicant->bidPrice }}"></input>
+                    <input type="number" class="mt-2 text-lg font-semibold w-full border border-gray-300 rounded px-3 py-2"
+                        name="amount" value="{{ $applicant->bidPrice }}">
                     <p class="text-sm text-gray-500 mt-1">Saldo tersedia: Rp{{ number_format($ewallet->balance ?? 0, 0, ',', '.') }}</p>
                 </div>
 
@@ -317,6 +321,7 @@
             </form>
         </div>
     </div>
+
 
 
     <!-- Modal bayar direct-->

@@ -95,7 +95,7 @@ class ChatController extends Controller
         }
         
         $message->save();
-        
+
         // Update or create conversations for both users
         $this->updateConversations(Auth::id(), $request->receiver_id);
         
@@ -105,6 +105,12 @@ class ChatController extends Controller
                 'success' => true,
                 'message' => $message->load('sender')
             ]);
+            Notification::create([
+                'user_id' => $request->receiver_id,
+                'sender_name' => $user->nama_lengkap ?? $user->username,
+                'message' => $messageText ?? '[No message]',
+                'is_read' => false,
+        ]);
         }
         
         // For traditional form submissions, redirect
