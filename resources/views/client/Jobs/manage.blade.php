@@ -240,7 +240,7 @@
                                 Lihat Profil
                             </a>
                             <a href="{{ url('chat/' . $user->id) }}"
-                                class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a] inline-block">
+                                class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a] inline-block " data-task-id="{{ $applicant->task->id }}">
                                 Chat
                             </a>
 

@@ -158,21 +158,36 @@
                    </span>
                 @endif
                   </button>
-                  <div id="dropdown-notif"
-                     class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
-                     <div class="px-4 py-2 font-semibold text-[#1F4482] border-b">Notification</div>
-                     @foreach ($notifications as $notif)
-                   <div class="px-4 py-2 border-b">
-                     <p class="font-semibold">{{ $notif->sender_name }}</p>
-                     <p class="text-sm text-gray-700">{!! $notif->message !!}</p>
-                     <p class="text-xs text-gray-400">{{ $notif->created_at->diffForHumans() }}</p>
-                   </div>
-                @endforeach
-                     <a href="{{ route('notifications.index') }}"
-                        class="block px-4 py-2 text-center text-[#1F4482] hover:underline">
-                        Lihat Semua Notifikasi
-                     </a>
-                  </div>
+<div id="dropdown-notif"
+     class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+    <div class="px-4 py-2 font-semibold text-[#1F4482] border-b">Notification</div>
+    
+    @foreach ($notifications as $notif)
+        @php
+            // Dapatkan user pengirim
+            $sender = \App\Models\User::where('nama_lengkap', $notif->sender_name)->first();
+        @endphp
+
+        <a 
+          @if($notif->jenis === 'chat' && $sender)
+            href="{{ url('chat/' . $sender->id) }}"
+          @else
+            href="{{ route('notifications.index') }}"
+          @endif
+          class="block px-4 py-2 border-b hover:bg-gray-50"
+        >
+            <p class="font-semibold">{{ $notif->sender_name }}</p>
+            <p class="text-sm text-gray-700">{!! $notif->message !!}</p>
+            <p class="text-xs text-gray-400">{{ $notif->created_at->diffForHumans() }}</p>
+        </a>
+    @endforeach
+
+    <a href="{{ route('notifications.index') }}"
+       class="block px-4 py-2 text-center text-[#1F4482] hover:underline">
+        Lihat Semua Notifikasi
+    </a>
+</div>
+
                </div>
 
                <!-- User -->
