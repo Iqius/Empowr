@@ -11,6 +11,7 @@ use App\Models\WorkerProfile;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Carbon;
 use App\Models\OtpCode;
+use App\Models\Ewallet;
 
 
 
@@ -40,7 +41,7 @@ class AuthController extends Controller
         
         Ewallet::create([
             'user_id' => $user->id,
-            'balance' => $transaction->amount,
+            'balance' => 0.00,
         ]);
 
         if ($request->role == 'worker') {
