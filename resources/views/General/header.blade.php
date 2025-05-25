@@ -202,7 +202,7 @@
                         <div class="text-sm font-medium text-gray-900 leading-none font-semibold">
                            {{ Auth::user()->nama_lengkap }}
                         </div>
-                        <div class="text-xs text-gray-500"> IDR {{ Auth::user()->ewallet }}</div>
+                        <div class="text-xs text-gray-500"> {{ Auth::user()->role }}</div>
                      </div>
                   </button>
                   <div

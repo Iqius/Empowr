@@ -103,8 +103,10 @@ class ProgressionController extends Controller
             $ewallet->balance += $task->price;
             $ewallet->save();
         }
-
+        // Buat transaksi untuk gaji worker
+        $orderId = 'selesai-' . $task->id . '-' . time();
         Transaction::create([
+            'order_id' => $orderId,              // ID order
             'task_id' => $task->id,                  // ID task
             'worker_id' => $workerProfile->id,       // ID worker profile
             'client_id' => auth()->user()->id,       // ID client

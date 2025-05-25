@@ -77,7 +77,15 @@ Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->name('j
 Route::post('/task-progression/{task}', [ProgressionController::class, 'create'])->middleware(['auth'])->name('task-progression.store');
 // Post ulasan worker pada saat complite task
 Route::post('/task-progression/ulasan/{task}', [ProgressionController::class, 'ulasanWorker'])->middleware(['auth'])->name('task-ulasan.store');
-
+Route::get('/dashboard1', function () {
+    $user = Auth::user();
+    return match ($user->role) {
+        'client' => redirect()->route('client.dashboardClient'),
+        'worker' => redirect()->route('worker.dashboardWorker'),
+        'admin'  => redirect()->route('admin.dashboardAdmin'),
+        default  => redirect('/'),
+    };
+})->middleware(['auth'])->name('dashboard');
 
 ####### GENERAL
 // List all Jobs

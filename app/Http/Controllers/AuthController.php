@@ -63,6 +63,29 @@ class AuthController extends Controller
     // **LOGIN**
     public function login(Request $request)
     {
+        // Kalau user sudah login, langsung redirect
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            // Cek dan set session custom jika belum ada
+            if (!session()->has('user_data')) {
+                session()->put('user_data', [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'role' => $user->role,
+                    'email' => $user->email,
+                ]);
+            }
+
+            return match ($user->role) {
+                'client' => redirect()->route('client.dashboardClient'),
+                'worker' => redirect()->route('worker.dashboardWorker'),
+                'admin'  => redirect()->route('admin.dashboardAdmin'),
+                default  => redirect()->route('dashboard'),
+            };
+        }
+
+        // Validasi form login
         $request->validate([
             'email' => 'required|string',
             'password' => 'required|string',
@@ -71,24 +94,29 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials, $request->remember)) {
+        if (Auth::attempt($credentials, $request->filled('remember'))) {
             $user = Auth::user();
 
-            // Redirect berdasarkan role
-            if ($user->role === 'client') {
-                return redirect()->route('client.dashboardClient')->with('success', 'Login berhasil!');
-            } elseif ($user->role === 'worker') {
-                return redirect()->route('worker.dashboardWorker')->with('success', 'Login berhasil!');
-            } elseif($user->role === 'admin'){
-                return redirect()->route('admin.dashboardAdmin')->with('success', 'Login berhasil!');
+            // Simpan session custom jika belum ada
+            if (!session()->has('user_data')) {
+                session()->put('user_data', [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'role' => $user->role,
+                    'email' => $user->email,
+                ]);
             }
 
-            return redirect()->route('dashboard')->with('success', 'Login berhasil!');
+            return match ($user->role) {
+                'client' => redirect()->route('client.dashboardClient')->with('success', 'Login berhasil!'),
+                'worker' => redirect()->route('worker.dashboardWorker')->with('success', 'Login berhasil!'),
+                'admin'  => redirect()->route('admin.dashboardAdmin')->with('success', 'Login berhasil!'),
+                default  => redirect()->route('dashboard')->with('success', 'Login berhasil!'),
+            };
         }
 
         return back()->with('error', 'Username atau password salah.');
     }
-
 
     // Dashboard Client view
     public function clientDashboard()

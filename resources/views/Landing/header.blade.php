@@ -30,20 +30,40 @@
 
 <body class="bg-grey" style="font-family: sans-serif;">
     <!-- Navbar -->
-    <nav class="bg-white fixed w-full z-20 top-0 start-0 border-b border-gray-200 ">
+    <nav class="bg-white fixed w-full z-20 top-0 start-0 border-b border-gray-200">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
             <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
                 <img src="{{ asset('assets/images/Logo.png') }}" class="h-5" alt="">
             </a>
+
             <div class="flex md:order-2 space-x-3 md:space-x-4 rtl:space-x-reverse">
-                <button type="button" onclick="window.location.href='{{ route('register') }}'"
-                    class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">
-                    Register
-                </button>
-                <button type="button" onclick="window.location.href='{{ route('login') }}'"
-                    class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">
-                    Sign In
-                </button>
+                @auth
+                    @php
+                        $role = session('user_data.role') ?? Auth::user()->role;
+                        $dashboardUrl = match($role) {
+                            'client' => route('client.dashboardClient'),
+                            'worker' => route('worker.dashboardWorker'),
+                            'admin'  => route('admin.dashboardAdmin'),
+                            default  => route('dashboard'),
+                        };
+                    @endphp
+
+                    <button type="button"
+                        onclick="window.location.href='{{ $dashboardUrl }}'"
+                        class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">
+                        Dashboard
+                    </button>
+                @else
+                    <button type="button" onclick="window.location.href='{{ route('register') }}'"
+                        class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">
+                        Register
+                    </button>
+                    <button type="button" onclick="window.location.href='{{ route('login') }}'"
+                        class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">
+                        Sign In
+                    </button>
+                @endauth
             </div>
         </div>
     </nav>
+

@@ -92,7 +92,8 @@ class ArbitraseController extends Controller
         }
 
         // Set status menjadi rejected
-        $arbitrase->status = 'rejected';
+        $arbitrase->status = 'resolved';
+
         $arbitrase->save();
 
         $user = Auth::user();
