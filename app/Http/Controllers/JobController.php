@@ -14,6 +14,7 @@ use App\Models\Transaction;
 use App\Models\UserPaymentAccount;
 use App\Models\Ewallet;
 use App\Models\User;
+use App\Models\workerAffiliated;
 use Midtrans\Config;
 use Midtrans\Snap;
 
@@ -25,13 +26,6 @@ class JobController extends Controller
 
         $jobs = Task::all();
         return view('General.jobs', compact('jobs'));
-    }
-
-    public function indexWorker()
-    {
-        $worker = Auth::user();
-        $workerProfile = $worker->workerProfile;
-        return view('worker.dashboardWorker', compact('workerProfile'));
     }
 
 

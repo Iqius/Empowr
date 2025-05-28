@@ -70,6 +70,40 @@
                             <input type="string" name="tanggal_bergabung" readonly class="col-span-2 p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600" value="{{ $worker->user->tanggal_bergabung }}" readonly>
                         </div>
                     </div>
+                    <hr class="my-5 border-2 rounded-xl">
+                    <h1 class="text-2xl font-semibold my-6">Data affiliation</h1>
+                    @if(auth()->user()->role == 'admin')
+                        @foreach ($data as $item)
+                            <div class="flex flex-col gap-4 mb-7">
+                                <label class="font-semibold">keahlian affiliate: </label>
+                                <div>
+                                    @php
+                                        $categories = json_decode($item->keahlian_affiliate, true) ?? [];
+                                    @endphp
+                                    @foreach($categories as $category)
+                                        <span
+                                            class="inline-block bg-gradient-to-b from-[#1F4482] to-[#2A5DB2] text-white px-3 py-1 rounded-full text-sm mr-2 mb-2">
+                                            {{ $category }}
+                                        </span>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-7 ">
+                                <div class="flex flex-col gap-4">
+                                    <label class="font-semibold">Foto identitas</label>
+                                    <img src="{{ asset('storage/' . $item->identity_photo) }}" 
+                                    alt="Foto Identitas"
+                                    class="w-full h-auto rounded border" />
+                                </div>
+                                <div class="flex flex-col gap-4">
+                                    <label class="font-semibold">Foto bersama identitas</label>
+                                    <img src="{{ asset('storage/' . $item->identity_photo) }}" 
+                                    alt="Foto Identitas"
+                                    class="w-full h-auto rounded border" />
+                                </div>
+                            </div>
+                        @endforeach
+                    @endif
                 </div>
                 
                 <!-- Tab Keahlian -->

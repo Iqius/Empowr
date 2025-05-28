@@ -366,6 +366,12 @@
                  <span class="ml-3">Affiliate</span>
                </a>
             </li>
+            <li>
+               <a href="{{ route('List-pengajuan-worker-affiliate.view') }}" class="sidebar-item flex items-center p-2 rounded-lg">
+                 <i class="bi bi-people text-lg text-[#1F4482]"></i>
+                 <span class="ml-3">Pendaftaran Affiliate</span>
+               </a>
+            </li>
           </ul>
         </div>
       </aside>

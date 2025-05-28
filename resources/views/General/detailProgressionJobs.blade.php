@@ -52,16 +52,16 @@
 
                         <div class="flex-1 flex flex-col items-center z-10 relative">
                             <div class="w-12 h-12 rounded-full flex items-center justify-center
-                                                                            @if($isCompleted)
-                                                                                bg-green-500 text-white
-                                                                            @elseif($isRejected)
-                                                                                bg-red-500 text-white
-                                                                            @elseif($isCurrent)
-                                                                                bg-blue-500 text-white animate-pulse
-                                                                            @else
-                                                                                bg-gray-300 text-gray-600
-                                                                            @endif
-                                                                            shadow-md transition-all">
+                                @if($isCompleted)
+                                    bg-green-500 text-white
+                                @elseif($isRejected)
+                                    bg-red-500 text-white
+                                @elseif($isCurrent)
+                                    bg-blue-500 text-white animate-pulse
+                                @else
+                                    bg-gray-300 text-gray-600
+                                @endif
+                                shadow-md transition-all">
                                 @if($isCompleted)
                                     <i class="fas fa-check"></i>
                                 @elseif($isRejected)
@@ -71,10 +71,10 @@
                                 @endif
                             </div>
                             <p class="mt-2 text-sm font-semibold text-center 
-                                                                            @if($isCompleted) text-green-600
-                                                                            @elseif($isRejected) text-red-600
-                                                                            @elseif($isCurrent) text-blue-600
-                                                                            @else text-gray-500 @endif">
+                                @if($isCompleted) text-green-600
+                                @elseif($isRejected) text-red-600
+                                @elseif($isCurrent) text-blue-600
+                                @else text-gray-500 @endif">
                                 {{ $step['label'] }}
                             </p>
                         </div>
@@ -117,17 +117,17 @@
                                     </p>
 
                                     @if($latestProgression)
-                                                    <p class="text-gray-700 mt-2">Status terakhir:
-                                                        <span
-                                                            class="font-semibold {{ $latestProgression->status_approve === 'approved' ? 'text-green-600' :
-                                        ($latestProgression->status_approve === 'rejected' ? 'text-red-600' : 'text-yellow-600') }}">
-                                                            {{ ucfirst($latestProgression->status_approve) }}
-                                                        </span>
-                                                    </p>
+                                        <p class="text-gray-700 mt-2">Status terakhir:
+                                            <span
+                                                class="font-semibold {{ $latestProgression->status_approve === 'approved' ? 'text-green-600' :
+                                                ($latestProgression->status_approve === 'rejected' ? 'text-red-600' : 'text-yellow-600') }}">
+                                                    {{ ucfirst($latestProgression->status_approve) }}
+                                            </span>
+                                        </p>
 
-                                                    @if($latestProgression->note)
-                                                        <p class="text-gray-700 mt-1">Note: {{ $latestProgression->note }}</p>
-                                                    @endif
+                                        @if($latestProgression->note)
+                                            <p class="text-gray-700 mt-1">Note: {{ $latestProgression->note }}</p>
+                                        @endif
                                     @endif
                                 </div>
                             @else

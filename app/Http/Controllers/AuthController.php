@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Carbon;
 use App\Models\OtpCode;
 use App\Models\Ewallet;
+use App\Models\workerAffiliated;
 
 
 
@@ -132,7 +133,19 @@ class AuthController extends Controller
     public function workerDashboard()
     {
         if(Auth::user()->role == 'worker'){
-            return view('worker.dashboardWorker');
+            $worker = Auth::user();
+            $workerProfile = $worker->workerProfile;
+
+            $affiliation = null;
+            $hasAffiliation = false;
+            if ($workerProfile) {
+                $affiliation = workerAffiliated::where('profile_id', $workerProfile->id)->first();
+                if ($affiliation) {
+                    $hasAffiliation = true;
+                    $affiliation = $affiliation->id; 
+                }
+            }
+            return view('worker.dashboardWorker', compact('workerProfile', 'hasAffiliation', 'affiliation'));
         }
         return view('Landing.landing'); 
     }

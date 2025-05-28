@@ -4,27 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('task', function (Blueprint $table) {
+        Schema::create('worker_verification_affiliations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('client_id');
-            $table->unsignedBigInteger('profile_id')->nullable();
-            $table->string(column: 'title');
-            $table->longText('description')->nullable();
-            $table->longText('qualification')->nullable();
-            $table->date('start_date');
-            $table->date('deadline');
-            $table->date('deadline_promotion');
-            $table->text('provisions')->nullable();
-            $table->decimal('price', 15, 2);
-            $table->enum('status', ['open', 'in progress', 'completed']);
-            $table->integer('revisions');
-            $table->enum('category', [
+            $table->unsignedBigInteger('profile_id');
+            $table->string('identity_photo');
+            $table->string('selfie_with_id');
+            $table->string('link_meet')->nullable();
+            $table->enum('keahlian_affiliate', [
                 'Web Development',
                 'Mobile Development',
                 'Game Development',
@@ -101,12 +94,12 @@ return new class extends Migration {
                 'Life Coaching',
                 'Consulting',
                 'Other'
-            ])->nullable();
-            $table->string('job_file')->nullable();
+            ]);
+            $table->enum('status', ['pending', 'reviewed', 'Interview', 'result'])->default('pending');
+            $table->enum('status_decision', ['approve', 'rejected', 'waiting'])->default('waiting');
             $table->timestamps();
 
-            $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('profile_id')->references('id')->on('worker_profiles')->onDelete('set null');
+            $table->foreign('profile_id')->references('id')->on('worker_profiles')->onDelete('cascade');
         });
     }
 
@@ -115,6 +108,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('task');
+        Schema::dropIfExists('worker_verification_affiliations');
     }
 };

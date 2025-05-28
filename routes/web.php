@@ -10,6 +10,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProgressionController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ArbitraseController;
+use App\Http\Controllers\affiliatedController;
 
 // LANDING PAGE
 Route::get('/', function () {
@@ -86,6 +87,12 @@ Route::get('/dashboard1', function () {
         default  => redirect('/'),
     };
 })->middleware(['auth'])->name('dashboard');
+// affiliated view
+Route::get('/worker/progression-affilated/{id}', [affiliatedController::class, 'index'])->middleware(['auth'])->name('progress-affiliate.view');
+Route::post('/worker/progression-affilated/submited', [affiliatedController::class, 'createAffiliatedOrder'])->middleware(['auth'])->name('progress-affiliate.submited');
+Route::post('/worker/progression-affilated/submited-ulang/{id}', [affiliatedController::class, 'ajukanUlangAffiliate'])->middleware(['auth'])->name('progress-affiliate.submited-ulang');
+
+
 
 ####### GENERAL
 // List all Jobs
@@ -133,8 +140,11 @@ Route::get('/arbitraseget', [ArbitraseController::class, 'index'])->middleware([
 Route::get('/arbitraseDetail', [ArbitraseController::class, 'index'])->middleware(['auth'])->name('arbitrase.show');
 Route::post('/arbitrase/{id}/accept', [ArbitraseController::class, 'accept'])->name('arbitrase.accept');
 Route::post('/arbitrase/{id}/reject', [ArbitraseController::class, 'reject'])->name('arbitrase.reject');
-// 
-
+// List pengajuan worker affiliasi
+Route::get('/admin/List-Request-Affiliasi-Worker', [affiliatedController::class, 'pengajuanAffiliasiWorkerView'])->middleware(['auth'])->name('List-pengajuan-worker-affiliate.view');
+Route::post('/admin/List-Request-Affiliasi-Worker/Pending-to-under-review/{id}', [affiliatedController::class, 'updateStatusAffiliate'])->name('List-pengajuan-worker-affiliate.pending-to-under-review');
+Route::post('/admin/List-Request-Affiliasi-Worker/Pending-to-under-review/submited-interview-date/{id}', [affiliatedController::class, 'interviewDate'])->name('interview-date.submit');
+Route::post('/admin/List-Request-Affiliasi-Worker/rejected-affiliated/{id}', [affiliatedController::class, 'rejectStatusAffiliate'])->name('rejected.affiliate');
 #### Arbitrase
 Route::post('/arbitrase/laporkan', [ArbitraseController::class, 'store'])->middleware(['auth'])->name('arbitrase.store');
 
