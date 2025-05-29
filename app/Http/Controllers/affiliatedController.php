@@ -8,62 +8,65 @@ use App\Models\workerAffiliated;
 use App\Models\workerAffiliatedLogs;
 use App\Models\WorkerProfile;
 use App\Models\Notification;
+use App\Models\task;
+use App\Models\TaskApplication;
+
 
 class affiliatedController extends Controller
 {
-    // Halaman progress
-    // Controller
-public function index($id){
-    $user = Auth::user();
-    if($user->role == 'admin'){
-        $affiliation = workerAffiliated::where('profile_id', $id)->firstOrFail();
-    }elseif($user->role == 'worker'){
-        $affiliation = workerAffiliated::findOrFail($id);
-    }
-   
-    // Ambil semua logs berdasarkan affiliation_id
-    $logs = workerAffiliatedLogs::where('affiliation_id', $affiliation->id)
-            ->orderBy('created_at')
-            ->get();
-    
-    // Definisi tahapan
-    $stepList = ['pending', 'reviewed', 'interview', 'result'];
-    $stepsStatus = [];
-    $rejected = false;
-    
-    foreach ($stepList as $step) {
-        if ($rejected) {
-            // Jika sebelumnya sudah ditolak, tandai sebagai auto-rejected
-            $stepsStatus[$step] = 'auto-rejected';
-            continue;
+    // Halaman progress pengajuan affiliate worker
+    public function index($id){
+        $user = Auth::user();
+        if($user->role == 'admin'){
+            $affiliation = workerAffiliated::where('profile_id', $id)->firstOrFail();
+        }elseif($user->role == 'worker'){
+            $affiliation = workerAffiliated::findOrFail($id);
         }
+    
+        // Ambil semua logs berdasarkan affiliation_id
+        $logs = workerAffiliatedLogs::where('affiliation_id', $affiliation->id)
+                ->orderBy('created_at')
+                ->get();
         
-        // Cari log yang sesuai dengan step ini
-        $log = $logs->filter(function ($log) use ($step) {
-            return strtolower($log->status) === strtolower($step);
-        })->last(); // Ambil yang terakhir jika ada beberapa
+        // Definisi tahapan
+        $stepList = ['pending', 'reviewed', 'interview', 'result'];
+        $stepsStatus = [];
+        $rejected = false;
         
-        if ($log) {
-            $stepsStatus[$step] = $log->status_decision;
-            // Jika ditolak, set flag rejected
-            if ($log->status_decision === 'rejected') {
-                $rejected = true;
+        foreach ($stepList as $step) {
+            if ($rejected) {
+                // Jika sebelumnya sudah ditolak, tandai sebagai auto-rejected
+                $stepsStatus[$step] = 'auto-rejected';
+                continue;
             }
-        } else {
-            // Jika tidak ada log untuk step ini, set sebagai null (belum diproses)
-            $stepsStatus[$step] = null;
+            
+            // Cari log yang sesuai dengan step ini
+            $log = $logs->filter(function ($log) use ($step) {
+                return strtolower($log->status) === strtolower($step);
+            })->last(); // Ambil yang terakhir jika ada beberapa
+            
+            if ($log) {
+                $stepsStatus[$step] = $log->status_decision;
+                // Jika ditolak, set flag rejected
+                if ($log->status_decision === 'rejected') {
+                    $rejected = true;
+                }
+            } else {
+                // Jika tidak ada log untuk step ini, set sebagai null (belum diproses)
+                $stepsStatus[$step] = null;
+            }
         }
+        
+        return view("worker.progressAffiliated", compact('affiliation', 'stepsStatus', 'logs'));
     }
-    
-    return view("worker.progressAffiliated", compact('affiliation', 'stepsStatus', 'logs'));
-}
 
-    // Tabel request pengajuan afiliasi worker
+    // Tabel request pengajuan afiliasi worker untuk admin
     public function pengajuanAffiliasiWorkerView(){
         $data = workerAffiliated::all();
         return view("admin.Affiliation.affiliationListWorkerRequest", compact('data'));
     }
 
+    // Update status progress pengajuan affiliasi worker untuk admin
     public function updateStatusAffiliate(Request $request, $id){
         // Ambil data dari tabel workerAffiliated berdasarkan id
         $affiliation = workerAffiliated::findOrFail($id);
@@ -132,6 +135,7 @@ public function index($id){
         return redirect()->back()->with('success', 'Status berhasil diperbarui.');
     }
 
+    // Penolakan pengajuan affiliasi worker untuk admin
     public function rejectStatusAffiliate(Request $request, $id)
     {
         $affiliation = workerAffiliated::findOrFail($id);
@@ -164,21 +168,7 @@ public function index($id){
         return redirect()->back()->with('error', 'Status saat ini tidak bisa ditolak.');
     }
 
-
-    public function ajukanUlangAffiliate($id){
-        $affiliation = workerAffiliated::findOrFail($id);
-        
-        // Hapus semua logs yang terkait dengan affiliation_id ini
-        workerAffiliatedLogs::where('affiliation_id', $affiliation->id)->delete();
-
-        $affiliation->status = 'pending';
-        $affiliation->status_decision = 'waiting';
-        $affiliation->save();
-        return redirect()->back()->with('success', 'Status berhasil diperbarui.');
-
-    }
-
-
+    // Menambahkan jadwal interview worker untuk admin
     public function interviewDate(Request $request, $id){
         $affiliation = workerAffiliated::findOrFail($id);
         if ($affiliation->status === 'interview'){
@@ -192,7 +182,7 @@ public function index($id){
     }
 
 
-    // PENGAJUAN AFFILIATED KE ADMIN
+    // PENGAJUAN AFFILIATED worker KE ADMIN
     public function createAffiliatedOrder(Request $request)
     {
         $request->validate([
@@ -230,5 +220,84 @@ public function index($id){
         ]);
 
         return redirect()->back()->with('success-order-affiliated', 'Pendaftaran berhasil dikirim!');
+    }
+
+
+
+
+    // -----------------------------------------------------BATAS UNTUK TASK AFFILIATE---------------------------------------------
+
+
+    // Untuk client mengajukan afiliate ke admin
+    public function pengajuanTaskAffiliation($id){
+        $task = task::findOrFail($id);
+
+        $task->pengajuan_affiliate = 'pengajuan';
+        $task->save();
+       
+        return redirect()->route('jobs.manage', ['id' => $id])->with('success-tambah-tugas-affiliate', 'Tugas telah masuk antrian admin.');
+    }
+
+    // menampilkan list task yg diajukan affiliate ke admin
+    public function viewListPengajuanTaskAffiliate(){
+        $task = Task::where('pengajuan_affiliate ', true)
+            ->whereDoesntHave('applications', function ($query) {
+                $query->where('affiliated', true);
+            })
+            ->get();
+        $workerProfiles = WorkerProfile::where('empowr_affiliate', true)->get();
+        return view('admin.Affiliation.affiliationListTaskClientRequest', compact('workerProfiles'))->with('task', $task);
+    }
+
+
+    // menolak pengajuan task affiliate
+    public function rejectTaskAffiliate($id){
+        $admin = Auth::user();
+        $task = task::where('id', $id)->firstOrFail();
+
+        $task->pengajuan_affiliate  = false;
+        $task->save();
+
+        Notification::create([
+            'user_id' => $task->client->id,
+            'sender_name' => $admin->nama_lengkap,
+            'message' => 'Maaf pengajuan affiliate telah ditolak.',
+            'is_read' => false,
+        ]);
+        return redirect()->route('List-pengajuan-task-affiliate.view')->with('success', 'Pengajuan affiliate ditolak.');
+
+    }
+
+
+    // menambahkan worker ke antrian pelamar tugas
+    public function tambahWorkerAffiliateKeTask(Request $request, $id){
+        
+        $task = Task::findOrFail($id);
+        $workerProfiles = $request->worker_id;
+
+        $existing = TaskApplication::where('task_id', $id)
+            ->where('profile_id', $workerProfiles)
+            ->first();
+
+            $hargaTask = (float) str_replace(',', '.', $request->harga_task_affiliate);
+            $hargaPajak = (float) str_replace(',', '.', $request->harga_pajak_affiliate);
+
+        TaskApplication::create([
+            'task_id' => $task->id,
+            'profile_id' => $workerProfiles,
+            'bidPrice' => $hargaTask + $hargaPajak,
+            'catatan' => $request->catatan,
+            'status' => 'pending',
+            'affiliated' => true,
+            'applied_at' => now(),
+        ]);
+
+
+        $task->harga_task_affiliate = $hargaTask;
+        $task->harga_pajak_affiliate = $hargaPajak;
+        $task->save();
+
+
+        return redirect()->route('List-pengajuan-task-affiliate.view')->with('success', 'Pengajuan affiliate telah dikirimkan.');
     }
 }

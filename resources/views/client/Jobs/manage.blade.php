@@ -106,7 +106,7 @@
 
                     <!-- Action Buttons -->
                     <div class="flex justify-end gap-2">
-                        @if ($job->status === 'open')
+                        @if ($job->status === 'open' && (auth()->user()->role != 'admin'))
                             <form id="cancelTaskForm{{ $job->id }}" action="{{ route('jobs.destroy', $job->id) }}"
                                 method="POST">
                                 @csrf
@@ -116,7 +116,7 @@
                                     Hapus Task
                                 </button>
                             </form>
-                        @else
+                        @elseif ($job->status != 'open' && (auth()->user()->role != 'admin'))
                             <button class="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed" disabled>
                                 Tidak Bisa Dibatalkan Task Sudah Di Proses
                             </button>
@@ -195,6 +195,15 @@
                     <option value="desc" {{ request('dir') === 'desc' ? 'selected' : '' }}>Turun ↓</option>
                 </select>
             </form>
+            @if($job->status_affiliate == false && (auth()->check() && auth()->user()->role != 'admin'))
+                <button onclick="openModalAffiliasi()" class="bg-blue-500 text-white px-4 py-2 rounded">
+                    Dapatkan worker yang bermitra disini
+                </button>
+            @elseif ($job->progress_affiliate == pengajuan && (auth()->check() && auth()->user()->role != 'admin'))
+                <button onclick="#" class="bg-blue-500 text-white px-4 py-2 rounded">
+                    Chat admin
+                </button>
+            @endif
         </div>
 
         <!-- List Pelamar (Daftar Pelamar) -->
@@ -232,41 +241,43 @@
                     </div>
 
 
-                    <!-- Kanan: Tombol-Tombol Aksi -->
-                    <div class="flex flex-col justify-between items-end">
-                        <div class="flex gap-2 mt-4">
-                            <a href="{{ route('profile.worker.lamar', $worker->id) }}"
-                                class="bg-[#1F4482] hover:bg-[#18346a] text-white px-4 py-2 rounded-md shadow inline-block">
-                                Lihat Profil
-                            </a>
-                            <a href="{{ url('chat/' . $user->id) }}"
-                                class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a] inline-block " data-task-id="{{ $applicant->task->id }}">
-                                Chat
-                            </a>
+                    @if(auth()->check() && auth()->user()->role != 'admin')
+                        <!-- Kanan: Tombol-Tombol Aksi -->
+                        <div class="flex flex-col justify-between items-end">
+                            <div class="flex gap-2 mt-4">
+                                <a href="{{ route('profile.worker.lamar', $worker->id) }}"
+                                    class="bg-[#1F4482] hover:bg-[#18346a] text-white px-4 py-2 rounded-md shadow inline-block">
+                                    Lihat Profil
+                                </a>
+                                <a href="{{ url('chat/' . $user->id) }}"
+                                    class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a] inline-block " data-task-id="{{ $applicant->task->id }}">
+                                    Chat
+                                </a>
 
 
-                            <!-- Tombol yang membuka modal hire -->
-                            <button type="button"
-                                class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800"
-                                onclick="openPaymentModal()">
-                                Hire worker
-                            </button>
-
-                            <form action="{{ route('client.reject') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="application_id" value="{{ $applicant->id }}">
-                                <button type="submit" class="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-800">
-                                    Tolak
+                                <!-- Tombol yang membuka modal hire -->
+                                <button type="button"
+                                    class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800"
+                                    onclick="openPaymentModal()">
+                                    Hire worker
                                 </button>
-                            </form>
+
+                                <form action="{{ route('client.reject') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="application_id" value="{{ $applicant->id }}">
+                                    <button type="submit" class="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-800">
+                                        Tolak
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                    </div>
+                    @endif
 
                 </div>
 
                 <!-- Modal hire pilih metode bayar-->
                 <div id="paymentModal"
-                    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 z-50"
+                    class="fixed inset-0 flex items-center justify-center opacity-0 pointer-events-none backdrop-blur-sm transition-opacity duration-300 bg-black/30"
                     onclick="handleOverlayClick(event)">
                     
                     <!-- Konten Modal -->
@@ -293,7 +304,7 @@
 
     <!-- modal bayar ewallet -->
     <div id="ewalletModal" 
-        class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 opacity-0"
+        class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 transition-opacity backdrop-blur-sm transition-opacity duration-300 opacity-0"
         onclick="handleOutsideClick(event)">
         <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-4 sm:mx-0 transform transition-transform duration-300 scale-90"
             id="ewalletContent" onclick="event.stopPropagation()">
@@ -327,7 +338,7 @@
 
     <!-- Modal bayar direct-->
     <div id="bayarModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden transition-opacity duration-300 opacity-0">
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden transition-opacity backdrop-blur-sm transition-opacity duration-300 opacity-0">
         <div id="modalContent"
             class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative transform transition-all duration-300 scale-95">
             <h2 class="text-lg font-semibold mb-4">Pilih Metode Pembayaran</h2>
@@ -399,7 +410,72 @@
     @endif
 </div>
 
+
+
+<!-- Modal untuk request affiliasi -->
+<div id="infoModalAffiliasi" class="fixed inset-0 z-[9999] flex items-center justify-center opacity-0 pointer-events-none backdrop-blur-sm transition-opacity duration-300 bg-black/30">
+    <div id="modalContentAffiliasi"class="bg-white p-6 rounded-lg w-full max-w-lg shadow-lg transform scale-95 opacity-0 transition duration-300max-h-[80vh] flex flex-col">
+        <form action="{{ route('jobs.request-affiliate', $task->id) }}" method="POST">
+            @csrf
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">Informasi</h2>
+                <button onclick="closeModalAffiliasi()" class="text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
+            </div>
+
+            <!-- Modal Body (scrollable bagian ini) -->
+            <div class="overflow-y-auto mb-4 text-sm text-gray-700 space-y-2 flex-1 pr-1">
+                <p>Ini adalah informasi penting sebelum Anda mengajukan permintaan. Harap dibaca dengan seksama.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                <p>More long content here...</p>
+                <!-- Tambahkan banyak paragraf untuk simulasi -->
+                <p>Lorem ipsum...</p>
+                <p>Lorem ipsum...</p>
+                <p>Lorem ipsum...</p>
+                <p>Lorem ipsum...</p>
+                <p>Lorem ipsum...</p>
+                <p>Lorem ipsum...</p>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex justify-end space-x-2 pt-2 border-t">
+                <button onclick="closeModalAffiliasi()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Tutup</button>
+                <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Ajukan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
 @include('General.footer')
+
+<!-- modal request affiliasi -->
+<script>
+  function openModalAffiliasi() {
+    const modal = document.getElementById('infoModalAffiliasi');
+    const content = document.getElementById('modalContentAffiliasi');
+
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    setTimeout(() => {
+      content.classList.remove('scale-95', 'opacity-0');
+      content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+  }
+
+  function closeModalAffiliasi() {
+    const modal = document.getElementById('infoModalAffiliasi');
+    const content = document.getElementById('modalContentAffiliasi');
+
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+    modal.classList.add('opacity-0');
+
+    setTimeout(() => {
+      modal.classList.add('pointer-events-none');
+    }, 300);
+  }
+</script>
 
 <!-- untuk modal bayar pake ewallet -->
 <script>
@@ -493,6 +569,7 @@
 </script>
 
 
+<!-- Script midtrans -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const buttons = document.querySelectorAll('.tab-button');
@@ -603,8 +680,38 @@
     }
 </script>
 
+<!-- SCRIPT UNTUK HAPUS TASK -->
+ <SCript>
+    <!-- Untuk hapus task admin -->
+
+    function confirmCancel(taskId) {
+        Swal.fire({
+            title: 'Yakin ingin menghapus task?',
+            text: "Tindakan ini tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Hapus Task',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Task berhasil dibatalkan!',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#1F4482'
+                }).then(() => {
+                    document.getElementById(cancelTaskForm${taskId}).submit();
+                });
+            }
+        });
+    }
+ </SCript>
 
 
+
+<!-- script filter worker -->
 <script>
     function sortApplicants() {
         const sortBy = document.getElementById("sortBy").value;
@@ -632,31 +739,7 @@
         container.innerHTML = '';
         items.forEach(item => container.appendChild(item));
     }
-    <!-- Untuk hapus task admin -->
-
-    function confirmCancel(taskId) {
-        Swal.fire({
-            title: 'Yakin ingin menghapus task?',
-            text: "Tindakan ini tidak bisa dikembalikan!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#aaa',
-            confirmButtonText: 'Hapus Task',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Task berhasil dibatalkan!',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#1F4482'
-                }).then(() => {
-                    document.getElementById(cancelTaskForm${taskId}).submit();
-                });
-            }
-        });
-    }
+    
 
     document.addEventListener('DOMContentLoaded', function () {
         const sortSelect = document.getElementById("sortBy");
@@ -687,149 +770,6 @@
 
         const total = reviews.reduce((sum, r) => sum + r.rating, 0);
         return total / reviews.length;
-    }
-
-    function openWorkerModalFromElement(el) {
-        const data = el.closest('div');
-
-        const name = data.getAttribute('data-name');
-        const note = data.getAttribute('data-note');
-        const price = data.getAttribute('data-price');
-        const experience = data.getAttribute('data-experience');
-        const rating = data.getAttribute('data-rating');
-        const education = data.getAttribute('data-education');
-        const cv = data.getAttribute('data-cv');
-        const label = data.getAttribute('data-label') === '1' ? 'Ya' : 'Tidak';
-        const affiliate = data.getAttribute('data-affiliate') === '1' ? 'Ya' : 'Tidak';
-
-        // Inject ke modal
-        document.getElementById("worker-name").textContent = name;
-        document.getElementById("worker-skills-value").textContent = "-"; // dari backend belum ada
-        document.getElementById("worker-label").textContent = label;
-        document.getElementById("worker-affiliate").textContent = affiliate;
-        document.getElementById("worker-education").textContent = education;
-        document.getElementById("worker-experience").textContent = ${experience} tahun;
-        document.getElementById("worker-cv").href = cv ?? "#";
-
-        // Rating Summary
-        document.getElementById("worker-rating-summary").innerHTML = `
-        <h3 class="text-2xl font-semibold">${rating}</h3>
-        <p class="text-yellow-500 text-xl">${"⭐".repeat(Math.floor(rating))}</p>
-        <p class="text-sm text-gray-500">Dari rating user</p>
-    `;
-
-        // Show modal
-        showWorkerTab('keahlianTab');
-        document.getElementById('workerDetailModal').classList.remove('hidden');
-    }
-
-
-
-    // Modal Worker
-    function openWorkerModal(index) {
-        const worker = applicants[index];
-        document.getElementById("worker-name").textContent = worker.name;
-        document.getElementById("worker-skills-value").textContent = worker.skills.join(", ");
-        document.getElementById("worker-label").textContent = worker.empowrLabel ? "Ya" : "Tidak";
-        document.getElementById("worker-affiliate").textContent = worker.empowrAffiliate ? "Ya" : "Tidak";
-        document.getElementById("worker-education").textContent = worker.education;
-        document.getElementById("worker-experience").textContent = ${worker.experience} tahun;
-        document.getElementById("worker-cv").href = worker.cv || "#";
-
-        // Summary
-        const avgRating = calculateAverageRating(worker.reviews);
-        document.getElementById("worker-rating-summary").innerHTML = `
-  <h3 class="text-2xl font-semibold">${avgRating.toFixed(1)}</h3>
-  <p class="text-yellow-500 text-xl">${"⭐".repeat(Math.floor(avgRating))}${avgRating % 1 >= 0.5 ? "✩" : ""}</p>
-  <p class="text-sm text-gray-500">Berdasarkan ${worker.reviews.length} rating</p>
-`;
-
-
-        // Distribusi
-        const dist = calculateRatingDistribution(worker.reviews);
-        const distEl = document.getElementById("worker-rating-distribution");
-        distEl.innerHTML = "";
-        for (let i = 5; i >= 1; i--) {
-            const count = dist[i];
-            const percent = (count / worker.reviews.length) * 100;
-            distEl.innerHTML += `
-    <div class="flex items-center space-x-2">
-      <span class="w-6 text-sm">${i}★</span>
-      <div class="w-full bg-gray-200 h-3 rounded">
-        <div class="bg-yellow-400 h-3 rounded" style="width: ${percent}%;"></div>
-      </div>
-      <span class="w-10 text-sm text-gray-600 text-right">${count}</span>
-    </div>
-  `;
-        }
-
-        // Reviews
-        const reviewEl = document.getElementById("worker-rating-reviews");
-        reviewEl.innerHTML = "";
-        worker.reviews.forEach(r => {
-            reviewEl.innerHTML += `
-    <div class="border rounded p-4">
-      <div class="flex justify-between items-center mb-2">
-        <span class="font-semibold">${r.name}</span>
-        <span class="text-yellow-500">${"⭐".repeat(r.rating)}</span>
-      </div>
-      <p class="text-sm text-gray-700">“${r.comment}”</p>
-    </div>
-  `;
-        });
-
-        // Sertifikat Dropdown
-        const certSelect = document.getElementById("certSelect");
-        const certPreview = document.getElementById("certPreview");
-        certSelect.innerHTML = <option disabled selected>Lihat Sertifikasi</option>;
-
-        // Cek apakah worker punya sertifikat
-        if (worker.certImages && worker.certImages.length > 0) {
-            worker.certImages.forEach((cert, i) => {
-                const option = document.createElement("option");
-                option.value = i;
-                option.textContent = cert.caption;
-                certSelect.appendChild(option);
-            });
-
-            certSelect.onchange = () => {
-                const selected = worker.certImages[certSelect.value];
-                document.getElementById("certImage").src = selected.image;
-                document.getElementById("certCaptionLink").href = selected.image;
-                document.getElementById("certCaptionLink").textContent = selected.caption;
-                certPreview.classList.remove("hidden");
-            };
-        } else {
-            certPreview.classList.add("hidden");
-        }
-
-        // Portofolio Dropdown
-        const portfolioSelect = document.getElementById("portfolioSelect");
-        const portfolioPreview = document.getElementById("portfolioPreview");
-
-        portfolioSelect.innerHTML = <option disabled selected>Lihat Portofolio</option>;
-
-        if (worker.portfolios && worker.portfolios.length > 0) {
-            worker.portfolios.forEach((item, i) => {
-                const option = document.createElement("option");
-                option.value = i;
-                option.textContent = item.caption;
-                portfolioSelect.appendChild(option);
-            });
-
-            portfolioSelect.onchange = () => {
-                const selected = worker.portfolios[portfolioSelect.value];
-                document.getElementById("portfolioImage").src = selected.image;
-                document.getElementById("portfolioCaptionLink").href = selected.image;
-                document.getElementById("portfolioCaptionLink").textContent = selected.caption;
-                portfolioPreview.classList.remove("hidden");
-            };
-        } else {
-            portfolioPreview.classList.add("hidden");
-        }
-
-        showWorkerTab('keahlianTab');
-        document.getElementById('workerDetailModal').classList.remove('hidden');
     }
 </script>
 

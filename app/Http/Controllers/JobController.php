@@ -182,7 +182,14 @@ class JobController extends Controller
 
     public function manage($id, Request $request)
     {
-        $task = Task::with('user')->findOrFail($id);
+
+        $user = Auth::user();
+        if($user->role == 'admin'){
+            $task = Task::where('id', $id)->firstOrFail();
+        }else{
+            $task = Task::with('user')->findOrFail($id);
+        }
+        
 
         $userId = Auth::id();
 
@@ -272,27 +279,9 @@ class JobController extends Controller
         ]);
         return back()->with('success', 'Lamaran berhasil dikirim.');
     }
-    public function accept($applicationId)
-    {
-        $application = TaskApplication::findOrFail($applicationId);
-        $task = $application->task;
 
-        // Update task
-        $task->update([
-            'profile_id' => $application->profile_id,
-            'status' => 'in progress',
-        ]);
 
-        // Update status lamaran
-        $application->update(['status' => 'accepted']);
-
-        // Optional: Tolak lamaran lain
-        TaskApplication::where('task_id', $task->id)
-            ->where('id', '!=', $application->id)
-            ->update(['status' => 'rejected']);
-
-        return back()->with('success', 'Worker berhasil diterima. Task dimulai.');
-    }
+    
 
     //tolak worker
     public function ClientReject(Request $request)
@@ -461,13 +450,32 @@ class JobController extends Controller
                 if ($transaction->type === 'payment') {
                     $task = $transaction->task;
                     if ($task) {
-                        $task->price = $transaction->amount;
-                        $task->profile_id = $transaction->worker_id;
-                        $task->client_id = $transaction->client_id;
-                        $task->status = 'in progress';
-                        $task->save();
+                        $hasAffiliate = TaskApplication::where('task_id', $task->id)
+                            ->where('affiliated', true)
+                            ->exists();
 
-                        TaskApplication::where('task_id', $task->id)->delete();
+                        // Kalau ada affiliated = true, update task dengan informasi khusus affiliate (opsional)
+                        if ($hasAffiliate) {
+                            $task->status = 'in progress'; // atau bisa disesuaikan
+                            $task->profile_id = $transaction->worker_id;
+                            $task->client_id = $transaction->client_id;
+                            $task->status_affiliate = true;
+                            $task->price = $transaction->amount;
+                            $task->save();
+
+                            // Bisa juga skip penghapusan task application kalau dibutuhkan
+                            TaskApplication::where('task_id', $task->id)->delete();
+                        } else {
+                            // Kalau bukan affiliate
+                            $task->price = $transaction->amount;
+                            $task->profile_id = $transaction->worker_id;
+                            $task->client_id = $transaction->client_id;
+                            $task->status_affiliate = false;
+                            $task->status = 'in progress';
+                            $task->save();
+
+                            TaskApplication::where('task_id', $task->id)->delete();
+                        }
                     }
                 } elseif ($transaction->type === 'topup') {
                     $userId = $transaction->client_id ?? $transaction->worker_id;
@@ -522,18 +530,36 @@ class JobController extends Controller
             return back()->with('error', 'Saldo tidak mencukupi.');
         }
 
-        // Potong saldo ewallet
-        $ewallet->balance -= $amount;
-        $ewallet->save();
+        $hasAffiliate = TaskApplication::where('task_id', $task->id)
+            ->where('affiliated', true)
+            ->exists();
 
-        $task->update([
-            'price' => $amount,
-            'profile_id' => $workerId,
-            'client_id' => $user->id,
-            'status' => 'in progress',
-        ]);
+        if ($hasAffiliate) {
+            // Potong saldo ewallet
+            $ewallet->balance -= $amount;
+            $ewallet->save();
+
+            $task->update([
+                'price' => $amount,
+                'profile_id' => $workerId,
+                'client_id' => $user->id,
+                'status_affiliate' => true,
+                'status' => 'in progress',
+            ]);
+        } else {
+            // Potong saldo ewallet
+            $ewallet->balance -= $amount;
+            $ewallet->save();
+
+            $task->update([
+                'price' => $amount,
+                'profile_id' => $workerId,
+                'client_id' => $user->id,
+                'status_affiliate' => false,
+                'status' => 'in progress',
+            ]);
+        }
         
-
         // Hapus semua aplikasi task
         TaskApplication::where('task_id', $task->id)->delete();
         
@@ -659,3 +685,29 @@ class JobController extends Controller
 
 
 
+
+
+
+// gadipake
+
+// public function accept($applicationId)
+//     {
+//         $application = TaskApplication::findOrFail($applicationId);
+//         $task = $application->task;
+
+//         // Update task
+//         $task->update([
+//             'profile_id' => $application->profile_id,
+//             'status' => 'in progress',
+//         ]);
+
+//         // Update status lamaran
+//         $application->update(['status' => 'accepted']);
+
+//         // Optional: Tolak lamaran lain
+//         TaskApplication::where('task_id', $task->id)
+//             ->where('id', '!=', $application->id)
+//             ->update(['status' => 'rejected']);
+
+//         return back()->with('success', 'Worker berhasil diterima. Task dimulai.');
+//     }

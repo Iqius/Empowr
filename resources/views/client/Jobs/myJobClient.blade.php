@@ -82,13 +82,13 @@
                         @if ($job->status === 'in progress')
                             <a href="{{ route('inProgress.jobs', $job->id) }}">
                         @else
-                                <a href="{{ route('jobs.manage', $job->id) }}">
-                            @endif
-                                <button
-                                    class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                                    Lihat Detail
-                                </button>
-                            </a>
+                            <a href="{{ route('jobs.manage', $job->id) }}">
+                        @endif
+                            <button
+                                class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
+                                Lihat Detail
+                            </button>
+                        </a>
                     </div>
                 </div>
             @endif

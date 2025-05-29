@@ -312,7 +312,7 @@
           </ul>
         </div>
       </aside>
-   @elseif (auth()->check() && auth()->user()->role === 'admin')
+   @elseif (auth()->user()->role === 'admin')
       <aside id="logo-sidebar"
         class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200"
         aria-label="Sidebar">
@@ -361,7 +361,7 @@
 
             <!-- Affiliate -->
             <li>
-               <a href="{{ url('/affiliate') }}" class="sidebar-item flex items-center p-2 rounded-lg">
+               <a href="{{ route('List-pengajuan-task-affiliate.view') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-people text-lg text-[#1F4482]"></i>
                  <span class="ml-3">Affiliate</span>
                </a>
