@@ -83,14 +83,15 @@ class ProgressionController extends Controller
                 'comment' => 'nullable|string|max:500', // Komentar opsional
             ]);
     
-            // Simpan rating dan komentar ke dalam tabel task_reviews
-            TaskReview::create([
-                'task_id' => $task->id,
-                'user_id' => auth()->user()->id, // User yang memberikan ulasan (client)
-                'reviewed_user_id' => $task->worker->user->id, // Worker yang menerima ulasan
-                'rating' => $request->rating, // Rating
-                'comment' => $request->review, // Komentar
+            $review = TaskReview::where('task_id', $task->id)
+                ->where('user_id', auth()->user()->id)
+                ->firstOrFail();
+
+            $review->update([
+                'rating' => $request->rating,
+                'comment' => $request->review,
             ]);
+
         }
 
         $task->update([
@@ -163,15 +164,101 @@ class ProgressionController extends Controller
             'comment' => 'nullable|string|max:500', // Komentar opsional
         ]);
 
-        // Simpan rating dan komentar ke dalam tabel task_reviews
-        TaskReview::create([
-            'task_id' => $task->id,
-            'user_id' => auth()->user()->id, // User yang memberikan ulasan (client)
-            'reviewed_user_id' => $task->client->id, // Worker yang menerima ulasan
-            'rating' => $request->rating, // Rating
-            'comment' => $request->review, // Komentar
+        $review = TaskReview::where('task_id', $task->id)
+            ->where('user_id', auth()->user()->id)
+            ->firstOrFail();
+
+        $review->update([
+            'rating' => $request->rating,
+            'comment' => $request->review,
         ]);
 
         return redirect()->route('jobs.index')->with('success-review', 'Pekerjaan sudah diberikan ulasan terima kasih.');
+    }
+
+
+
+
+    // Fungsi tampilan detail Job yang sudah in progres
+    public function DetailJobsInProgress($id)
+    {
+        $task = Task::with('user')->findOrFail($id);
+
+        $progressionsByStep = Progression::with('task')
+            ->where('task_id', $task->id)
+            ->get()
+            ->keyBy('progression_ke');
+
+        $progressions = $progressionsByStep->values();
+
+        $steps = [];
+        for ($i = 1; $i <= 4; $i++) {
+            if (isset($progressionsByStep[$i])) {
+                $steps['step' . $i] = $progressionsByStep[$i]->status_approve ?? 'pending';
+            } else {
+                $steps['step' . $i] = 'pending';
+            }
+        }
+
+        // Tentukan apakah worker bisa mengunggah file
+        $currentStep = $progressionsByStep->keys()->max() + 1;
+        $canSubmit = $this->determineCanSubmit($currentStep, $progressionsByStep);
+
+        if ($task->status !== 'completed') {
+            return view('General.detailProgressionJobs', compact(
+                'task',
+                'steps',
+                'progressionsByStep',
+                'progressions',
+                'canSubmit' // jangan lupa lempar ke view kalau mau dipakai
+            ));
+        } else {
+            return view('General.detailProgressionComplite', compact(
+                'task',
+                'progressions',
+            ));
+        }
+    }
+
+
+    private function determineCanSubmit($step, $progressionsByStep)
+    {
+        $canSubmit = false;
+
+        $third = $progressionsByStep[3] ?? null;
+        $fourth = $progressionsByStep[4] ?? null;
+
+        // Ambil data task terkait
+        $task = $third?->task ?? null;
+
+        // Cek jika task ada dan memiliki kolom revisions
+        $taskRevisions = $task ? $task->revisions : 0;
+
+        // Hitung revisi yang sudah ada di progression (dari step 4 dan seterusnya)
+        $currentRevisions = Progression::where('task_id', $third->task_id ?? null)
+            ->where('progression_ke', '>=', 4) // Memperhitungkan revisi setelah step 3
+            ->count();
+
+        // Jika ini adalah step pertama, cek apakah progression pertama sudah disetujui
+        if ($step == 1) {
+            if (isset($progressionsByStep[1]) && $progressionsByStep[1]->status_approve == 'approved') {
+                $canSubmit = true;
+            }
+        }
+
+        // Special rules for step 4 (revisi)
+        if ($step == 4) {
+            // Cek apakah revisi masih diizinkan
+            if (!$fourth && $third && $third->status_approve === 'rejected' && $currentRevisions < $taskRevisions) {
+                $canSubmit = true;
+            }
+        }
+
+        // Jika revisi yang sudah dilakukan lebih sedikit dari yang diizinkan, tombol submit harus muncul
+        if ($currentRevisions < $taskRevisions) {
+            $canSubmit = true;
+        }
+
+        return $canSubmit;
     }
 }

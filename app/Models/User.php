@@ -92,4 +92,11 @@ class User extends Authenticatable
     {
         return $this->hasOne(Ewallet::class, 'user_id');
     }
+
+
+    public function withdraws()
+    {
+        return $this->hasMany(Transaction::class, 'client_id')->where('type', 'payout');
+    }
+
 }

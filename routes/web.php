@@ -11,6 +11,7 @@ use App\Http\Controllers\ProgressionController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ArbitraseController;
 use App\Http\Controllers\affiliatedController;
+use App\Http\Controllers\paymentController;
 
 // LANDING PAGE
 Route::get('/', function () {
@@ -52,7 +53,7 @@ Route::post('/hire', [JobController::class, 'Clienthire'])->name('client.hire');
 // --Client Tolak Worker
 Route::post('/reject', [JobController::class, 'ClientReject'])->name('client.reject');
 // --bayar
-Route::post('/bayar/{task?}', [JobController::class, 'bayar'])->name('client.bayar');
+Route::post('/bayar/{task?}', [paymentController::class, 'bayar'])->name('client.bayar');
 // --review progress
 Route::post('/task-progression/{progress}/review', [ProgressionController::class, 'review'])->name('task-progression.review');
 // --Client complete job
@@ -118,10 +119,12 @@ Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->nam
 // --CHAT MASIH BELUM PASTI
 Route::get('/chat', [\Chatify\Http\Controllers\MessagesController::class, 'index'])->name('chat');
 // --In progress jobs
-Route::get('/in-progress-jobs/{task_id}', [JobController::class, 'DetailJobsInProgress'])->name('inProgress.jobs');
+Route::get('/in-progress-jobs/{task_id}', [ProgressionController::class, 'DetailJobsInProgress'])->name('inProgress.jobs');
 // --arbitrase
 // web.php
 Route::get('/arbitrase', [ArbitraseController::class, 'indexUser'])->name('arbitrase.user');
+// withdraw
+Route::post('/ewallet/withdraw/pengajuan', [paymentController::class, 'pencairanDana'])->name('withdraw.pengajuan');
 
 
 //chat
@@ -137,8 +140,8 @@ Route::delete('/chat/destroy/{id}', [ChatController::class, 'destroyConversation
 Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifications.index');
 Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 // --Ewallet
-Route::get('/ewallet/{id}', [JobController::class, 'ewalletIndex'])->name('ewallet.index');
-Route::post('/ewallet/pembayaran/{id}', [JobController::class, 'bayarEwalletBase'])->name('client.bayar.ewallet');
+Route::get('/ewallet/{id}', [paymentController::class, 'ewalletIndex'])->name('ewallet.index');
+Route::post('/ewallet/pembayaran/{id}', [paymentController::class, 'bayarEwalletBase'])->name('client.bayar.ewallet');
 
 
 
@@ -163,6 +166,10 @@ Route::post('/arbitrase/laporkan', [ArbitraseController::class, 'store'])->middl
 Route::get('/admin/List-Request-Affiliasi-Task', [affiliatedController::class, 'viewListPengajuanTaskAffiliate'])->middleware(['auth'])->name('List-pengajuan-task-affiliate.view');
 Route::post('/admin/List-Request-Affiliasi-Task/rejected-affiliated/{id}', [affiliatedController::class, 'rejectTaskAffiliate'])->name('rejected.affiliate-task');
 Route::post('/admin/List-Request-Affiliasi-Task/approve-affiliated/{id}', [affiliatedController::class, 'tambahWorkerAffiliateKeTask'])->name('approve.affiliate-task');
+// withdraw list user 
+Route::get('/withdraw', [paymentController::class, 'indexWithdraw'])->name('withdraw.view');
+Route::post('/withdraw/approve/{id}', [paymentController::class, 'approveWithdraw'])->name('withdraw.approve');
+Route::post('/withdraw/reject/{id}', [paymentController::class, 'rejectWithdraw'])->name('withdraw.reject');
 
 
 

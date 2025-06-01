@@ -337,7 +337,7 @@
 
             <!-- Pencairan dana -->
             <li>
-               <a href="#" class="sidebar-item flex items-center p-2 rounded-lg">
+               <a href="{{ route('withdraw.view') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-currency-dollar text-lg text-[#1F4482]"></i>
                  <span class="ml-3">Pencairan dana</span>
                </a>

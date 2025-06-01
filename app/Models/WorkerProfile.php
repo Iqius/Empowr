@@ -49,4 +49,5 @@ class WorkerProfile extends Model
         return $this->hasMany(WorkerVerificationAffiliation::class, 'profile_id', 'id');
     }
 
+
 }

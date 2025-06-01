@@ -18,7 +18,7 @@
                     <p class="text-xl font-bold">Saldo belum tersedia.</p>
                 @endif
                 <div class="flex flex-col space-y-2">
-                <button class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm" onclick="openTopupModal()">Withdraw</button>
+                <button class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm" onclick="openWithdrawModal()">Withdraw</button>
                 <button class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm" onclick="openTopupModal()">Top Up</button>
                 </div>
             </div>  
@@ -220,6 +220,62 @@
     </div>
 </div>
 
+<!-- Modal withdraw -->
+<div id="withdrawModal"class="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 hidden justify-center items-center transition-opacity duration-300">
+    <!-- Modal Content -->
+    <div id="withdrawModalContent"
+        class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md scale-95 opacity-0 transform transition-all duration-300 ease-out"
+    >
+        <h2 class="text-xl font-semibold mb-4 text-center">Ajukan Withdraw</h2>
+
+        <form action="{{ route('withdraw.pengajuan') }}" method="POST">
+            @csrf
+
+            <!-- Jumlah Withdraw -->
+            <div class="mb-4">
+                <label for="amount" class="block text-gray-700 font-medium mb-1">Jumlah Penarikan</label>
+                <input type="number" name="amount" id="amount" min="10000"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required>
+            </div>
+
+            <!-- Metode Pembayaran -->
+            <div class="mb-4">
+                <select id="withdraw_method" name="withdraw_method" onchange="togglePaymentFields()">
+                    <option value="">-- Pilih Metode Pembayaran --</option>
+                    @if($paymentAccounts && $paymentAccounts->bank_name !== 'Tidak ada')
+                        <option value="bank">Bank ({{ $paymentAccounts->bank_name }})</option>
+                    @endif
+                    @if($paymentAccounts && $paymentAccounts->ewallet_provider !== 'Tidak ada')
+                        <option value="ewallet">E-Wallet ({{ $paymentAccounts->ewallet_provider }})</option>
+                    @endif
+                </select>
+
+                <div id="bankFields" style="display:none;">
+                    <p>No. Rekening: {{ $paymentAccounts->account_number }}</p>
+                    <p>Atas Nama: {{ $paymentAccounts->bank_account_name }}</p>
+                </div>
+
+                <div id="ewalletFields" style="display:none;">
+                    <p>No. Wallet: {{ $paymentAccounts->wallet_number }}</p>
+                    <p>Atas Nama: {{ $paymentAccounts->ewallet_account_name }}</p>
+                </div>
+            </div>
+
+            <!-- Tombol -->
+            <div class="flex justify-end space-x-2 mt-6">
+                <button type="button" onclick="closeWithdrawModal()"
+                    class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition">
+                    Batal
+                </button>
+                <button type="submit"
+                    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                    Ajukan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 
 
@@ -282,6 +338,47 @@
 });
 
 </script>
+
+
+<!-- JS untuk modal withdraw -->
+<script>
+    function openWithdrawModal() {
+        const modal = document.getElementById('withdrawModal');
+        const content = document.getElementById('withdrawModalContent');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        setTimeout(() => {
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        }, 50); // kecil delay agar animasi smooth
+    }
+
+    function closeWithdrawModal() {
+        const modal = document.getElementById('withdrawModal');
+        const content = document.getElementById('withdrawModalContent');
+
+        content.classList.remove('scale-100', 'opacity-100');
+        content.classList.add('scale-95', 'opacity-0');
+
+        setTimeout(() => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }, 300); // sesuai durasi animasi
+    }
+</script>
+
+
+<!-- Js untuk pilih metode withdraw -->
+ <script>
+    function togglePaymentFields() {
+        const method = document.getElementById('withdraw_method').value;
+        document.getElementById('bankFields').style.display = method === 'bank' ? 'block' : 'none';
+        document.getElementById('ewalletFields').style.display = method === 'ewallet' ? 'block' : 'none';
+    }
+</script>
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
