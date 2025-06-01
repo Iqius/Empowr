@@ -96,22 +96,52 @@ class ProgressionController extends Controller
         $task->update([
             'status' => 'completed',
         ]);
-        $workerProfile = WorkerProfile::findOrFail($task->profile_id);
-        $userId = $workerProfile->user_id;
-        $ewallet = Ewallet::where('user_id', $userId)->first();
-        if ($ewallet) {
-            $ewallet->balance += $task->price;
-            $ewallet->save();
-        }
+        
+        if($task->status_affiliate == true){
+            $workerProfile = WorkerProfile::findOrFail($task->profile_id);
+            $userId = $workerProfile->user_id;
+            $ewallet = Ewallet::where('user_id', $userId)->first();
+            if ($ewallet) {
+                $ewallet->balance += $task->price;
+                $ewallet->save();
+            }
 
-        Transaction::create([
-            'task_id' => $task->id,                  // ID task
-            'worker_id' => $workerProfile->id,       // ID worker profile
-            'client_id' => auth()->user()->id,       // ID client
-            'amount' => $task->price,
-            'status' => 'success',
-            'type' => 'salary',
-        ]);
+            
+            // Buat transaksi untuk gaji worker
+            $orderId = 'selesai-' . $task->id . '-' . time();
+            Transaction::create([
+                'order_id' => $orderId,              // ID order
+                'task_id' => $task->id,                  // ID task
+                'worker_id' => $workerProfile->id,       // ID worker profile
+                'client_id' => auth()->user()->id,       // ID client
+                'amount' => $task->harga_task_affiliate,
+                'status' => 'success',
+                'type' => 'salary',
+            ]);
+            
+        }else{
+            $workerProfile = WorkerProfile::findOrFail($task->profile_id);
+            $userId = $workerProfile->user_id;
+            $ewallet = Ewallet::where('user_id', $userId)->first();
+            if ($ewallet) {
+                $ewallet->balance += $task->harga_task_affiliate;
+                $ewallet->save();
+            }
+
+            
+            // Buat transaksi untuk gaji worker
+            $orderId = 'selesai-' . $task->id . '-' . time();
+            Transaction::create([
+                'order_id' => $orderId,              // ID order
+                'task_id' => $task->id,                  // ID task
+                'worker_id' => $workerProfile->id,       // ID worker profile
+                'client_id' => auth()->user()->id,       // ID client
+                'amount' => $task->price,
+                'status' => 'success',
+                'type' => 'salary',
+            ]);
+        }
+        
         
         $lastProgression = Progression::where('task_id', $taskId)
             ->orderBy('created_at', 'desc')

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('catatan');
             $table->float('bidPrice');
             $table->enum('status', ['pending', 'accepted', 'rejected']);
+            $table->boolean('affiliated')->nullable()->default('0');
             $table->dateTime('applied_at');
 
             $table->foreign('task_id')->references('id')->on('task')->onDelete('cascade');

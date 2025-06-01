@@ -13,6 +13,7 @@ use App\Models\SertifikasiImage;
 use App\Models\Portofolio;
 use App\Models\PortofolioImage;
 use App\Models\WorkerProfile;
+use App\Models\workerAffiliated;
 use App\Models\task;
 
 class ProfileController extends Controller
@@ -57,7 +58,9 @@ class ProfileController extends Controller
     {
         // Ambil worker beserta relasi user
         $worker = WorkerProfile::with(['user', 'certifications.images'])->findOrFail($id);
-        return view('client.Jobs.lamaranWorkerDetailProfile', compact('worker'));
+
+        $data = workerAffiliated::where('profile_id', $worker->id)->get();
+        return view('General.lamaranWorkerDetailProfile', compact('worker','data'));
     }
 
 

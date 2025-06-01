@@ -10,6 +10,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProgressionController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ArbitraseController;
+use App\Http\Controllers\affiliatedController;
 
 // LANDING PAGE
 Route::get('/', function () {
@@ -64,7 +65,15 @@ Route::get('/add-job', function () {
 // --Tampilkan halaman update dpake client dan admin
 Route::post('/progress/update-jobs/{id}', [JobController::class, 'updateJobClient'])->name('jobs.update');
 Route::get('/update-job/{id}', [JobController::class, 'updateJobView'])->middleware(['auth'])->name('client.update');
+// Pengajuan affiliate
+Route::post('/jobs/manage/{id}/Request', [affiliatedController::class, 'pengajuanTaskAffiliation'])->name('jobs.request-affiliate');
+// Manage tugas client
 
+Route::delete('/jobs/delete/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
+Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
+Route::get('/jobs/data', [JobController::class, 'getJobData'])->name('jobs.data');
+// add job view
+Route::get('/jobs', [JobController::class, 'addJobView'])->name('add-job-view');
 
 
 
@@ -77,6 +86,24 @@ Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->name('j
 Route::post('/task-progression/{task}', [ProgressionController::class, 'create'])->middleware(['auth'])->name('task-progression.store');
 // Post ulasan worker pada saat complite task
 Route::post('/task-progression/ulasan/{task}', [ProgressionController::class, 'ulasanWorker'])->middleware(['auth'])->name('task-ulasan.store');
+Route::get('/dashboard1', function () {
+    $user = Auth::user();
+    return match ($user->role) {
+        'client' => redirect()->route('client.dashboardClient'),
+        'worker' => redirect()->route('worker.dashboardWorker'),
+        'admin'  => redirect()->route('admin.dashboardAdmin'),
+        default  => redirect('/'),
+    };
+})->middleware(['auth'])->name('dashboard');
+// affiliated view
+Route::get('/worker/progression-affilated/{id}', [affiliatedController::class, 'index'])->middleware(['auth'])->name('progress-affiliate.view');
+Route::post('/worker/progression-affilated/submited', [affiliatedController::class, 'createAffiliatedOrder'])->middleware(['auth'])->name('progress-affiliate.submited');
+Route::post('/worker/progression-affilated/submited-ulang/{id}', [affiliatedController::class, 'ajukanUlangAffiliate'])->middleware(['auth'])->name('progress-affiliate.submited-ulang');
+// MANAGE WORKER
+Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->name('manage.worker');
+// LAMAR WORKER
+Route::post('/task/{task}/apply', [JobController::class, 'apply'])->name('task.apply');
+
 
 
 ####### GENERAL
@@ -125,28 +152,35 @@ Route::get('/arbitraseget', [ArbitraseController::class, 'index'])->middleware([
 Route::get('/arbitraseDetail', [ArbitraseController::class, 'index'])->middleware(['auth'])->name('arbitrase.show');
 Route::post('/arbitrase/{id}/accept', [ArbitraseController::class, 'accept'])->name('arbitrase.accept');
 Route::post('/arbitrase/{id}/reject', [ArbitraseController::class, 'reject'])->name('arbitrase.reject');
-// 
-
+// List pengajuan worker affiliasi
+Route::get('/admin/List-Request-Affiliasi-Worker', [affiliatedController::class, 'pengajuanAffiliasiWorkerView'])->middleware(['auth'])->name('List-pengajuan-worker-affiliate.view');
+Route::post('/admin/List-Request-Affiliasi-Worker/Pending-to-under-review/{id}', [affiliatedController::class, 'updateStatusAffiliate'])->name('List-pengajuan-worker-affiliate.pending-to-under-review');
+Route::post('/admin/List-Request-Affiliasi-Worker/Pending-to-under-review/submited-interview-date/{id}', [affiliatedController::class, 'interviewDate'])->name('interview-date.submit');
+Route::post('/admin/List-Request-Affiliasi-Worker/rejected-affiliated/{id}', [affiliatedController::class, 'rejectStatusAffiliate'])->name('rejected.affiliate');
 #### Arbitrase
 Route::post('/arbitrase/laporkan', [ArbitraseController::class, 'store'])->middleware(['auth'])->name('arbitrase.store');
+// List pengajuan task affiliasi
+Route::get('/admin/List-Request-Affiliasi-Task', [affiliatedController::class, 'viewListPengajuanTaskAffiliate'])->middleware(['auth'])->name('List-pengajuan-task-affiliate.view');
+Route::post('/admin/List-Request-Affiliasi-Task/rejected-affiliated/{id}', [affiliatedController::class, 'rejectTaskAffiliate'])->name('rejected.affiliate-task');
+Route::post('/admin/List-Request-Affiliasi-Task/approve-affiliated/{id}', [affiliatedController::class, 'tambahWorkerAffiliateKeTask'])->name('approve.affiliate-task');
 
 
+
+
+// CLIENT ditaro diatas ga mau kebaca
+// nampilkan view detail tugas client
 Route::get('/jobs/manage/{id}', [JobController::class, 'manage'])->name('jobs.manage');
-Route::delete('/jobs/delete/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
-Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
-Route::get('/jobs/data', [JobController::class, 'getJobData'])->name('jobs.data');
 
 
-Route::get('/my-job-worker', function () {
-    return view('myJobWorker');
-})->name('myjob.worker');
-Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->name('manage.worker');
+// GA DIPAKE
 
+// Route::get('/my-job-worker', function () {
+//     return view('myJobWorker');
+// })->name('myjob.worker');
 
-Route::post('/task/{task}/apply', [JobController::class, 'apply'])->name('task.apply');
-Route::post('/application/{id}/accept', [JobController::class, 'accept'])->name('application.accept');
+// Route::post('/application/{id}/accept', [JobController::class, 'accept'])->name('application.accept');
 
-Route::get('/tasks/{id}/applicants', [JobController::class, 'showApplicants']);
+// Route::get('/tasks/{id}/applicants', [JobController::class, 'showApplicants']);
 
-Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage']);
-Route::get('/jobs', [JobController::class, 'addJobView'])->name('add-job-view');
+// Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage']);
+
