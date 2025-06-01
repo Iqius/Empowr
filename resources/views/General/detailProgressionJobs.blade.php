@@ -353,10 +353,10 @@
                         </button>
 
                         <!-- Chat Button -->
-                        <button
-                            class="w-32 py-2 bg-[#1F4482] text-white rounded-lg rounded-md hover:bg-[#18346a] focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        <a href="{{ url('chat/' . $task->worker->user->id) }}"
+                            class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a] flex items-center justify-center">
                             Chat
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -386,10 +386,10 @@
                         </button>
 
                         <!-- Chat Button -->
-                        <button
-                            class="w-32 py-2 bg-[#1F4482] text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        <a href="{{ url('chat/' . $task->client->id) }}"
+                            class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a] flex items-center justify-center">
                             Chat
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

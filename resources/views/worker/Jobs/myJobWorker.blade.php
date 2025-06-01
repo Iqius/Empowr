@@ -3,7 +3,7 @@
 <div class="p-4 sm:p-6 md:p-8  mt-16">
     <div class="flex flex-col md:flex-row gap-4 mb-6">
         <!-- Search Input -->
-        <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
+        <input type="text" placeholder="Cari Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
 
         <!-- Status Dropdown -->
         <select class="p-2 border rounded w-full md:w-auto" id="statusFilter">

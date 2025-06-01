@@ -65,7 +65,7 @@
             <form method="POST" action="{{ route('register') }}" class="w-full max-w-md">
                 @csrf
                 <!-- Text Header -->
-                <h2 class="text-4xl font-extrabold text-[#1F4482] mb-4">Register</h2>
+                <h2 class="text-4xl font-extrabold text-[#1F4482] mb-4">Daftar</h2>
                 <p class="block text-sm font-medium text-gray-600 mb-6">Buat akun baru jika kamu belum punya!</p>
 
                 <!-- Name Input -->
@@ -148,12 +148,12 @@
 
                 <!-- Submit Button -->
                 <button id="submitBtn" type="submit"
-                    class="w-full mt-4 inline-block bg-[#183E74] font-semibold hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">Sign
-                    Up</button>
+                    class="w-full mt-4 inline-block bg-[#183E74] font-semibold hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">Daftar
+                    </button>
 
                 <!-- Login Link -->
                 <p class="text-sm text-gray-600 mt-3 mb-6">Sudah punya akun? <a href="{{ route('login') }}"
-                        class="text-sm font-semibold text-[#1F4482] hover:underline">Login</a></p>
+                        class="text-sm font-semibold text-[#1F4482] hover:underline">Masuk</a></p>
             </form>
         </div>
     </div>

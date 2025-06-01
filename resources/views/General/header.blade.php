@@ -249,7 +249,7 @@
                <a href="{{ Auth::user()->role === 'client' ? route('client.dashboardClient') : route('worker.dashboardWorker') }}"
                  class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-house text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Dashboard</span>
+                 <span class="ml-3">Beranda</span>
                </a>
             </li>
 
@@ -257,7 +257,7 @@
             <li>
                <a href="{{ route('jobs.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-briefcase text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Jobs</span>
+                 <span class="ml-3">Semua Tugas</span>
                </a>
             </li>
 
@@ -266,7 +266,7 @@
                <a href="{{ Auth::user()->role === 'client' ? route('jobs.my') : route('jobs.Worker') }}"
                  class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-person-workspace text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">My Job</span>
+                 <span class="ml-3">Tugas Saya</span>
                </a>
             </li>
 
@@ -290,7 +290,7 @@
             <li>
                <a href="{{ url('/guide') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-book text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Guide</span>
+                 <span class="ml-3">Petunjuk</span>
                </a>
             </li>
 
@@ -298,7 +298,7 @@
             <li>
                <a href="{{ url('/affiliate') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-currency-dollar text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Affiliate</span>
+                 <span class="ml-3">Affiliasi</span>
                </a>
             </li>
 
@@ -306,7 +306,7 @@
             <li>
                <a href="{{ url('/contact-admin') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-telephone text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Contact Admin</span>
+                 <span class="ml-3">Hubungi Admin</span>
                </a>
             </li>
           </ul>

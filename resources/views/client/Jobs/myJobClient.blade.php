@@ -3,11 +3,11 @@
 <section class="p-4 sm:p-6 md:p-8 mt-16">
     <a href="{{ route('add-job-view') }}"
         class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow mb-6">
-        Add New Job
+        Tambah Tugas
     </a>
     <div class="flex flex-col md:flex-row gap-4 mb-6">
         <!-- Search Input -->
-        <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
+        <input type="text" placeholder="Cari Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
 
         <!-- Status Dropdown -->
         <select class="p-2 border rounded w-full md:w-auto" id="statusFilter">

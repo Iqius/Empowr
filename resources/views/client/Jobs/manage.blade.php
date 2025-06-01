@@ -2,20 +2,18 @@
 
 <div class="p-4 mt-16 ">
     <!-- Tabs button -->
-    <div class="flex flex-wrap gap-4 pb-4 text-sm sm:text-base overflow-x-auto">
-        <button
-            class="tab-button text-white font-semibold py-2 px-4 rounded-md transition-all duration-300 bg-[#1F4482] focus:outline-none"
-            data-tab="info">
-            Informasi Lengkap
-        </button>
-        <button
-            class="tab-button text-gray-600 font-semibold py-2 px-4 rounded-md transition-all duration-300 hover:bg-[#1F4482] hover:text-white focus:outline-none active:bg-[#1F4482] active:text-white"
-            data-tab="applicants">
-            Lamaran Worker
-        </button>
-    </div>
-
-
+<div class="flex flex-wrap gap-4 text-sm sm:text-base overflow-x-auto">
+    <button
+        class="tab-button active bg-white text-black font-semibold py-2 px-4 rounded-md border-b-0 transition-all duration-300 focus:outline-none"
+        data-tab="info">
+        Informasi Lengkap
+    </button>
+    <button
+        class="tab-button bg-white/70 text-gray-400 font-semibold py-2 px-4 rounded-md border-b-0 transition-all duration-300 focus:outline-none"
+        data-tab="applicants">
+        Lamaran Worker
+    </button>
+</div>
 
 
     <!-- Flash Message -->
@@ -38,11 +36,11 @@
     @endphp
 
     <!-- Tab 1: Informasi Lengkap -->
-    <div id="info" class="tab-content space-y-4 mt-4">
+    <div id="info" class="tab-content space-y-4 ">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Left Section -->
             <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border space-y-6">
+            <div class="bg-white p-6 space-y-6 rounded-tr-xl rounded-br-xl rounded-bl-xl ">
                     <!-- Header -->
                     <div class="flex justify-between items-start">
                         <div class="flex items-center gap-4">
@@ -175,7 +173,7 @@
 
 
     <!-- Tab 2: Lamaran Worker -->
-    <div id="applicants" class="tab-content hidden mt-4">
+    <div id="applicants" class="tab-content hidden mt-4 ">
         <!-- Filter -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
             <form method="GET" class="flex items-center gap-2">
@@ -494,29 +492,33 @@
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const buttons = document.querySelectorAll('.tab-button');
-        const tabs = document.querySelectorAll('.tab-content');
+document.addEventListener('DOMContentLoaded', function () {
+    const buttons = document.querySelectorAll('.tab-button');
+    const tabs = document.querySelectorAll('.tab-content');
 
-        // Set the first tab as default active
-        buttons[0].classList.add('bg-[#1F4482]', 'text-white');
-        tabs[0].classList.remove('hidden');
+    // Set default tab
+    buttons[0].classList.add('bg-white', 'text-black', 'font-semibold');
+    tabs[0].classList.remove('hidden');
 
-        buttons.forEach((button, index) => {
-            button.addEventListener('click', () => {
-                // Reset all tabs
-                buttons.forEach((btn) => {
-                    btn.classList.remove('bg-[#1F4482]', 'text-white');
-                    btn.classList.add('text-gray-600');
-                });
-                tabs.forEach((tab) => tab.classList.add('hidden'));
-
-                // Set clicked tab as active
-                button.classList.add('bg-[#1F4482]', 'text-white');
-                tabs[index].classList.remove('hidden');
+    buttons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+            // Reset semua tombol
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-white', 'text-black', 'text-white');
+                btn.classList.add('bg-white/70', 'text-gray-400');
             });
+
+            // Reset semua tab
+            tabs.forEach(tab => tab.classList.add('hidden'));
+
+            // Aktifkan yang diklik
+            button.classList.remove('bg-white/70', 'text-gray-400');
+            button.classList.add('bg-white', 'text-black');
+            tabs[index].classList.remove('hidden');
         });
     });
+});
+
 
     @if(session('snap_token'))
         // Close modal if open
@@ -663,16 +665,6 @@
         if (sortSelect) {
             sortSelect.addEventListener("change", sortApplicants);
         }
-
-        document.querySelectorAll('.tab-button').forEach(button => {
-            button.addEventListener('click', () => {
-                console.log("Tab clicked:", button.dataset.tab);
-                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('text-blue-600', 'font-semibold'));
-                button.classList.add('text-white', 'font-semibold');
-                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-                document.getElementById(button.dataset.tab)?.classList.remove('hidden');
-            });
-        });
 
         document.querySelectorAll('.btn-worker-info').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -831,33 +823,6 @@
         showWorkerTab('keahlianTab');
         document.getElementById('workerDetailModal').classList.remove('hidden');
     }
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const tabButtons = document.querySelectorAll('.tab-button');
-        const tabContents = document.querySelectorAll('.tab-content');
-
-        tabButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const tabId = this.getAttribute('data-tab');
-
-                // Sembunyikan semua tab
-                tabContents.forEach(content => content.classList.add('hidden'));
-
-                // Tampilkan tab yang sesuai
-                document.getElementById(tabId).classList.remove('hidden');
-
-                // Update gaya tombol
-                tabButtons.forEach(btn => {
-                    btn.classList.remove('bg-[#1F4482]', 'text-white');
-                    btn.classList.add('text-gray-600');
-                });
-                this.classList.remove('text-gray-600');
-                this.classList.add('bg-[#1F4482]', 'text-white');
-            });
-        });
-    });
 </script>
 
 @include('General.footer')

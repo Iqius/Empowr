@@ -3,7 +3,7 @@
 @if(auth()->check() && (auth()->user()->role === 'worker' || auth()->user()->role === 'client'))
     <section class="p-4 md:p-8 mt-16">
         <div class="flex flex-col md:flex-row gap-4 mb-6">
-            <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
+            <input type="text" placeholder="Cari Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
             <select class="p-2 border rounded w-full md:w-auto" id="sortSelect">
                 <option disabled selected>Urutkan</option>
                 <option value="price-asc">Harga Terendah</option>
@@ -75,7 +75,7 @@
                             <a href="{{ route('jobs.show', $job->id) }}">
                                 <button
                                     class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                                    View
+                                    Lihat Detail
                                 </button>
                             </a>
                         </div>
@@ -91,7 +91,7 @@
             Add New Job
         </a>
         <div class="flex flex-col md:flex-row gap-4 mb-6">
-            <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
+            <input type="text" placeholder="Cari Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
             <select class="p-2 border rounded w-full md:w-auto" id="sortSelect">
                 <option disabled selected>Sort</option>
                 <option value="price-asc">Lowest Price</option>

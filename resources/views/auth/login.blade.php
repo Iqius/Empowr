@@ -108,13 +108,13 @@
                 <!-- Submit Button -->
                 <button type="submit"
                     class="w-full mt-4 inline-block bg-[#183E74] font-semibold hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">
-                    Sign In
+                    Masuk
                 </button>
 
                 <!-- Register Link -->
                 <p class="text-sm text-gray-600 mt-3">Belum memiliki akun?
                     <a href="{{ route('register') }}"
-                        class="text-sm font-semibold text-[#1F4482] hover:underline">Register</a>
+                        class="text-sm font-semibold text-[#1F4482] hover:underline">Daftar</a>
                 </p>
             </form>
         </div>

@@ -7,7 +7,7 @@
             Bergabung Affiliator
         </a>
         <h2 class="text-xl font-semibold mb-2 flex items-center gap-1">
-            Task Kamu
+            Tugas Kamu
             <span class="text-gray-400 text-base">
                 <i class="fas fa-info-circle"></i>
             </span>
@@ -26,7 +26,7 @@
                 class="flex items-center justify-between h-32 bg-white text-[#1F4482] p-6 rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl">
                 <i class="fa fa-desktop text-5xl ml-10"></i>
                 <div class="text-right mr-5">
-                    <p class="text-base font-medium">Task Dilamar</p>
+                    <p class="text-base font-medium">Tugas Dilamar</p>
                     <p class="text-4xl font-bold">{{ $lamarTasks }}</p>
                 </div>
             </div>
@@ -60,7 +60,7 @@
                 class="flex items-center justify-between h-32 bg-white text-[#1F4482] p-6 rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl">
                 <i class="fa fa-clipboard-check text-5xl ml-10"></i>
                 <div class="text-right mr-5">
-                    <p class="text-base font-medium">Task Selesai</p>
+                    <p class="text-base font-medium">Tugas Selesai</p>
                     <p class="text-4xl font-bold">{{ $completedTasks }}</p>
                 </div>
             </div>
@@ -76,7 +76,7 @@
             @endphp
             <!-- Applied Jobs -->
             <div class="bg-white border rounded p-4 shadow-sm">
-                <h2 class="text-lg font-semibold mb-4">Task Dilamar</h2>
+                <h2 class="text-lg font-semibold mb-4">Tugas Dilamar</h2>
                 @if($appliedTasks->isEmpty())
                     <p class="text-center text-gray-500">Tidak ada task yang sedang dilamar</p>
                 @else
@@ -94,7 +94,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
+                                <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Lihat</button>
                             </li>
                         @endforeach
                     </ul>
@@ -144,7 +144,7 @@
             @endphp
             <!-- Accept Jobs -->
             <div class="bg-white border rounded p-4 shadow-sm">
-                <h2 class="text-lg font-semibold mb-4">Task Diterima</h2>
+                <h2 class="text-lg font-semibold mb-4">Tugas Diterima</h2>
                 @if($accTasks->isEmpty())
                     <p class="text-center text-gray-500">Tidak ada task yang sedang diterima</p>
                 @else
@@ -162,7 +162,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</button>
+                                <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Lihat</button>
                             </li>
                         @endforeach
                     </ul>
