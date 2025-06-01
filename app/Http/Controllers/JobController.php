@@ -73,6 +73,7 @@ class JobController extends Controller
             'kategory' => json_encode($request->kategoriWorker),
             'job_file' => $path,
         ]);
+
         return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
 

@@ -240,7 +240,7 @@ class affiliatedController extends Controller
 
     // menampilkan list task yg diajukan affiliate ke admin
     public function viewListPengajuanTaskAffiliate(){
-        $task = Task::where('pengajuan_affiliate ', true)
+        $task = Task::where('pengajuan_affiliate', true)
             ->whereDoesntHave('applications', function ($query) {
                 $query->where('affiliated', true);
             })
