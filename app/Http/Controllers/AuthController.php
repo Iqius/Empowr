@@ -299,4 +299,18 @@ class AuthController extends Controller
 
         return back()->with('success', 'Kode OTP baru telah dikirim.');
     }
+    public function verifyOtpCheck(Request $request)
+    {
+        $otpInput = implode('', $request->input('otp')); // Gabungkan array menjadi string
+        $correctOtp = session('otp'); // Ambil OTP dari session
+
+        if ($otpInput === $correctOtp) {
+            // Berhasil verifikasi OTP
+            return redirect()->route('password.reset');
+        } else {
+            // OTP salah
+            return back()->with('error', 'Kode OTP yang dimasukkan salah. Silakan coba lagi.');
+        }
+    }
+
 }

@@ -8,8 +8,10 @@
             </label>
             <input type="file" name="profile_image" id="profile-pic" accept="image/*" class="hidden" onchange="uploadImage(event)">
             <div class="text-center md:text-left">
-                <h2 class="text-2xl font-bold">{{ Auth::user()->username }}</h2>
-                <span id="verificationBadge" class="text-blue-500">✔ Verified</span>
+                <div class="flex items-center space-x-3">
+                    <img src="assets/images/Affiliasi.png" alt="Affiliasi" class="w-10 h-10">
+                    <h2 class="text-2xl font-bold">{{ Auth::user()->username }}</h2>
+                </div>
             </div>
         </div>
 

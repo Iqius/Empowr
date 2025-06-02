@@ -25,7 +25,9 @@ Route::get('/register', function () {
 })->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/forgot-password', [AuthController::class, 'showForgotForm'])->name('forgot-password.form');
-Route::post('/forgot-password', [AuthController::class, 'sendOtp'])->name('forgot-password.send-otp');
+Route::post('/forgot-password/send-otp', [AuthController::class, 'sendOtp'])->name('forgot-password.send-otp');
+Route::post('/forgot-password/verify-otp', [AuthController::class, 'verifyOtpCheck'])->name('forgot-password.verify-otp-check');
+
 
 Route::get('/verify-otp', [AuthController::class, 'showOtpForm'])->name('forgot-password.otp-form');
 Route::post('/verify-otp-check', [AuthController::class, 'checkOtp'])->name('forgot-password.verify-otp-check');
@@ -75,7 +77,10 @@ Route::get('/jobs/data', [JobController::class, 'getJobData'])->name('jobs.data'
 // add job view
 Route::get('/jobs', [JobController::class, 'addJobView'])->name('add-job-view');
 
-
+//profile rating
+Route::get('/profile/reviews/load-more', [ProfileController::class, 'loadMoreReviews'])->name('profile.reviews.load-more');
+Route::get('/profile/worker/{id}/rating', [ProfileController::class, 'getWorkerRatingAjax'])->name('profile.worker.rating');
+Route::get('/profile/my-rating', [ProfileController::class, 'getMyRatingData'])->name('profile.my.rating');
 
 // WORKER
 // -- DASHBOARD

@@ -15,6 +15,7 @@ use App\Models\PortofolioImage;
 use App\Models\WorkerProfile;
 use App\Models\workerAffiliated;
 use App\Models\task;
+use App\Models\TaskReview;
 
 class ProfileController extends Controller
 {
@@ -210,4 +211,112 @@ class ProfileController extends Controller
         return response()->json(['success' => true, 'image_url' => asset('storage/' . $imagePath)]);
     }
 
+public function getWorkerRatingData($workerId)
+{
+    try {
+        // Get average rating and total reviews directly from task_reviews table
+        $ratingStats = \DB::table('task_reviews')
+            ->where('reviewed_user_id', $workerId)
+            ->whereNotNull('rating')
+            ->selectRaw('AVG(rating) as avg_rating, COUNT(rating) as total_reviews')
+            ->first();
+
+        $avgRating = $ratingStats->avg_rating ? round($ratingStats->avg_rating, 1) : 0;
+        $totalReviews = $ratingStats->total_reviews ?: 0;
+
+        // Get rating breakdown
+        $ratingBreakdown = \DB::table('task_reviews')
+            ->where('reviewed_user_id', $workerId)
+            ->whereNotNull('rating')
+            ->select('rating')
+            ->selectRaw('COUNT(*) as count')
+            ->groupBy('rating')
+            ->orderBy('rating', 'desc')
+            ->get();
+
+        // Calculate percentages
+        $breakdown = [];
+        $labels = [
+            5 => 'Excellent',
+            4 => 'Good', 
+            3 => 'Average',
+            2 => 'Below Average',
+            1 => 'Poor'
+        ];
+
+        foreach ($labels as $rating => $label) {
+            $found = $ratingBreakdown->firstWhere('rating', $rating);
+            $count = $found ? $found->count : 0;
+            $percentage = $totalReviews > 0 ? round(($count * 100) / $totalReviews, 1) : 0;
+            $breakdown[$label] = $percentage;
+        }
+
+        return [
+            'avg_rating' => $avgRating,
+            'total_reviews' => $totalReviews,
+            'breakdown' => $breakdown
+        ];
+
+    } catch (\Exception $e) {
+        \Log::error("Error getting worker rating data: " . $e->getMessage());
+        return [
+            'avg_rating' => 0,
+            'total_reviews' => 0,
+            'breakdown' => [
+                'Excellent' => 0,
+                'Good' => 0,
+                'Average' => 0,
+                'Below Average' => 0,
+                'Poor' => 0
+            ]
+        ];
+    }
+}
+
+/**
+ * Get reviews for a worker
+ */
+public function getWorkerReviews($workerId, $limit = 10, $offset = 0)
+{
+    try {
+        $reviews = \DB::table('task_reviews')
+            ->join('users', 'task_reviews.user_id', '=', 'users.id')
+            ->where('task_reviews.reviewed_user_id', $workerId)
+            ->whereNotNull('task_reviews.comment')
+            ->where('task_reviews.comment', '!=', '')
+            ->select(
+                'task_reviews.id',
+                'task_reviews.rating',
+                'task_reviews.comment',
+                'task_reviews.created_at',
+                'task_reviews.updated_at',
+                'users.id as user_id',
+                'users.nama_lengkap as user_name',
+                'users.profile_image'
+            )
+            ->orderBy('task_reviews.created_at', 'desc')
+            ->limit($limit)
+            ->offset($offset)
+            ->get();
+
+        // Format reviews for display
+        return $reviews->map(function($review) {
+            return [
+                'id' => $review->id,
+                'user_name' => $review->user_name ?: 'Anonymous User',
+                'user_avatar' => $review->profile_image ? 
+                    asset('storage/' . $review->profile_image) : 
+                    $this->generateAvatar($review->user_name ?: 'Anonymous'),
+                'rating' => (int)$review->rating,
+                'comment' => $review->comment,
+                'date' => $this->formatDate($review->created_at),
+                'location' => 'Indonesia' // Default location
+            ];
+        })->toArray();
+
+    } catch (\Exception $e) {
+        \Log::error("Error getting worker reviews: " . $e->getMessage());
+        return [];
+    }
+}
 }
