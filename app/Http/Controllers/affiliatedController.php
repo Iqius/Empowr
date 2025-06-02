@@ -232,7 +232,7 @@ class affiliatedController extends Controller
     public function pengajuanTaskAffiliation($id){
         $task = task::findOrFail($id);
 
-        $task->pengajuan_affiliate = 'pengajuan';
+        $task->pengajuan_affiliate = true;
         $task->save();
        
         return redirect()->route('jobs.manage', ['id' => $id])->with('success-tambah-tugas-affiliate', 'Tugas telah masuk antrian admin.');
