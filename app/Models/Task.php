@@ -14,7 +14,7 @@ class Task extends Model
 
     protected $fillable = [
         'id', 'client_id', 'profile_id', 'title', 'description', 'qualification', 'deadline',
-        'deadline_promotion', 'provisions', 'price', 'status', 'revisions', 'taskType', 'job_file', 'start_date','kategory, harga_pajak_affiliate, status_affiliate, harga_task_affiliate', 'pengajuan_affiliate'
+        'deadline_promotion', 'provisions', 'price', 'status', 'revisions', 'taskType', 'job_file', 'start_date','kategory', 'harga_pajak_affiliate', 'status_affiliate', 'harga_task_affiliate', 'pengajuan_affiliate',
     ];
 
     public function user()

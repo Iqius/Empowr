@@ -18,6 +18,8 @@ class Transaction extends Model
         'status',
         'type',
         'payment_method',
+        'proof_transfer',
+        'withdraw_method'
     ];
 
 
@@ -25,6 +27,17 @@ class Transaction extends Model
     public function task()
     {
         return $this->belongsTo(Task::class, 'task_id');
+    }
+
+    // Relasi opsional
+    public function worker()
+    {
+        return $this->belongsTo(WorkerProfile::class, 'worker_id');
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(User::class, 'client_id');
     }
 
     

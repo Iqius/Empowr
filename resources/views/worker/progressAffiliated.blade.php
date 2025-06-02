@@ -5,7 +5,7 @@
 <div class="p-4 mt-14">
 
     <div id="progres" class=" tab-content p-4 rounded h-full">
-        @if($affiliation->status_decision == 'rejected' && auth()->check() && auth()->user()->role === 'worker')
+        @if($affiliation->status_decision == 'rejected' && auth()->user()->role === 'worker' && auth()->user()->workerProfile->empowr_affiliation == true)
             <form id="formAjukanUlang" method="POST" action="{{route('progress-affiliate.submited-ulang', ['id' => $affiliation])}}">
                 @csrf
                 <a 

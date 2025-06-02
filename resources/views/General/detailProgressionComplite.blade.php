@@ -7,12 +7,15 @@
             <div class="p-4 rounded h-full">
                 <div class="flex justify-end space-x-4 mb-7">
                 @php
-                    $hasReviewed = \App\Models\TaskReview::where('user_id', auth()->id())
-                                    ->where('task_id', $task->id)
-                                    ->exists();
+                    use App\Models\TaskReview;
+
+                    $hasPendingReview = TaskReview::where('task_id', $task->id)
+                        ->where('user_id', auth()->id())
+                        ->where('rating', 0)
+                        ->exists();
                 @endphp
 
-                @if(auth()->user()->role == 'worker' && !$hasReviewed)
+                @if(auth()->user()->role == 'worker' && $hasPendingReview)
                     <button type="button" onclick="openModal()"
                         class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4">
                         Berikan Penilaian
@@ -52,7 +55,6 @@
 
                         <!-- Action Buttons (Di sebelah kanan Profil) -->
                         <div class="flex flex-col gap-2">
-
                             <!-- Cek Button -->
                             <button class="w-32 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
                                 Cek Profile

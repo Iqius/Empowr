@@ -193,11 +193,11 @@
                     <option value="desc" {{ request('dir') === 'desc' ? 'selected' : '' }}>Turun ↓</option>
                 </select>
             </form>
-            @if($job->status_affiliate == false && (auth()->check() && auth()->user()->role != 'admin'))
+            @if($job->status_affiliate == 0 && (auth()->check() && auth()->user()->role != 'admin'))
                 <button onclick="openModalAffiliasi()" class="bg-blue-500 text-white px-4 py-2 rounded">
                     Dapatkan worker yang bermitra disini
                 </button>
-            @elseif ($job->progress_affiliate == pengajuan && (auth()->check() && auth()->user()->role != 'admin'))
+            @elseif ($job->pengajuan_affiliate == 0 && (auth()->check() && auth()->user()->role != 'admin'))
                 <button onclick="#" class="bg-blue-500 text-white px-4 py-2 rounded">
                     Chat admin
                 </button>
