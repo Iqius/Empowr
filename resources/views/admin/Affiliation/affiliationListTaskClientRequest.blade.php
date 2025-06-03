@@ -17,11 +17,11 @@
                     <tbody class="bg-white divide-y divide-gray-100"> 
                         <tr class="hover:bg-blue-50 transition">
                             <td class="px-4 py-3 flex items-center gap-3">
-                                <img src="{{ asset('storage/' . ($worker->profile_image ?? 'default.jpg')) }}"
+                                <img src="{{ asset('storage/' . ($tasks->client->profile_image ?? 'default.png')) }}"
                                     class="w-10 h-10 rounded-full object-cover">
-                                <span class="font-medium">PASS</span>
+                                <span class="font-medium">{{ $tasks->client->nama_lengkap }}</span>
                             </td>
-                            <td class="px-4 py-3">PASS</td>
+                            <td class="px-4 py-3">{{ $tasks->title }}</td>
                             <td class="px-4 py-3">
                                 <div class="flex space-x-2">
                                     {{-- Form Detail Task --}}

@@ -208,28 +208,30 @@
                   <div
                      class="z-50 min-w-[200px] max-w-[300px] hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-sm shadow-sm"
                      id="dropdown-user">
-                     <div class="px-4 py-3" role="none">
-                        <p class="text-sm font-medium text-gray-900 truncate font-semibold" role="none">
-                           {{ Auth::user()->email }}
-                        </p>
-                     </div>
-                     <ul class="py-1" role="none">
-                        <li>
-                           <a href="{{route('profil')}}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                              role="menuitem">Profile</a>
-                        </li>
-                        <li>
-                           <a href="{{ route('ewallet.index', Auth::user()->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
-                              Wallet <span class="text-blue-500">IDR {{ Auth::user()->ewallet }}</span> 
-                           </a>
-                        </li>
-                        <li>
-                           <form id="logoutForm" action="{{ route('logout') }}" method="POST">@csrf</form>
-                           <button id="logoutBtn" type="button"
-                              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
-                              Sign out
-                           </button>
-                        </li>
+                     @if (auth()->user()->role != 'admin')
+                           <div class="px-4 py-3" role="none">
+                              <p class="text-sm font-medium text-gray-900 truncate font-semibold" role="none">
+                                 {{ Auth::user()->email }}
+                              </p>
+                           </div>
+                           <ul class="py-1" role="none">
+                           <li>
+                              <a href="{{route('profil')}}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                 role="menuitem">Profile</a>
+                           </li>
+                           <li>
+                              <a href="{{ route('ewallet.index', Auth::user()->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
+                                 Wallet <span class="text-blue-500">IDR {{ Auth::user()->ewallet }}</span> 
+                              </a>
+                           </li>
+                        @endif
+                           <li>
+                              <form id="logoutForm" action="{{ route('logout') }}" method="POST">@csrf</form>
+                              <button id="logoutBtn" type="button"
+                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+                                 Sign out
+                              </button>
+                           </li>
                      </ul>
                   </div>
                </div>
