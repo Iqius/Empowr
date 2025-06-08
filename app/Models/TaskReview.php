@@ -20,7 +20,6 @@ class TaskReview extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Relasi ke User yang menerima ulasan
     public function reviewedUser()
     {
         return $this->belongsTo(User::class, 'reviewed_user_id');

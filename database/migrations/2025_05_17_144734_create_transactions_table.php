@@ -22,6 +22,7 @@ class CreateTransactionsTable extends Migration
             $table->enum('payment_method', ['direct', 'ewallet']);
             $table->enum('type', ['payment', 'payout', 'topup', 'salary', 'refund']);
             $table->string('proof_transfer')->nullable();
+            $table->enum('withdraw_method', ['bank', 'ewallet'])->nullable();
 
             $table->timestamps();
 

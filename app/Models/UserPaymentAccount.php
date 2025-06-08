@@ -13,10 +13,10 @@ class UserPaymentAccount extends Model
         'user_id',
         'account_type',
         'wallet_number',
-        'ewallet_name',
+        'ewallet_account_name',
         'bank_name',
-        'bank_number',
-        'pemilik_bank',
+        'account_number',
+        'bank_account_name',
         'ewallet_provider',
     ];
 
