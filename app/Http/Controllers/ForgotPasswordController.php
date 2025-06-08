@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Carbon;
 use App\Models\OtpCode;
 use App\Models\Ewallet;
-use App\Models\workerAffiliated;
+use App\Models\WorkerAffiliated;
 
 class ForgotPasswordController extends Controller
 {

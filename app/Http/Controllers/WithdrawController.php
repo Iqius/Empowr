@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Ewallet;
 use App\Models\Transaction;
 use App\Models\UserPaymentAccount;
-use App\Models\workerAffiliated;
+use App\Models\WorkerAffiliated;
 
 class WithdrawController extends Controller
 {
