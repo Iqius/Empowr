@@ -13,7 +13,7 @@ use App\Models\SertifikasiImage;
 use App\Models\Portofolio;
 use App\Models\PortofolioImage;
 use App\Models\WorkerProfile;
-use App\Models\workerAffiliated;
+use App\Models\WorkerAffiliated;
 use App\Models\task;
 use App\Models\TaskReview;
 
@@ -84,7 +84,7 @@ class ProfileController extends Controller
         // Ambil worker beserta relasi user
         $worker = WorkerProfile::with(['user', 'certifications.images'])->findOrFail($id);
 
-        $data = workerAffiliated::where('profile_id', $worker->id)->get();
+        $data = WorkerAffiliated::where('profile_id', $worker->id)->get();
         return view('General.lamaranWorkerDetailProfile', compact('worker','data'));
     }
 
@@ -111,15 +111,20 @@ class ProfileController extends Controller
             'portofolio.*' => 'file|mimes:jpg,jpeg,png|max:2048',
             'description' => 'nullable|string',
             'duration' => 'nullable|integer',
+
+            // ini di hapus aja nanti
             'account_type' => 'nullable|string',
+
+            // untuk pilihan ewallet
             'wallet_number' => 'nullable|string',
-            'ewallet_name' => 'nullable|string',
-            'bank_name' => 'nullable|string',
-            'bank_number' => 'nullable|string',
-            'pemilik_bank' => 'nullable|string',
-            'ewallet_provider' => 'nullable|string',
-            'bank_account_name' => 'nullable|string',
             'ewallet_account_name' => 'nullable|string',
+            'ewallet_provider' => 'nullable|string',
+
+            // untuk pilihan bank
+            'bank_name' => 'nullable|string',
+            'account_number' => 'nullable|string',
+            'bank_account_name' => 'nullable|string',
+            
         ]);
 
         // Update user data only if present
@@ -150,7 +155,11 @@ class ProfileController extends Controller
 
         // Update or create rekening
         $existingAccount = UserPaymentAccount::firstOrNew(['user_id' => $user->id]);
+
+        // ini hapus aja nanti
         $existingAccount->account_type = $request->account_type ?? $existingAccount->account_type;
+
+        
         $existingAccount->wallet_number = $request->wallet_number ?? $existingAccount->wallet_number;
         $existingAccount->ewallet_provider = $request->ewallet_name ?? $existingAccount->ewallet_provider;
         $existingAccount->bank_name = $request->bank_name ?? $existingAccount->bank_name;

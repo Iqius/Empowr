@@ -14,7 +14,7 @@ use App\Models\Transaction;
 use App\Models\UserPaymentAccount;
 use App\Models\Ewallet;
 use App\Models\User;
-use App\Models\workerAffiliated;
+use App\Models\WorkerAffiliated;
 use Midtrans\Config;
 use Midtrans\Snap;
 use App\Models\TaskReview;

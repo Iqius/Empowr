@@ -14,7 +14,7 @@ class Task extends Model
 
     protected $fillable = [
         'id', 'client_id', 'profile_id', 'title', 'description', 'qualification', 'deadline',
-        'deadline_promotion', 'provisions', 'price', 'status', 'revisions', 'taskType', 'job_file', 'start_date','kategory', 'harga_pajak_affiliate', 'status_affiliate', 'harga_task_affiliate', 'pengajuan_affiliate',
+        'deadline_promotion', 'provisions', 'price', 'status', 'revisions', 'job_file', 'start_date','category', 'pengajuan_affiliate', 'harga_task_affiliate', 'harga_pajak_affiliate'
     ];
 
     public function user()
@@ -37,20 +37,20 @@ class Task extends Model
         return $this->hasMany(TaskApplication::class, 'task_id');
     }
 
-    public function assignment()
-    {
-        return $this->hasOne(TaskAssignment::class, 'task_id');
-    }
+    // public function assignment()
+    // {
+    //     return $this->hasOne(TaskAssignment::class, 'task_id');
+    // }
 
     public function review()
     {
         return $this->hasOne(TaskReview::class, 'task_id');
     }
 
-    public function escrow()
-    {
-        return $this->hasOne(EscrowPayment::class, 'task_id');
-    }
+    // public function escrow()
+    // {
+    //     return $this->hasOne(EscrowPayment::class, 'task_id');
+    // }
 
     public function arbitrase()
     {
