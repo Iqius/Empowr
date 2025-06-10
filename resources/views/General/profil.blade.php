@@ -16,7 +16,10 @@
                     <div class="text-center">
                         <div class="flex items-center space-x-3">
                             <h2 class="text-2xl font-bold">{{ Auth::user()->username }}</h2>
-                            <img src="assets/images/verif.png"  alt="verif" class="w-10 h-10">
+                                <?php if ($countReviews > 10 && $avgRating > 4): ?>
+                                    <img src="assets/images/verif.png" alt="verif" class="w-10 h-10">
+                                <?php endif; ?>
+
                             <img src="assets/images/Affiliasi.png"  alt="Affiliasi" class="w-10 h-10">
                         </div>
                     </div>
@@ -249,7 +252,6 @@
                     </form>
 
                     <hr class="border-t-1 border-gray-300 my-7">
-
                     <h1 class="text-2xl font-semibold mb-6">Payment Account</h1>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-7">
                         <div class="flex flex-col gap-4">
@@ -407,186 +409,163 @@
                     </div>
                 </div>
 
-{{-- resources/views/components/rating-section.blade.php --}}
-
-<!-- Rating & Reviews Tab Content -->
-<div id="ulasan" class="tab-content p-4 hidden">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        <!-- Rating Summary Section -->
-        <div class="md:col-span-1">
-            <h2 class="text-xl font-semibold mb-4">Ulasan</h2>
-            
-            <!-- Overall Rating Card -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-                <h3 class="text-gray-500 text-sm font-medium mb-3">Rating Keseluruhan</h3>
-                
-                <div class="flex items-center mb-4">
-                    <span class="text-4xl font-light text-gray-900 mr-3">
-                        {{ number_format($ratingData['avg_rating'], 1) }}
-                    </span>
-                    <div class="flex flex-col">
-                        <div class="flex items-center mb-1">
-                            @php
-                                $fullStars = floor($ratingData['avg_rating']);
-                                $hasHalfStar = ($ratingData['avg_rating'] - $fullStars) >= 0.5;
-                            @endphp
+                <!-- Rating & Reviews Tab Content -->
+                <div id="ulasan" class="tab-content p-4 hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        
+                        <!-- Rating Summary Section -->
+                        <div class="md:col-span-1">
+                            <h2 class="text-xl font-semibold mb-4">Ulasan</h2>
                             
-                            @for($i = 1; $i <= 5; $i++)
-                                @if($i <= $fullStars)
-                                    <svg class="w-5 h-5 text-orange-400 fill-current" viewBox="0 0 20 20">
-                                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                                    </svg>
-                                @elseif($i == $fullStars + 1 && $hasHalfStar)
-                                    <svg class="w-5 h-5 text-orange-400 fill-current" viewBox="0 0 20 20">
-                                        <defs>
-                                            <linearGradient id="half-fill">
-                                                <stop offset="50%" stop-color="currentColor"/>
-                                                <stop offset="50%" stop-color="#D1D5DB"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <path fill="url(#half-fill)" d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                                    </svg>
-                                @else
-                                    <svg class="w-5 h-5 text-gray-300 fill-current" viewBox="0 0 20 20">
-                                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                                    </svg>
-                                @endif
-                            @endfor
-                        </div>
-                        <span class="text-sm text-gray-500">
-                            berdasarkan {{ $ratingData['total_reviews'] }} ulasan
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Rating Breakdown -->
-                @if(!empty($ratingData['breakdown']))
-                <div class="space-y-2">
-                    @php
-                    $colors = [
-                        'Excellent' => 'bg-green-500',
-                        'Good' => 'bg-lime-400', 
-                        'Average' => 'bg-yellow-400',
-                        'Below Average' => 'bg-orange-400',
-                        'Poor' => 'bg-red-500'
-                    ];
-                    @endphp
-                    
-                    @foreach($ratingData['breakdown'] as $label => $percentage)
-                    <div class="flex items-center">
-                        <span class="text-sm text-gray-600 w-20 flex-shrink-0">{{ $label }}</span>
-                        <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
-                            <div class="{{ $colors[$label] }} h-2 rounded-full transition-all duration-300" 
-                                 style="width: {{ $percentage }}%"></div>
-                        </div>
-                        <span class="text-xs text-gray-500 w-8">{{ number_format($percentage, 0) }}%</span>
-                    </div>
-                    @endforeach
-                </div>
-                @endif
-            </div>
-        </div>
-
-        <!-- Reviews List Section -->
-        <div class="md:col-span-2">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold">Ulasan Pengguna</h3>
-                @if(count($reviews) > 0)
-                    <span class="text-sm text-gray-500">{{ count($reviews) }} ulasan ditampilkan</span>
-                @endif
-            </div>
-            
-            @if(empty($reviews))
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-                    <div class="text-gray-400 mb-2">
-                        <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.477 8-9.999 8a9.954 9.954 0 01-5.383-1.62L3 21l2.622-2.622A9.955 9.955 0 011 12C1 7.582 5.477 4 12 4s9 3.582 9 8z"/>
-                        </svg>
-                    </div>
-                    <p class="text-gray-500 text-lg font-medium">Belum ada ulasan</p>
-                    <p class="text-gray-400 text-sm mt-1">Ulasan akan muncul setelah tugas selesai</p>
-                </div>
-            @else
-                <div class="space-y-4" id="reviews-container">
-                    @foreach($reviews as $review)
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
-                        <div class="flex items-start space-x-4">
-                            <img src="{{ $review['user_avatar'] }}" 
-                                 alt="{{ $review['user_name'] }}" 
-                                 class="w-10 h-10 rounded-full object-cover flex-shrink-0 border-2 border-gray-100">
-                            
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="text-gray-900 font-medium text-sm">
-                                        {{ $review['user_name'] }}
-                                    </h4>
-                                    <span class="text-xs text-gray-500">
-                                        {{ $review['date'] }}
-                                    </span>
-                                </div>
+                            <!-- Overall Rating Card -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                                <h3 class="text-gray-500 text-sm font-medium mb-3">Rating Keseluruhan</h3>
                                 
-                                <div class="flex items-center mb-3">
-                                    @for($i = 1; $i <= 5; $i++)
-                                        @if($i <= $review['rating'])
-                                            <svg class="w-4 h-4 text-orange-400 fill-current" viewBox="0 0 20 20">
+                                <div class="flex items-center mb-4">
+                                    @php
+                                        $avgRating = $ratingData->avg('rating') ?? 0;
+                                        $avgRating = round($avgRating, 1);
+                                        $fullStars = floor($avgRating);
+                                        $hasHalfStar = ($avgRating - $fullStars) >= 0.5;
+                                        $emptyStars = 5 - $fullStars - ($hasHalfStar ? 1 : 0);
+                                    @endphp
+
+                                    <span class="text-4xl font-light text-gray-900 mr-3">
+                                        {{ number_format($avgRating, 1) }}
+                                    </span>
+
+                                    <div class="flex items-center mb-1">
+                                        {{-- Full Stars --}}
+                                        @for ($i = 0; $i < $fullStars; $i++)
+                                            <svg class="w-5 h-5 text-orange-400 fill-current" viewBox="0 0 20 20">
                                                 <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
                                             </svg>
-                                        @else
-                                            <svg class="w-4 h-4 text-gray-300 fill-current" viewBox="0 0 20 20">
-                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        @endfor
+
+                                        {{-- Half Star --}}
+                                        @if ($hasHalfStar)
+                                            <svg class="w-5 h-5 text-orange-400 fill-current" viewBox="0 0 20 20">
+                                                <defs>
+                                                    <linearGradient id="half-fill">
+                                                        <stop offset="50%" stop-color="currentColor"/>
+                                                        <stop offset="50%" stop-color="#D1D5DB"/>
+                                                    </linearGradient>
+                                                </defs>
+                                                <path fill="url(#half-fill)" d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
                                             </svg>
                                         @endif
-                                    @endfor
-                                    <span class="ml-2 text-sm text-gray-600">
-                                        ({{ $review['rating'] }}/5)
-                                    </span>
-                                </div>
 
-                                @if(isset($review['task_title']) && $review['task_title'])
-                                <div class="mb-2">
-                                    <span class="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full font-medium">
-                                        Task: {{ Str::limit($review['task_title'], 30) }}
-                                    </span>
+                                        {{-- Empty Stars --}}
+                                        @for ($i = 0; $i < $emptyStars; $i++)
+                                            <svg class="w-5 h-5 text-gray-300 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                        @endfor
+                                    </div>
                                 </div>
-                                @endif
-                                
-                                <p class="text-gray-700 text-sm leading-relaxed">
-                                    {{ $review['comment'] }}
-                                </p>
-                                
-                                <div class="flex items-center text-xs text-gray-500 mt-3">
-                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
-                                    </svg>
-                                    <span>{{ $review['location'] }}</span>
+                                <div class="text-sm text-gray-500">
+                                    berdasarkan {{ $countReviews }} ulasan
+                                </div>
+                            </div>
+                                <!-- Rating Breakdown -->
+                            @php
+                                $labels = [
+                                    5 => ['label' => 'Sangat Baik', 'color' => 'bg-green-500'],
+                                    4 => ['label' => 'Baik', 'color' => 'bg-blue-500'],
+                                    3 => ['label' => 'Cukup', 'color' => 'bg-yellow-400'],
+                                    2 => ['label' => 'Kurang', 'color' => 'bg-orange-400'],
+                                    1 => ['label' => 'Sangat Buruk', 'color' => 'bg-red-500'],
+                                ];
+                            @endphp
+                            <div class="space-y-2">
+                                @foreach ($breakdown as $star => $data)
+                                    <div class="flex items-center">
+                                        <span class="text-sm text-gray-600 w-20 flex-shrink-0">
+                                            {{ $labels[$star]['label'] }}
+                                        </span>
+                                        <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
+                                            <div class="h-2 rounded-full transition-all duration-300 {{ $labels[$star]['color'] }}" 
+                                                style="width: {{ $data['percentage'] }}%">
+                                            </div>
+                                        </div>
+                                        <span class="text-xs text-gray-500 w-8">{{ $data['percentage'] }}%</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div> 
+                    <!-- Reviews List Section -->
+                    <div class="md:col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold">Ulasan Pengguna</h3>
+                        </div>
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+                        <div class="text-gray-400 mb-2">
+                            <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.477 8-9.999 8a9.954 9.954 0 01-5.383-1.62L3 21l2.622-2.622A9.955 9.955 0 011 12C1 7.582 5.477 4 12 4s9 3.582 9 8z"/>
+                            </svg>
+                        </div>
+                        <p class="text-gray-500 text-lg font-medium">Belum ada ulasan</p>
+                        <p class="text-gray-400 text-sm mt-1">Ulasan akan muncul setelah tugas selesai</p>
+                    </div>
+                    @foreach ($ratingData as $data)
+                    <div class="space-y-4 mt-4" id="reviews-container">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+                            <div class="flex items-start space-x-4">
+                                <img src="{{ asset('storage/' . ($data->user->profile_image ?? 'avatar.png')) }}" 
+                                    alt="pepek" 
+                                    class="w-10 h-10 rounded-full object-cover flex-shrink-0 border-2 border-gray-100">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="text-gray-900 font-medium text-sm">
+                                            {{ $data->user->nama_lengkap }}
+                                        </h4>
+                                        <span class="text-xs text-gray-500">
+                                            {{ $data->created_at->diffForHumans() }}
+                                        </span>
+                                    </div>
+                                    @if ($data->rating)
+                                    <div class="flex items-center mt-2">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <svg class="w-4 h-4 {{ $i <= $data->rating ? 'text-yellow-400' : 'text-gray-300' }} fill-current"
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 .587l3.668 7.571L24 9.748l-6 5.847 1.417 8.263L12 18.896 4.583 23.858 6 15.595 0 9.748l8.332-1.59z" />
+                                            </svg>
+                                        @endfor
+                                    </div>
+                                    @else
+                                        <p class="text-sm text-gray-400 italic mt-2">Belum ada ulasan</p>
+                                    @endif
+                                    <div class="mb-2">
+                                        <span class="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full font-medium">
+                                            {{$data->comment}}
+                                        </span>
+                                    </div>
+                                    <p class="text-gray-700 text-sm leading-relaxed"></p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     @endforeach
+                    {{--<!-- Load More Button -->
+                    @if(count($reviews) >= 10)
+                    <div class="text-center mt-6">
+                        <button onclick="loadMoreReviews()" 
+                                id="load-more-btn"
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span id="load-more-text">Muat Lebih Banyak</span>
+                            <svg id="load-more-spinner" class="hidden animate-spin ml-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    @endif--}}
                 </div>
-                
-                <!-- Load More Button -->
-                @if(count($reviews) >= 10)
-                <div class="text-center mt-6">
-                    <button onclick="loadMoreReviews()" 
-                            id="load-more-btn"
-                            class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                        <span id="load-more-text">Muat Lebih Banyak</span>
-                        <svg id="load-more-spinner" class="hidden animate-spin ml-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </button>
-                </div>
-                @endif
-            @endif
+            </div>
         </div>
-    </div>
-</div>
-
             </div>
         </div>
     </div>
@@ -784,7 +763,7 @@
         }
     });
 </script>
-
+{{--
 <script>
 let currentOffset = {{ count($reviews) }};
 let isLoading = false;
@@ -902,7 +881,7 @@ function generateStars(rating) {
     return stars;
 }
 </script>
-
+--}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const openCertificateModal = document.getElementById('openCertificateModal'); 
@@ -1068,17 +1047,5 @@ function generateStars(rating) {
         activeButton.classList.add('active'); // Menambahkan kelas active pada tombol yang dipilih
     }
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
 
 @include('General.footer')

@@ -29,6 +29,11 @@ Route::get('/forgot-password', [AuthController::class, 'showForgotForm'])->name(
 Route::post('/forgot-password/send-otp', [AuthController::class, 'sendOtp'])->name('forgot-password.send-otp');
 Route::post('/forgot-password/verify-otp', [AuthController::class, 'verifyOtpCheck'])->name('forgot-password.verify-otp-check');
 
+// Menampilkan form set new password (cek session otp_verified)
+Route::get('/forgot-password/set-new-password', [AuthController::class, 'showSetPasswordForm'])->name('forgot-password.set-password-form');
+
+// Proses submit set new password
+Route::post('/forgot-password/set-new-password', [AuthController::class, 'setNewPassword'])->name('forgot-password.set-new-password');
 
 Route::get('/verify-otp', [AuthController::class, 'showOtpForm'])->name('forgot-password.otp-form');
 Route::post('/verify-otp-check', [AuthController::class, 'checkOtp'])->name('forgot-password.verify-otp-check');
@@ -114,7 +119,7 @@ Route::post('/task/{task}/apply', [JobController::class, 'apply'])->name('task.a
 
 ####### GENERAL
 // List all Jobs
-Route::get('/dashboard/jobs', [JobController::class, 'index'])->name('jobs.index');
+Route::get('/dashboard/jobs', [JobController::class, 'index'])->middleware('auth')->name('jobs.index');
 // detail jobs di fitur jobs
 Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
 Route::get('/my-jobs', [JobController::class, 'myJobs'])->name('jobs.my');

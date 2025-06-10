@@ -646,7 +646,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Ulasan</label>
                 <textarea name="review" rows="4" class="w-full p-2 border rounded-lg mb-4"
-                    placeholder="Tulis ulasanmu..." required></textarea>
+                    placeholder="Tulis ulasanmu..." ></textarea>
             </div>
 
             <!-- Submit -->
@@ -763,7 +763,7 @@
             modal.classList.add('opacity-100');
             content.classList.remove('opacity-0', 'scale-95');
             content.classList.add('opacity-100', 'scale-100');
-        }, 10); // tunggu sedikit supaya transisinya jalan
+        }, 10); 
     }
 
     function closeModalRating() {

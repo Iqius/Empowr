@@ -32,7 +32,12 @@
                         required>
                 @endfor
             </div>
-
+            {{-- Pesan kesalahan OTP --}}
+            @if ($errors->has('otp'))
+                <div class="text-red-600 text-sm mb-4">
+                    {{ $errors->first('otp') }}
+                </div>
+            @endif
             <button type="submit"
                 class="w-full mt-4 inline-block bg-[#183E74] font-semibold hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">
                 Validate

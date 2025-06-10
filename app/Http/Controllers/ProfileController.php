@@ -29,14 +29,24 @@ class ProfileController extends Controller
                 ->where('status', 'completed')
                 ->latest()
                 ->get();
+            $ratingData = TaskReview::where('reviewed_user_id', $user)
+                ->whereNotNull('rating')
+                ->select('rating')
+                ->selectRaw('COUNT(*) as count')
+                ->groupBy('rating')
+                ->orderBy('rating', 'desc')
+                ->get();
 
             return view('General.profil', [
                 'workerProfile' => null,
                 'sertifikasi' => collect(),
                 'portofolio' => collect(),
                 'tasks' => $tasks,
+                'ratingData' => $ratingData,
+                
             ]);
         }
+
 
         $workerProfile = $user->workerProfile;
 
@@ -48,8 +58,22 @@ class ProfileController extends Controller
             ->latest()
             ->get();
 
+        $ratingData = TaskReview::with('user')
+                ->where('reviewed_user_id', $user->id)
+                ->get();
+        
+        $avgRating = $ratingData->avg('rating') ?? 0;
+        $countReviews = $ratingData->count();
+        $breakdown = collect([5, 4, 3, 2, 1])->mapWithKeys(function ($star) use ($ratingData, $countReviews) {
+            $count = $ratingData->where('rating', $star)->count();
+            $percentage = $countReviews > 0 ? round(($count / $countReviews) * 100) : 0;
 
-        return view('General.profil', compact('workerProfile', 'sertifikasi', 'portofolio', 'tasks'));
+            return [$star => [
+                'count' => $count,
+                'percentage' => $percentage,
+            ]];
+        });
+        return view('General.profil', compact('workerProfile', 'sertifikasi', 'portofolio', 'tasks', 'ratingData', 'avgRating', 'countReviews', 'breakdown'));
     }
 
 
@@ -225,14 +249,6 @@ public function getWorkerRatingData($workerId)
         $totalReviews = $ratingStats->total_reviews ?: 0;
 
         // Get rating breakdown
-        $ratingBreakdown = \DB::table('task_reviews')
-            ->where('reviewed_user_id', $workerId)
-            ->whereNotNull('rating')
-            ->select('rating')
-            ->selectRaw('COUNT(*) as count')
-            ->groupBy('rating')
-            ->orderBy('rating', 'desc')
-            ->get();
 
         // Calculate percentages
         $breakdown = [];

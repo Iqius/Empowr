@@ -240,8 +240,10 @@ class AuthController extends Controller
         }
 
         // Simpan status verifikasi
-        session(['otp_verified' => true]);
-
+        session([
+            'otp_verified' => true,
+            'email' => $request->email,
+        ]);
         return redirect()->route('forgot-password.set-password-form');
     }
 
@@ -268,14 +270,19 @@ class AuthController extends Controller
         ]);
 
         $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return redirect()->back()->with('error', 'Email tidak ditemukan.');
+        }
+
         $user->password = Hash::make($request->password);
         $user->save();
 
         OtpCode::where('email', $request->email)->delete();
         session()->forget(['otp_verified', 'email']);
 
-        return redirect()->route('login')->with('success', 'Password berhasil direset. Silakan login.');
+return redirect()->route('login')->with('success', 'Password berhasil diubah. Silakan login.');
     }
+
     //resend otp
     public function resendOtp(Request $request)
     {
@@ -299,18 +306,4 @@ class AuthController extends Controller
 
         return back()->with('success', 'Kode OTP baru telah dikirim.');
     }
-    public function verifyOtpCheck(Request $request)
-    {
-        $otpInput = implode('', $request->input('otp')); // Gabungkan array menjadi string
-        $correctOtp = session('otp'); // Ambil OTP dari session
-
-        if ($otpInput === $correctOtp) {
-            // Berhasil verifikasi OTP
-            return redirect()->route('password.reset');
-        } else {
-            // OTP salah
-            return back()->with('error', 'Kode OTP yang dimasukkan salah. Silakan coba lagi.');
-        }
-    }
-
 }

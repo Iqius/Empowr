@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('task_id');
             $table->unsignedBigInteger('profile_id');
-            $table->text('catatan');
+            $table->text('catatan')->nullable();
             $table->float('bidPrice');
             $table->enum('status', ['pending', 'accepted', 'rejected']);
             $table->boolean('affiliated')->nullable()->default('0');

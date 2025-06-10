@@ -274,6 +274,4 @@ $taskId = $request->input('task_id');
 
         return response()->json($messages);
     }
-
-
 }

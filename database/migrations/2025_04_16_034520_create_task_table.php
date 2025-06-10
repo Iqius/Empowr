@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->decimal('price', 15, 2);
             $table->enum('status', ['open', 'in progress', 'completed']);
             $table->integer('revisions');
-            $table->enum('category', [
+            $table->json('kategory', [
                 'Web Development',
                 'Mobile Development',
                 'Game Development',
