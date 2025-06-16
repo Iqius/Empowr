@@ -220,7 +220,7 @@
                         </li>
                         <li>
                            <a href="{{ route('ewallet.index', Auth::user()->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
-                              Wallet <span class="text-blue-500">IDR {{ Auth::user()->ewallet }}</span> 
+                              Wallet <span class="text-blue-500">IDR {{ Auth::user()->ewallet?->balance }}</span> 
                            </a>
                         </li>
                         <li>

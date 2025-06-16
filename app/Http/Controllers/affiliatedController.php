@@ -222,7 +222,15 @@ class AffiliatedController extends Controller
         return redirect()->back()->with('success-order-affiliated', 'Pendaftaran berhasil dikirim!');
     }
 
-
+    public function ajukanUlangAffiliate($id){
+        $affiliation = workerAffiliated::findOrFail($id);
+        // Hapus semua logs yang terkait dengan affiliation_id ini
+        workerAffiliatedLogs::where('affiliation_id', $affiliation->id)->delete();
+        $affiliation->status = 'pending';
+        $affiliation->status_decision = 'waiting';
+        $affiliation->save();
+        return redirect()->back()->with('success', 'Status berhasil diperbarui.');
+    }
 
 
     // -----------------------------------------------------BATAS UNTUK TASK AFFILIATE---------------------------------------------

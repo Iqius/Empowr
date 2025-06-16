@@ -2,9 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\task as Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Midtrans\Config;
+use App\Models\User;
+use App\Models\WorkerProfile;
+use App\Models\TaskApplication;
+use App\Models\TaskReview;
+use Midtrans\Snap;
 use App\Models\Ewallet;
 use App\Models\Transaction;
 use App\Models\UserPaymentAccount;
@@ -361,6 +368,6 @@ class PaymentController extends Controller
             'payment_method' => $paymentMethod,
         ]);
 
-        return redirect()->route('jobs.my')->with('success', 'Pembayaran berhasil menggunakan e-wallet.');
+        return redirect()->route('jobs.manage', ['id' => $taskId])->with('success-hired', 'Pembayaran berhasil menggunakan e-wallet.');
     }
 }
