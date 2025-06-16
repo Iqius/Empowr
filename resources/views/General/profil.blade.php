@@ -1046,6 +1046,16 @@ function generateStars(rating) {
         const activeButton = document.querySelector(`button[onclick="showTab('${tabId}')"]`);
         activeButton.classList.add('active'); // Menambahkan kelas active pada tombol yang dipilih
     }
+
+    @if(session('success-update'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: '{{ session('success-update') }}',
+                confirmButtonColor: '#3085d6'
+            });
+    @endif
+
 </script>
 
 @include('General.footer')
