@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\UserPaymentAccount;
+use App\Models\Session;
 // use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class User extends Authenticatable
@@ -99,4 +100,8 @@ class User extends Authenticatable
         return $this->hasMany(Transaction::class, 'client_id')->where('type', 'payout');
     }
 
+    public function sessions()
+    {
+        return $this->hasMany(Session::class, 'user_id');
+    }
 }
