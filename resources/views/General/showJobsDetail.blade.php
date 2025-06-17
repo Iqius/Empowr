@@ -326,7 +326,7 @@
         // Submit form saat klik tombol daftar
         submitBtn.addEventListener("click", function () {
             const rawNego = negoInput.value.replace(/[.,]/g, "");
-            if (!rawNego  isNaN(rawNego)  Number(rawNego) <= 0) {
+            if (!rawNego || isNaN(rawNego) || Number(rawNego) <= 0) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Invalid Input',
