@@ -4,27 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\workerAffiliated;
-use App\Models\workerAffiliatedLogs;
+use App\Models\WorkerAffiliated;
+use App\Models\WorkerAffiliatedLogs;
 use App\Models\WorkerProfile;
 use App\Models\Notification;
 use App\Models\task;
 use App\Models\TaskApplication;
 
 
-class affiliatedController extends Controller
+class AffiliatedController extends Controller
 {
     // Halaman progress pengajuan affiliate worker
     public function index($id){
         $user = Auth::user();
         if($user->role == 'admin'){
-            $affiliation = workerAffiliated::where('profile_id', $id)->firstOrFail();
+            $affiliation = WorkerAffiliated::where('profile_id', $id)->firstOrFail();
         }elseif($user->role == 'worker'){
-            $affiliation = workerAffiliated::findOrFail($id);
+            $affiliation = WorkerAffiliated::findOrFail($id);
         }
     
         // Ambil semua logs berdasarkan affiliation_id
-        $logs = workerAffiliatedLogs::where('affiliation_id', $affiliation->id)
+        $logs = WorkerAffiliatedLogs::where('affiliation_id', $affiliation->id)
                 ->orderBy('created_at')
                 ->get();
         
@@ -62,14 +62,14 @@ class affiliatedController extends Controller
 
     // Tabel request pengajuan afiliasi worker untuk admin
     public function pengajuanAffiliasiWorkerView(){
-        $data = workerAffiliated::all();
+        $data = WorkerAffiliated::all();
         return view("admin.Affiliation.affiliationListWorkerRequest", compact('data'));
     }
 
     // Update status progress pengajuan affiliasi worker untuk admin
     public function updateStatusAffiliate(Request $request, $id){
-        // Ambil data dari tabel workerAffiliated berdasarkan id
-        $affiliation = workerAffiliated::findOrFail($id);
+        // Ambil data dari tabel WorkerAffiliated berdasarkan id
+        $affiliation = WorkerAffiliated::findOrFail($id);
 
         // Jika status_decision saat ini adalah 'pending'
         if ($affiliation->status === 'pending') {
@@ -78,7 +78,7 @@ class affiliatedController extends Controller
             $affiliation->status_decision = 'approve';
             $affiliation->save();
 
-            workerAffiliatedLogs::create([
+            WorkerAffiliatedLogs::create([
                 'affiliation_id' => $affiliation->id,
                 'status_decision' => 'approved',
                 'status' => 'pending',
@@ -90,7 +90,7 @@ class affiliatedController extends Controller
             $affiliation->status_decision = 'approve';
             $affiliation->save();
 
-            workerAffiliatedLogs::create([
+            WorkerAffiliatedLogs::create([
                 'affiliation_id' => $affiliation->id,
                 'status_decision' => 'approved',
                 'status' => 'reviewed',
@@ -102,7 +102,7 @@ class affiliatedController extends Controller
             $affiliation->status_decision = 'approve';
             $affiliation->save();
 
-            workerAffiliatedLogs::create([
+            WorkerAffiliatedLogs::create([
                 'affiliation_id' => $affiliation->id,
                 'status_decision' => 'approved',
                 'status' => 'interview',
@@ -114,7 +114,7 @@ class affiliatedController extends Controller
             $affiliation->status_decision = 'approve';
             $affiliation->save();
 
-            workerAffiliatedLogs::create([
+            WorkerAffiliatedLogs::create([
                 'affiliation_id' => $affiliation->id,
                 'status_decision' => 'approved',
                 'status' => 'result',
@@ -138,7 +138,7 @@ class affiliatedController extends Controller
     // Penolakan pengajuan affiliasi worker untuk admin
     public function rejectStatusAffiliate(Request $request, $id)
     {
-        $affiliation = workerAffiliated::findOrFail($id);
+        $affiliation = WorkerAffiliated::findOrFail($id);
         $lastLog = $affiliation->logs()->latest()->first();
         $admin = $lastLog?->admin; // null-safe jika $lastLog tidak ada
 
@@ -148,7 +148,7 @@ class affiliatedController extends Controller
             $affiliation->status_decision = 'rejected';
             $affiliation->save();
             // Buat log penolakan
-            workerAffiliatedLogs::create([
+            WorkerAffiliatedLogs::create([
                 'affiliation_id' => $affiliation->id,
                 'status' => $affiliation->status,
                 'status_decision' => 'rejected',
@@ -170,7 +170,7 @@ class affiliatedController extends Controller
 
     // Menambahkan jadwal interview worker untuk admin
     public function interviewDate(Request $request, $id){
-        $affiliation = workerAffiliated::findOrFail($id);
+        $affiliation = WorkerAffiliated::findOrFail($id);
         if ($affiliation->status === 'interview'){
             // Ubah menjadi 'under review'
             $affiliation->link_meet = $request->input('meeting_link');
@@ -211,7 +211,7 @@ class affiliatedController extends Controller
         }
 
         // Simpan ke tabel worker_verification_affiliations
-        workerAffiliated::create([
+        WorkerAffiliated::create([
             'profile_id' => $user->workerProfile->id,
             'identity_photo' => $identityPhotoPath,
             'selfie_with_id' => $selfieWithIdPath,
@@ -222,7 +222,15 @@ class affiliatedController extends Controller
         return redirect()->back()->with('success-order-affiliated', 'Pendaftaran berhasil dikirim!');
     }
 
-
+    public function ajukanUlangAffiliate($id){
+        $affiliation = workerAffiliated::findOrFail($id);
+        // Hapus semua logs yang terkait dengan affiliation_id ini
+        workerAffiliatedLogs::where('affiliation_id', $affiliation->id)->delete();
+        $affiliation->status = 'pending';
+        $affiliation->status_decision = 'waiting';
+        $affiliation->save();
+        return redirect()->back()->with('success', 'Status berhasil diperbarui.');
+    }
 
 
     // -----------------------------------------------------BATAS UNTUK TASK AFFILIATE---------------------------------------------

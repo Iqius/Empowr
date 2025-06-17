@@ -210,30 +210,28 @@
                   <div
                      class="z-50 min-w-[200px] max-w-[300px] hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-sm shadow-sm"
                      id="dropdown-user">
-                     @if (auth()->user()->role != 'admin')
-                           <div class="px-4 py-3" role="none">
-                              <p class="text-sm font-medium text-gray-900 truncate font-semibold" role="none">
-                                 {{ Auth::user()->email }}
-                              </p>
-                           </div>
-                           <ul class="py-1" role="none">
-                           <li>
-                              <a href="{{route('profil')}}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                 role="menuitem">Profile</a>
-                           </li>
-                           <li>
-                              <a href="{{ route('ewallet.index', Auth::user()->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
-                                 Wallet <span class="text-blue-500">IDR {{ Auth::user()->ewallet }}</span> 
-                              </a>
-                           </li>
-                        @endif
-                           <li>
-                              <form id="logoutForm" action="{{ route('logout') }}" method="POST">@csrf</form>
-                              <button id="logoutBtn" type="button"
-                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
-                                 Sign out
-                              </button>
-                           </li>
+                     <div class="px-4 py-3" role="none">
+                        <p class="text-sm font-medium text-gray-900 truncate font-semibold" role="none">
+                           {{ Auth::user()->email }}
+                        </p>
+                     </div>
+                     <ul class="py-1" role="none">
+                        <li>
+                           <a href="{{route('profil')}}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              role="menuitem">Profile</a>
+                        </li>
+                        <li>
+                           <a href="{{ route('ewallet.index', Auth::user()->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
+                              Wallet <span class="text-blue-500">IDR {{ Auth::user()->ewallet?->balance }}</span> 
+                           </a>
+                        </li>
+                        <li>
+                           <form id="logoutForm" action="{{ route('logout') }}" method="POST">@csrf</form>
+                           <button id="logoutBtn" type="button"
+                              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+                              Sign out
+                           </button>
+                        </li>
                      </ul>
                   </div>
                </div>
@@ -253,7 +251,7 @@
                <a href="{{ Auth::user()->role === 'client' ? route('client.dashboardClient') : route('worker.dashboardWorker') }}"
                  class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-house text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Dashboard</span>
+                 <span class="ml-3">Beranda</span>
                </a>
             </li>
 
@@ -261,7 +259,7 @@
             <li>
                <a href="{{ route('jobs.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-briefcase text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Jobs</span>
+                 <span class="ml-3">Semua Tugas</span>
                </a>
             </li>
 
@@ -270,7 +268,7 @@
                <a href="{{ Auth::user()->role === 'client' ? route('jobs.my') : route('jobs.Worker') }}"
                  class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-person-workspace text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">My Job</span>
+                 <span class="ml-3">Tugas Saya</span>
                </a>
             </li>
 
@@ -294,7 +292,7 @@
             <li>
                <a href="{{ url('/guide') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-book text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Guide</span>
+                 <span class="ml-3">Petunjuk</span>
                </a>
             </li>
 
@@ -302,7 +300,7 @@
             <li>
                <a href="{{ url('/affiliate') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-currency-dollar text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Affiliate</span>
+                 <span class="ml-3">Affiliasi</span>
                </a>
             </li>
 
@@ -310,7 +308,7 @@
             <li>
                <a href="{{ url('/contact-admin') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                  <i class="bi bi-telephone text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Contact Admin</span>
+                 <span class="ml-3">Hubungi Admin</span>
                </a>
             </li>
           </ul>

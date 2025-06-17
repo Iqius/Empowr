@@ -74,7 +74,7 @@
                 @error('email') border-red-500 @enderror" value="{{ old('email') }}">
 
                     @error('email')
-                        <p class="text-red-500 text-sm absolute mt-1">{{ $message }}</p>
+                    <p class="text-red-500 text-sm absolute mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -93,7 +93,7 @@
                     </button>
 
                     @error('password')
-                        <p class="text-red-500 text-sm absolute mt-1">{{ $message }}</p>
+                    <p class="text-red-500 text-sm absolute mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -108,19 +108,19 @@
                 <!-- Submit Button -->
                 <button type="submit"
                     class="w-full mt-4 inline-block bg-[#183E74] font-semibold hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">
-                    Sign In
+                    Masuk
                 </button>
 
                 <!-- Register Link -->
                 <p class="text-sm text-gray-600 mt-3">Belum memiliki akun?
                     <a href="{{ route('register') }}"
-                        class="text-sm font-semibold text-[#1F4482] hover:underline">Register</a>
+                        class="text-sm font-semibold text-[#1F4482] hover:underline">Daftar</a>
                 </p>
             </form>
         </div>
 
         <script>
-            document.getElementById("closeModal").addEventListener("click", function () {
+            document.getElementById("closeModal").addEventListener("click", function() {
                 document.getElementById("errorModal").style.display = "none";
             });
 
@@ -142,22 +142,37 @@
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
-            @if (session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: '{{ session('success') }}',
-                    confirmButtonColor: '#1F4482',
-                });
+            @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('
+                success ') }}',
+                confirmButtonColor: '#1F4482',
+            });
             @endif
 
-            @if (session('error'))
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops!',
-                    text: '{{ session('error') }}',
-                    confirmButtonColor: '#1F4482',
-                });
+            @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops!',
+                text: '{{ session('
+                error ') }}',
+                confirmButtonColor: '#1F4482',
+            });
+            @endif
+
+            // ✅ SweetAlert for Success Message
+            @if(session('success-log'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Kamu Ter-logout Paksa',
+                text: "{{ session('success-log') }}",
+                confirmButtonColor: '#1F4482',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = window.location.href;
+            });
             @endif
         </script>
 </body>

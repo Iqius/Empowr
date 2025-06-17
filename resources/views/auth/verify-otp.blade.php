@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Verifikasi OTP</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Penting untuk mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" href="{{ asset('assets/images/logosaja.png') }}" type="image/png">
 
@@ -16,7 +16,11 @@
         <p class="mb-6 text-sm sm:text-base text-gray-600">
             Please type the verification code sent to <strong>{{ session('email') }}</strong>
         </p>
-
+            @if (session('error'))
+                <div class="mb-4 text-sm text-red-600 bg-red-100 border border-red-400 p-2 rounded">
+                    {{ session('error') }}
+                </div>
+            @endif
         <form method="POST" action="{{ route('forgot-password.verify-otp-check') }}">
             @csrf
             <input type="hidden" name="email" value="{{ session('email') }}">
@@ -28,7 +32,12 @@
                         required>
                 @endfor
             </div>
-
+            {{-- Pesan kesalahan OTP --}}
+            @if ($errors->has('otp'))
+                <div class="text-red-600 text-sm mb-4">
+                    {{ $errors->first('otp') }}
+                </div>
+            @endif
             <button type="submit"
                 class="w-full mt-4 inline-block bg-[#183E74] font-semibold hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">
                 Validate
@@ -84,7 +93,7 @@
             }
         }, 1000);
 
-        // Handle paste 6 digit sekaligus ke input pertama
+        // paste 6 digit OTP
         inputs[0].addEventListener('paste', function (e) {
             e.preventDefault();
             const data = (e.clipboardData || window.clipboardData).getData('text').trim();

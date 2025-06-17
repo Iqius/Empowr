@@ -10,8 +10,10 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProgressionController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ArbitraseController;
-use App\Http\Controllers\affiliatedController;
-use App\Http\Controllers\paymentController;
+use App\Http\Controllers\AffiliatedController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\WithdrawController;
+use App\Http\Controllers\ForgotPasswordController;
 
 // LANDING PAGE
 Route::get('/', function () {
@@ -26,15 +28,22 @@ Route::get('/register', function () {
 })->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/forgot-password', [AuthController::class, 'showForgotForm'])->name('forgot-password.form');
-Route::post('/forgot-password', [AuthController::class, 'sendOtp'])->name('forgot-password.send-otp');
+Route::post('/forgot-password/send-otp', [AuthController::class, 'sendOtp'])->name('forgot-password.send-otp');
+Route::post('/forgot-password/verify-otp', [AuthController::class, 'verifyOtpCheck'])->name('forgot-password.verify-otp-check');
+
+// Menampilkan form set new password (cek session otp_verified)
+Route::get('/forgot-password/set-new-password', [AuthController::class, 'showSetPasswordForm'])->name('forgot-password.set-password-form');
+
+// Proses submit set new password
+Route::post('/forgot-password/set-new-password', [AuthController::class, 'setNewPassword'])->name('forgot-password.set-new-password');
 
 Route::get('/verify-otp', [AuthController::class, 'showOtpForm'])->name('forgot-password.otp-form');
 Route::post('/verify-otp-check', [AuthController::class, 'checkOtp'])->name('forgot-password.verify-otp-check');
 
 // Langkah 2: Set password baru
-Route::get('/set-password', [AuthController::class, 'showSetPasswordForm'])->name('forgot-password.set-password-form');
-Route::post('/verify-otp-set-password', [AuthController::class, 'setNewPassword'])->name('forgot-password.set-new-password');
-Route::post('/resend-otp', [AuthController::class, 'resendOtp'])->name('forgot-password.resend-otp');
+Route::get('/set-password', [ForgotPasswordController::class, 'showSetPasswordForm'])->name('forgot-password.set-password-form');
+Route::post('/verify-otp-set-password', [ForgotPasswordController::class, 'setNewPassword'])->name('forgot-password.set-new-password');
+Route::post('/resend-otp', [ForgotPasswordController::class, 'resendOtp'])->name('forgot-password.resend-otp');
 
 Route::get('/login', function () {
     return view('auth.login');
@@ -53,7 +62,7 @@ Route::post('/hire', [JobController::class, 'Clienthire'])->name('client.hire');
 // --Client Tolak Worker
 Route::post('/reject', [JobController::class, 'ClientReject'])->name('client.reject');
 // --bayar
-Route::post('/bayar/{task?}', [paymentController::class, 'bayar'])->name('client.bayar');
+Route::post('/bayar/{task?}', [PaymentController::class, 'bayar'])->name('client.bayar');
 // --review progress
 Route::post('/task-progression/{progress}/review', [ProgressionController::class, 'review'])->name('task-progression.review');
 // --Client complete job
@@ -67,7 +76,7 @@ Route::get('/add-job', function () {
 Route::post('/progress/update-jobs/{id}', [JobController::class, 'updateJobClient'])->name('jobs.update');
 Route::get('/update-job/{id}', [JobController::class, 'updateJobView'])->middleware(['auth'])->name('client.update');
 // Pengajuan affiliate
-Route::post('/jobs/manage/{id}/Request', [affiliatedController::class, 'pengajuanTaskAffiliation'])->name('jobs.request-affiliate');
+Route::post('/jobs/manage/{id}/Request', [AffiliatedController::class, 'pengajuanTaskAffiliation'])->name('jobs.request-affiliate');
 // Manage tugas client
 
 Route::delete('/jobs/delete/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
@@ -76,13 +85,16 @@ Route::get('/jobs/data', [JobController::class, 'getJobData'])->name('jobs.data'
 // add job view
 Route::get('/jobs', [JobController::class, 'addJobView'])->name('add-job-view');
 
-
+//profile rating
+Route::get('/profile/reviews/load-more', [ProfileController::class, 'loadMoreReviews'])->name('profile.reviews.load-more');
+Route::get('/profile/worker/{id}/rating', [ProfileController::class, 'getWorkerRatingAjax'])->name('profile.worker.rating');
+Route::get('/profile/my-rating', [ProfileController::class, 'getMyRatingData'])->name('profile.my.rating');
 
 // WORKER
 // -- DASHBOARD
 Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->middleware(['auth'])->name('worker.dashboardWorker');
 // MyJobs
-Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->name('jobs.Worker');
+Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->middleware(['auth'])->name('jobs.Worker');
 // Upload Progress
 Route::post('/task-progression/{task}', [ProgressionController::class, 'create'])->middleware(['auth'])->name('task-progression.store');
 // Post ulasan worker pada saat complite task
@@ -97,11 +109,11 @@ Route::get('/dashboard1', function () {
     };
 })->middleware(['auth'])->name('dashboard');
 // affiliated view
-Route::get('/worker/progression-affilated/{id}', [affiliatedController::class, 'index'])->middleware(['auth'])->name('progress-affiliate.view');
-Route::post('/worker/progression-affilated/submited', [affiliatedController::class, 'createAffiliatedOrder'])->middleware(['auth'])->name('progress-affiliate.submited');
-Route::post('/worker/progression-affilated/submited-ulang/{id}', [affiliatedController::class, 'ajukanUlangAffiliate'])->middleware(['auth'])->name('progress-affiliate.submited-ulang');
+Route::get('/worker/progression-affilated/{id}', [AffiliatedController::class, 'index'])->middleware(['auth'])->name('progress-affiliate.view');
+Route::post('/worker/progression-affilated/submited', [AffiliatedController::class, 'createAffiliatedOrder'])->middleware(['auth'])->name('progress-affiliate.submited');
+Route::post('/worker/progression-affilated/submited-ulang/{id}', [AffiliatedController::class, 'ajukanUlangAffiliate'])->middleware(['auth'])->name('progress-affiliate.submited-ulang');
 // MANAGE WORKER
-Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->name('manage.worker');
+Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->middleware('auth')->name('manage.worker');
 // LAMAR WORKER
 Route::post('/task/{task}/apply', [JobController::class, 'apply'])->name('task.apply');
 
@@ -109,10 +121,10 @@ Route::post('/task/{task}/apply', [JobController::class, 'apply'])->name('task.a
 
 ####### GENERAL
 // List all Jobs
-Route::get('/dashboard/jobs', [JobController::class, 'index'])->name('jobs.index');
+Route::get('/dashboard/jobs', [JobController::class, 'index'])->middleware('auth')->name('jobs.index');
 // detail jobs di fitur jobs
 Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
-Route::get('/my-jobs', [JobController::class, 'myJobs'])->name('jobs.my');
+Route::get('/my-jobs', [JobController::class, 'myJobs'])->middleware('auth')->name('jobs.my');
 // --Profile update
 Route::get('/profil', [ProfileController::class, 'showProfile'])->name('profil');
 Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
@@ -124,7 +136,7 @@ Route::get('/in-progress-jobs/{task_id}', [ProgressionController::class, 'Detail
 // web.php
 Route::get('/arbitrase', [ArbitraseController::class, 'indexUser'])->name('arbitrase.user');
 // withdraw
-Route::post('/ewallet/withdraw/pengajuan', [paymentController::class, 'pencairanDana'])->name('withdraw.pengajuan');
+Route::post('/ewallet/withdraw/pengajuan', [WithdrawController::class, 'pencairanDana'])->name('withdraw.pengajuan');
 
 
 //chat
@@ -140,8 +152,8 @@ Route::delete('/chat/destroy/{id}', [ChatController::class, 'destroyConversation
 Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifications.index');
 Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 // --Ewallet
-Route::get('/ewallet/{id}', [paymentController::class, 'ewalletIndex'])->name('ewallet.index');
-Route::post('/ewallet/pembayaran/{id}', [paymentController::class, 'bayarEwalletBase'])->name('client.bayar.ewallet');
+Route::get('/ewallet/{id}', [PaymentController::class, 'ewalletIndex'])->name('ewallet.index');
+Route::post('/ewallet/pembayaran/{id}', [PaymentController::class, 'bayarEwalletBase'])->name('client.bayar.ewallet');
 
 
 
@@ -156,20 +168,20 @@ Route::get('/arbitraseDetail', [ArbitraseController::class, 'index'])->middlewar
 Route::post('/arbitrase/{id}/accept', [ArbitraseController::class, 'accept'])->name('arbitrase.accept');
 Route::post('/arbitrase/{id}/reject', [ArbitraseController::class, 'reject'])->name('arbitrase.reject');
 // List pengajuan worker affiliasi
-Route::get('/admin/List-Request-Affiliasi-Worker', [affiliatedController::class, 'pengajuanAffiliasiWorkerView'])->middleware(['auth'])->name('List-pengajuan-worker-affiliate.view');
-Route::post('/admin/List-Request-Affiliasi-Worker/Pending-to-under-review/{id}', [affiliatedController::class, 'updateStatusAffiliate'])->name('List-pengajuan-worker-affiliate.pending-to-under-review');
-Route::post('/admin/List-Request-Affiliasi-Worker/Pending-to-under-review/submited-interview-date/{id}', [affiliatedController::class, 'interviewDate'])->name('interview-date.submit');
-Route::post('/admin/List-Request-Affiliasi-Worker/rejected-affiliated/{id}', [affiliatedController::class, 'rejectStatusAffiliate'])->name('rejected.affiliate');
+Route::get('/admin/List-Request-Affiliasi-Worker', [AffiliatedController::class, 'pengajuanAffiliasiWorkerView'])->middleware(['auth'])->name('List-pengajuan-worker-affiliate.view');
+Route::post('/admin/List-Request-Affiliasi-Worker/Pending-to-under-review/{id}', [AffiliatedController::class, 'updateStatusAffiliate'])->name('List-pengajuan-worker-affiliate.pending-to-under-review');
+Route::post('/admin/List-Request-Affiliasi-Worker/Pending-to-under-review/submited-interview-date/{id}', [AffiliatedController::class, 'interviewDate'])->name('interview-date.submit');
+Route::post('/admin/List-Request-Affiliasi-Worker/rejected-affiliated/{id}', [AffiliatedController::class, 'rejectStatusAffiliate'])->name('rejected.affiliate');
 #### Arbitrase
 Route::post('/arbitrase/laporkan', [ArbitraseController::class, 'store'])->middleware(['auth'])->name('arbitrase.store');
 // List pengajuan task affiliasi
-Route::get('/admin/List-Request-Affiliasi-Task', [affiliatedController::class, 'viewListPengajuanTaskAffiliate'])->middleware(['auth'])->name('List-pengajuan-task-affiliate.view');
-Route::post('/admin/List-Request-Affiliasi-Task/rejected-affiliated/{id}', [affiliatedController::class, 'rejectTaskAffiliate'])->name('rejected.affiliate-task');
-Route::post('/admin/List-Request-Affiliasi-Task/approve-affiliated/{id}', [affiliatedController::class, 'tambahWorkerAffiliateKeTask'])->name('approve.affiliate-task');
+Route::get('/admin/List-Request-Affiliasi-Task', [AffiliatedController::class, 'viewListPengajuanTaskAffiliate'])->middleware(['auth'])->name('List-pengajuan-task-affiliate.view');
+Route::post('/admin/List-Request-Affiliasi-Task/rejected-affiliated/{id}', [AffiliatedController::class, 'rejectTaskAffiliate'])->name('rejected.affiliate-task');
+Route::post('/admin/List-Request-Affiliasi-Task/approve-affiliated/{id}', [AffiliatedController::class, 'tambahWorkerAffiliateKeTask'])->name('approve.affiliate-task');
 // withdraw list user 
-Route::get('/withdraw', [paymentController::class, 'indexWithdraw'])->name('withdraw.view');
-Route::post('/withdraw/approve/{id}', [paymentController::class, 'approveWithdraw'])->name('withdraw.approve');
-Route::post('/withdraw/reject/{id}', [paymentController::class, 'rejectWithdraw'])->name('withdraw.reject');
+Route::get('/withdraw', [WithdrawController::class, 'indexWithdraw'])->name('withdraw.view');
+Route::post('/withdraw/approve/{id}', [WithdrawController::class, 'approveWithdraw'])->name('withdraw.approve');
+Route::post('/withdraw/reject/{id}', [WithdrawController::class, 'rejectWithdraw'])->name('withdraw.reject');
 
 
 

@@ -14,7 +14,7 @@ use App\Models\Transaction;
 use App\Models\UserPaymentAccount;
 use App\Models\Ewallet;
 use App\Models\User;
-use App\Models\workerAffiliated;
+use App\Models\WorkerAffiliated;
 use Midtrans\Config;
 use Midtrans\Snap;
 use App\Models\TaskReview;
@@ -182,47 +182,50 @@ class JobController extends Controller
 
 
 
-    public function manage($id, Request $request)
-    {
+   public function manage($id, Request $request)
+{
+    $user = Auth::user();
 
-        $user = Auth::user();
-        if($user->role == 'admin'){
-            $task = Task::where('id', $id)->firstOrFail();
-        }else{
-            $task = Task::with('user')->findOrFail($id);
-        }
-        
-
-        $userId = Auth::id();
-
-        $ewallet = Ewallet::where('user_id', $userId)->first();
-        
-        // Contoh akses saldo ewallet dengan null safe
-        
-        // Filter
-        $sortBy = $request->get('sort', 'bidPrice'); // default: harga
-        $sortDir = $request->get('dir', 'asc'); // default: naik
-        $allowedSorts = ['bidPrice', 'experience']; // experience berasal dari relasi
-        if (!in_array($sortBy, $allowedSorts)) {
-            $sortBy = 'bidPrice';
-        }
-        $applicants = TaskApplication::with([
-            'worker.user',
-            'worker.certifications.images',
-            'worker.portfolios.images',
-        ])
-            ->where('task_id', $id)
-            ->get()
-            ->sortBy(function ($applicant) use ($sortBy) {
-                if ($sortBy === 'experience') {
-                    return $applicant->worker->pengalaman_kerja ?? 0;
-                }
-                return $applicant->{$sortBy} ?? 0;
-            }, SORT_REGULAR, $request->get('dir') === 'desc')
-            ->values(); // reset index
-
-        return view('client.jobs.manage', compact('task', 'applicants','ewallet'));
+    if ($user->role == 'admin') {
+        $task = Task::where('id', $id)->firstOrFail();
+    } else {
+        $task = Task::with('user')->findOrFail($id);
     }
+
+    $userId = Auth::id();
+    $ewallet = Ewallet::where('user_id', $userId)->first();
+
+    // Ambil parameter sort dan arah
+    $sortBy = $request->get('sort', 'bidPrice');
+    $sortDir = $request->get('dir', 'asc');
+
+    $allowedSorts = ['bidPrice', 'experience'];
+    if (!in_array($sortBy, $allowedSorts)) {
+        $sortBy = 'bidPrice';
+    }
+
+    // Ambil semua applicant + relasi yang dibutuhkan
+    $applicants = TaskApplication::with([
+        'worker.user',
+        'worker.certifications.images',
+        'worker.portfolios.images',
+    ])->where('task_id', $id)->get();
+
+    // Sorting manual jika berdasarkan pengalaman
+    if ($sortBy === 'experience') {
+        $applicants = $applicants->sortBy(function ($applicant) {
+            return $applicant->worker->pengalaman_kerja ?? 0;
+        }, SORT_REGULAR, $sortDir === 'desc')->values();
+    } else {
+        // Sorting langsung berdasarkan kolom TaskApplication
+        $applicants = $applicants->sortBy(function ($applicant) use ($sortBy) {
+            return $applicant->{$sortBy} ?? 0;
+        }, SORT_REGULAR, $sortDir === 'desc')->values();
+    }
+
+    return view('client.jobs.manage', compact('task', 'applicants', 'ewallet'));
+}
+
 
 
     public function manageWorker($id)

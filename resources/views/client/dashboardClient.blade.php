@@ -4,10 +4,10 @@
   <div class="p-4 mt-14">
     <a href="{{ route('add-job-view') }}"
       class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow mb-6">
-      Add New Job
+      Tambah Tugas
     </a>
     <h2 class="text-xl font-semibold mb-2 flex items-center gap-1">
-      Task Kamu
+      Tugas Kamu
       <span class="text-gray-400 text-base">
         <i class="fas fa-info-circle"></i>
       </span>
@@ -19,7 +19,7 @@
         class="flex items-center justify-between h-32 bg-white text-[#1F4482] p-6 rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl">
         <i class="fa fa-square-plus text-5xl ml-10"></i>
         <div class="text-right mr-5">
-          <p class="text-base font-medium">Task Diposting</p>
+          <p class="text-base font-medium">Tugas Diposting</p>
           <p class="text-4xl font-bold">1</p>
         </div>
       </div>
@@ -40,7 +40,7 @@
         class="flex items-center justify-between h-32 bg-white text-[#1F4482] p-6 rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl">
         <i class="fa fa-clipboard-check text-5xl ml-10"></i>
         <div class="text-right mr-5">
-          <p class="text-base font-medium">Task Selesai</p>
+          <p class="text-base font-medium">Tugas Selesai</p>
           <p class="text-4xl font-bold">1</p>
         </div>
       </div>
@@ -61,7 +61,7 @@
       <div class="bg-white border rounded p-4 shadow-sm col-span-1 sm:col-span-3">
         <!-- Chart  -->
         <div class="flex items-center justify-between mb-4">
-          <h3 class="font-semibold text-lg">Grafik Task</h3>
+          <h3 class="font-semibold text-lg">Grafik Tugas</h3>
           <span class="text-sm text-gray-500">2025 </span>
         </div>
         <div class="w-full h-64 relative">
@@ -73,7 +73,7 @@
     <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
       <!-- Jobs -->
       <div class="bg-white border rounded p-4 shadow-sm">
-        <h2 class="text-lg font-semibold mb-4">Task</h2>
+        <h2 class="text-lg font-semibold mb-4">Tugas</h2>
         <ul class="space-y-4">
           <li class="flex items-center justify-between">
             <div class="flex items-center gap-3">
