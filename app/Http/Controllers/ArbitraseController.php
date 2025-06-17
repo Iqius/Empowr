@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\DB;
 use App\Models\Arbitrase;
 use Illuminate\Http\Request;
@@ -77,7 +78,7 @@ class ArbitraseController extends Controller
         // Simpan ke database
         Arbitrase::create($data);
 
-        return back()->with('success', 'Data arbitrase berhasil ditambahkan.');
+        return back()->with('success', 'Data arbitrase berhasil ditambahkan, silahkan menunggu konfirmasi dari admin.');
     }
 
     public function show() {}
@@ -197,7 +198,7 @@ class ArbitraseController extends Controller
             ]);
 
 
-            
+
             // Kirim notifikasi
             $notifMessage = 'Arbitrase dengan reason ' . $arbitrase->reason . ' telah diterima dan akan ditindaklanjuti sesuai kesepakatan.';
             foreach ([$worker, $client] as $u) {
@@ -216,5 +217,4 @@ class ArbitraseController extends Controller
             return back()->withErrors(['message' => 'Terjadi kesalahan: ' . $e->getMessage()]);
         }
     }
-
 }
