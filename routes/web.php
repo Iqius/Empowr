@@ -155,6 +155,9 @@ Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAs
 Route::get('/ewallet/{id}', [PaymentController::class, 'ewalletIndex'])->name('ewallet.index');
 Route::post('/ewallet/pembayaran/{id}', [PaymentController::class, 'bayarEwalletBase'])->name('client.bayar.ewallet');
 
+Route::get('/check-session', function () {
+    return response()->json(['valid' => auth()->check()]);
+});
 
 
 
@@ -202,4 +205,3 @@ Route::get('/jobs/manage/{id}', [JobController::class, 'manage'])->name('jobs.ma
 // Route::get('/tasks/{id}/applicants', [JobController::class, 'showApplicants']);
 
 // Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage']);
-

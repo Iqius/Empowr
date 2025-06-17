@@ -163,11 +163,11 @@
             @endif
 
             // ✅ SweetAlert for Success Message
-            @if(session('success-log'))
+            @if(session('kicked'))
             Swal.fire({
                 icon: 'success',
                 title: 'Kamu Ter-logout Paksa',
-                text: "{{ session('success-log') }}",
+                text: "Anda telah login pada browser / device lain, anda akan dialihkan ke halaman login.",
                 confirmButtonColor: '#1F4482',
                 confirmButtonText: 'OK'
             }).then(() => {
@@ -175,6 +175,7 @@
             });
             @endif
         </script>
+
 </body>
 
 </html>
