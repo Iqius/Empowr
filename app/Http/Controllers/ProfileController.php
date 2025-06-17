@@ -131,7 +131,7 @@ class ProfileController extends Controller
         $user->nama_lengkap = $request->nama_lengkap ?? $user->nama_lengkap;
         $user->email = $request->email ?? $user->email;
         $user->nomor_telepon = $request->nomor_telepon ?? $user->nomor_telepon;
-        $user->bio = $request->bio ?? $user->bio;
+        $user->bio = $request->input('bio');
         $user->save();
 
         $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
@@ -218,7 +218,7 @@ class ProfileController extends Controller
         }
         
 
-        return redirect()->route('profil')->with('success', 'Anda telah berhasil menyimpan.');
+        return redirect()->route('profil')->with('success-update', 'Profil berhasil diupdate');
     }
 
 

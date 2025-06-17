@@ -94,7 +94,7 @@ Route::get('/profile/my-rating', [ProfileController::class, 'getMyRatingData'])-
 // -- DASHBOARD
 Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->middleware(['auth'])->name('worker.dashboardWorker');
 // MyJobs
-Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->name('jobs.Worker');
+Route::get('/dashboard/Myjobs', [JobController::class, 'myJobsWorker'])->middleware(['auth'])->name('jobs.Worker');
 // Upload Progress
 Route::post('/task-progression/{task}', [ProgressionController::class, 'create'])->middleware(['auth'])->name('task-progression.store');
 // Post ulasan worker pada saat complite task
@@ -113,7 +113,7 @@ Route::get('/worker/progression-affilated/{id}', [AffiliatedController::class, '
 Route::post('/worker/progression-affilated/submited', [AffiliatedController::class, 'createAffiliatedOrder'])->middleware(['auth'])->name('progress-affiliate.submited');
 Route::post('/worker/progression-affilated/submited-ulang/{id}', [AffiliatedController::class, 'ajukanUlangAffiliate'])->middleware(['auth'])->name('progress-affiliate.submited-ulang');
 // MANAGE WORKER
-Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->name('manage.worker');
+Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->middleware('auth')->name('manage.worker');
 // LAMAR WORKER
 Route::post('/task/{task}/apply', [JobController::class, 'apply'])->name('task.apply');
 
@@ -124,7 +124,7 @@ Route::post('/task/{task}/apply', [JobController::class, 'apply'])->name('task.a
 Route::get('/dashboard/jobs', [JobController::class, 'index'])->middleware('auth')->name('jobs.index');
 // detail jobs di fitur jobs
 Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
-Route::get('/my-jobs', [JobController::class, 'myJobs'])->name('jobs.my');
+Route::get('/my-jobs', [JobController::class, 'myJobs'])->middleware('auth')->name('jobs.my');
 // --Profile update
 Route::get('/profil', [ProfileController::class, 'showProfile'])->name('profil');
 Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
