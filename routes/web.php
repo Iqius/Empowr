@@ -92,8 +92,8 @@ Route::get('/dashboard1', function () {
     return match ($user->role) {
         'client' => redirect()->route('client.dashboardClient'),
         'worker' => redirect()->route('worker.dashboardWorker'),
-        'admin'  => redirect()->route('admin.dashboardAdmin'),
-        default  => redirect('/'),
+        'admin' => redirect()->route('admin.dashboardAdmin'),
+        default => redirect('/'),
     };
 })->middleware(['auth'])->name('dashboard');
 // affiliated view
@@ -178,7 +178,10 @@ Route::post('/withdraw/reject/{id}', [paymentController::class, 'rejectWithdraw'
 // nampilkan view detail tugas client
 Route::get('/jobs/manage/{id}', [JobController::class, 'manage'])->name('jobs.manage');
 
-
+// GUIDE
+Route::get('/guide', function () {
+    return view('general.guide');
+});
 // GA DIPAKE
 
 // Route::get('/my-job-worker', function () {
