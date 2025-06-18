@@ -231,10 +231,11 @@ class JobController extends Controller
     public function manageWorker($id)
     {
         $task = Task::with('user')->findOrFail($id);
+        $profileId = Auth::user()->workerProfile->id;
 
         // Cari lamaran user ini (jika ada)
         $application = TaskApplication::where('task_id', $id)
-            ->where('profile_id', Auth::id())
+            ->where('profile_id', $profileId)
             ->first();
 
         return view('worker.manageWorker', compact('task', 'application'));

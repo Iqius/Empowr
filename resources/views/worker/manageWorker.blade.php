@@ -5,13 +5,13 @@
         <div class="bg-white p-6 rounded-xl shadow-sm border space-y-6">
             <h2 class="text-lg font-semibold text-gray-800 mb-2">Lamaran Kamu</h2>
             <p class="text-gray-600">Harga Penawaran: <strong>Rp
-                    {{ number_format($task->price, 0, ',', '.') }}</strong></p>
-            <p class="text-gray-600">Catatan: <strong>{{ $task->catatan }}</strong></p>
+                    {{ number_format($application->bidPrice) }}</strong></p>
+            <p class="text-gray-600">Catatan: {{ $application->catatan }}</p>
             <p class="text-gray-600">Status Lamaran:
-                <span class="px-2 py-1 rounded text-white" @if($task->status === 'pending') bg-yellow-500
-                @elseif($task->status === 'accepted') bg-green-500 @elseif($task->status === 'rejected') bg-red-500
+                <span class="px-2 py-1 rounded text-white" @if($application->status === 'pending') bg-yellow-500
+                @elseif($application->status === 'accepted') bg-green-500 @elseif($application->status === 'rejected') bg-red-500
                     @else bg-gray-500 @endif"></span>
-                {{ ucfirst($task->status) }}
+                {{ ucfirst($application->status) }}
                 </span>
             </p>
 
@@ -115,7 +115,7 @@
                         <p class="text-gray-500 mb-2">Kategori Task</p>
                         <div>
                             @php
-                                $categories = json_decode($task->kategory, true) ?? [];
+                                $categories = json_decode($task->category, true) ?? [];
                             @endphp
                             @foreach($categories as $category)
                                 <span
@@ -129,25 +129,6 @@
             </div>
         </div>
     </div>
-    @if($application)
-        <hr class="my-4">
-        <div class="mt-4 space-y-2">
-            <h2 class="text-lg font-semibold text-gray-700">Lamaran Kamu</h2>
-            <p class="text-gray-600">Harga Penawaran: <strong>Rp
-                    {{ number_format($application->bidPrice, 0, ',', '.') }}</strong></p>
-            <p class="text-gray-600">Catatan: <strong>{{ $application->catatan }}</strong></p>
-            <p class="text-gray-600">Status Lamaran:
-                <span class="px-2 py-1 rounded text-white
-                                                    @if($application->status === 'pending') bg-yellow-500
-                                                    @elseif($application->status === 'accepted') bg-green-500
-                                                    @elseif($application->status === 'rejected') bg-red-500
-                                                        @else bg-gray-500
-                                                    @endif"></span>
-                {{ ucfirst($application->status) }}
-                </span>
-            </p>
-        </div>
-    @endif
 </div>
 
 @include('General.footer')
