@@ -244,8 +244,10 @@
                 <div class="flex gap-2 mt-4">
                     <button type="button" onclick="openModalWithStatus('approved', {{ $lastProgression->id }})"
                         class="flex-1 py-3 bg-[#1F4482] text-white rounded-lg rounded-md hover:bg-[#18346a] transition-colors">Approve</button>
-                    <button type="button" onclick="openModalWithStatus('rejected', {{ $lastProgression->id }})"
+                    @if($lastProgression->progression_ke !== $task->revisions + 3)
+                        <button type="button" onclick="openModalWithStatus('rejected', {{ $lastProgression->id }})"
                         class="flex-1 py-3 bg-red-600 rounded text-white hover:bg-red-700 transition-colors">Reject</button>
+                    @endif
                 </div>
                 @endif
             </div>
@@ -880,6 +882,26 @@
     Swal.fire({
         icon: 'success',
         title: 'Arbitrase Berhasil Dikirim!',
+        text: "{{ session('success') }}",
+        confirmButtonColor: '#1F4482',
+        confirmButtonText: 'OK'
+    }).then(() => {
+        window.location.href = window.location.href;
+    });
+    @elseif(session('success-progression'))
+    Swal.fire({
+        icon: 'success',
+        title: 'Progression Berhasil Diupload!',
+        text: "{{ session('success') }}",
+        confirmButtonColor: '#1F4482',
+        confirmButtonText: 'OK'
+    }).then(() => {
+        window.location.href = window.location.href;
+    });
+    @elseif(session('success-review'))
+    Swal.fire({
+        icon: 'success',
+        title: 'Review Berhasil Dikirim!',
         text: "{{ session('success') }}",
         confirmButtonColor: '#1F4482',
         confirmButtonText: 'OK'

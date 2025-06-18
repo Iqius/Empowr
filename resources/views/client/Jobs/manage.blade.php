@@ -490,9 +490,10 @@
 
             <!-- Modal Footer -->
             <div class="flex justify-end space-x-2 pt-2 border-t">
-                <button onclick="closeModalAffiliasi()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Tutup</button>
-                <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Ajukan</button>
+                <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Ajukan</button>
+                <button type="button" onclick="closeModalAffiliasi()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Tutup</button>
             </div>
+            
         </form>
     </div>
 </div>
