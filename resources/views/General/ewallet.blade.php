@@ -320,23 +320,45 @@
 
 <script>
     snap.pay('{{ session('snap_token') }}', {
-    onSuccess: function (result) {
-        alert('Pembayaran berhasil!');
-        window.location.href = '/ewallet/' + result.user_id;;
-    },
-    onPending: function (result) {
-        alert('Pembayaran tertunda, silakan selesaikan pembayaran Anda');
-        window.location.reload();
-    },
-    onError: function (result) {
-        alert('Pembayaran gagal, silakan coba lagi');
-        window.location.reload();
-    },
-    onClose: function () {
-        alert('Anda menutup popup tanpa menyelesaikan pembayaran');
-    }
-});
-
+        onSuccess: function (result) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Pembayaran Berhasil!',
+                text: 'Terima kasih, pembayaran Anda telah berhasil.',
+                confirmButtonText: 'Lanjut',
+            }).then(() => {
+                window.location.href = '/ewallet/' + result.user_id;
+            });
+        },
+        onPending: function (result) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Pembayaran Tertunda',
+                text: 'Pembayaran Anda masih tertunda, silakan selesaikan prosesnya.',
+                confirmButtonText: 'OK',
+            }).then(() => {
+                window.location.reload();
+            });
+        },
+        onError: function (result) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Pembayaran Gagal',
+                text: 'Terjadi kesalahan dalam proses pembayaran. Silakan coba lagi.',
+                confirmButtonText: 'OK',
+            }).then(() => {
+                window.location.reload();
+            });
+        },
+        onClose: function () {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Popup Ditutup',
+                text: 'Anda menutup popup tanpa menyelesaikan pembayaran.',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
 </script>
 
 
