@@ -17,7 +17,10 @@ class Arbitrase extends Model
         'task_id',
         'status',
         'reason',
+        'created_at',
     ];
+
+    public $timestamps = false;
 
     // Relasi ke User sebagai Worker
     public function worker()

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\UserPaymentAccount;
+use App\Models\Session;
 // use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class User extends Authenticatable
@@ -37,8 +38,8 @@ class User extends Authenticatable
         'negara',  // Tambahkan ini
         // 'bio',     // Tambahkan ini
     ];
-    
-    
+
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -75,8 +76,32 @@ class User extends Authenticatable
 
     public function workerProfile()
     {
-        return $this->hasOne(WorkerProfile::class);
+        return $this->hasOne(WorkerProfile::class, 'user_id');
     }
 
-    
+    public function getNameAttribute()
+    {
+        return $this->username;
+    }
+
+    public function isOnline()
+    {
+        return false; // Selalu kembalikan false
+    }
+
+    public function ewallet()
+    {
+        return $this->hasOne(Ewallet::class, 'user_id');
+    }
+
+
+    public function withdraws()
+    {
+        return $this->hasMany(Transaction::class, 'client_id')->where('type', 'payout');
+    }
+
+    public function sessions()
+    {
+        return $this->hasMany(Session::class, 'user_id');
+    }
 }

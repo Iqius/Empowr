@@ -3,11 +3,11 @@
 @if(auth()->check() && (auth()->user()->role === 'worker' || auth()->user()->role === 'client'))
     <section class="p-4 md:p-8 mt-16">
         <div class="flex flex-col md:flex-row gap-4 mb-6">
-            <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
+            <input type="text" placeholder="Cari Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
             <select class="p-2 border rounded w-full md:w-auto" id="sortSelect">
-                <option disabled selected>Sort</option>
-                <option value="price-asc">Lowest Price</option>
-                <option value="price-desc">Highest Price</option>
+                <option disabled selected>Urutkan</option>
+                <option value="price-asc">Harga Terendah</option>
+                <option value="price-desc">Harga Tertinggi</option>
             </select>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full" id="jobContainer">
@@ -75,7 +75,7 @@
                             <a href="{{ route('jobs.show', $job->id) }}">
                                 <button
                                     class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                                    View
+                                    Lihat Detail
                                 </button>
                             </a>
                         </div>
@@ -91,7 +91,7 @@
             Add New Job
         </a>
         <div class="flex flex-col md:flex-row gap-4 mb-6">
-            <input type="text" placeholder="Search Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
+            <input type="text" placeholder="Cari Job" class="p-2 border rounded w-full md:w-1/3" id="searchInput">
             <select class="p-2 border rounded w-full md:w-auto" id="sortSelect">
                 <option disabled selected>Sort</option>
                 <option value="price-asc">Lowest Price</option>
@@ -157,7 +157,8 @@
                         </div>
                         @if($job->status == 'open')
                             <div class="flex gap-2">
-                                <form id="cancelTaskForm{{ $job->id }}" action="{{ route('jobs.destroy', $job->id) }}" method="POST">
+                                <form id="cancelTaskForm{{ $job->id }}" action="{{ route('jobs.destroy', $job->id) }}"
+                                    method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <button type="button" onclick="confirmCancel({{ $job->id }})"
@@ -201,34 +202,6 @@
         </div>
     </section>
 @endif
-
-<!-- Untuk hapus task admin -->
-<script>
-    function confirmCancel(taskId) {
-            Swal.fire({
-                title: 'Yakin ingin membatalkan?',
-                text: "Tindakan ini tidak bisa dikembalikan!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#aaa',
-                confirmButtonText: 'Ya, batalkan!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Task berhasil dibatalkan!',
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#3085d6'
-                    }).then(() => {
-                        document.getElementById(`cancelTaskForm${taskId}`).submit();
-                    });
-                }
-            });
-        }
-</script>
-
 
 
 <script>
@@ -328,7 +301,7 @@
                 icon: 'success',
                 title: 'Berhasil Diposting!',
                 text: "{{ session('success') }}",
-                confirmButtonColor: '#2563EB',
+                confirmButtonColor: '#1F4482',
                 confirmButtonText: 'OK'
             }).then(() => {
                 window.location.href = window.location.href;
@@ -340,7 +313,7 @@
                 icon: 'success',
                 title: 'Berhasil Diperbarui!',
                 text: "{{ session('success') }}",
-                confirmButtonColor: '#2563EB',
+                confirmButtonColor: '#1F4482',
                 confirmButtonText: 'OK'
             }).then(() => {
                 window.location.href = window.location.href;
@@ -353,7 +326,7 @@
                 icon: 'success',
                 title: 'Pekerjaan kamu telah terselesaikan',
                 text: "{{ session('success') }}",
-                confirmButtonColor: '#2563EB',
+                confirmButtonColor: '#1F4482',
                 confirmButtonText: 'OK'
             }).then(() => {
                 window.location.href = window.location.href;
@@ -366,13 +339,14 @@
                 icon: 'success',
                 title: 'Pekerjaan sudah diberikan ulasan terima kasih!',
                 text: "{{ session('success') }}",
-                confirmButtonColor: '#2563EB',
+                confirmButtonColor: '#1F4482',
                 confirmButtonText: 'OK'
             }).then(() => {
                 window.location.href = window.location.href;
             });
         @endif
     });
+
 </script>
 
 

@@ -44,5 +44,10 @@ class WorkerProfile extends Model
     {
         return $this->hasMany(\App\Models\Portofolio::class, 'worker_id');
     }
+    public function verificationAffiliations()
+    {
+        return $this->hasMany(WorkerVerificationAffiliation::class, 'profile_id', 'id');
+    }
+
 
 }

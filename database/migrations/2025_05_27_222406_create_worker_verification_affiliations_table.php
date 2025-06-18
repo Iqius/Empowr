@@ -16,8 +16,11 @@ return new class extends Migration
             $table->unsignedBigInteger('profile_id');
             $table->string('identity_photo');
             $table->string('selfie_with_id');
-            $table->string('keahlian_affiliate');
-            $table->enum('status', ['pending', 'reviewed', 'interview', 'approved', 'rejected']);
+            $table->string('link_meet')->nullable();
+            $table->text('keahlian_affiliate');
+            $table->enum('status', ['pending', 'reviewed', 'Interview', 'result'])->default('pending');
+            $table->enum('status_decision', ['approve', 'rejected', 'waiting'])->default('waiting');
+            $table->datetime('jadwal_interview')->nullable();
             $table->timestamps();
 
             $table->foreign('profile_id')->references('id')->on('worker_profiles')->onDelete('cascade');

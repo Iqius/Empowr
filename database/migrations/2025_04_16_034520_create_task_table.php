@@ -24,87 +24,12 @@ return new class extends Migration {
             $table->decimal('price', 15, 2);
             $table->enum('status', ['open', 'in progress', 'completed']);
             $table->integer('revisions');
-            $table->text('kategory')->nullable();
-            $table->enum('category', [
-                'Web Development',
-                'Mobile Development',
-                'Game Development',
-                'Software Engineering',
-                'Frontend Development',
-                'Backend Development',
-                'Full Stack Development',
-                'DevOps',
-                'QA Testing',
-                'Automation Testing',
-                'API Integration',
-                'WordPress Development',
-                'Data Science',
-                'Machine Learning',
-                'AI Development',
-                'Data Engineering',
-                'Data Entry',
-                'SEO',
-                'Content Writing',
-                'Technical Writing',
-                'Blog Writing',
-                'Copywriting',
-                'Scriptwriting',
-                'Proofreading',
-                'Translation',
-                'Transcription',
-                'Resume Writing',
-                'Ghostwriting',
-                'Creative Writing',
-                'Social Media Management',
-                'Digital Marketing',
-                'Email Marketing',
-                'Affiliate Marketing',
-                'Influencer Marketing',
-                'Community Management',
-                'Search Engine Marketing',
-                'Branding',
-                'Graphic Design',
-                'UI/UX Design',
-                'Logo Design',
-                'Motion Graphics',
-                'Illustration',
-                'Video Editing',
-                'Video Production',
-                'Animation',
-                '3D Modeling',
-                'Video Game Design',
-                'Audio Editing',
-                'Photography',
-                'Photo Editing',
-                'Presentation Design',
-                'Project Management',
-                'Virtual Assistant',
-                'Customer Service',
-                'Lead Generation',
-                'Market Research',
-                'Business Analysis',
-                'Human Resources',
-                'Event Planning',
-                'Bookkeeping',
-                'Accounting',
-                'Tax Preparation',
-                'Financial Analysis',
-                'Legal Advice',
-                'Contract Drafting',
-                'Startup Consulting',
-                'Investment Research',
-                'Real Estate Consulting',
-                'Personal Assistant',
-                'Clerical Work',
-                'Data Analysis',
-                'Business Coaching',
-                'Career Coaching',
-                'Life Coaching',
-                'Consulting',
-                'Other'
-            ])->nullable();
+            $table->text('category')->nullable();
             $table->string('job_file')->nullable();
-            $table->boolean('bayar')->default(false);
+            $table->boolean('status_affiliate')->nullable();
+            $table->boolean('pengajuan_affiliate')->nullable();
+            $table->decimal('harga_pajak_affiliate', 15, 2)->default(0);
+            $table->decimal('harga_task_affiliate', 15, 2)->default(0);
             $table->timestamps();
 
             $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');

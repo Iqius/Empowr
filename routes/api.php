@@ -9,6 +9,6 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-Route::post('/midtrans-callback', [JobController::class, 'callback']);
+Route::post('/midtrans-callback', [paymentController::class, 'callback']);
 
 Route::get('/invoice/{id}', [JobController::class, 'invoice'])->name('invoice');

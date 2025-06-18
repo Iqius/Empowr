@@ -1,7 +1,7 @@
 @include('General.header')
 
 <div class="p-6 mt-16">
-    <form id="job-form" method="POST" enctype="multipart/form-data">
+    <form id="job-form" method="POST" enctype="multipart/form-data" action="{{ route('jobs.store') }}">
         @csrf
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Left Section -->
@@ -11,9 +11,9 @@
                         <!-- Title -->
                         <div>
                             <label class="text-sm font-medium text-gray-600 mb-1 block">Judul Task</label>
-                            <input type="text" name="title"
-                                class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F4482] transition-all duration-300 mb-4"
-                                required>
+                            <input type="text" name="title" id="title" placeholder="Masukkan judul task"
+                                class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F4482] transition-all duration-300 mb-4">
+                            <span class="error-message text-red-500 text-sm"></span>
                         </div>
 
                         <!-- About Task -->
@@ -22,8 +22,7 @@
                         <input type="hidden" name="description" id="description">
 
                         <label class="text-sm font-medium text-gray-600">Kualifikasi</label>
-                        <div id="editor-qualification" class="bg-white mb-4" style="height: 200px;">
-                        </div>
+                        <div id="editor-qualification" class="bg-white mb-4" style="height: 200px;"></div>
                         <input type="hidden" name="qualification" id="qualification">
 
                         <label class="text-sm font-medium text-gray-600">Aturan Task</label>
@@ -45,138 +44,135 @@
                 <div class="bg-white p-6 rounded-xl shadow-sm border space-y-6">
                     <h2 class="text-lg font-semibold text-gray-800 mb-4">Task Detail</h2>
 
-                    <!-- Task Period -->
                     <div>
                         <label class="text-sm font-medium text-gray-600 mb-1 block">Tanggal Mulai Task</label>
-                        <input type="date" name="start_date"
-                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F4482] transition-all duration-300"
-                            required>
+                        <input type="date" name="start_date" id="start_date"
+                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F4482] transition-all duration-300">
+                        <span class="error-message text-red-500 text-sm"></span>
                     </div>
 
                     <div>
                         <label class="text-sm font-medium text-gray-600 mb-1 block">Target Selesai Task</label>
-                        <input type="date" name="deadline"
-                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F4482] transition-all duration-300"
-                            required>
+                        <input type="date" name="deadline" id="deadline"
+                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F4482] transition-all duration-300">
+                        <span class="error-message text-red-500 text-sm"></span>
                     </div>
 
                     <div>
                         <label class="text-sm font-medium text-gray-600 mb-1 block">Tanggal Penutupan Lamaran</label>
-                        <input type="date" name="deadline_promotion"
-                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F4482] transition-all duration-300"
-                            required>
+                        <input type="date" name="deadline_promotion" id="deadline_promotion"
+                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F4482] transition-all duration-300">
+                        <span class="error-message text-red-500 text-sm"></span>
                     </div>
 
                     <div>
                         <label class="text-sm font-medium text-gray-600 mb-1 block">Kategori Task</label>
-                        <div>
-                            <div class="col-span-2 ">
-                                @php
-                                    $selectedSkills = json_decode(optional(Auth::user()->keahlian)->keahlian, true) ?? [];
-                                    $categories = [
-                                        "Web Development",
-                                        "Mobile Development",
-                                        "Game Development",
-                                        "Software Engineering",
-                                        "Frontend Development",
-                                        "Backend Development",
-                                        "Full Stack Development",
-                                        "DevOps",
-                                        "QA Testing",
-                                        "Automation Testing",
-                                        "API Integration",
-                                        "WordPress Development",
-                                        "Data Science",
-                                        "Machine Learning",
-                                        "AI Development",
-                                        "Data Engineering",
-                                        "Data Entry",
-                                        "SEO",
-                                        "Content Writing",
-                                        "Technical Writing",
-                                        "Blog Writing",
-                                        "Copywriting",
-                                        "Scriptwriting",
-                                        "Proofreading",
-                                        "Translation",
-                                        "Transcription",
-                                        "Resume Writing",
-                                        "Ghostwriting",
-                                        "Creative Writing",
-                                        "Social Media Management",
-                                        "Digital Marketing",
-                                        "Email Marketing",
-                                        "Affiliate Marketing",
-                                        "Influencer Marketing",
-                                        "Community Management",
-                                        "Search Engine Marketing",
-                                        "Branding",
-                                        "Graphic Design",
-                                        "UI/UX Design",
-                                        "Logo Design",
-                                        "Motion Graphics",
-                                        "Illustration",
-                                        "Video Editing",
-                                        "Video Production",
-                                        "Animation",
-                                        "3D Modeling",
-                                        "Video Game Design",
-                                        "Audio Editing",
-                                        "Photography",
-                                        "Photo Editing",
-                                        "Presentation Design",
-                                        "Project Management",
-                                        "Virtual Assistant",
-                                        "Customer Service",
-                                        "Lead Generation",
-                                        "Market Research",
-                                        "Business Analysis",
-                                        "Human Resources",
-                                        "Event Planning",
-                                        "Bookkeeping",
-                                        "Accounting",
-                                        "Tax Preparation",
-                                        "Financial Analysis",
-                                        "Legal Advice",
-                                        "Contract Drafting",
-                                        "Startup Consulting",
-                                        "Investment Research",
-                                        "Real Estate Consulting",
-                                        "Personal Assistant",
-                                        "Clerical Work",
-                                        "Data Analysis",
-                                        "Business Coaching",
-                                        "Career Coaching",
-                                        "Life Coaching",
-                                        "Consulting",
-                                        "Other"
-                                    ];
-                                @endphp
-                                <select id="keahlian-select" name="kategoriWorker[]" multiple
-                                    class="w-full p-2 border rounded">
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category }}" {{ in_array($category, $selectedSkills) ? 'selected' : '' }}>
-                                            {{ $category }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+                        <select id="keahlian-select" name="kategoriWorker[]" multiple class="w-full p-2 border rounded">
+                            @php
+                                $selectedSkills = json_decode(optional(Auth::user()->keahlian)->keahlian, true) ?? [];
+                                $categories = [
+                                    "Web Development",
+                                    "Mobile Development",
+                                    "Game Development",
+                                    "Software Engineering",
+                                    "Frontend Development",
+                                    "Backend Development",
+                                    "Full Stack Development",
+                                    "DevOps",
+                                    "QA Testing",
+                                    "Automation Testing",
+                                    "API Integration",
+                                    "WordPress Development",
+                                    "Data Science",
+                                    "Machine Learning",
+                                    "AI Development",
+                                    "Data Engineering",
+                                    "Data Entry",
+                                    "SEO",
+                                    "Content Writing",
+                                    "Technical Writing",
+                                    "Blog Writing",
+                                    "Copywriting",
+                                    "Scriptwriting",
+                                    "Proofreading",
+                                    "Translation",
+                                    "Transcription",
+                                    "Resume Writing",
+                                    "Ghostwriting",
+                                    "Creative Writing",
+                                    "Social Media Management",
+                                    "Digital Marketing",
+                                    "Email Marketing",
+                                    "Affiliate Marketing",
+                                    "Influencer Marketing",
+                                    "Community Management",
+                                    "Search Engine Marketing",
+                                    "Branding",
+                                    "Graphic Design",
+                                    "UI/UX Design",
+                                    "Logo Design",
+                                    "Motion Graphics",
+                                    "Illustration",
+                                    "Video Editing",
+                                    "Video Production",
+                                    "Animation",
+                                    "3D Modeling",
+                                    "Video Game Design",
+                                    "Audio Editing",
+                                    "Photography",
+                                    "Photo Editing",
+                                    "Presentation Design",
+                                    "Project Management",
+                                    "Virtual Assistant",
+                                    "Customer Service",
+                                    "Lead Generation",
+                                    "Market Research",
+                                    "Business Analysis",
+                                    "Human Resources",
+                                    "Event Planning",
+                                    "Bookkeeping",
+                                    "Accounting",
+                                    "Tax Preparation",
+                                    "Financial Analysis",
+                                    "Legal Advice",
+                                    "Contract Drafting",
+                                    "Startup Consulting",
+                                    "Investment Research",
+                                    "Real Estate Consulting",
+                                    "Personal Assistant",
+                                    "Clerical Work",
+                                    "Data Analysis",
+                                    "Business Coaching",
+                                    "Career Coaching",
+                                    "Life Coaching",
+                                    "Consulting",
+                                    "Other"
+                                ];
+                            @endphp
+                            @foreach ($categories as $category)
+                                <option value="{{ $category }}" {{ in_array($category, $selectedSkills) ? 'selected' : '' }}>
+                                    {{ $category }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
+
                     <div>
                         <label class="text-sm font-medium text-gray-600 mb-1 block">Permintaan Jumlah Revisi</label>
-                        <input type="number" name="revisions" min="0"
-                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F4482] transition-all duration-300"
-                            required>
+                        <input type="number" name="revisions" min="0" id="revisions"
+                            placeholder="Masukkan maksimal jumlah revisi"
+                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F4482] transition-all duration-300">
+                        <span class="error-message text-red-500 text-sm"></span>
                     </div>
 
                     <div>
                         <label class="text-sm font-medium text-gray-600 mb-1 block">Budget (IDR)</label>
-                        <input type="number" name="price"
-                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F4482] transition-all duration-300"
-                            required>
+                        <input type="text" name="price" id="price" placeholder="Masukkan harga task"
+                            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F4482] transition-all duration-300">
+                        <span class="error-message text-red-500 text-sm"></span>
                     </div>
                 </div>
+
                 <!-- Button Submit -->
                 <div class="flex justify-center mt-6">
                     <button type="button" id="submit-btn"
@@ -184,7 +180,6 @@
                         Tambahkan
                     </button>
                 </div>
-
             </div>
         </div>
     </form>
@@ -195,113 +190,135 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        console.log("Quill Editor Initialized");
-
-        // 🔹 Konfigurasi toolbar Quill
+        // Inisialisasi Quill Editor
         const toolbarOptions = [
-            [{ 'header': [1, 2, false] }],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ header: [1, 2, false] }],
+            [{ list: 'ordered' }, { list: 'bullet' }],
             ['bold', 'italic', 'underline'],
             ['link', 'image'],
             ['clean']
         ];
+        const priceInput = document.getElementById('price');
 
-        // 🔹 Inisialisasi Quill Editor untuk semua bidang
-        var quillDescription = new Quill('#editor-about', {
-            theme: 'snow',
-            modules: {
-                toolbar: toolbarOptions
-            }
-        });
+        var quillDescription = new Quill('#editor-about', { theme: 'snow', modules: { toolbar: toolbarOptions } });
+        var quillQualification = new Quill('#editor-qualification', { theme: 'snow', modules: { toolbar: toolbarOptions } });
+        var quillRules = new Quill('#editor-rules', { theme: 'snow', modules: { toolbar: toolbarOptions } });
 
-        var quillQualification = new Quill('#editor-qualification', {
-            theme: 'snow',
-            modules: {
-                toolbar: toolbarOptions
-            }
-        });
-
-        var quillRules = new Quill('#editor-rules', {
-            theme: 'snow',
-            modules: {
-                toolbar: toolbarOptions
-            }
-        });
-
-        // 🔹 Fungsi yang SANGAT diperbaiki untuk memastikan list terformat dengan benar
+        // Fungsi untuk bersihkan konten Quill (hapus tag kosong dan whitespace)
         function cleanContent(content) {
-            // If content is empty, return empty string
-            if (!content.trim()) return '';
-
-            var tempDiv = document.createElement('div');
-            tempDiv.innerHTML = content;
-
-            // Special handling for ordered lists to ensure they're preserved properly
-            tempDiv.querySelectorAll('*').forEach(function (node) {
-                // Pertahankan atribut penting untuk list
-                if (node.tagName === 'OL' || node.tagName === 'UL') {
-                    // Keep class attribute for list type but remove style
-                    node.removeAttribute('style');
-                }
-                else if (node.tagName === 'LI') {
-                    // For list items, keep necessary attributes but remove style
-                    node.removeAttribute('style');
-                }
-                else {
-                    // For non-list elements, remove both class and style
-                    node.removeAttribute('class');
-                    node.removeAttribute('style');
-                }
-            });
-
-            return tempDiv.innerHTML.trim();
+            return content.replace(/<(.|\n)*?>/g, '').trim();
         }
 
-        // 🔹 Tombol submit event handler
-        document.querySelector('#submit-btn').addEventListener('click', function (event) {
-            event.preventDefault(); // ✅ Mencegah submit otomatis sebelum data tersimpan
+        // Fungsi format angka dengan pemisah ribuan
+        function formatNumberWithSeparator(value) {
+            // Hilangkan semua selain angka dan titik (jika ingin mendukung decimal)
+            let cleanValue = value.replace(/[^0-9.]/g, '');
 
-            console.log("Submit button clicked!");
+            // Pisah integer dan decimal
+            let parts = cleanValue.split('.');
+            let integerPart = parts[0];
+            let decimalPart = parts[1] || '';
 
-            // 🔹 Ambil isi dari Quill dan simpan di input hidden
-            document.querySelector('input[name="description"]').value = cleanContent(quillDescription.root.innerHTML);
-            document.querySelector('input[name="qualification"]').value = cleanContent(quillQualification.root.innerHTML);
-            document.querySelector('input[name="rules"]').value = cleanContent(quillRules.root.innerHTML);
+            // Format integer dengan ribuan
+            integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-            // 🔹 Debugging untuk memastikan data benar sebelum submit
-            console.log('Description:', document.querySelector('input[name="description"]').value);
-            console.log('Qualification:', document.querySelector('input[name="qualification"]').value);
-            console.log('Rules:', document.querySelector('input[name="rules"]').value);
+            return decimalPart.length > 0 ? integerPart + '.' + decimalPart : integerPart;
+        }
 
-            // 🔹 Validasi apakah semua input tidak kosong
-            if (
-                document.querySelector('input[name="description"]').value.trim() &&
-                document.querySelector('input[name="qualification"]').value.trim() &&
-                document.querySelector('input[name="rules"]').value.trim()
-            ) {
-                console.log("Form is valid, submitting...");
-                document.querySelector('#job-form').action = "{{ route('jobs.store') }}"; // ✅ Tentukan route
-                document.querySelector('#job-form').submit(); // ✅ Submit form
-            } else {
-                alert('Please complete all required fields before submitting.');
-                console.log("Form validation failed.");
+        // Event saat mengetik di input price, agar format ribuan muncul
+        priceInput.addEventListener('input', function (e) {
+            let cursorPosition = this.selectionStart;
+            let originalLength = this.value.length;
+
+            this.value = formatNumberWithSeparator(this.value);
+
+            // Sesuaikan posisi cursor agar tetap nyaman saat mengetik
+            let newLength = this.value.length;
+            cursorPosition += newLength - originalLength;
+            this.setSelectionRange(cursorPosition, cursorPosition);
+        });
+
+        document.querySelector('#submit-btn').addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Ambil input hidden dari Quill
+            document.querySelector('input[name="description"]').value = quillDescription.root.innerHTML.trim();
+            document.querySelector('input[name="qualification"]').value = quillQualification.root.innerHTML.trim();
+            document.querySelector('input[name="rules"]').value = quillRules.root.innerHTML.trim();
+
+            // Ambil nilai semua input
+            let fields = {
+                title: document.getElementById('title'),
+                description: document.querySelector('input[name="description"]'),
+                qualification: document.querySelector('input[name="qualification"]'),
+                rules: document.querySelector('input[name="rules"]'),
+                start_date: document.getElementById('start_date'),
+                deadline: document.getElementById('deadline'),
+                deadline_promotion: document.getElementById('deadline_promotion'),
+                kategoriWorker: document.getElementById('keahlian-select'),
+                revisions: document.getElementById('revisions'),
+                price: document.getElementById('price')
+            };
+
+            // Hapus semua error message dan class error sebelumnya
+            Object.values(fields).forEach(field => {
+                let errorSpan = field.parentElement.querySelector('.error-message');
+                if (errorSpan) errorSpan.textContent = '';
+                field.classList.remove('border-red-500');
+            });
+
+            // Fungsi cek konten Quill (untuk hidden input)
+            function cleanContent(content) {
+                return content.replace(/<(.|\n)*?>/g, '').trim();
             }
-        });
 
-        // 🔹 Disable paste menjadi plaintext (untuk mencegah stripping format)
-        quillDescription.clipboard.addMatcher(Node.ELEMENT_NODE, function (node, delta) {
-            return delta;
-        });
+            // Validasi setiap field
+            let errors = [];
 
-        quillQualification.clipboard.addMatcher(Node.ELEMENT_NODE, function (node, delta) {
-            return delta;
-        });
+            if (fields.title.value.trim() === '') {
+                errors.push({ field: fields.title, message: 'Judul Task harus diisi.' });
+            }
+            if (fields.start_date.value.trim() === '') {
+                errors.push({ field: fields.start_date, message: 'Tanggal Mulai Task harus diisi.' });
+            }
+            if (fields.deadline.value.trim() === '') {
+                errors.push({ field: fields.deadline, message: 'Target Selesai Task harus diisi.' });
+            }
+            if (fields.deadline_promotion.value.trim() === '') {
+                errors.push({ field: fields.deadline_promotion, message: 'Tanggal Penutupan Lamaran harus diisi.' });
+            }
+            let kategoriSelected = [...fields.kategoriWorker.options].filter(option => option.selected).map(option => option.value);
+            if (kategoriSelected.length === 0) {
+                errors.push({ field: fields.kategoriWorker, message: 'Kategori Task harus dipilih.' });
+            }
+            if (fields.revisions.value.trim() === '') {
+                errors.push({ field: fields.revisions, message: 'Permintaan Jumlah Revisi harus diisi.' });
+            }
+            if (fields.price.value.trim() === '') {
+                errors.push({ field: fields.price, message: 'Budget Task harus diisi.' });
+            }
 
-        quillRules.clipboard.addMatcher(Node.ELEMENT_NODE, function (node, delta) {
-            return delta;
+            if (errors.length > 0) {
+                // Tampilkan pesan error di masing-masing field
+                errors.forEach(err => {
+                    let errorSpan = err.field.parentElement.querySelector('.error-message');
+                    if (errorSpan) errorSpan.textContent = err.message;
+                    err.field.classList.add('border-red-500');
+                });
+
+                // Scroll ke error pertama agar user langsung melihatnya
+                errors[0].field.scrollIntoView({ behavior: "smooth", block: "center" });
+
+                return false; // jangan submit
+            }
+
+            // Submit form jika validasi lolos
+            fields.price.value = fields.price.value.replace(/,/g, '');
+            document.getElementById('job-form').submit();
         });
     });
 </script>
+
 
 <script>
     new TomSelect('#keahlian-select', {
@@ -312,8 +329,5 @@
         maxItems: null
     });
 </script>
-
-
-
 
 @include('General.footer')

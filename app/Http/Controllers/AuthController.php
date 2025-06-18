@@ -11,7 +11,10 @@ use App\Models\WorkerProfile;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Carbon;
 use App\Models\OtpCode;
-
+use App\Models\Ewallet;
+use App\Models\workerAffiliated;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 
 class AuthController extends Controller
@@ -38,6 +41,11 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        Ewallet::create([
+            'user_id' => $user->id,
+            'balance' => 0.00,
+        ]);
+
         if ($request->role == 'worker') {
             WorkerProfile::create([
                 'user_id' => $user->id,
@@ -45,7 +53,7 @@ class AuthController extends Controller
             UserPaymentAccount::create([
                 'user_id' => $user->id,
             ]);
-        }else{
+        } else {
             UserPaymentAccount::create([
                 'user_id' => $user->id,
             ]);
@@ -57,6 +65,10 @@ class AuthController extends Controller
     // **LOGIN**
     public function login(Request $request)
     {
+        if (Auth::check()) {
+            return $this->redirectBasedOnRole(Auth::user());
+        }
+
         $request->validate([
             'email' => 'required|string',
             'password' => 'required|string',
@@ -65,51 +77,85 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials, $request->remember)) {
+        if (Auth::attempt($credentials, $request->filled('remember'))) {
             $user = Auth::user();
 
-            // Redirect berdasarkan role
-            if ($user->role === 'client') {
-                return redirect()->route('client.dashboardClient')->with('success', 'Login berhasil!');
-            } elseif ($user->role === 'worker') {
-                return redirect()->route('worker.dashboardWorker')->with('success', 'Login berhasil!');
-            } elseif($user->role === 'admin'){
-                return redirect()->route('admin.dashboardAdmin')->with('success', 'Login berhasil!');
-            }
+            // Hapus semua session lain milik user
+            DB::table('sessions')
+                ->where('user_id', $user->id)
+                ->where('id', '!=', Session::getId()) // jangan hapus session saat ini
+                ->delete();
 
-            return redirect()->route('dashboard')->with('success', 'Login berhasil!');
+            // Simpan user_id ke session
+            session()->put('user_data', [
+                'id' => $user->id,
+                'name' => $user->name,
+                'role' => $user->role,
+                'email' => $user->email,
+            ]);
+
+            // Saat login berhasil dan session lama ditemukan
+            DB::table('sessions')
+                ->where('user_id', $user->id)
+                ->where('id', '!=', Session::getId())
+                ->delete();
+
+            // Kirim flash ke login jika terdeteksi
+            session()->flash('success-log', 'Akun anda telah login pada browser / device lain!');
+
+            return $this->redirectBasedOnRole($user)->with('success', 'Login berhasil!');
         }
 
         return back()->with('error', 'Username atau password salah.');
     }
 
+    protected function redirectBasedOnRole($user)
+    {
+        return match ($user->role) {
+            'client' => redirect()->route('client.dashboardClient'),
+            'worker' => redirect()->route('worker.dashboardWorker'),
+            'admin'  => redirect()->route('admin.dashboardAdmin'),
+            default  => redirect()->route('dashboard'),
+        };
+    }
 
     // Dashboard Client view
     public function clientDashboard()
     {
-        if(Auth::user()->role == 'client'){
+        if (Auth::user()->role == 'client') {
             return view('client.dashboardClient');
         }
         return view('Landing.landing');
-         
     }
 
     // Dashboard Worker view
     public function workerDashboard()
     {
-        if(Auth::user()->role == 'worker'){
-            return view('worker.dashboardWorker');
+        if (Auth::user()->role == 'worker') {
+            $worker = Auth::user();
+            $workerProfile = $worker->workerProfile;
+
+            $affiliation = null;
+            $hasAffiliation = false;
+            if ($workerProfile) {
+                $affiliation = workerAffiliated::where('profile_id', $workerProfile->id)->first();
+                if ($affiliation) {
+                    $hasAffiliation = true;
+                    $affiliation = $affiliation->id;
+                }
+            }
+            return view('worker.dashboardWorker', compact('workerProfile', 'hasAffiliation', 'affiliation'));
         }
-        return view('Landing.landing'); 
+        return view('Landing.landing');
     }
 
 
     public function adminDashboard()
     {
-        if(Auth::user()->role == 'admin'){
+        if (Auth::user()->role == 'admin') {
             return view('admin.dashboardAdmin');
         }
-        return view('Landing.landing'); 
+        return view('Landing.landing');
     }
 
 
@@ -118,7 +164,7 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->route('login')->with('success', 'Anda telah logout.');
-    }   
+    }
 
 
 
@@ -154,7 +200,7 @@ class AuthController extends Controller
 
         Salam hangat,
         Tim Keamanan Empowr";
-        
+
         // Kirim OTP via email
         Mail::raw($message, function ($msg) use ($request) {
             $msg->to($request->email)->subject('Kode OTP Verifikasi - Empowr');
@@ -193,8 +239,10 @@ class AuthController extends Controller
         }
 
         // Simpan status verifikasi
-        session(['otp_verified' => true]);
-
+        session([
+            'otp_verified' => true,
+            'email' => $request->email,
+        ]);
         return redirect()->route('forgot-password.set-password-form');
     }
 
@@ -221,14 +269,19 @@ class AuthController extends Controller
         ]);
 
         $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return redirect()->back()->with('error', 'Email tidak ditemukan.');
+        }
+
         $user->password = Hash::make($request->password);
         $user->save();
 
         OtpCode::where('email', $request->email)->delete();
         session()->forget(['otp_verified', 'email']);
 
-        return redirect()->route('login')->with('success', 'Password berhasil direset. Silakan login.');
+        return redirect()->route('login')->with('success', 'Password berhasil diubah. Silakan login.');
     }
+
     //resend otp
     public function resendOtp(Request $request)
     {
