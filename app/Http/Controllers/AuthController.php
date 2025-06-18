@@ -100,9 +100,6 @@ class AuthController extends Controller
                 ->where('id', '!=', Session::getId())
                 ->delete();
 
-            // Kirim flash ke login jika terdeteksi
-            session()->flash('success-log', 'Akun anda telah login pada browser / device lain!');
-
             return $this->redirectBasedOnRole($user)->with('success', 'Login berhasil!');
         }
 
@@ -117,6 +114,13 @@ class AuthController extends Controller
             'admin'  => redirect()->route('admin.dashboardAdmin'),
             default  => redirect()->route('dashboard'),
         };
+    }
+
+    // **LOGOUT**
+    public function logout()
+    {
+        Auth::logout();
+        return redirect()->route('login')->with('success', 'Anda telah logout.');
     }
 
     // Dashboard Client view
@@ -157,16 +161,6 @@ class AuthController extends Controller
         }
         return view('Landing.landing');
     }
-
-
-    // **LOGOUT**
-    public function logout()
-    {
-        Auth::logout();
-        return redirect()->route('login')->with('success', 'Anda telah logout.');
-    }
-
-
 
 
     // FORGOT PASS SECTION
