@@ -70,7 +70,7 @@ class JobController extends Controller
             'price' => $request->price,
             'status' => 'open',
             'revisions' => $request->revisions,
-            'kategory' => json_encode($request->kategoriWorker),
+            'category' => json_encode($request->kategoriWorker),
             'job_file' => $path,
         ]);
 
@@ -116,7 +116,7 @@ class JobController extends Controller
             'deadline_promotion' => $request->deadline_promotion ?? $task->deadline_promotion,
             'price' => $request->price ?? $task->price,
             'revisions' => $request->revisions ?? $task->revisions,
-            'kategory' => $request->kategoriWorker ? json_encode($request->kategoriWorker) : $task->kategory,
+            'category' => $request->kategoriWorker ? json_encode($request->kategoriWorker) : $task->category,
             'job_file' => $newPath,
         ]);
 
