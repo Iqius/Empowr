@@ -4,9 +4,9 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         // === Logout Logic ===
-        document.getElementById("logoutBtn").addEventListener("click", function () {
+        document.getElementById("logoutBtn").addEventListener("click", function() {
             Swal.fire({
                 title: 'Kamu yakin ingin keluar?',
                 icon: 'warning',
@@ -46,6 +46,27 @@
     function toggleDropdown() {
         document.getElementById("dropdown-notif").classList.toggle("hidden");
     }
+</script>
+
+<script>
+    setInterval(() => {
+        fetch('/check-session')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.valid) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Kamu Terlogout Paksa!',
+                        text: 'Akunmu sudah login di perangkat lain.',
+                        confirmButtonText: 'OK',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then(() => {
+                        window.location.href = "{{ route('login') }}";
+                    });
+                }
+            });
+    }, 10000); //set auto logout 10 sec
 </script>
 
 
