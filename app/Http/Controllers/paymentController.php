@@ -273,7 +273,6 @@ class PaymentController extends Controller
         $type = $request->input('type');
         $workerId = $request->worker_profile_id ?? $task->profile_id;
         
-        
         // Ambil ewallet user
         $ewallet = Ewallet::where('user_id', $user->id)->first();
 

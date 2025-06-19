@@ -90,6 +90,11 @@ Route::get('/profile/reviews/load-more', [ProfileController::class, 'loadMoreRev
 Route::get('/profile/worker/{id}/rating', [ProfileController::class, 'getWorkerRatingAjax'])->name('profile.worker.rating');
 Route::get('/profile/my-rating', [ProfileController::class, 'getMyRatingData'])->name('profile.my.rating');
 
+
+
+
+
+
 // WORKER
 // -- DASHBOARD
 Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->middleware(['auth'])->name('worker.dashboardWorker');
@@ -116,6 +121,12 @@ Route::post('/worker/progression-affilated/submited-ulang/{id}', [AffiliatedCont
 Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->middleware('auth')->name('manage.worker');
 // LAMAR WORKER
 Route::post('/task/{task}/apply', [JobController::class, 'apply'])->name('task.apply');
+
+
+
+
+
+
 
 
 

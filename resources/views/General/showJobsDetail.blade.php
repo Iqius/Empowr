@@ -166,7 +166,7 @@
                         <p class="text-gray-500 mb-2">Kategori Task</p>
                         <div>
                             @php
-                                $categories = json_decode($job->kategory, true) ?? [];
+                                $categories = json_decode($job->category, true) ?? [];
                             @endphp
                             @foreach($categories as $category)
                                 <span
