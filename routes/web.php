@@ -90,6 +90,11 @@ Route::get('/profile/reviews/load-more', [ProfileController::class, 'loadMoreRev
 Route::get('/profile/worker/{id}/rating', [ProfileController::class, 'getWorkerRatingAjax'])->name('profile.worker.rating');
 Route::get('/profile/my-rating', [ProfileController::class, 'getMyRatingData'])->name('profile.my.rating');
 
+
+
+
+
+
 // WORKER
 // -- DASHBOARD
 Route::get('/worker/dashboard', [AuthController::class, 'workerDashboard'])->middleware(['auth'])->name('worker.dashboardWorker');
@@ -116,6 +121,12 @@ Route::post('/worker/progression-affilated/submited-ulang/{id}', [AffiliatedCont
 Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->middleware('auth')->name('manage.worker');
 // LAMAR WORKER
 Route::post('/task/{task}/apply', [JobController::class, 'apply'])->name('task.apply');
+
+
+
+
+
+
 
 
 
@@ -155,6 +166,9 @@ Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAs
 Route::get('/ewallet/{id}', [PaymentController::class, 'ewalletIndex'])->name('ewallet.index');
 Route::post('/ewallet/pembayaran/{id}', [PaymentController::class, 'bayarEwalletBase'])->name('client.bayar.ewallet');
 
+Route::get('/check-session', function () {
+    return response()->json(['valid' => auth()->check()]);
+});
 
 
 
@@ -202,4 +216,3 @@ Route::get('/jobs/manage/{id}', [JobController::class, 'manage'])->name('jobs.ma
 // Route::get('/tasks/{id}/applicants', [JobController::class, 'showApplicants']);
 
 // Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage']);
-

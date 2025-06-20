@@ -241,7 +241,7 @@
 @include('General.footer')
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function() {
     // ✅ SweetAlert for Success Message
     @if(session('success'))
     Swal.fire({
@@ -253,15 +253,14 @@
     }).then(() => {
       window.location.href = window.location.href;
     });
-  @endif
-    });
+    @endif
+  });
   const statusCtx = document.getElementById('statusChart').getContext('2d');
   new Chart(statusCtx, {
     type: 'line',
     data: {
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      datasets: [
-        {
+      datasets: [{
           label: 'Ongoing',
           data: [10, 20, 15, 25, 30, 45, 40, 15, 25, 30, 45, 40],
           borderColor: '#3b82f6',

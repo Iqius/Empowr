@@ -70,7 +70,7 @@ class JobController extends Controller
             'price' => $request->price,
             'status' => 'open',
             'revisions' => $request->revisions,
-            'kategory' => json_encode($request->kategoriWorker),
+            'category' => json_encode($request->kategoriWorker),
             'job_file' => $path,
         ]);
 
@@ -116,7 +116,7 @@ class JobController extends Controller
             'deadline_promotion' => $request->deadline_promotion ?? $task->deadline_promotion,
             'price' => $request->price ?? $task->price,
             'revisions' => $request->revisions ?? $task->revisions,
-            'kategory' => $request->kategoriWorker ? json_encode($request->kategoriWorker) : $task->kategory,
+            'category' => $request->kategoriWorker ? json_encode($request->kategoriWorker) : $task->category,
             'job_file' => $newPath,
         ]);
 
@@ -251,10 +251,11 @@ foreach ($applicants as $applicant) {
     public function manageWorker($id)
     {
         $task = Task::with('user')->findOrFail($id);
+        $profileId = Auth::user()->workerProfile->id;
 
         // Cari lamaran user ini (jika ada)
         $application = TaskApplication::where('task_id', $id)
-            ->where('profile_id', Auth::id())
+            ->where('profile_id', $profileId)
             ->first();
 
         return view('worker.manageWorker', compact('task', 'application'));
@@ -485,107 +486,4 @@ foreach ($applicants as $applicant) {
     // }
 
 
-    // public function callback(Request $request)
-    // {
-    //     $serverKey = config('midtrans.server_key');
-    //     $hash = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
-
-    //     if ($hash !== $request->signature_key) {
-    //         return response()->json(['error' => 'Invalid signature'], 400);
-    //     }
-
-    //     $transaction = Transaction::where('order_id', $request->order_id)->first();
-
-    //     if (!$transaction) {
-    //         return response()->json(['error' => 'Transaction not found'], 404);
-    //     }
-
-    //     if ($request->transaction_status === 'capture' || $request->transaction_status === 'settlement') {
-    //         if ($transaction->status !== 'success') {
-    //             $transaction->status = 'success';
-    //             $transaction->save();
-
-    //             if ($transaction->type === 'payment') {
-    //                 $task = $transaction->task;
-    //                 if ($task) {
-    //                     $hasAffiliate = TaskApplication::where('task_id', $task->id)
-    //                         ->where('affiliated', true)
-    //                         ->exists();
-
-    //                     // Kalau ada affiliated = true, update task dengan informasi khusus affiliate (opsional)
-    //                     if ($hasAffiliate) {
-    //                         $task->status = 'in progress'; // atau bisa disesuaikan
-    //                         $task->profile_id = $transaction->worker_id;
-    //                         $task->client_id = $transaction->client_id;
-    //                         $task->status_affiliate = true;
-    //                         $task->price = $transaction->amount;
-    //                         $task->save();
-
-    //                         TaskReview::create([
-    //                             'task_id' => $task->id,
-    //                             'user_id' => $transaction->worker_id, // User yang memberikan ulasan (client)
-    //                             'reviewed_user_id' => $transaction->client_id, // Worker yang menerima ulasan
-    //                             'rating' => '0', // Rating
-    //                             'comment' => null, // Komentar
-    //                         ]);
-
-    //                         TaskReview::create([
-    //                             'task_id' => $task->id,
-    //                             'user_id' => $transaction->client_id, // User yang memberikan ulasan (client)
-    //                             'reviewed_user_id' => $transaction->worker_id, // Worker yang menerima ulasan
-    //                             'rating' => '0', // Rating
-    //                             'comment' => null, // Komentar
-    //                         ]);
-    //                     } else {
-    //                         // Kalau bukan affiliate
-    //                         $task->price = $transaction->amount;
-    //                         $task->profile_id = $transaction->worker_id;
-    //                         $task->client_id = $transaction->client_id;
-    //                         $task->status_affiliate = false;
-    //                         $task->status = 'in progress';
-    //                         $task->save();
-
-    //                         TaskReview::create([
-    //                             'task_id' => $task->id,
-    //                             'user_id' => $transaction->worker_id, // User yang memberikan ulasan (client)
-    //                             'reviewed_user_id' => $transaction->client_id, // Worker yang menerima ulasan
-    //                             'rating' => '0', // Rating
-    //                             'comment' => null, // Komentar
-    //                         ]);
-
-    //                         TaskReview::create([
-    //                             'task_id' => $task->id,
-    //                             'user_id' => $transaction->client_id, // User yang memberikan ulasan (client)
-    //                             'reviewed_user_id' => $transaction->worker_id, // Worker yang menerima ulasan
-    //                             'rating' => '0', // Rating
-    //                             'comment' => null, // Komentar
-    //                         ]);
-    //                     }
-    //                     // Bisa juga skip penghapusan task application kalau dibutuhkan
-    //                     TaskApplication::where('task_id', $task->id)->delete();
-    //                 }
-    //             } elseif ($transaction->type === 'topup') {
-    //                 $userId = $transaction->client_id ?? $transaction->worker_id;
-
-    //                 $ewalet = Ewallet::where('user_id', $userId)->first();
-    //                 if ($ewalet) {
-    //                     $ewalet->balance += $transaction->amount;
-    //                     $ewalet->save();
-    //                 } else {
-    //                     Ewallet::create([
-    //                         'user_id' => $userId,
-    //                         'balance' => $transaction->amount,
-    //                     ]);
-    //                 }
-    //             }
-    //         }
-    //     } elseif ($request->transaction_status === 'pending') {
-    //         $transaction->status = 'pending';
-    //         $transaction->save();
-    //     } elseif ($request->transaction_status === 'cancel' || $request->transaction_status === 'expire') {
-    //         $transaction->status = $request->transaction_status;
-    //         $transaction->save();
-    //     }
-
-    //     return response()->json(['success' => true]);
-    // }
+   

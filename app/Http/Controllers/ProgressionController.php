@@ -40,7 +40,7 @@ class ProgressionController extends Controller
         ]);
 
 
-        return back()->with('success', 'Progress berhasil dikirim.');
+        return back()->with('success-progression', 'Progress berhasil dikirim.');
     }
 
     //review progress sisi client
@@ -69,7 +69,7 @@ class ProgressionController extends Controller
             'action_by_client' => $userId,
         ]);
 
-        return back()->with('success', 'Progression berhasil direview.');
+        return back()->with('success-review', 'Progression berhasil direview.');
     }
 
     public function CompliteJob(Request $request, $taskId)
