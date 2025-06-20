@@ -189,14 +189,14 @@
                     @php
                         $worker = $applicant->worker;
                         $user = $worker->user;
-                        $avgRating = 0; // default
                     @endphp
 
                     <a href="{{ route('profile.worker.lamar', $worker->id) }}"
                         class="block p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition hover:bg-gray-100"
                         data-index="{{ $loop->index }}" data-name="{{ $user->nama_lengkap }}"
                         data-note="{{ $applicant->catatan }}" data-price="{{ $applicant->bidPrice }}"
-                        data-experience="{{ $worker->pengalaman_kerja }}" data-rating="{{ number_format($avgRating, 1) }}"
+                        data-experience="{{ $worker->pengalaman_kerja }}" data-rating="{{ number_format($applicant->avgRating ?? 0, 1) }}"
+
                         data-education="{{ $worker->pendidikan }}" data-cv="{{ $worker->cv }}"
                         data-label="{{ $worker->empowr_label }}" data-affiliate="{{ $worker->empowr_affiliate }}">
 
@@ -209,7 +209,7 @@
                                     <p class="text-lg font-semibold text-gray-800">{{ $user->nama_lengkap }}</p>
                                     <p class="text-sm text-gray-500">
                                         Pengalaman: {{ $worker->pengalaman_kerja ?? '-' }} tahun |
-                                        Rating: {{ number_format($avgRating, 1) }}
+                                        Rating: {{ number_format($applicant->avgRating ?? 0, 1) }}
                                     </p>
                                 </div>
                             </div>
@@ -324,10 +324,15 @@
         closeBtn.addEventListener("click", closeModal);
 
         // Submit form saat klik tombol daftar
-        submitBtn.addEventListener("click", function () {
+       submitBtn.addEventListener("click", function () {
             const rawNego = negoInput.value.replace(/[.,]/g, "");
             if (!rawNego || isNaN(rawNego) || Number(rawNego) <= 0) {
-                alert("Harga tawaran harus berupa angka lebih dari 0");
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Invalid Input',
+                    text: 'Harga tawaran harus berupa angka lebih dari 0',
+                    confirmButtonColor: '#3085d6'
+                });
                 return;
             }
 

@@ -190,15 +190,37 @@ class ProgressionController extends Controller
             ->keyBy('progression_ke');
 
         $progressions = $progressionsByStep->values();
+        $totalSteps = 3 + ($task->revisions ?? 0);
 
-        $steps = [];
-        for ($i = 1; $i <= 4; $i++) {
-            if (isset($progressionsByStep[$i])) {
-                $steps['step' . $i] = $progressionsByStep[$i]->status_approve ?? 'pending';
-            } else {
-                $steps['step' . $i] = 'pending';
-            }
-        }
+$steps = [];
+
+// Step 1–3 biasa
+for ($i = 1; $i <= 3; $i++) {
+    if (isset($progressionsByStep[$i])) {
+        $steps['step' . $i] = $progressionsByStep[$i]->status_approve ?? 'pending';
+    } else {
+        $steps['step' . $i] = 'pending';
+    }
+}
+
+// Step 4 (Selesai) → ambil dari hasil revisi, bukan langsung dari step ke-4
+$revisions = Progression::where('task_id', $task->id)
+    ->where('progression_ke', '>=', 4)
+    ->orderByDesc('progression_ke')
+    ->get();
+
+$approvedRevision = $revisions->firstWhere('status_approve', 'approved');
+$maxRevision = $task->revisions ?? 0;
+$currentRevisions = $revisions->count();
+
+if ($approvedRevision) {
+    $steps['step4'] = 'approved';
+} elseif ($currentRevisions >= $maxRevision) {
+    $steps['step4'] = $revisions->first()?->status_approve ?? 'rejected';
+} else {
+    $steps['step4'] = 'pending';
+}
+
 
         // Tentukan apakah worker bisa mengunggah file
         $currentStep = $progressionsByStep->keys()->max() + 1;

@@ -1,7 +1,7 @@
 <!-- resources/views/chat/chat.blade.php -->
 @include('General.header')
 
-<div class="bg-gray-100 h-[650px] flex mt-16">
+<div class="bg-gray-100 flex h-[calc(100vh-64px)] mt-16">
     <!-- Left Sidebar -->
     <div class="w-15 sm:w-64 md:w-80 bg-white border-r border-gray-300 flex flex-col">
 

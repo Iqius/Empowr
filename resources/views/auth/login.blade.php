@@ -45,7 +45,8 @@
     </style>
 </head>
 
-<body class="flex justify-center items-center h-screen bg-gray-100 px-0">
+<body class=" bg-gray-100 px-0">
+    <div class="flex justify-center items-center h-screen">
     <div class="flex w-full h-full">
 
         <!-- Left Section with Image and Text (Full Height) -->
@@ -118,6 +119,7 @@
                 </p>
             </form>
         </div>
+    </div>
 
         <script>
             document.getElementById("closeModal").addEventListener("click", function () {
