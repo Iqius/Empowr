@@ -182,6 +182,7 @@
                     <option value="bidPrice" {{ request('sort') === 'bidPrice' ? 'selected' : '' }}>Harga</option>
                     <option value="experience" {{ request('sort') === 'experience' ? 'selected' : '' }}>Pengalaman</option>
                     <option value="rating" {{ request('sort') === 'rating' ? 'selected' : '' }}>Rating</option>
+
                 </select>
 
                 <select name="dir" id="dirBy" class="p-2 border rounded bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1F4482]">
@@ -207,7 +208,6 @@
                 @php
                     $worker = $applicant->worker;
                     $user = $worker->user;
-                    $avgRating = 0; // default
                 @endphp
 
                 <!-- Kartu Pelamar -->
@@ -225,7 +225,7 @@
                                     Rp{{ number_format($applicant->bidPrice) }}</p>
                                 <p class="text-gray-500 text-sm"><strong>Pengalaman</strong>
                                     {{ $worker->pengalaman_kerja ?? 0 }} tahun</p>
-                                <p class="text-gray-500 text-sm"><strong>Rating</strong> {{ number_format($avgRating, 1) }}
+                                <p class="text-gray-500 text-sm"><strong>Rating</strong> {{ number_format($applicant->avgRating ?? 0, 1) }}
                                 </p>
                             </div>
                         </div>
@@ -252,8 +252,7 @@
 
                                 <!-- Tombol yang membuka modal hire -->
                                 <button type="button"
-                                    class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800"
-                                    onclick="openPaymentModal()">
+                                    class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800" data-profile-id="{{ $applicant->profile_id }}" data-bid-price="{{ $applicant->bidPrice }}" onclick="openPaymentModal(this)">
                                     Hire worker
                                 </button>
 
@@ -267,9 +266,12 @@
                             </div>
                         </div>
                     @endif
-
                 </div>
+            @endforeach
+        </div>
+    </div>
 
+    
 <!-- Modal hire pilih metode bayar -->
 <div id="paymentModal"
     class="fixed inset-0 flex items-center justify-center opacity-0 pointer-events-none backdrop-blur-sm transition-opacity duration-300 bg-black/30"
@@ -289,9 +291,6 @@
                 class="w-auto max-w-full max-h-48 mx-auto mb-4">
         </div>
 
-
-
-
         <!-- Judul -->
         <h2 class="text-lg font-bold mb-2 text-center">Pilih Metode Pembayaran</h2>
 
@@ -304,8 +303,8 @@
         <div class="flex flex-col sm:flex-row justify-between gap-2">
             <button type="button" onclick="openEwalletModal(this)"
                 class="flex-1 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-                data-profile-id="{{ $applicant->profile_id }}"
-                data-bid-price="{{ $applicant->bidPrice }}">
+                data-profile-id=""
+                data-bid-price="">
                 Bayar dengan E-Wallet
             </button>
 
@@ -316,13 +315,6 @@
         </div>
     </div>
 </div>
-
-
-            @endforeach
-        </div>
-    </div>
-
-    
 
 <!-- modal bayar ewallet -->
 <div id="ewalletModal" 
@@ -364,16 +356,16 @@
                 </p>
             </div>
 
-<!-- Tombol bayar -->
-<button type="submit" id="payButton"
-    class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 mb-2">
-    - Rp0
-</button>
+            <!-- Tombol bayar -->
+            <button type="submit" id="payButton"
+                class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 mb-2">
+                - Rp0
+            </button>
 
-<!-- Saldo tersisa -->
-<p id="saldoTersisa" class="text-sm text-center mt-1">
-    Saldo tersisa: Rp0
-</p>
+            <!-- Saldo tersisa -->
+            <p id="saldoTersisa" class="text-sm text-center mt-1">
+                Saldo tersisa: Rp0
+            </p>
 
 
         </form>
@@ -539,43 +531,56 @@
         modal.classList.remove('hidden');
         setTimeout(() => modal.classList.remove('opacity-0'), 10);
 
-        const profileId = button.getAttribute('data-profile-id');
-        const bidPrice = parseInt(button.getAttribute('data-bid-price').replace(/\./g, '')) || 0;
+        // Ambil data dari tombol yang diklik
+        const profileId = button.getAttribute('data-profile-id') ?? '';
+        const rawBidPrice = button.getAttribute('data-bid-price') ?? '0';
+        const bidPrice = parseInt(rawBidPrice.replace(/\D/g, '')) || 0;
 
-        document.getElementById('worker_profile_id').value = profileId;
-        document.querySelector('input[name="amount"]').value = bidPrice;
+        // Set ke input hidden
+        const inputProfile = document.getElementById('worker_profile_id');
+        const inputAmount = document.querySelector('input[name="amount"]');
+
+        if (inputProfile) inputProfile.value = profileId;
+        if (inputAmount) inputAmount.value = bidPrice;
 
         // Update tombol bayar
-        document.getElementById('payButton').innerText = `- Rp${bidPrice.toLocaleString('id-ID')}`;
+        const payButton = document.getElementById('payButton');
+        if (payButton) {
+            payButton.innerText = `- Rp${bidPrice.toLocaleString('id-ID')}`;
+        }
 
-        // Hitung dan tampilkan saldo tersisa
+        // Hitung saldo tersisa
         const sisa = userBalance - bidPrice;
         const saldoTersisaElement = document.getElementById('saldoTersisa');
-        if (sisa >= 0) {
-            saldoTersisaElement.innerText = `Saldo tersisa: Rp${sisa.toLocaleString('id-ID')}`;
-            saldoTersisaElement.classList.remove('text-red-600');
-            saldoTersisaElement.classList.add('text-gray-700');
-        } else {
-            saldoTersisaElement.innerText = `Saldo tidak mencukupi`;
-            saldoTersisaElement.classList.add('text-red-600');
+        if (saldoTersisaElement) {
+            if (sisa >= 0) {
+                saldoTersisaElement.innerText = `Saldo tersisa: Rp${sisa.toLocaleString('id-ID')}`;
+                saldoTersisaElement.classList.remove('text-red-600');
+                saldoTersisaElement.classList.add('text-gray-700');
+            } else {
+                saldoTersisaElement.innerText = `Saldo tidak mencukupi`;
+                saldoTersisaElement.classList.add('text-red-600');
+                saldoTersisaElement.classList.remove('text-gray-700');
+            }
         }
     }
-
-
 
     function closeEwalletModal() {
         const modal = document.getElementById('ewalletModal');
-        modal.classList.add('opacity-0');
-        setTimeout(() => modal.classList.add('hidden'), 300);
-    }
-
-    function handleOutsideClick(event) {
-        if (event.target.id === 'ewalletModal') {
-            closeEwalletModal();
+        if (modal) {
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
         }
     }
 
+    function handleOutsideClick(event) {
+        const modal = document.getElementById('ewalletModal');
+        if (event.target === modal) {
+            closeEwalletModal();
+        }
+    }
 </script>
+
 
 
 <script src="https://app.sandbox.midtrans.com/snap/snap.js"
@@ -584,11 +589,21 @@
 
 <!-- JS UNTUK MODAL HIRE -->
 <script>
-    function openPaymentModal() {
+    function openPaymentModal(button) {
+        const profileId = button.dataset.profileId;
+        const bidPrice = button.dataset.bidPrice;
+        
         const modal = document.getElementById('paymentModal');
         modal.classList.remove('opacity-0', 'pointer-events-none');
         modal.classList.add('opacity-100');
+
+        // Inject data ke tombol ewallet di dalam modal
+        const ewalletBtn = modal.querySelector('[onclick^="openEwalletModal"]');
+        ewalletBtn.setAttribute('data-profile-id', profileId);
+        ewalletBtn.setAttribute('data-bid-price', bidPrice);
+
     }
+
 
     function closePaymentModal() {
         const modal = document.getElementById('paymentModal');

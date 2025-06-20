@@ -70,7 +70,7 @@ class JobController extends Controller
             'price' => $request->price,
             'status' => 'open',
             'revisions' => $request->revisions,
-            'kategory' => json_encode($request->kategoriWorker),
+            'category' => json_encode($request->kategoriWorker),
             'job_file' => $path,
         ]);
 
@@ -116,7 +116,7 @@ class JobController extends Controller
             'deadline_promotion' => $request->deadline_promotion ?? $task->deadline_promotion,
             'price' => $request->price ?? $task->price,
             'revisions' => $request->revisions ?? $task->revisions,
-            'kategory' => $request->kategoriWorker ? json_encode($request->kategoriWorker) : $task->kategory,
+            'category' => $request->kategoriWorker ? json_encode($request->kategoriWorker) : $task->category,
             'job_file' => $newPath,
         ]);
 
@@ -149,6 +149,16 @@ class JobController extends Controller
 
         // Dapatkan profile_id worker yang sedang login
         $profileId = WorkerProfile::where('user_id', Auth::id())->value('id');
+foreach ($applicants as $applicant) {
+    $user = $applicant->worker->user ?? null;
+
+    if ($user) {
+        $ratingData = TaskReview::where('reviewed_user_id', $user->id)->get();
+        $applicant->avgRating = $ratingData->avg('rating') ?? 0;
+    } else {
+        $applicant->avgRating = 0;
+    }
+}
 
         // Cek apakah user ini sudah melamar task tersebut
         $hasApplied = TaskApplication::where('task_id', $id)
@@ -210,7 +220,16 @@ class JobController extends Controller
         'worker.certifications.images',
         'worker.portfolios.images',
     ])->where('task_id', $id)->get();
+    foreach ($applicants as $applicant) {
+        $user = $applicant->worker->user ?? null;
 
+        if ($user) {
+            $ratingData = TaskReview::where('reviewed_user_id', $user->id)->get();
+            $applicant->avgRating = $ratingData->avg('rating') ?? 0;
+        } else {
+            $applicant->avgRating = 0;
+        }
+    }
     // Sorting manual jika berdasarkan pengalaman
     if ($sortBy === 'experience') {
         $applicants = $applicants->sortBy(function ($applicant) {
@@ -223,6 +242,7 @@ class JobController extends Controller
         }, SORT_REGULAR, $sortDir === 'desc')->values();
     }
 
+
     return view('client.jobs.manage', compact('task', 'applicants', 'ewallet'));
 }
 
@@ -231,10 +251,11 @@ class JobController extends Controller
     public function manageWorker($id)
     {
         $task = Task::with('user')->findOrFail($id);
+        $profileId = Auth::user()->workerProfile->id;
 
         // Cari lamaran user ini (jika ada)
         $application = TaskApplication::where('task_id', $id)
-            ->where('profile_id', Auth::id())
+            ->where('profile_id', $profileId)
             ->first();
 
         return view('worker.manageWorker', compact('task', 'application'));
@@ -311,7 +332,10 @@ class JobController extends Controller
 
         return back()->with('success', 'Lamaran berhasil dihapus.');
     }
-    
+
+
+
+
 }
 
 
