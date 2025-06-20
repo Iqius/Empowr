@@ -208,7 +208,6 @@
                 @php
                     $worker = $applicant->worker;
                     $user = $worker->user;
-                    $avgRating = 0; // default
                 @endphp
 
                 <!-- Kartu Pelamar -->
@@ -226,7 +225,7 @@
                                     Rp{{ number_format($applicant->bidPrice) }}</p>
                                 <p class="text-gray-500 text-sm"><strong>Pengalaman</strong>
                                     {{ $worker->pengalaman_kerja ?? 0 }} tahun</p>
-                                <p class="text-gray-500 text-sm"><strong>Rating</strong> {{ number_format($avgRating, 1) }}
+                                <p class="text-gray-500 text-sm"><strong>Rating</strong> {{ number_format($applicant->avgRating ?? 0, 1) }}
                                 </p>
                             </div>
                         </div>
