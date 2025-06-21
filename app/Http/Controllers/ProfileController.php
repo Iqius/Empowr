@@ -222,7 +222,7 @@ class ProfileController extends Controller
 
         return response()->json(['success' => true, 'image_url' => asset('storage/' . $imagePath)]);
     }
-
+  
     public function getWorkerRatingData($workerId)
     {
         try {
