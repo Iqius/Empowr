@@ -217,10 +217,10 @@ class PaymentController extends Controller
         $userId = Auth::id();
 
         $ewallet = Ewallet::where('user_id', $userId)->first();
-
+        $workerprofileid = WorkerProfile::where('user_id', $userId)->value('id');
         $paymentAccounts = UserPaymentAccount::where('user_id', $userId)->first();
 
-        $transactions = Transaction::where('worker_id', $userId)
+        $transactions = Transaction::where('worker_id', $workerprofileid)
                         ->orWhere('client_id', $userId)
                         ->orderBy('created_at', 'desc')
                         ->get();
