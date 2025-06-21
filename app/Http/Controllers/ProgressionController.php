@@ -83,14 +83,17 @@ class ProgressionController extends Controller
                 'comment' => 'nullable|string|max:500', // Komentar opsional
             ]);
     
-            $review = TaskReview::where('task_id', $task->id)
-                ->where('user_id', auth()->user()->id)
-                ->firstOrFail();
+            $task = task::findOrFail($taskId);
+            $workerProfile = WorkerProfile::findOrFail($task->profile_id);
 
-            $review->update([
-                'rating' => $request->rating,
-                'comment' => $request->review,
-            ]);
+
+                TaskReview::create([
+                    'task_id' => $task->id,
+                    'user_id' =>  $task->client_id, // User yang memberikan ulasan (client)
+                    'reviewed_user_id' => $workerProfile->user_id, // Worker yang menerima ulasan
+                    'rating' => $request->rating, // Rating
+                    'comment' => $request->review, // Komentar
+                ]);
 
         }
 
@@ -103,8 +106,9 @@ class ProgressionController extends Controller
             $userId = $workerProfile->user_id;
             $ewallet = Ewallet::where('user_id', $userId)->first();
             if ($ewallet) {
-                $ewallet->balance += $task->price;
-                $ewallet->save();
+                $ewallet->update([
+                    'balance' => $ewallet->balance + $task->harga_task_affiliate,
+                ]);
             }
 
             
@@ -125,10 +129,10 @@ class ProgressionController extends Controller
             $userId = $workerProfile->user_id;
             $ewallet = Ewallet::where('user_id', $userId)->first();
             if ($ewallet) {
-                $ewallet->balance += $task->harga_task_affiliate;
-                $ewallet->save();
+                $ewallet->update([
+                    'balance' => $ewallet->balance + $task->price,
+                ]);
             }
-
             
             // Buat transaksi untuk gaji worker
             $orderId = 'selesai-' . $task->id . '-' . time();
@@ -154,30 +158,6 @@ class ProgressionController extends Controller
         }
         return redirect()->route('jobs.index')->with('success-updated', 'Job updated successfully.');
     }
-
-    public function ulasanWorker(Request $request, $taskId)
-    {
-        $task = task::findOrFail($taskId);
-
-        $request->validate([
-            'rating' => 'required|integer|between:1,5', // Rating 1 - 5
-            'comment' => 'nullable|string|max:500', // Komentar opsional
-        ]);
-
-        $review = TaskReview::where('task_id', $task->id)
-            ->where('user_id', auth()->user()->id)
-            ->firstOrFail();
-
-        $review->update([
-            'rating' => $request->rating,
-            'comment' => $request->review,
-        ]);
-
-        return redirect()->route('jobs.index')->with('success-review', 'Pekerjaan sudah diberikan ulasan terima kasih.');
-    }
-
-
-
 
     // Fungsi tampilan detail Job yang sudah in progres
     public function DetailJobsInProgress($id)

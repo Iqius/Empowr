@@ -179,51 +179,6 @@
   </div>
 </div>
 
-<!-- Modal Review -->
-<div id="ratingModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center transition-opacity duration-300">
-    <div id="modalContent" class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 opacity-0 scale-95 transform transition-all duration-300 relative">
-        <!-- Close Modal -->
-        <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600" onclick="closeModal()">
-            <i class="bi bi-x-lg text-xl"></i>
-        </button>
-        <h2 class="text-xl font-semibold mb-4 text-gray-800">Beri Rating & Ulasan Sebelum Menyelesaikan</h2>
-        <form id="completeJobForm" action="{{ route('task-ulasan.store', $task->id) }}" method="POST" class="space-y-4">
-            @csrf
-            @method('POST')
-
-            <!-- Rating -->
-            <div class="flex items-center gap-2">
-                @for ($i = 1; $i <= 5; $i++)
-                    <label>
-                        <input type="radio" name="rating" value="{{ $i }}" class="hidden" required>
-                        <i class="bi bi-star text-3xl text-gray-400 hover:text-yellow-400 cursor-pointer"></i>
-                    </label>
-                @endfor
-            </div>
-
-            <!-- Review -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Ulasan</label>
-                <textarea name="review" rows="4" class="w-full border border-gray-300 rounded-lg focus:ring focus:ring-green-200" placeholder="Tulis ulasanmu..." required></textarea>
-            </div>
-
-            <!-- Submit -->
-            <div class="flex justify-end">
-                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
-                    Kirim & Selesaikan
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-
-
-
-
-
-
-
 <!-- buat quilbot -->
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
