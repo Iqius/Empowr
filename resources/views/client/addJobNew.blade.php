@@ -69,90 +69,90 @@
                         <label class="text-sm font-medium text-gray-600 mb-1 block">Kategori Task</label>
                         <select id="keahlian-select" name="kategoriWorker[]" multiple class="w-full p-2 border rounded">
                             @php
-                                $selectedSkills = json_decode(optional(Auth::user()->keahlian)->keahlian, true) ?? [];
-                                $categories = [
-                                    "Web Development",
-                                    "Mobile Development",
-                                    "Game Development",
-                                    "Software Engineering",
-                                    "Frontend Development",
-                                    "Backend Development",
-                                    "Full Stack Development",
-                                    "DevOps",
-                                    "QA Testing",
-                                    "Automation Testing",
-                                    "API Integration",
-                                    "WordPress Development",
-                                    "Data Science",
-                                    "Machine Learning",
-                                    "AI Development",
-                                    "Data Engineering",
-                                    "Data Entry",
-                                    "SEO",
-                                    "Content Writing",
-                                    "Technical Writing",
-                                    "Blog Writing",
-                                    "Copywriting",
-                                    "Scriptwriting",
-                                    "Proofreading",
-                                    "Translation",
-                                    "Transcription",
-                                    "Resume Writing",
-                                    "Ghostwriting",
-                                    "Creative Writing",
-                                    "Social Media Management",
-                                    "Digital Marketing",
-                                    "Email Marketing",
-                                    "Affiliate Marketing",
-                                    "Influencer Marketing",
-                                    "Community Management",
-                                    "Search Engine Marketing",
-                                    "Branding",
-                                    "Graphic Design",
-                                    "UI/UX Design",
-                                    "Logo Design",
-                                    "Motion Graphics",
-                                    "Illustration",
-                                    "Video Editing",
-                                    "Video Production",
-                                    "Animation",
-                                    "3D Modeling",
-                                    "Video Game Design",
-                                    "Audio Editing",
-                                    "Photography",
-                                    "Photo Editing",
-                                    "Presentation Design",
-                                    "Project Management",
-                                    "Virtual Assistant",
-                                    "Customer Service",
-                                    "Lead Generation",
-                                    "Market Research",
-                                    "Business Analysis",
-                                    "Human Resources",
-                                    "Event Planning",
-                                    "Bookkeeping",
-                                    "Accounting",
-                                    "Tax Preparation",
-                                    "Financial Analysis",
-                                    "Legal Advice",
-                                    "Contract Drafting",
-                                    "Startup Consulting",
-                                    "Investment Research",
-                                    "Real Estate Consulting",
-                                    "Personal Assistant",
-                                    "Clerical Work",
-                                    "Data Analysis",
-                                    "Business Coaching",
-                                    "Career Coaching",
-                                    "Life Coaching",
-                                    "Consulting",
-                                    "Other"
-                                ];
+                            $selectedSkills = json_decode(optional(Auth::user()->keahlian)->keahlian, true) ?? [];
+                            $categories = [
+                            "Web Development",
+                            "Mobile Development",
+                            "Game Development",
+                            "Software Engineering",
+                            "Frontend Development",
+                            "Backend Development",
+                            "Full Stack Development",
+                            "DevOps",
+                            "QA Testing",
+                            "Automation Testing",
+                            "API Integration",
+                            "WordPress Development",
+                            "Data Science",
+                            "Machine Learning",
+                            "AI Development",
+                            "Data Engineering",
+                            "Data Entry",
+                            "SEO",
+                            "Content Writing",
+                            "Technical Writing",
+                            "Blog Writing",
+                            "Copywriting",
+                            "Scriptwriting",
+                            "Proofreading",
+                            "Translation",
+                            "Transcription",
+                            "Resume Writing",
+                            "Ghostwriting",
+                            "Creative Writing",
+                            "Social Media Management",
+                            "Digital Marketing",
+                            "Email Marketing",
+                            "Affiliate Marketing",
+                            "Influencer Marketing",
+                            "Community Management",
+                            "Search Engine Marketing",
+                            "Branding",
+                            "Graphic Design",
+                            "UI/UX Design",
+                            "Logo Design",
+                            "Motion Graphics",
+                            "Illustration",
+                            "Video Editing",
+                            "Video Production",
+                            "Animation",
+                            "3D Modeling",
+                            "Video Game Design",
+                            "Audio Editing",
+                            "Photography",
+                            "Photo Editing",
+                            "Presentation Design",
+                            "Project Management",
+                            "Virtual Assistant",
+                            "Customer Service",
+                            "Lead Generation",
+                            "Market Research",
+                            "Business Analysis",
+                            "Human Resources",
+                            "Event Planning",
+                            "Bookkeeping",
+                            "Accounting",
+                            "Tax Preparation",
+                            "Financial Analysis",
+                            "Legal Advice",
+                            "Contract Drafting",
+                            "Startup Consulting",
+                            "Investment Research",
+                            "Real Estate Consulting",
+                            "Personal Assistant",
+                            "Clerical Work",
+                            "Data Analysis",
+                            "Business Coaching",
+                            "Career Coaching",
+                            "Life Coaching",
+                            "Consulting",
+                            "Other"
+                            ];
                             @endphp
                             @foreach ($categories as $category)
-                                <option value="{{ $category }}" {{ in_array($category, $selectedSkills) ? 'selected' : '' }}>
-                                    {{ $category }}
-                                </option>
+                            <option value="{{ $category }}" {{ in_array($category, $selectedSkills) ? 'selected' : '' }}>
+                                {{ $category }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -189,20 +189,41 @@
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         // Inisialisasi Quill Editor
         const toolbarOptions = [
-            [{ header: [1, 2, false] }],
-            [{ list: 'ordered' }, { list: 'bullet' }],
+            [{
+                header: [1, 2, false]
+            }],
+            [{
+                list: 'ordered'
+            }, {
+                list: 'bullet'
+            }],
             ['bold', 'italic', 'underline'],
             ['link', 'image'],
             ['clean']
         ];
         const priceInput = document.getElementById('price');
 
-        var quillDescription = new Quill('#editor-about', { theme: 'snow', modules: { toolbar: toolbarOptions } });
-        var quillQualification = new Quill('#editor-qualification', { theme: 'snow', modules: { toolbar: toolbarOptions } });
-        var quillRules = new Quill('#editor-rules', { theme: 'snow', modules: { toolbar: toolbarOptions } });
+        var quillDescription = new Quill('#editor-about', {
+            theme: 'snow',
+            modules: {
+                toolbar: toolbarOptions
+            }
+        });
+        var quillQualification = new Quill('#editor-qualification', {
+            theme: 'snow',
+            modules: {
+                toolbar: toolbarOptions
+            }
+        });
+        var quillRules = new Quill('#editor-rules', {
+            theme: 'snow',
+            modules: {
+                toolbar: toolbarOptions
+            }
+        });
 
         // Fungsi untuk bersihkan konten Quill (hapus tag kosong dan whitespace)
         function cleanContent(content) {
@@ -226,7 +247,7 @@
         }
 
         // Event saat mengetik di input price, agar format ribuan muncul
-        priceInput.addEventListener('input', function (e) {
+        priceInput.addEventListener('input', function(e) {
             let cursorPosition = this.selectionStart;
             let originalLength = this.value.length;
 
@@ -238,7 +259,7 @@
             this.setSelectionRange(cursorPosition, cursorPosition);
         });
 
-        document.querySelector('#submit-btn').addEventListener('click', function (e) {
+        document.querySelector('#submit-btn').addEventListener('click', function(e) {
             e.preventDefault();
 
             // Ambil input hidden dari Quill
@@ -276,26 +297,47 @@
             let errors = [];
 
             if (fields.title.value.trim() === '') {
-                errors.push({ field: fields.title, message: 'Judul Task harus diisi.' });
+                errors.push({
+                    field: fields.title,
+                    message: 'Judul Task harus diisi.'
+                });
             }
             if (fields.start_date.value.trim() === '') {
-                errors.push({ field: fields.start_date, message: 'Tanggal Mulai Task harus diisi.' });
+                errors.push({
+                    field: fields.start_date,
+                    message: 'Tanggal Mulai Task harus diisi.'
+                });
             }
             if (fields.deadline.value.trim() === '') {
-                errors.push({ field: fields.deadline, message: 'Target Selesai Task harus diisi.' });
+                errors.push({
+                    field: fields.deadline,
+                    message: 'Target Selesai Task harus diisi.'
+                });
             }
             if (fields.deadline_promotion.value.trim() === '') {
-                errors.push({ field: fields.deadline_promotion, message: 'Tanggal Penutupan Lamaran harus diisi.' });
+                errors.push({
+                    field: fields.deadline_promotion,
+                    message: 'Tanggal Penutupan Lamaran harus diisi.'
+                });
             }
             let kategoriSelected = [...fields.kategoriWorker.options].filter(option => option.selected).map(option => option.value);
             if (kategoriSelected.length === 0) {
-                errors.push({ field: fields.kategoriWorker, message: 'Kategori Task harus dipilih.' });
+                errors.push({
+                    field: fields.kategoriWorker,
+                    message: 'Kategori Task harus dipilih.'
+                });
             }
             if (fields.revisions.value.trim() === '') {
-                errors.push({ field: fields.revisions, message: 'Permintaan Jumlah Revisi harus diisi.' });
+                errors.push({
+                    field: fields.revisions,
+                    message: 'Permintaan Jumlah Revisi harus diisi.'
+                });
             }
             if (fields.price.value.trim() === '') {
-                errors.push({ field: fields.price, message: 'Budget Task harus diisi.' });
+                errors.push({
+                    field: fields.price,
+                    message: 'Budget Task harus diisi.'
+                });
             }
 
             if (errors.length > 0) {
@@ -307,7 +349,10 @@
                 });
 
                 // Scroll ke error pertama agar user langsung melihatnya
-                errors[0].field.scrollIntoView({ behavior: "smooth", block: "center" });
+                errors[0].field.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
 
                 return false; // jangan submit
             }
