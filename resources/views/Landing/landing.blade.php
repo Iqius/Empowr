@@ -105,9 +105,9 @@
 
         <!-- Client Section -->
         <div class="flex flex-col md:flex-row justify-center items-center gap-6 mb-12" data-aos="fade-up">
-            <div class="flex justify-center md:justify-end md:w-1/2">
+            <div class="md:justify-end md:w-1/2">
                 <img src="assets/images/Landing Page 2.png" alt="Client working with Empower"
-                    class="w-full h-auto object-cover">
+                    class="w-[605px] h-96 rounded-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
             </div>
             <div class="text-left md:w-1/2">
                 <h3 class="text-[#252525] text-4xl font-semibold mb-4">Sebagai Client</h3>
@@ -137,9 +137,9 @@
                     Cari Tugas Sekarang!
                 </a>
             </div>
-            <div class="flex justify-center md:justify-end md:w-1/2">
+            <div class="md:justify-end md:w-1/2">
                 <img src="assets/images/Landing Page 3.png" alt="Worker using Empower"
-                    class="w-full h-auto object-cover">
+                    class="w-[605px] h-96 rounded-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
             </div>
         </div>
 
