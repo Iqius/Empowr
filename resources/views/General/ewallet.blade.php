@@ -286,11 +286,10 @@
                 Anda harus memberikan rating terlebih dahulu sebelum mencairkan dana. Berikut daftar tugasnya:
             </p>
             <ul class="list-disc pl-5 space-y-2 text-gray-800 max-h-[250px] overflow-y-auto">
-                @foreach(session('unrated_tasks') as $taskReview)
+                @foreach(session('unrated_tasks') as $task)
                     <li>
-                        <strong>{{ $taskReview->task->judul ?? 'Tanpa Judul' }}</strong><br>
-                        Deadline: {{ $taskReview->task->deadline ?? '-' }}<br>
-                        <a href="{{ route('inProgress.jobs', $taskReview->task->id) }}" class="text-blue-600 hover:underline">Lihat Detail</a>
+                        <strong>{{ $task->title ?? 'Tanpa Judul' }}</strong>
+                        <a href="{{ route('inProgress.jobs', $task->id) }}" class="text-blue-600 hover:underline">Lihat Detail</a>
                     </li>
                 @endforeach
             </ul>

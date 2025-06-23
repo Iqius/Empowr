@@ -86,15 +86,15 @@ class ProgressionController extends Controller
             $task = task::findOrFail($taskId);
             $workerProfile = WorkerProfile::findOrFail($task->profile_id);
 
+            
 
-                TaskReview::create([
-                    'task_id' => $task->id,
-                    'user_id' =>  $task->client_id, // User yang memberikan ulasan (client)
-                    'reviewed_user_id' => $workerProfile->user_id, // Worker yang menerima ulasan
-                    'rating' => $request->rating, // Rating
-                    'comment' => $request->review, // Komentar
-                ]);
-
+            TaskReview::create([
+                'task_id' => $task->id,
+                'user_id' =>  $task->client_id, // User yang memberikan ulasan (client)
+                'reviewed_user_id' => $workerProfile->user_id, // Worker yang menerima ulasan
+                'rating' => $request->rating, // Rating
+                'comment' => $request->review, // Komentar
+            ]);
         }
 
         $task->update([
@@ -159,6 +159,26 @@ class ProgressionController extends Controller
         return redirect()->route('jobs.index')->with('success-updated', 'Job updated successfully.');
     }
 
+    public function ulasanWorker(Request $request, $taskId)
+    {
+        $task = task::findOrFail($taskId);
+
+        $request->validate([
+            'rating' => 'required|integer|between:1,5', // Rating 1 - 5
+            'comment' => 'nullable|string|max:500', // Komentar opsional
+        ]);
+
+        TaskReview::create([
+            'task_id' => $task->id,
+            'user_id' =>  $task->worker->user_id, // User yang memberikan ulasan (client)
+            'reviewed_user_id' => $task->client_id, // Worker yang menerima ulasan
+            'rating' => $request->rating, // Rating
+            'comment' => $request->review, // Komentar
+        ]);
+
+        return redirect()->route('jobs.index')->with('success-review', 'Pekerjaan sudah diberikan ulasan terima kasih.');
+    }
+
     // Fungsi tampilan detail Job yang sudah in progres
     public function DetailJobsInProgress($id)
     {
@@ -206,20 +226,19 @@ class ProgressionController extends Controller
         $currentStep = $progressionsByStep->keys()->max() + 1;
         $canSubmit = $this->determineCanSubmit($currentStep, $progressionsByStep);
 
-        if (($task->status === 'completed') || ($task->status === 'arbitrase-completed')) {
-           return view('General.detailProgressionComplite', compact(
-                'task',
-                'progressions',
-            ));
-        } else{
-             return view('General.detailProgressionJobs', compact(
+        if ($task->status !== 'completed') {
+            return view('General.detailProgressionJobs', compact(
                 'task',
                 'steps',
                 'progressionsByStep',
                 'progressions',
                 'canSubmit' // jangan lupa lempar ke view kalau mau dipakai
             ));
-            
+        } else {
+            return view('General.detailProgressionComplite', compact(
+                'task',
+                'progressions',
+            ));
         }
     }
 

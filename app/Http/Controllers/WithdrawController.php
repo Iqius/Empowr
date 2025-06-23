@@ -11,6 +11,7 @@ use App\Models\UserPaymentAccount;
 use App\Models\WorkerAffiliated;
 use App\Models\Task;
 use App\Models\TaskReview;
+use Illuminate\Support\Collection;
 
 class WithdrawController extends Controller
 {
@@ -21,20 +22,31 @@ class WithdrawController extends Controller
         ]);
 
         $user = Auth::user();
-        if($user->role == 'worker') {
-            $workerId = $user->workerProfile->id;
+        $workerId = $user->workerProfile->id;
+        
+        if ($user->role == 'worker') {
+            
+
+            // Ambil semua task yang sudah selesai
             $completedTaskIds = Task::where('profile_id', $workerId)
-                                ->where('status', 'completed')
-                                ->pluck('id');        
+                ->where('status', 'completed')
+                ->pluck('id');
+
+            // Ambil semua ID task yang sudah direview oleh user ini
             $reviewedTaskIds = TaskReview::where('user_id', $user->id)
-                                        ->whereIn('task_id', $completedTaskIds)
-                                        ->pluck('task_id');
+                ->whereIn('task_id', $completedTaskIds)
+                ->pluck('task_id');
+
+            // Ambil task ID yang belum direview
             $unreviewedCompletedTaskIds = $completedTaskIds->diff($reviewedTaskIds);
-            $unratedTasks = [];
+
+            // Ambil data task dari ID tersebut
+            $unratedTasks = collect();
             if ($unreviewedCompletedTaskIds->isNotEmpty()) {
                 $unratedTasks = Task::whereIn('id', $unreviewedCompletedTaskIds)->get();
             }
-            if ($unratedTasks->count() > 0) {
+
+            if ($unratedTasks->isNotEmpty()) {
                 return back()->with([
                     'show_unrated_modal' => true,
                     'unrated_tasks' => $unratedTasks
@@ -87,7 +99,7 @@ class WithdrawController extends Controller
 
         // Tentukan role pengguna
         if ($user->role === 'worker') {
-            $transactionData['worker_id'] = $user->id;
+            $transactionData['worker_id'] = $workerId;
         } elseif ($user->role === 'client') {
             $transactionData['client_id'] = $user->id;
         }
