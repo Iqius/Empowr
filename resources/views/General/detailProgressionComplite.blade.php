@@ -24,6 +24,11 @@
 
                 </div>
                 <div class="p-6 bg-white rounded-lg shadow-md my-5">
+                    @if($task->status == 'arbitrase-completed')
+                        <h1 class="text-xl font-semibold text-gray-700 mt-6">TASK STATUS</h1>
+                        <hr class="border-t-1 border-gray-300 mb-7 mt-4">
+                        <div class="job-description text-gray-600 mt-1">TASK STATUS SELESAI DENGAN ARBITRASE</div>
+                    @endif
                     <h1 class="text-xl font-semibold text-gray-700 mt-6">Deskripsi</h1>
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
                     <div class="job-description text-gray-600 mt-1">{!!$task->description!!}</div>
