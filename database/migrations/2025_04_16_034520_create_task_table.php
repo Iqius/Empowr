@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->date('deadline_promotion');
             $table->text('provisions')->nullable();
             $table->decimal('price', 15, 2);
-            $table->enum('status', ['open', 'in progress', 'completed']);
+            $table->enum('status', ['open', 'in progress','on-hold' ,'completed', 'arbitrase-completed']);
             $table->integer('revisions');
             $table->text('category')->nullable();
             $table->string('job_file')->nullable();

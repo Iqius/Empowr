@@ -16,6 +16,7 @@ use App\Models\WorkerProfile;
 use App\Models\WorkerAffiliated;
 use App\Models\task;
 use App\Models\TaskReview;
+use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
@@ -107,14 +108,6 @@ class ProfileController extends Controller
             'pendidikan' => 'nullable|string',
             'cv' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240',
 
-            'certificate_image' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'title_sertifikasi' => 'nullable|string',
-            'title' => 'nullable|string',
-            'portofolio' => 'nullable|array',
-            'portofolio.*' => 'file|mimes:jpg,jpeg,png|max:2048',
-            'description' => 'nullable|string',
-            'duration' => 'nullable|integer',
-
             'wallet_number' => 'nullable|string',
             'ewallet_account_name' => 'nullable|string',
             'ewallet_provider' => 'nullable|string',
@@ -151,18 +144,43 @@ class ProfileController extends Controller
         $existingAccount = UserPaymentAccount::firstOrNew(['user_id' => $user->id]);
         $existingAccount->wallet_number = $request->wallet_number ?? $existingAccount->wallet_number;
         $existingAccount->ewallet_provider = $request->ewallet_provider ?? $existingAccount->ewallet_provider;
+        $existingAccount->ewallet_name = $request->ewallet_name ?? $existingAccount->ewallet_name;
+
         $existingAccount->bank_name = $request->bank_name ?? $existingAccount->bank_name;
         $existingAccount->account_number = $request->account_number ?? $existingAccount->account_number;
-        $existingAccount->account_name = $request->account_name ?? $existingAccount->account_name;
-        $existingAccount->ewallet_name = $request->ewallet_name ?? $existingAccount->ewallet_name;
+        $existingAccount->bank_account_name = $request->bank_account_name ?? $existingAccount->bank_account_name;
+        
         $existingAccount->save();
 
+
+        return redirect()->route('profil')->with('success-update', 'Profil berhasil diupdate');
+    }
+
+
+
+    public function updateSertifikasi(Request $request){
+
+        $user = Auth::user();
+
+        $request->validate([
+            'certificate_image' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'title_sertifikasi' => 'nullable|string',
+        ]);
+
+        $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
         // Sertifikasi
         if ($request->hasFile('certificate_image')) {
             if ($request->has('sertifikasi_id')) {
                 $sertifikasi = Sertifikasi::find($request->sertifikasi_id);
                 $sertifikasi->title = $request->sertifikat_caption;
                 $sertifikasi->save();
+
+                // Hapus gambar lama
+                $oldImage = $sertifikasi->images()->first(); // pakai relasi images()
+                if ($oldImage && file_exists(public_path($oldImage->image))) {
+                    unlink(public_path($oldImage->image));
+                    $oldImage->delete();
+                }
             } else {
                 $sertifikasi = Sertifikasi::create([
                     'worker_id' => $workerProfile->id,
@@ -170,37 +188,93 @@ class ProfileController extends Controller
                 ]);
             }
 
-            $sertifImage = $request->file('certificate_image')->store('sertifikasi', 'public');
+            // Simpan yang baru
+            $slugName = Str::slug($user->nama_lengkap ?? 'user');
+            $folderPath = public_path('images/sertifikasi/' . $slugName);
+            if (!file_exists($folderPath)) mkdir($folderPath, 0777, true);
+
+            $file = $request->file('certificate_image');
+            $fileName = round(microtime(true) * 1000) . '-' . $file->getClientOriginalName();
+            $file->move($folderPath, $fileName);
 
             SertifikasiImage::create([
                 'sertifikasi_id' => $sertifikasi->id,
-                'image' => $sertifImage,
+                'image' => 'images/sertifikasi/' . $slugName . '/' . $fileName,
+            ]);
+
+            return redirect()->route('profil')->with('success-update', 'Profil berhasil diupdate');
+        }
+    }
+
+    public function updatePortofolio(Request $request){
+        $user = Auth::user();
+
+        $request->validate([        
+            'title' => 'nullable|string',
+            'portofolio' => 'nullable|array',
+            'portofolio.*' => 'file|mimes:jpg,jpeg,png|max:2048',
+            'description' => 'nullable|string',
+            'duration' => 'nullable|integer',
+        ]);
+
+        $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
+
+        $slugName = Str::slug($user->nama_lengkap ?? 'user');
+        $folderPath = public_path('images/portofolio/' . $slugName);
+        if (!file_exists($folderPath)) mkdir($folderPath, 0777, true);
+
+        // ⬇️ Update portofolio (data saja)
+        if ($request->filled('portofolio_id')) {
+            $portofolio = Portofolio::find($request->portofolio_id);
+
+            if ($portofolio && $portofolio->worker_id === $workerProfile->id) {
+                $portofolio->title = $request->title ?? $portofolio->title;
+                $portofolio->description = $request->description ?? $portofolio->description;
+                $portofolio->duration = $request->duration ?? $portofolio->duration;
+                $portofolio->save();
+            }
+        } else {
+            // ⬇️ Tambah baru
+            $portofolio = Portofolio::create([
+                'worker_id' => $workerProfile->id,
+                'title' => $request->title,
+                'description' => $request->description,
+                'duration' => $request->duration,
             ]);
         }
 
-        // Portofolio
+        // ⬇️ Jika ada file baru → hapus gambar lama dan ganti
         if ($request->hasFile('portofolio')) {
-            $portofolio = Portofolio::firstOrNew([
-                'worker_id' => $workerProfile->id,
-                'title' => $request->title,
-            ]);
-
-            $portofolio->description = $request->description ?? $portofolio->description;
-            $portofolio->duration = $request->duration ?? $portofolio->duration;
-            $portofolio->save();
-
-            foreach ($request->file('portofolio') as $file) {
-                $portoImagePath = $file->store('portofolio', 'public');
+            
+            $files = is_array($request->file('portofolio')) ? $request->file('portofolio') : [$request->file('portofolio')];
+            foreach ($files as $file) {
+                $fileName = round(microtime(true) * 1000) . '-' . $file->getClientOriginalName();
+                $file->move($folderPath, $fileName);
 
                 PortofolioImage::create([
                     'portofolio_id' => $portofolio->id,
-                    'image' => $portoImagePath,
+                    'image' => 'images/portofolio/' . $slugName . '/' . $fileName,
                 ]);
             }
         }
 
-        return redirect()->route('profil')->with('success-update', 'Profil berhasil diupdate');
+        return redirect()->route('profil')->with('success-update', 'Portofolio berhasil diperbarui');
     }
+
+    public function deletePortofolioImage($id)
+{
+    $image = PortofolioImage::findOrFail($id);
+
+    // Hapus file
+    if (file_exists(public_path($image->image))) {
+        unlink(public_path($image->image));
+    }
+
+    $image->delete();
+
+    return back()->with('success', 'Gambar berhasil dihapus.');
+}
+
 
     public function updateProfileImage(Request $request)
     {
@@ -276,9 +350,7 @@ class ProfileController extends Controller
         }
     }
 
-    /**
-     * Get reviews for a worker
-     */
+   
     public function getWorkerReviews($workerId, $limit = 10, $offset = 0)
     {
         try {
@@ -321,4 +393,53 @@ class ProfileController extends Controller
             return [];
         }
     }
+
+
+    // Hapus sertifikat
+    public function deleteSertifikasi($id)
+    {
+        $sertifikasi = Sertifikasi::find($id);
+
+        if (!$sertifikasi) {
+            return back()->with('error', 'Sertifikasi tidak ditemukan.');
+        }
+
+        // Hapus semua gambar terkait
+        foreach ($sertifikasi->images as $image) {
+            // Hapus file dari storage
+            \Storage::disk('public')->delete($image->image);
+
+            // Hapus record dari database
+            $image->delete();
+        }
+
+        // Hapus sertifikasi utama
+        $sertifikasi->delete();
+
+        return back()->with('success', 'Sertifikasi berhasil dihapus.');
+    }
+
+    // delete portofolio di profile
+    public function deletePortofolio($id)
+    {
+        $portofolio = Portofolio::with('images')->find($id);
+
+        if (!$portofolio) {
+            return back()->with('error', 'Portofolio tidak ditemukan.');
+        }
+
+        // Hapus file gambar dari storage
+        foreach ($portofolio->images as $image) {
+            if (Storage::disk('public')->exists($image->image)) {
+                Storage::disk('public')->delete($image->image);
+            }
+            $image->delete(); // Hapus record dari DB
+        }
+
+        // Hapus data portofolio
+        $portofolio->delete();
+
+        return back()->with('success', 'Portofolio berhasil dihapus.');
+    }
+   
 }
