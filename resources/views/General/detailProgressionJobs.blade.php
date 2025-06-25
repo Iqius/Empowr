@@ -86,106 +86,107 @@
                 @endforeach
             </div>
         </div>
+        @if($task->status == 'in progress')
+            <!-- Card Section: selalu di bawah -->
+            <div class="flex flex-col gap-4 p-4">
+                <!-- Single Card for Worker -->
+                @if(auth()->user()->role == 'worker')
+                @php
+                $currentStep = $progressionsByStep->count() + 1;
+                $maxSteps = 3 + $task->revisions; // 3 progression + jumlah revisi yang dibolehkan
+                $latestProgression = $progressionsByStep->last();
 
-        <!-- Card Section: selalu di bawah -->
-        <div class="flex flex-col gap-4 p-4">
-            <!-- Single Card for Worker -->
-            @if(auth()->user()->role == 'worker')
-            @php
-            $currentStep = $progressionsByStep->count() + 1;
-            $maxSteps = 3 + $task->revisions; // 3 progression + jumlah revisi yang dibolehkan
-            $latestProgression = $progressionsByStep->last();
+                // Fix for initial submission - ensure canSubmit is true for first submission
+                $canSubmitInitial = ($progressionsByStep->isEmpty() || ($latestProgression && $latestProgression->status_approve !== 'waiting'));
+                @endphp
 
-            // Fix for initial submission - ensure canSubmit is true for first submission
-            $canSubmitInitial = ($progressionsByStep->isEmpty() || ($latestProgression && $latestProgression->status_approve !== 'waiting'));
-            @endphp
+                <div class="flex flex-col gap-4 py-6 px-4">
+                    <!-- Current Status Section (simplified) -->
+                    <div class="mb-4">
+                        <h2 class="font-bold text-lg mb-2">Status Progres</h2>
 
-            <div class="flex flex-col gap-4 py-6 px-4">
-                <!-- Current Status Section (simplified) -->
-                <div class="mb-4">
-                    <h2 class="font-bold text-lg mb-2">Status Progres</h2>
+                        @if($progressionsByStep->count() > 0)
+                        <div class="border-b pb-3 mb-3">
+                            <p class="text-gray-700">Tahap saat ini:
+                                <span class="text-red-600 font-semibold">
+                                    @if($currentStep > 3)
+                                    Revisi Ke-{{ $currentStep - 3 }}
+                                    @else
+                                    Progression Ke-{{ $currentStep }}
+                                    @endif
+                                </span>
+                            </p>
 
-                    @if($progressionsByStep->count() > 0)
-                    <div class="border-b pb-3 mb-3">
-                        <p class="text-gray-700">Tahap saat ini:
-                            <span class="text-red-600 font-semibold">
-                                @if($currentStep > 3)
-                                Revisi Ke-{{ $currentStep - 3 }}
-                                @else
-                                Progression Ke-{{ $currentStep }}
-                                @endif
-                            </span>
-                        </p>
+                            @if($latestProgression)
+                            <p class="text-gray-700 mt-2">Status terakhir:
+                                <span
+                                    class="font-semibold {{ $latestProgression->status_approve === 'approved' ? 'text-green-600' :
+                                                    ($latestProgression->status_approve === 'rejected' ? 'text-red-600' : 'text-yellow-600') }}">
+                                    {{ ucfirst($latestProgression->status_approve) }}
+                                </span>
+                            </p>
 
-                        @if($latestProgression)
-                        <p class="text-gray-700 mt-2">Status terakhir:
-                            <span
-                                class="font-semibold {{ $latestProgression->status_approve === 'approved' ? 'text-green-600' :
-                                                ($latestProgression->status_approve === 'rejected' ? 'text-red-600' : 'text-yellow-600') }}">
-                                {{ ucfirst($latestProgression->status_approve) }}
-                            </span>
-                        </p>
-
-                        @if($latestProgression->note)
-                        <p class="text-gray-700 mt-1">Note: {{ $latestProgression->note }}</p>
-                        @endif
+                            @if($latestProgression->note)
+                            <p class="text-gray-700 mt-1">Note: {{ $latestProgression->note }}</p>
+                            @endif
+                            @endif
+                        </div>
+                        @else
+                        <div class="border-b pb-3 mb-3">
+                            <p>Tahap saat ini:
+                                <span class="text-red-600 font-semibold">Progression Ke-1</span>
+                            </p>
+                        </div>
                         @endif
                     </div>
+
+                    <!-- Submission Section -->
+                    @if($canSubmitInitial && $currentStep <= $maxSteps)
+                        <div>
+                        <h2 class="font-bold text-lg mb-2">
+                            @if($currentStep > 3)
+                            Submit Revisi Ke-{{ $currentStep - 3 }}
+                            @else
+                            Submit Progression Ke-{{ $currentStep }}
+                            @endif
+                        </h2>
+
+                        <form action="{{ route('task-progression.store', $task->id) }}" method="POST"
+                            enctype="multipart/form-data">
+                            @csrf
+                            <label for="file-upload"
+                                class="group cursor-pointer bg-gray-50 rounded-lg p-4 border-2 border-dashed border-gray-300 w-full flex items-center justify-start gap-4 transition-all duration-300 hover:bg-gray-100">
+                                <div
+                                    class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">
+                                    📄</div>
+                                <p class="text-gray-700 font-medium">Klik untuk mengunggah file</p>
+                            </label>
+
+                            <input id="file-upload" type="file" name="file" class="hidden" required>
+
+                            <div id="file-name-display" class="mt-2 text-sm text-gray-600 hidden">
+                                File dipilih: <span id="selected-file-name" class="font-medium"></span>
+                            </div>
+
+                            <p class="mt-4 text-sm text-gray-600">Tanggal di submit:
+                                {{ now()->format('d-m-Y H:i')}}
+                            </p>
+
+                            <button type="submit"
+                                class="mt-4 w-full py-3 bg-[#1F4482] rounded text-white hover:bg-[#18346a] font-semibold transition-colors">Submit</button>
+                        </form>
+                </div>
+                @else
+                <div class="bg-gray-100 rounded p-4 text-center">
+                    @if($currentStep > $maxSteps)
+                    <p class="text-gray-700">Semua tahap sudah diselesaikan</p>
                     @else
-                    <div class="border-b pb-3 mb-3">
-                        <p>Tahap saat ini:
-                            <span class="text-red-600 font-semibold">Progression Ke-1</span>
-                        </p>
-                    </div>
+                    <p class="text-gray-700">Menunggu review dari client untuk melanjutkan</p>
                     @endif
                 </div>
-
-                <!-- Submission Section -->
-                @if($canSubmitInitial && $currentStep <= $maxSteps)
-                    <div>
-                    <h2 class="font-bold text-lg mb-2">
-                        @if($currentStep > 3)
-                        Submit Revisi Ke-{{ $currentStep - 3 }}
-                        @else
-                        Submit Progression Ke-{{ $currentStep }}
-                        @endif
-                    </h2>
-
-                    <form action="{{ route('task-progression.store', $task->id) }}" method="POST"
-                        enctype="multipart/form-data">
-                        @csrf
-                        <label for="file-upload"
-                            class="group cursor-pointer bg-gray-50 rounded-lg p-4 border-2 border-dashed border-gray-300 w-full flex items-center justify-start gap-4 transition-all duration-300 hover:bg-gray-100">
-                            <div
-                                class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">
-                                📄</div>
-                            <p class="text-gray-700 font-medium">Klik untuk mengunggah file</p>
-                        </label>
-
-                        <input id="file-upload" type="file" name="file" class="hidden" required>
-
-                        <div id="file-name-display" class="mt-2 text-sm text-gray-600 hidden">
-                            File dipilih: <span id="selected-file-name" class="font-medium"></span>
-                        </div>
-
-                        <p class="mt-4 text-sm text-gray-600">Tanggal di submit:
-                            {{ now()->format('d-m-Y H:i')}}
-                        </p>
-
-                        <button type="submit"
-                            class="mt-4 w-full py-3 bg-[#1F4482] rounded text-white hover:bg-[#18346a] font-semibold transition-colors">Submit</button>
-                    </form>
-            </div>
-            @else
-            <div class="bg-gray-100 rounded p-4 text-center">
-                @if($currentStep > $maxSteps)
-                <p class="text-gray-700">Semua tahap sudah diselesaikan</p>
-                @else
-                <p class="text-gray-700">Menunggu review dari client untuk melanjutkan</p>
                 @endif
             </div>
             @endif
-        </div>
         @endif
 
         <!-- Card untuk Client -->

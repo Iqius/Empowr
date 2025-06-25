@@ -277,7 +277,31 @@
     </div>
 </div>
 
-
+@if(session('show_unrated_modal') && session('unrated_tasks'))
+    <div id="unratedModal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white w-full max-w-lg p-6 rounded-xl shadow-xl">
+            <h2 class="text-xl font-bold mb-4">Tugas yang Belum Diberi Rating</h2>
+            <p class="mb-3 text-sm text-gray-700">
+                Anda harus memberikan rating terlebih dahulu sebelum mencairkan dana. Berikut daftar tugasnya:
+            </p>
+            <ul class="list-disc pl-5 space-y-2 text-gray-800 max-h-[250px] overflow-y-auto">
+                @foreach(session('unrated_tasks') as $task)
+                    <li>
+                        <strong>{{ $task->title ?? 'Tanpa Judul' }}</strong>
+                        <a href="{{ route('inProgress.jobs', $task->id) }}" class="text-blue-600 hover:underline">Lihat Detail</a>
+                    </li>
+                @endforeach
+            </ul>
+            <div class="mt-6 text-right">
+                <button onclick="window.location.reload()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+@endif
 
 <!-- untuk modal topup -->
 <script>

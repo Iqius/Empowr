@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Notification;
 use App\Models\Ewallet;
 use App\Models\Transaction;
+use App\Models\Task;
 
 class ArbitraseController extends Controller
 {
@@ -72,7 +73,7 @@ class ArbitraseController extends Controller
             'client_id' => $request->client_id ?? $user->id,
             'worker_id' => $request->worker_id ?? ($workerProfile ? $workerProfile->id : null),
         ];
-
+        Task::where('id', $request->task_id)->update(['status' => 'on-hold']);
         // dd($request->all());
 
         // Simpan ke database
@@ -148,8 +149,7 @@ class ArbitraseController extends Controller
             // Ubah status task jika perlu
             $task = $arbitrase->task;
             if ($task && $task->status === 'in progress') {
-                $task->status = 'completed';
-                $task->save();
+                Task::where('id', $arbitrase->task_id)->update(['status' => 'arbitrase-completed']);
             }
 
             $user = Auth::user();

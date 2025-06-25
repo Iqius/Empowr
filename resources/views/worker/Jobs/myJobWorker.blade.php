@@ -78,7 +78,6 @@
         @endforeach
 
         @foreach ($task as $job)
-        {{--@if ($job->status !== 'completed')--}}
         <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition relative"
             data-status="{{ $job->status }}">
             <div class="flex items-center gap-3 mb-3">

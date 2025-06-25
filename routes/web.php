@@ -121,6 +121,18 @@ Route::post('/worker/progression-affilated/submited-ulang/{id}', [AffiliatedCont
 Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->middleware('auth')->name('manage.worker');
 // LAMAR WORKER
 Route::post('/task/{task}/apply', [JobController::class, 'apply'])->name('task.apply');
+// hapus sertfikat di profile
+Route::post('/sertifikasi/hapus-file/{id}', [ProfileController::class, 'deleteSertifikasi'])->name('sertifikasi.hapusFile');
+// hapus portofolio di profile
+Route::post('/portofolio/delete/{id}', [ProfileController::class, 'deletePortofolio'])->name('portofolio.delete');
+// update portofolio
+Route::post('/update-portofolio', [ProfileController::class, 'updatePortofolio'])->name('profile.updatePortofolio');
+// update portofolio untuk hapus gambar
+Route::delete('/portofolio/image/{id}/delete', [ProfileController::class, 'deletePortofolioImage'])->name('portofolio.image.delete');
+// update sertifikasi
+Route::post('/update-sertifikasi', [ProfileController::class, 'updateSertifikasi'])->name('profile.updateSertifikasi');
+
+
 
 
 

@@ -149,16 +149,16 @@ class JobController extends Controller
 
         // Dapatkan profile_id worker yang sedang login
         $profileId = WorkerProfile::where('user_id', Auth::id())->value('id');
-foreach ($applicants as $applicant) {
-    $user = $applicant->worker->user ?? null;
+        foreach ($applicants as $applicant) {
+            $user = $applicant->worker->user ?? null;
 
-    if ($user) {
-        $ratingData = TaskReview::where('reviewed_user_id', $user->id)->get();
-        $applicant->avgRating = $ratingData->avg('rating') ?? 0;
-    } else {
-        $applicant->avgRating = 0;
-    }
-}
+            if ($user) {
+                $ratingData = TaskReview::where('reviewed_user_id', $user->id)->get();
+                $applicant->avgRating = $ratingData->avg('rating') ?? 0;
+            } else {
+                $applicant->avgRating = 0;
+            }
+        }
 
         // Cek apakah user ini sudah melamar task tersebut
         $hasApplied = TaskApplication::where('task_id', $id)

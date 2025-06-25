@@ -30,6 +30,10 @@
    @vite(['resources/css/app.css', 'resources/js/app.js'])
    <script src="https://cdn.tailwindcss.com"></script>
 
+<!-- swiper js untuk scroll gambar -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+
    <style>
       body {
          font-family: "Poppins", sans-serif;
@@ -118,6 +122,8 @@
          color: white;
       }
    </style>
+
+   
 </head>
 
 <body class="bg-gray-100" style="font-family: sans-serif;">

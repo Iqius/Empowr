@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 23, 2025 at 10:29 AM
+-- Generation Time: Jun 23, 2025 at 12:03 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -125,8 +125,8 @@ CREATE TABLE `ewallet` (
 --
 
 INSERT INTO `ewallet` (`id`, `user_id`, `balance`, `created_at`, `updated_at`) VALUES
-(1, 1, 8970000.00, '2025-06-23 06:13:39', '2025-06-23 06:52:03'),
-(2, 2, 9860000.00, '2025-06-23 06:14:51', '2025-06-23 06:47:57');
+(1, 1, 8950000.00, '2025-06-23 06:13:39', '2025-06-23 09:09:09'),
+(2, 2, 9770000.00, '2025-06-23 06:14:51', '2025-06-23 09:38:36');
 
 -- --------------------------------------------------------
 
@@ -371,8 +371,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('BMqMl5sT9faj9AtWg14Bm5wpspU3OmsGYvu0A5X8', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:139.0) Gecko/20100101 Firefox/139.0', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoidGtHUkptU2JyNXZOaU1aMWVJaE9xdnkzejdHNnpURVNSelZ6amFTdyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9jaGVjay1zZXNzaW9uIjt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MjtzOjk6InVzZXJfZGF0YSI7YTo0OntzOjI6ImlkIjtpOjI7czo0OiJuYW1lIjtzOjY6IndvcmtlciI7czo0OiJyb2xlIjtzOjY6IndvcmtlciI7czo1OiJlbWFpbCI7czoxNjoid29ya2VyQGdtYWlsLmNvbSI7fX0=', 1750667379),
-('y3Zu4PmYlFMXZ4ek9nvZhnajziljxJk1y7zGuSaP', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiMjlYNFBqcFI3SE1NZk80dGF4YWEwcHlvYVZkRGtXaDlTWG1oWmEyWiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9jaGVjay1zZXNzaW9uIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTtzOjk6InVzZXJfZGF0YSI7YTo0OntzOjI6ImlkIjtpOjE7czo0OiJuYW1lIjtzOjY6IkZhcmhhbiI7czo0OiJyb2xlIjtzOjY6ImNsaWVudCI7czo1OiJlbWFpbCI7czoxNjoiY2xpZW50QGdtYWlsLmNvbSI7fX0=', 1750662900);
+('BMqMl5sT9faj9AtWg14Bm5wpspU3OmsGYvu0A5X8', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:139.0) Gecko/20100101 Firefox/139.0', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoidGtHUkptU2JyNXZOaU1aMWVJaE9xdnkzejdHNnpURVNSelZ6amFTdyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9jaGVjay1zZXNzaW9uIjt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MjtzOjk6InVzZXJfZGF0YSI7YTo0OntzOjI6ImlkIjtpOjI7czo0OiJuYW1lIjtzOjY6IndvcmtlciI7czo0OiJyb2xlIjtzOjY6IndvcmtlciI7czo1OiJlbWFpbCI7czoxNjoid29ya2VyQGdtYWlsLmNvbSI7fX0=', 1750672978),
+('y3Zu4PmYlFMXZ4ek9nvZhnajziljxJk1y7zGuSaP', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiMjlYNFBqcFI3SE1NZk80dGF4YWEwcHlvYVZkRGtXaDlTWG1oWmEyWiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9jaGVjay1zZXNzaW9uIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTtzOjk6InVzZXJfZGF0YSI7YTo0OntzOjI6ImlkIjtpOjE7czo0OiJuYW1lIjtzOjY6IkZhcmhhbiI7czo0OiJyb2xlIjtzOjY6ImNsaWVudCI7czo1OiJlbWFpbCI7czoxNjoiY2xpZW50QGdtYWlsLmNvbSI7fX0=', 1750672972);
 
 -- --------------------------------------------------------
 
@@ -392,7 +392,7 @@ CREATE TABLE `task` (
   `deadline_promotion` date NOT NULL,
   `provisions` text DEFAULT NULL,
   `price` decimal(15,2) NOT NULL,
-  `status` enum('open','in progress','completed') NOT NULL,
+  `status` enum('open','in progress','on-hold','completed','arbitrase-completed') NOT NULL,
   `revisions` int(11) NOT NULL,
   `category` text DEFAULT NULL,
   `job_file` varchar(255) DEFAULT NULL,
@@ -409,9 +409,8 @@ CREATE TABLE `task` (
 --
 
 INSERT INTO `task` (`id`, `client_id`, `profile_id`, `title`, `description`, `qualification`, `start_date`, `deadline`, `deadline_promotion`, `provisions`, `price`, `status`, `revisions`, `category`, `job_file`, `status_affiliate`, `pengajuan_affiliate`, `harga_pajak_affiliate`, `harga_task_affiliate`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 'Membuat web', '<p>asdasdaasdas</p>', '<p>asdasdasas</p>', '2025-06-23', '2025-06-23', '2025-06-23', '<p>asdasdasd</p>', 10000.00, 'completed', 1, '[\"Mobile Development\",\"Game Development\"]', NULL, NULL, NULL, 0.00, 0.00, '2025-06-23 06:15:54', '2025-06-23 06:17:25'),
-(2, 1, 1, 'Membuat web', '<p>adawd</p>', '<p>awdawd</p>', '2025-06-23', '2025-06-23', '2025-06-23', '<p>awdadw</p>', 10000.00, 'completed', 1, '[\"Mobile Development\",\"Game Development\"]', NULL, NULL, NULL, 0.00, 0.00, '2025-06-23 06:31:08', '2025-06-23 06:32:57'),
-(3, 1, 1, 'Membuat rumah', '<p>asdasda</p>', '<p>asdasd</p>', '2025-06-23', '2025-06-23', '2025-06-23', '<p>asdasd</p>', 10000.00, 'completed', 1, '[\"Mobile Development\",\"Game Development\",\"Web Development\"]', NULL, NULL, NULL, 0.00, 0.00, '2025-06-23 06:46:57', '2025-06-23 06:47:57');
+(4, 1, 1, 'Membuat rumah', '<p>asdasd</p>', '<p>asdasdad</p>', '2025-06-23', '2025-06-23', '2025-06-23', '<p>asadad</p>', 10000.00, 'completed', 1, '[\"Mobile Development\"]', NULL, NULL, NULL, 0.00, 0.00, '2025-06-23 09:07:15', '2025-06-23 09:09:25'),
+(5, 1, 1, 'Membuat PPT', '<p>dsfsdfsdf</p>', '<p>dsfsdf</p>', '2025-06-23', '2025-06-23', '2025-06-23', '<p>sdfsdf</p>', 10000.00, 'completed', 2, '[\"Mobile Development\"]', NULL, NULL, NULL, 0.00, 0.00, '2025-06-23 09:07:52', '2025-06-23 09:09:38');
 
 -- --------------------------------------------------------
 
@@ -495,9 +494,10 @@ CREATE TABLE `task_reviews` (
 --
 
 INSERT INTO `task_reviews` (`id`, `task_id`, `user_id`, `reviewed_user_id`, `rating`, `comment`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 2, 4, NULL, '2025-06-23 06:17:25', '2025-06-23 06:17:25'),
-(5, 3, 2, 1, 0, NULL, '2025-06-23 06:47:57', '2025-06-23 06:47:57'),
-(6, 3, 1, 2, 5, NULL, '2025-06-23 06:47:57', '2025-06-23 06:47:57');
+(7, 4, 1, 2, 4, NULL, '2025-06-23 09:09:25', '2025-06-23 09:09:25'),
+(8, 5, 1, 2, 5, NULL, '2025-06-23 09:09:38', '2025-06-23 09:09:38'),
+(9, 5, 2, 1, 5, NULL, '2025-06-23 09:28:26', '2025-06-23 09:28:26'),
+(10, 4, 2, 1, 5, NULL, '2025-06-23 09:31:12', '2025-06-23 09:31:12');
 
 -- --------------------------------------------------------
 
@@ -526,16 +526,18 @@ CREATE TABLE `transactions` (
 --
 
 INSERT INTO `transactions` (`id`, `order_id`, `task_id`, `worker_id`, `client_id`, `amount`, `status`, `payment_method`, `type`, `proof_transfer`, `withdraw_method`, `created_at`, `updated_at`) VALUES
-(1, '1-1-1750659426', 1, 1, 1, 10000.00, 'success', 'ewallet', 'payment', NULL, NULL, '2025-06-23 06:17:06', '2025-06-23 06:17:06'),
-(2, 'selesai-1-1750659445', 1, 1, 1, 10000.00, 'success', 'direct', 'salary', NULL, NULL, '2025-06-23 06:17:25', '2025-06-23 06:17:25'),
-(3, '2-1-1750660308', 2, 1, 1, 10000.00, 'success', 'ewallet', 'payment', NULL, NULL, '2025-06-23 06:31:48', '2025-06-23 06:31:48'),
-(4, 'selesai-2-1750660377', 2, 1, 1, 10000.00, 'success', 'direct', 'salary', NULL, NULL, '2025-06-23 06:32:57', '2025-06-23 06:32:57'),
 (7, 'WD-6858F6542CBDB', NULL, 1, NULL, 20000.00, 'pending', 'direct', 'payout', NULL, 'bank', '2025-06-23 06:38:12', '2025-06-23 06:38:12'),
 (8, 'WD-6858F668628CB', NULL, 1, NULL, 100000.00, 'pending', 'direct', 'payout', NULL, 'bank', '2025-06-23 06:38:32', '2025-06-23 06:38:32'),
 (9, 'WD-6858F74BC91D6', NULL, 1, NULL, 10000.00, 'pending', 'direct', 'payout', NULL, 'bank', '2025-06-23 06:42:19', '2025-06-23 06:42:19'),
-(10, '3-1-1750661251', 3, 1, 1, 10000.00, 'success', 'ewallet', 'payment', NULL, NULL, '2025-06-23 06:47:31', '2025-06-23 06:47:31'),
-(11, 'selesai-3-1750661277', 3, 1, 1, 10000.00, 'success', 'direct', 'salary', NULL, NULL, '2025-06-23 06:47:57', '2025-06-23 06:47:57'),
-(12, 'WD-6858F9938A07B', NULL, NULL, 1, 1000000.00, 'pending', 'direct', 'payout', NULL, 'bank', '2025-06-23 06:52:03', '2025-06-23 06:52:03');
+(12, 'WD-6858F9938A07B', NULL, NULL, 1, 1000000.00, 'pending', 'direct', 'payout', NULL, 'bank', '2025-06-23 06:52:03', '2025-06-23 06:52:03'),
+(13, '4-1-1750669733', 4, 1, 1, 10000.00, 'success', 'ewallet', 'payment', NULL, NULL, '2025-06-23 09:08:53', '2025-06-23 09:08:53'),
+(14, '5-1-1750669749', 5, 1, 1, 10000.00, 'success', 'ewallet', 'payment', NULL, NULL, '2025-06-23 09:09:09', '2025-06-23 09:09:09'),
+(15, 'selesai-4-1750669765', 4, 1, 1, 10000.00, 'success', 'direct', 'salary', NULL, NULL, '2025-06-23 09:09:25', '2025-06-23 09:09:25'),
+(16, 'selesai-5-1750669778', 5, 1, 1, 10000.00, 'success', 'direct', 'salary', NULL, NULL, '2025-06-23 09:09:38', '2025-06-23 09:09:38'),
+(17, 'selesai-5-1750670236', 5, 1, 2, 10000.00, 'success', 'direct', 'salary', NULL, NULL, '2025-06-23 09:17:16', '2025-06-23 09:17:16'),
+(18, 'selesai-5-1750670772', 5, 1, 2, 10000.00, 'success', 'direct', 'salary', NULL, NULL, '2025-06-23 09:26:12', '2025-06-23 09:26:12'),
+(21, 'WD-6859208B93E7E', NULL, 1, NULL, 10000.00, 'pending', 'direct', 'payout', NULL, 'bank', '2025-06-23 09:38:19', '2025-06-23 09:38:19'),
+(22, 'WD-6859209C06760', NULL, 1, NULL, 100000.00, 'pending', 'direct', 'payout', NULL, 'bank', '2025-06-23 09:38:36', '2025-06-23 09:38:36');
 
 -- --------------------------------------------------------
 
@@ -1012,13 +1014,13 @@ ALTER TABLE `sertifikasi_images`
 -- AUTO_INCREMENT for table `task`
 --
 ALTER TABLE `task`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `task_applications`
 --
 ALTER TABLE `task_applications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `task_assignments`
@@ -1036,13 +1038,13 @@ ALTER TABLE `task_progression`
 -- AUTO_INCREMENT for table `task_reviews`
 --
 ALTER TABLE `task_reviews`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `users`

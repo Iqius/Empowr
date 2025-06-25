@@ -86,15 +86,15 @@ class ProgressionController extends Controller
             $task = task::findOrFail($taskId);
             $workerProfile = WorkerProfile::findOrFail($task->profile_id);
 
+            
 
-                TaskReview::create([
-                    'task_id' => $task->id,
-                    'user_id' =>  $task->client_id, // User yang memberikan ulasan (client)
-                    'reviewed_user_id' => $workerProfile->user_id, // Worker yang menerima ulasan
-                    'rating' => $request->rating, // Rating
-                    'comment' => $request->review, // Komentar
-                ]);
-
+            TaskReview::create([
+                'task_id' => $task->id,
+                'user_id' =>  $task->client_id, // User yang memberikan ulasan (client)
+                'reviewed_user_id' => $workerProfile->user_id, // Worker yang menerima ulasan
+                'rating' => $request->rating, // Rating
+                'comment' => $request->review, // Komentar
+            ]);
         }
 
         $task->update([
@@ -159,6 +159,26 @@ class ProgressionController extends Controller
         return redirect()->route('jobs.index')->with('success-updated', 'Job updated successfully.');
     }
 
+    public function ulasanWorker(Request $request, $taskId)
+    {
+        $task = task::findOrFail($taskId);
+
+        $request->validate([
+            'rating' => 'required|integer|between:1,5', // Rating 1 - 5
+            'comment' => 'nullable|string|max:500', // Komentar opsional
+        ]);
+
+        TaskReview::create([
+            'task_id' => $task->id,
+            'user_id' =>  $task->worker->user_id, // User yang memberikan ulasan (client)
+            'reviewed_user_id' => $task->client_id, // Worker yang menerima ulasan
+            'rating' => $request->rating, // Rating
+            'comment' => $request->review, // Komentar
+        ]);
+
+        return redirect()->route('jobs.index')->with('success-review', 'Pekerjaan sudah diberikan ulasan terima kasih.');
+    }
+
     // Fungsi tampilan detail Job yang sudah in progres
     public function DetailJobsInProgress($id)
     {
@@ -172,34 +192,34 @@ class ProgressionController extends Controller
         $progressions = $progressionsByStep->values();
         $totalSteps = 3 + ($task->revisions ?? 0);
 
-$steps = [];
+        $steps = [];
 
-// Step 1–3 biasa
-for ($i = 1; $i <= 3; $i++) {
-    if (isset($progressionsByStep[$i])) {
-        $steps['step' . $i] = $progressionsByStep[$i]->status_approve ?? 'pending';
-    } else {
-        $steps['step' . $i] = 'pending';
-    }
-}
+        // Step 1–3 biasa
+        for ($i = 1; $i <= 3; $i++) {
+            if (isset($progressionsByStep[$i])) {
+                $steps['step' . $i] = $progressionsByStep[$i]->status_approve ?? 'pending';
+            } else {
+                $steps['step' . $i] = 'pending';
+            }
+        }
 
-// Step 4 (Selesai) → ambil dari hasil revisi, bukan langsung dari step ke-4
-$revisions = Progression::where('task_id', $task->id)
-    ->where('progression_ke', '>=', 4)
-    ->orderByDesc('progression_ke')
-    ->get();
+        // Step 4 (Selesai) → ambil dari hasil revisi, bukan langsung dari step ke-4
+        $revisions = Progression::where('task_id', $task->id)
+            ->where('progression_ke', '>=', 4)
+            ->orderByDesc('progression_ke')
+            ->get();
 
-$approvedRevision = $revisions->firstWhere('status_approve', 'approved');
-$maxRevision = $task->revisions ?? 0;
-$currentRevisions = $revisions->count();
+        $approvedRevision = $revisions->firstWhere('status_approve', 'approved');
+        $maxRevision = $task->revisions ?? 0;
+        $currentRevisions = $revisions->count();
 
-if ($approvedRevision) {
-    $steps['step4'] = 'approved';
-} elseif ($currentRevisions >= $maxRevision) {
-    $steps['step4'] = $revisions->first()?->status_approve ?? 'rejected';
-} else {
-    $steps['step4'] = 'pending';
-}
+        if ($approvedRevision) {
+            $steps['step4'] = 'approved';
+        } elseif ($currentRevisions >= $maxRevision) {
+            $steps['step4'] = $revisions->first()?->status_approve ?? 'rejected';
+        } else {
+            $steps['step4'] = 'pending';
+        }
 
 
         // Tentukan apakah worker bisa mengunggah file

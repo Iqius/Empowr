@@ -283,28 +283,38 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 ">
                         <!-- Button to trigger the modal -->
                         @foreach ($portofolio as $porto)
-                        <div class="flex flex-col gap-4">
-                            <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200">
-                                @if($porto->images && count($porto->images) > 0)
-                                <div class="w-full h-40 mb-3">
-                                    <img src="{{ asset('storage/' . $porto->images[0]->image) }}"
-                                        alt="Gambar Portofolio" class="w-full h-full object-cover rounded-md">
+                            <div class="flex flex-col gap-4 relative cursor-pointer" x-data="{ openModal: false }" onclick='openPortoModal(@json($porto))'>
+                                <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200">
+                                    @if($porto->images && count($porto->images) > 0)
+                                    <div class="w-full h-40 mb-3">
+                                        <img src="{{ asset('storage/' . $porto->images[0]->image) }}"
+                                            alt="Gambar Portofolio" class="w-full h-full object-cover rounded-md">
+                                    </div>
+                                    @endif
+
+                                    <a href="#">
+                                        <p class="text-blue-600 font-semibold text-base sm:text-lg">{{ $porto->title }}</p>
+                                        @php
+                                        $descriptionWords = explode(' ', $porto->description);
+                                        $shortDescription = implode(' ', array_slice($descriptionWords, 0, 10));
+                                        $remainingDescription = count($descriptionWords) > 10 ? '...' : '';
+                                        @endphp
+
+                                        <p class="text-gray-500 text-sm">{{ $shortDescription . $remainingDescription }}</p>
+                                        <p class="text-xs text-gray-400 mt-1">Durasi: {{ $porto->duration }} hari</p>
+                                    </a>
                                 </div>
-                                @endif
-
-                                <a href="#">
-                                    <p class="text-blue-600 font-semibold text-base sm:text-lg">{{ $porto->title }}</p>
-                                    @php
-                                    $descriptionWords = explode(' ', $porto->description);
-                                    $shortDescription = implode(' ', array_slice($descriptionWords, 0, 10));
-                                    $remainingDescription = count($descriptionWords) > 10 ? '...' : '';
-                                    @endphp
-
-                                    <p class="text-gray-500 text-sm">{{ $shortDescription . $remainingDescription }}</p>
-                                    <p class="text-xs text-gray-400 mt-1">Durasi: {{ $porto->duration }} hari</p>
-                                </a>
+                                <form action="{{ route('portofolio.delete', $porto->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus portofolio ini?')" class="absolute top-2 right-2">
+                                    @csrf
+                                    <button class="text-red-600 hover:text-red-800">
+                                        <i class="bi bi-trash-fill"></i> Hapus
+                                    </button>
+                                </form>
+                                <!-- Tombol edit di setiap item portofolio -->
+                                <button onclick='openEditModal(@json($porto))' class="absolute top-2 left-2 bg-yellow-400 text-white px-2 py-1 rounded text-xs">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </button>
                             </div>
-                        </div>
                         @endforeach
                     </div>
                 </div>
@@ -317,22 +327,33 @@
                         Tambah Sertifikat
                     </button>
                     @endif
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 ">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-5">
                         @foreach ($sertifikasi as $sertifikat)
-                        <div class="flex flex-col gap-4">
-                            <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200">
-                                @if($sertifikat->images && count($sertifikat->images) > 0)
-                                <div class="w-full h-40 mb-3">
-                                    <img src="{{ asset('storage/' . $sertifikat->images[0]->image) }}"
-                                        alt="Gambar Sertifikat" class="w-full h-full object-cover rounded-md">
+                            <div class="flex flex-col gap-4">
+                                <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200 relative">
+                                    {{-- Gambar sertifikat --}}
+                                    @if($sertifikat->images && count($sertifikat->images) > 0)
+                                        <div class="w-full h-40 mb-3">
+                                            <img src="{{ asset('storage/' . $sertifikat->images[0]->image) }}"
+                                                alt="Gambar Sertifikat" class="w-full h-full object-cover rounded-md">
+                                        </div>
+                                    @endif
+
+                                    {{-- Judul sertifikat --}}
+                                    <p class="text-blue-600 font-semibold text-base sm:text-lg text-center">
+                                        {{ $sertifikat->title ?? 'Tanpa Judul' }}
+                                    </p>
+
+                                    {{-- Tombol hapus --}}
+                                    <form action="{{ route('sertifikasi.hapusFile', $sertifikat->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus file dan judul sertifikat ini?')">
+                                        @csrf
+                                        <button type="submit"
+                                            class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600">
+                                            Hapus
+                                        </button>
+                                    </form>
                                 </div>
-                                @endif
-                                <!-- Menambahkan text-center untuk membuat teks rata tengah -->
-                                <p class="text-blue-600 font-semibold text-base sm:text-lg text-center">
-                                    {{ $sertifikat->title }}
-                                </p>
                             </div>
-                        </div>
                         @endforeach
                     </div>
                 </div>
@@ -583,26 +604,10 @@
             <h5 class="text-xl font-semibold text-gray-800" id="portfolioModalLabel">Tambah Portofolio</h5>
         </div>
 
-        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('profile.updatePortofolio') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="modal-body space-y-4">
-                <!-- Input fields for Portfolio details -->
-                <input type="hidden" name="nama_lengkap" value="">
-                <input type="hidden" name="email" value="">
-                <input type="hidden" name="nomor_telepon" value="">
-                <input type="hidden" name="bio" value="">
-                <input type="hidden" name="keahlian[]" value="">
-                <input type="hidden" name="tingkat_keahlian" value="">
-                <input type="hidden" name="pengalaman_kerja" value="">
-                <input type="hidden" name="pendidikan" value="">
-                <input type="hidden" name="account_type" value="">
-                <input type="hidden" name="wallet_number" value="">
-                <input type="hidden" name="ewallet_name" value="">
-                <input type="hidden" name="bank_name" value="">
-                <input type="hidden" name="bank_number" value="">
-                <input type="hidden" name="pemilik_bank" value="">
-                <input type="hidden" name="sertifikat_caption" value="">
-
+               
                 <!-- Image Input -->
                 <div class="space-y-2">
                     <label for="portfolioImageInput" class="block text-sm font-medium text-gray-700">Gambar
@@ -659,7 +664,7 @@
             </h5>
         </div>
 
-        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('profile.updateSertifikasi') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="modal-body space-y-4">
 
@@ -697,7 +702,206 @@
     </div>
 </div>
 
+
+<!-- Modal edit portofolio -->
+<!-- Modal -->
+<div id="editModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 rounded-xl w-full max-w-3xl relative">
+        <h2 class="text-lg font-bold mb-4">Edit Portofolio</h2>
+        <form action="{{ route('profile.updatePortofolio') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" name="portofolio_id" id="modalPortofolioId">
+
+            <!-- Title -->
+            <div class="mb-3">
+                <label class="block">Judul</label>
+                <input type="text" name="title" id="modalTitle" class="w-full border p-2 rounded" />
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+                <label class="block">Deskripsi</label>
+                <textarea name="description" id="modalDescription" rows="3" class="w-full border p-2 rounded"></textarea>
+            </div>
+
+            <!-- Duration -->
+            <div class="mb-3">
+                <label class="block">Durasi (hari)</label>
+                <input type="number" name="duration" id="modalDuration" class="w-full border p-2 rounded" />
+            </div>
+
+            <!-- Gambar tersimpan (slider) -->
+            <div class="mb-3">
+                <label class="block mb-1">Gambar Tersimpan</label>
+                <div class="swiper mySwiper">
+                    <div class="swiper-wrapper" id="modalImageSlider">
+                        {{-- Diisi lewat JS --}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload baru -->
+            <div class="mb-3">
+                <label class="block">Upload Gambar Baru</label>
+                <input type="file" name="portofolio[]" multiple class="w-full border p-2 rounded">
+            </div>
+
+            <!-- Tombol -->
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-300 rounded">Batal</button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- modal preview portofolio -->
+<div id="portoModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
+        <!-- Tombol Close -->
+        <button onclick="closePortoModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl">&times;</button>
+
+        <!-- Swiper Slider -->
+        <div class="swiper mySwiper mb-4">
+            <div class="swiper-wrapper" id="modalSwiperWrapper">
+                {{-- Diisi via JS --}}
+            </div>
+            <!-- Swiper navigation -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+
+        <!-- Title -->
+        <h2 id="modalPortoTitle" class="text-lg font-bold mb-1"></h2>
+
+        <!-- Durasi -->
+        <p id="modalPortoDuration" class="text-sm text-gray-600 mb-1"></p>
+
+        <!-- Deskripsi -->
+        <p id="modalPortoDescription" class="text-sm text-gray-700"></p>
+    </div>
+</div>
+
+
+
+
+
 <!-- ----------------------------------JS BATAS ------------------------------------------------------------------- -->
+
+<!-- Swiper JS -->
+<!-- SwiperJS CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+<script>
+    let swiper;
+
+    function openPortoModal(porto) {
+        // Tampilkan modal
+        document.getElementById('portoModal').classList.remove('hidden');
+        document.getElementById('modalPortoTitle').textContent = porto.title;
+        document.getElementById('modalPortoDuration').textContent = "Durasi: " + porto.duration + " hari";
+        document.getElementById('modalPortoDescription').textContent = porto.description;
+
+        // Bersihkan gambar lama
+        const wrapper = document.getElementById('modalSwiperWrapper');
+        wrapper.innerHTML = '';
+
+        // Tambahkan gambar baru
+        porto.images.forEach(img => {
+            const slide = document.createElement('div');
+            slide.className = 'swiper-slide';
+            slide.innerHTML = `<img src="${window.location.origin}/${img.image}" class="w-full h-64 object-cover rounded-md" />`;
+            wrapper.appendChild(slide);
+        });
+
+        // Inisialisasi ulang swiper
+        if (swiper) swiper.destroy();
+        swiper = new Swiper(".mySwiper", {
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+        });
+    }
+
+    function closePortoModal() {
+        document.getElementById('portoModal').classList.add('hidden');
+    }
+</script>
+
+
+
+
+
+
+
+<!-- modal edit portofolio -->
+<script>
+    const modal = document.getElementById('editModal');
+    const sliderContainer = document.getElementById('modalImageSlider');
+
+    function openEditModal(portofolio) {
+
+        const modal = document.getElementById('editModal');
+        // Isi data input
+        document.getElementById('modalPortofolioId').value = portofolio.id;
+        document.getElementById('modalTitle').value = portofolio.title;
+        document.getElementById('modalDescription').value = portofolio.description;
+        document.getElementById('modalDuration').value = portofolio.duration;
+
+        // Kosongkan isi slider
+        sliderContainer.innerHTML = '';
+
+        // Tambahkan gambar ke slider
+        if (portofolio.images && portofolio.images.length > 0) {
+            portofolio.images.forEach(img => {
+                const slide = document.createElement('div');
+                slide.classList.add('swiper-slide', 'relative');
+
+                slide.innerHTML = `
+                    <img src="/${img.image}" class="w-64 h-64 object-cover rounded border mx-auto" />
+                    <form method="POST" action="/portofolio/image/${img.id}/delete" class="absolute top-1 right-1">
+                        @csrf
+                        @method('DELETE')
+                        <button class="bg-red-600 text-white text-xs px-1 rounded-full hover:bg-red-700">&times;</button>
+                    </form>
+                `;
+                sliderContainer.appendChild(slide);
+            });
+        }
+
+        // Tampilkan modal
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        // Inisialisasi ulang Swiper
+        setTimeout(() => {
+            new Swiper('.mySwiper', {
+                slidesPerView: 1,
+                spaceBetween: 10,
+                loop: true,
+                pagination: {
+                    el: ".swiper-pagination",
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: ".swiper-button-next",
+                    prevEl: ".swiper-button-prev",
+                },
+            });
+        }, 100);
+    }
+
+    function closeModal() {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }
+</script>
+
+
+
 <script>
     const profileUpdateURL = "{{ route('profile.update') }}";
 </script>
