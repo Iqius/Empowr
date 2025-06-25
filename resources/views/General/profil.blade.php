@@ -2,7 +2,7 @@
 <div class="p-4 mt-10">
     <div class="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-6 min-h-screen">
         <!-- Kolom kiri untuk tab -->
-        <div class="p-4 rounded h-full">
+        <div class="p-4 rounded sticky top-16 self-start">
             <div class="p-6 bg-white rounded-lg shadow-md h-auto">
                 <div class="flex flex-col items-center gap-4">
                     <label for="profile-pic" class="cursor-pointer">
