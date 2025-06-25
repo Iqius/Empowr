@@ -217,6 +217,8 @@ Route::post('/withdraw/reject/{id}', [WithdrawController::class, 'rejectWithdraw
 // nampilkan view detail tugas client
 Route::get('/jobs/manage/{id}', [JobController::class, 'manage'])->name('jobs.manage');
 
+//serach
+Route::get('/tasks/search', [JobController::class, 'search']);
 
 // GA DIPAKE
 

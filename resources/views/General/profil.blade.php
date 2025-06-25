@@ -20,9 +20,10 @@
                                 <img src="assets/images/verif.png" alt="verif" class="w-10 h-10">
                             <?php endif; ?>
 
-                            @if($workerProfile->empowr_affiliate == true)
-                                <img src="assets/images/Affiliasi.png"  alt="Affiliasi" class="w-10 h-10">
+                            @if($workerProfile?->empowr_affiliate)
+                                <img src="{{ asset('assets/images/Affiliasi.png') }}" alt="Affiliasi" class="w-10 h-10">
                             @endif
+
                         </div>
                     </div>
                 </div>
