@@ -13,8 +13,24 @@ class Task extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'id', 'client_id', 'profile_id', 'title', 'description', 'qualification', 'deadline',
-        'deadline_promotion', 'provisions', 'price', 'status', 'revisions', 'job_file', 'start_date','category', 'pengajuan_affiliate', 'harga_task_affiliate', 'harga_pajak_affiliate'
+        'id',
+        'client_id',
+        'profile_id',
+        'title',
+        'description',
+        'qualification',
+        'deadline',
+        'deadline_promotion',
+        'provisions',
+        'price',
+        'status',
+        'revisions',
+        'job_file',
+        'start_date',
+        'category',
+        'pengajuan_affiliate',
+        'harga_task_affiliate',
+        'harga_pajak_affiliate'
     ];
 
     public function user()
@@ -57,4 +73,3 @@ class Task extends Model
         return $this->hasOne(Arbitrase::class, 'task_id');
     }
 }
-

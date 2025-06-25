@@ -149,6 +149,24 @@ class JobController extends Controller
 
         // Dapatkan profile_id worker yang sedang login
         $profileId = WorkerProfile::where('user_id', Auth::id())->value('id');
+        foreach ($applicants as $applicant) {
+            $user = $applicant->worker->user ?? null;
+
+            if ($user) {
+                $ratingData = TaskReview::where('reviewed_user_id', $user->id)->get();
+                $applicant->avgRating = $ratingData->avg('rating') ?? 0;
+            } else {
+                $applicant->avgRating = 0;
+            }
+        }
+$job = Task::with('user')->findOrFail($id);
+
+        $clientUser = $job->user;
+
+        if ($clientUser) {
+            $ratingData = TaskReview::where('reviewed_user_id', $clientUser->id)->get();
+            $clientUser->avgRating = $ratingData->avg('rating') ?? 0;
+        }
 
         // Cek apakah user ini sudah melamar task tersebut
         $hasApplied = TaskApplication::where('task_id', $id)
@@ -210,7 +228,16 @@ class JobController extends Controller
         'worker.certifications.images',
         'worker.portfolios.images',
     ])->where('task_id', $id)->get();
+    foreach ($applicants as $applicant) {
+        $user = $applicant->worker->user ?? null;
 
+        if ($user) {
+            $ratingData = TaskReview::where('reviewed_user_id', $user->id)->get();
+            $applicant->avgRating = $ratingData->avg('rating') ?? 0;
+        } else {
+            $applicant->avgRating = 0;
+        }
+    }
     // Sorting manual jika berdasarkan pengalaman
     if ($sortBy === 'experience') {
         $applicants = $applicants->sortBy(function ($applicant) {
@@ -222,6 +249,7 @@ class JobController extends Controller
             return $applicant->{$sortBy} ?? 0;
         }, SORT_REGULAR, $sortDir === 'desc')->values();
     }
+
 
     return view('client.jobs.manage', compact('task', 'applicants', 'ewallet'));
 }
@@ -312,7 +340,30 @@ class JobController extends Controller
 
         return back()->with('success', 'Lamaran berhasil dihapus.');
     }
-    
+
+public function search(Request $request)
+{
+    $query = $request->q;
+    $sort = $request->sort;
+
+    $tasks = Task::with('user')->where('title', 'like', '%' . $query . '%');
+
+    if ($sort === 'price-asc') {
+        $tasks = $tasks->orderBy('price', 'asc');
+    } elseif ($sort === 'price-desc') {
+        $tasks = $tasks->orderBy('price', 'desc');
+    }
+
+    $tasks = $tasks->get();
+
+    $html = view('components.job-cards', ['jobs' => $tasks])->render();
+    return response($html);
+}
+
+
+
+
+
 }
 
 

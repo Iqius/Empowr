@@ -10,79 +10,11 @@
                 <option value="price-desc">Harga Tertinggi</option>
             </select>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full" id="jobContainer">
-            <!-- Job Card -->
-            @php
-                $task = \App\Models\Task::all();
-            @endphp
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full" id="jobContainer">
+    @include('components.job-cards', ['jobs' => $jobs])
+</div>
 
-            @foreach ($task as $job)
-                @if($job->status == 'open') <!-- Cek apakah statusnya 'open' -->
-                    <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition relative"
-                        data-price="{{ $job->price }}">
-                        <!-- Save Button -->
-                        <button class="absolute top-3 right-3 text-gray-400 hover:text-[#1F4482] transition">
-                            <i class="fa-regular fa-bookmark text-lg"></i>
-                        </button>
 
-                        <!-- User Info -->
-                        <div class="flex items-center gap-3 mb-3">
-                            <img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}"
-                                alt="User" class="w-9 h-9 rounded-full object-cover" />
-                            <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
-                                {{ $job->user->nama_lengkap ?? 'Unknown' }}
-                                <span class="text-[#1F4482]">✔</span>
-                            </p>
-                        </div>
-
-                        <!-- Job Title -->
-                        <h3 class="text-sm font-semibold text-gray-900 mb-1">
-                            {{ $job->title }}
-                        </h3>
-
-                        <!-- Description -->
-                        <div class="text-xs text-gray-500 mb-4 leading-relaxed">
-                            @php
-                                // Check if the description contains ordered or unordered lists
-                                $hasLists = preg_match('/<ol[^>]*>|<ul[^>]*>/i', $job->description);
-
-                                // Get the text before any list appears
-                                $textBeforeLists = preg_split('/<ol[^>]*>|<ul[^>]*>/i', $job->description)[0];
-
-                                // Strip any HTML tags from this text
-                                $plainTextBeforeLists = strip_tags($textBeforeLists);
-
-                                // Create the preview - if there are lists, add ellipsis
-                                if ($hasLists) {
-                                    // Limit the text before the list and add ellipsis
-                                    $previewText = Str::limit($plainTextBeforeLists, 10, '...');
-                                } else {
-                                    // If no lists, just use normal limit
-                                    $previewText = Str::limit(strip_tags($job->description), 150, '...');
-                                }
-                            @endphp
-                            {{ $previewText }}
-                        </div>
-
-                        <!-- Bottom Row: Price + Button -->
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="text-sm font-semibold text-gray-800">Rp {{ number_format($job->price, 0, ',', '.') }}</p>
-                                <p class="text-xs text-gray-400">Penutupan <span
-                                        class="font-semibold text-gray-500">{{ \Carbon\Carbon::parse($job->deadline_promotion)->translatedFormat('d F Y') }}
-                                    </span></p>
-                            </div>
-                            <a href="{{ route('jobs.show', $job->id) }}">
-                                <button
-                                    class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                                    Lihat Detail
-                                </button>
-                            </a>
-                        </div>
-                    </div>
-                @endif
-            @endforeach
-        </div>
     </section>
 @elseif (auth()->check() && auth()->user()->role === 'admin') <!-- UNTUK ADMIN -->
     <section class="p-4 md:p-8 mt-16">
@@ -347,6 +279,28 @@
         @endif
     });
 
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const sortSelect = document.getElementById('sortSelect');
+        const jobContainer = document.getElementById('jobContainer');
+
+        function fetchTasks() {
+            const q = searchInput?.value || '';
+            const sort = sortSelect?.value || '';
+
+            fetch(`/tasks/search?q=${encodeURIComponent(q)}&sort=${sort}`)
+                .then(response => response.text())
+                .then(html => {
+                    jobContainer.innerHTML = html; // replace isi jobContainer langsung
+                })
+                .catch(error => console.error('Fetch error:', error));
+        }
+
+        if (searchInput) searchInput.addEventListener('input', fetchTasks);
+        if (sortSelect) sortSelect.addEventListener('change', fetchTasks);
+    });
 </script>
 
 

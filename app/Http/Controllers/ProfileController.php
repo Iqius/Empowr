@@ -16,6 +16,7 @@ use App\Models\WorkerProfile;
 use App\Models\WorkerAffiliated;
 use App\Models\task;
 use App\Models\TaskReview;
+use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
@@ -23,29 +24,42 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role === 'client') {
-            $tasks = Task::with('review')
-                ->where('client_id', $user->id)
-                ->where('status', 'completed')
-                ->latest()
-                ->get();
-            $ratingData = TaskReview::where('reviewed_user_id', $user)
-                ->whereNotNull('rating')
-                ->select('rating')
-                ->selectRaw('COUNT(*) as count')
-                ->groupBy('rating')
-                ->orderBy('rating', 'desc')
-                ->get();
+if ($user->role === 'client') {
+    $tasks = Task::with('review')
+        ->where('client_id', $user->id)
+        ->where('status', 'completed')
+        ->latest()
+        ->get();
 
-            return view('General.profil', [
-                'workerProfile' => null,
-                'sertifikasi' => collect(),
-                'portofolio' => collect(),
-                'tasks' => $tasks,
-                'ratingData' => $ratingData,
-                
-            ]);
-        }
+    $ratingData = TaskReview::where('reviewed_user_id', $user->id)
+        ->whereNotNull('rating')
+        ->get();
+
+    $avgRating = $ratingData->avg('rating') ?? 0;
+    $countReviews = $ratingData->count();
+
+    $breakdown = collect([5, 4, 3, 2, 1])->mapWithKeys(function ($star) use ($ratingData, $countReviews) {
+        $count = $ratingData->where('rating', $star)->count();
+        $percentage = $countReviews > 0 ? round(($count / $countReviews) * 100) : 0;
+
+        return [$star => [
+            'count' => $count,
+            'percentage' => $percentage,
+        ]];
+    });
+
+    return view('General.profil', [
+        'workerProfile' => null,
+        'sertifikasi' => collect(),
+        'portofolio' => collect(),
+        'tasks' => $tasks,
+        'ratingData' => $ratingData,
+        'avgRating' => $avgRating,
+        'countReviews' => $countReviews,
+        'breakdown' => $breakdown,
+    ]);
+}
+
 
 
         $workerProfile = $user->workerProfile;
@@ -59,9 +73,9 @@ class ProfileController extends Controller
             ->get();
 
         $ratingData = TaskReview::with('user')
-                ->where('reviewed_user_id', $user->id)
-                ->get();
-        
+            ->where('reviewed_user_id', $user->id)
+            ->get();
+
         $avgRating = $ratingData->avg('rating') ?? 0;
         $countReviews = $ratingData->count();
         $breakdown = collect([5, 4, 3, 2, 1])->mapWithKeys(function ($star) use ($ratingData, $countReviews) {
@@ -85,11 +99,10 @@ class ProfileController extends Controller
         $worker = WorkerProfile::with(['user', 'certifications.images'])->findOrFail($id);
 
         $data = WorkerAffiliated::where('profile_id', $worker->id)->get();
-        return view('General.lamaranWorkerDetailProfile', compact('worker','data'));
+        return view('General.lamaranWorkerDetailProfile', compact('worker', 'data'));
     }
 
 
-    // Update profile
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
@@ -99,35 +112,23 @@ class ProfileController extends Controller
             'email' => 'nullable|email',
             'nomor_telepon' => 'nullable|string',
             'bio' => 'nullable|string',
-            'keahlian' => 'nullable|string',
-            'tingkat_keahlian' => 'nullable|string',
+
+            // ubah validasi keahlian
+            'keahlian' => 'nullable|array',
+            'keahlian.*' => 'string|max:255',
+
             'pengalaman_kerja' => 'nullable|string',
             'pendidikan' => 'nullable|string',
-            'cv' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240', // 10MB
-            'certificate_image' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'title_sertifikasi' => 'nullable|string',
-            'title' => 'nullable|string',
-            'portofolio' => 'nullable|array',
-            'portofolio.*' => 'file|mimes:jpg,jpeg,png|max:2048',
-            'description' => 'nullable|string',
-            'duration' => 'nullable|integer',
+            'cv' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240',
 
-            // ini di hapus aja nanti
-            'account_type' => 'nullable|string',
-
-            // untuk pilihan ewallet
             'wallet_number' => 'nullable|string',
             'ewallet_account_name' => 'nullable|string',
             'ewallet_provider' => 'nullable|string',
-
-            // untuk pilihan bank
             'bank_name' => 'nullable|string',
             'account_number' => 'nullable|string',
             'bank_account_name' => 'nullable|string',
-            
         ]);
 
-        // Update user data only if present
         $user->nama_lengkap = $request->nama_lengkap ?? $user->nama_lengkap;
         $user->email = $request->email ?? $user->email;
         $user->nomor_telepon = $request->nomor_telepon ?? $user->nomor_telepon;
@@ -136,91 +137,156 @@ class ProfileController extends Controller
 
         $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
 
-        // CV only if new file uploaded
+        // CV upload
         if ($request->hasFile('cv')) {
             $workerProfile->cv = $request->file('cv')->store('cv', 'public');
         }
 
-        $workerProfile->keahlian = $request->keahlian ?? $workerProfile->keahlian;
-        $workerProfile->tingkat_keahlian = $request->tingkat_keahlian ?? $workerProfile->tingkat_keahlian;
+        // ✅ Simpan array keahlian sebagai JSON
+        $workerProfile->keahlian = json_encode($request->keahlian ?? []);
+
         $workerProfile->linkedin = $request->linkedin ?? $workerProfile->linkedin;
         $workerProfile->pengalaman_kerja = $request->pengalaman_kerja ?? $workerProfile->pengalaman_kerja;
         $workerProfile->pendidikan = $request->pendidikan ?? $workerProfile->pendidikan;
 
-        // Boolean switches
         $workerProfile->empowr_label = $request->has('empowr_label');
         $workerProfile->empowr_affiliate = $request->has('empowr_affiliate');
-
         $workerProfile->save();
 
-        // Update or create rekening
+        // Rekening
         $existingAccount = UserPaymentAccount::firstOrNew(['user_id' => $user->id]);
-
-        // ini hapus aja nanti
-        $existingAccount->account_type = $request->account_type ?? $existingAccount->account_type;
-
-        
         $existingAccount->wallet_number = $request->wallet_number ?? $existingAccount->wallet_number;
-        $existingAccount->ewallet_provider = $request->ewallet_name ?? $existingAccount->ewallet_provider;
+        $existingAccount->ewallet_provider = $request->ewallet_provider ?? $existingAccount->ewallet_provider;
+        $existingAccount->ewallet_name = $request->ewallet_name ?? $existingAccount->ewallet_name;
+
         $existingAccount->bank_name = $request->bank_name ?? $existingAccount->bank_name;
-        $existingAccount->account_number = $request->bank_number ?? $existingAccount->account_number;
-        $existingAccount->bank_account_name = $request->pemilik_bank ?? $existingAccount->bank_account_name;
-        $existingAccount->ewallet_account_name = $request->pemilik_ewallet ?? $existingAccount->account_nameewallet_account_name;
+        $existingAccount->account_number = $request->account_number ?? $existingAccount->account_number;
+        $existingAccount->bank_account_name = $request->bank_account_name ?? $existingAccount->bank_account_name;
+        
         $existingAccount->save();
 
-        // Upload Sertifikat (jika ada)
+
+        return redirect()->route('profil')->with('success-update', 'Profil berhasil diupdate');
+    }
+
+
+
+    public function updateSertifikasi(Request $request){
+
+        $user = Auth::user();
+
+        $request->validate([
+            'certificate_image' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'title_sertifikasi' => 'nullable|string',
+        ]);
+
+        $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
+        // Sertifikasi
         if ($request->hasFile('certificate_image')) {
-            // If sertifikasi_id exists, we are editing an existing certificate
             if ($request->has('sertifikasi_id')) {
                 $sertifikasi = Sertifikasi::find($request->sertifikasi_id);
                 $sertifikasi->title = $request->sertifikat_caption;
                 $sertifikasi->save();
+
+                // Hapus gambar lama
+                $oldImage = $sertifikasi->images()->first(); // pakai relasi images()
+                if ($oldImage && file_exists(public_path($oldImage->image))) {
+                    unlink(public_path($oldImage->image));
+                    $oldImage->delete();
+                }
             } else {
-                // Create new sertifikasi if no ID is present
                 $sertifikasi = Sertifikasi::create([
                     'worker_id' => $workerProfile->id,
                     'title' => $request->title_sertifikasi,
                 ]);
             }
 
-            // Store sertifikat image
-            $sertifImage = $request->file('certificate_image')->store('sertifikasi', 'public');
+            // Simpan yang baru
+            $slugName = Str::slug($user->nama_lengkap ?? 'user');
+            $folderPath = public_path('images/sertifikasi/' . $slugName);
+            if (!file_exists($folderPath)) mkdir($folderPath, 0777, true);
 
-            // Create SertifikasiImage record
+            $file = $request->file('certificate_image');
+            $fileName = round(microtime(true) * 1000) . '-' . $file->getClientOriginalName();
+            $file->move($folderPath, $fileName);
+
             SertifikasiImage::create([
                 'sertifikasi_id' => $sertifikasi->id,
-                'image' => $sertifImage,
+                'image' => 'images/sertifikasi/' . $slugName . '/' . $fileName,
+            ]);
+
+            return redirect()->route('profil')->with('success-update', 'Profil berhasil diupdate');
+        }
+    }
+
+    public function updatePortofolio(Request $request){
+        $user = Auth::user();
+
+        $request->validate([        
+            'title' => 'nullable|string',
+            'portofolio' => 'nullable|array',
+            'portofolio.*' => 'file|mimes:jpg,jpeg,png|max:2048',
+            'description' => 'nullable|string',
+            'duration' => 'nullable|integer',
+        ]);
+
+        $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
+
+        $slugName = Str::slug($user->nama_lengkap ?? 'user');
+        $folderPath = public_path('images/portofolio/' . $slugName);
+        if (!file_exists($folderPath)) mkdir($folderPath, 0777, true);
+
+        // ⬇️ Update portofolio (data saja)
+        if ($request->filled('portofolio_id')) {
+            $portofolio = Portofolio::find($request->portofolio_id);
+
+            if ($portofolio && $portofolio->worker_id === $workerProfile->id) {
+                $portofolio->title = $request->title ?? $portofolio->title;
+                $portofolio->description = $request->description ?? $portofolio->description;
+                $portofolio->duration = $request->duration ?? $portofolio->duration;
+                $portofolio->save();
+            }
+        } else {
+            // ⬇️ Tambah baru
+            $portofolio = Portofolio::create([
+                'worker_id' => $workerProfile->id,
+                'title' => $request->title,
+                'description' => $request->description,
+                'duration' => $request->duration,
             ]);
         }
 
-        // Update or Create Portofolio (jika ada perubahan)
+        // ⬇️ Jika ada file baru → hapus gambar lama dan ganti
         if ($request->hasFile('portofolio')) {
-            // Cek apakah sudah ada portofolio
-            $portofolio = Portofolio::firstOrNew([
-                'worker_id' => $workerProfile->id,
-                'title' => $request->title,
-            ]);
-
-            // Update portofolio data
-            $portofolio->description = $request->description ?? $portofolio->description;
-            $portofolio->duration = $request->duration ?? $portofolio->duration;
-            $portofolio->save();
-
-            // Upload gambar portofolio baru
-            foreach ($request->file('portofolio') as $file) {
-                $portoImagePath = $file->store('portofolio', 'public');
+            
+            $files = is_array($request->file('portofolio')) ? $request->file('portofolio') : [$request->file('portofolio')];
+            foreach ($files as $file) {
+                $fileName = round(microtime(true) * 1000) . '-' . $file->getClientOriginalName();
+                $file->move($folderPath, $fileName);
 
                 PortofolioImage::create([
                     'portofolio_id' => $portofolio->id,
-                    'image' => $portoImagePath,
+                    'image' => 'images/portofolio/' . $slugName . '/' . $fileName,
                 ]);
             }
         }
-        
 
-        return redirect()->route('profil')->with('success-update', 'Profil berhasil diupdate');
+        return redirect()->route('profil')->with('success-update', 'Portofolio berhasil diperbarui');
     }
 
+    public function deletePortofolioImage($id)
+{
+    $image = PortofolioImage::findOrFail($id);
+
+    // Hapus file
+    if (file_exists(public_path($image->image))) {
+        unlink(public_path($image->image));
+    }
+
+    $image->delete();
+
+    return back()->with('success', 'Gambar berhasil dihapus.');
+}
 
 
     public function updateProfileImage(Request $request)
@@ -243,105 +309,150 @@ class ProfileController extends Controller
 
         return response()->json(['success' => true, 'image_url' => asset('storage/' . $imagePath)]);
     }
+  
+    public function getWorkerRatingData($workerId)
+    {
+        try {
+            // Get average rating and total reviews directly from task_reviews table
+            $ratingStats = \DB::table('task_reviews')
+                ->where('reviewed_user_id', $workerId)
+                ->whereNotNull('rating')
+                ->selectRaw('AVG(rating) as avg_rating, COUNT(rating) as total_reviews')
+                ->first();
 
-public function getWorkerRatingData($workerId)
-{
-    try {
-        // Get average rating and total reviews directly from task_reviews table
-        $ratingStats = \DB::table('task_reviews')
-            ->where('reviewed_user_id', $workerId)
-            ->whereNotNull('rating')
-            ->selectRaw('AVG(rating) as avg_rating, COUNT(rating) as total_reviews')
-            ->first();
+            $avgRating = $ratingStats->avg_rating ? round($ratingStats->avg_rating, 1) : 0;
+            $totalReviews = $ratingStats->total_reviews ?: 0;
 
-        $avgRating = $ratingStats->avg_rating ? round($ratingStats->avg_rating, 1) : 0;
-        $totalReviews = $ratingStats->total_reviews ?: 0;
+            // Get rating breakdown
 
-        // Get rating breakdown
+            // Calculate percentages
+            $breakdown = [];
+            $labels = [
+                5 => 'Excellent',
+                4 => 'Good',
+                3 => 'Average',
+                2 => 'Below Average',
+                1 => 'Poor'
+            ];
 
-        // Calculate percentages
-        $breakdown = [];
-        $labels = [
-            5 => 'Excellent',
-            4 => 'Good', 
-            3 => 'Average',
-            2 => 'Below Average',
-            1 => 'Poor'
-        ];
+            foreach ($labels as $rating => $label) {
+                $found = $ratingBreakdown->firstWhere('rating', $rating);
+                $count = $found ? $found->count : 0;
+                $percentage = $totalReviews > 0 ? round(($count * 100) / $totalReviews, 1) : 0;
+                $breakdown[$label] = $percentage;
+            }
 
-        foreach ($labels as $rating => $label) {
-            $found = $ratingBreakdown->firstWhere('rating', $rating);
-            $count = $found ? $found->count : 0;
-            $percentage = $totalReviews > 0 ? round(($count * 100) / $totalReviews, 1) : 0;
-            $breakdown[$label] = $percentage;
+            return [
+                'avg_rating' => $avgRating,
+                'total_reviews' => $totalReviews,
+                'breakdown' => $breakdown
+            ];
+        } catch (\Exception $e) {
+            \Log::error("Error getting worker rating data: " . $e->getMessage());
+            return [
+                'avg_rating' => 0,
+                'total_reviews' => 0,
+                'breakdown' => [
+                    'Excellent' => 0,
+                    'Good' => 0,
+                    'Average' => 0,
+                    'Below Average' => 0,
+                    'Poor' => 0
+                ]
+            ];
+        }
+    }
+
+   
+    public function getWorkerReviews($workerId, $limit = 10, $offset = 0)
+    {
+        try {
+            $reviews = \DB::table('task_reviews')
+                ->join('users', 'task_reviews.user_id', '=', 'users.id')
+                ->where('task_reviews.reviewed_user_id', $workerId)
+                ->whereNotNull('task_reviews.comment')
+                ->where('task_reviews.comment', '!=', '')
+                ->select(
+                    'task_reviews.id',
+                    'task_reviews.rating',
+                    'task_reviews.comment',
+                    'task_reviews.created_at',
+                    'task_reviews.updated_at',
+                    'users.id as user_id',
+                    'users.nama_lengkap as user_name',
+                    'users.profile_image'
+                )
+                ->orderBy('task_reviews.created_at', 'desc')
+                ->limit($limit)
+                ->offset($offset)
+                ->get();
+
+            // Format reviews for display
+            return $reviews->map(function ($review) {
+                return [
+                    'id' => $review->id,
+                    'user_name' => $review->user_name ?: 'Anonymous User',
+                    'user_avatar' => $review->profile_image ?
+                        asset('storage/' . $review->profile_image) :
+                        $this->generateAvatar($review->user_name ?: 'Anonymous'),
+                    'rating' => (int)$review->rating,
+                    'comment' => $review->comment,
+                    'date' => $this->formatDate($review->created_at),
+                    'location' => 'Indonesia' // Default location
+                ];
+            })->toArray();
+        } catch (\Exception $e) {
+            \Log::error("Error getting worker reviews: " . $e->getMessage());
+            return [];
+        }
+    }
+
+
+    // Hapus sertifikat
+    public function deleteSertifikasi($id)
+    {
+        $sertifikasi = Sertifikasi::find($id);
+
+        if (!$sertifikasi) {
+            return back()->with('error', 'Sertifikasi tidak ditemukan.');
         }
 
-        return [
-            'avg_rating' => $avgRating,
-            'total_reviews' => $totalReviews,
-            'breakdown' => $breakdown
-        ];
+        // Hapus semua gambar terkait
+        foreach ($sertifikasi->images as $image) {
+            // Hapus file dari storage
+            \Storage::disk('public')->delete($image->image);
 
-    } catch (\Exception $e) {
-        \Log::error("Error getting worker rating data: " . $e->getMessage());
-        return [
-            'avg_rating' => 0,
-            'total_reviews' => 0,
-            'breakdown' => [
-                'Excellent' => 0,
-                'Good' => 0,
-                'Average' => 0,
-                'Below Average' => 0,
-                'Poor' => 0
-            ]
-        ];
+            // Hapus record dari database
+            $image->delete();
+        }
+
+        // Hapus sertifikasi utama
+        $sertifikasi->delete();
+
+        return back()->with('success', 'Sertifikasi berhasil dihapus.');
     }
-}
 
-/**
- * Get reviews for a worker
- */
-public function getWorkerReviews($workerId, $limit = 10, $offset = 0)
-{
-    try {
-        $reviews = \DB::table('task_reviews')
-            ->join('users', 'task_reviews.user_id', '=', 'users.id')
-            ->where('task_reviews.reviewed_user_id', $workerId)
-            ->whereNotNull('task_reviews.comment')
-            ->where('task_reviews.comment', '!=', '')
-            ->select(
-                'task_reviews.id',
-                'task_reviews.rating',
-                'task_reviews.comment',
-                'task_reviews.created_at',
-                'task_reviews.updated_at',
-                'users.id as user_id',
-                'users.nama_lengkap as user_name',
-                'users.profile_image'
-            )
-            ->orderBy('task_reviews.created_at', 'desc')
-            ->limit($limit)
-            ->offset($offset)
-            ->get();
+    // delete portofolio di profile
+    public function deletePortofolio($id)
+    {
+        $portofolio = Portofolio::with('images')->find($id);
 
-        // Format reviews for display
-        return $reviews->map(function($review) {
-            return [
-                'id' => $review->id,
-                'user_name' => $review->user_name ?: 'Anonymous User',
-                'user_avatar' => $review->profile_image ? 
-                    asset('storage/' . $review->profile_image) : 
-                    $this->generateAvatar($review->user_name ?: 'Anonymous'),
-                'rating' => (int)$review->rating,
-                'comment' => $review->comment,
-                'date' => $this->formatDate($review->created_at),
-                'location' => 'Indonesia' // Default location
-            ];
-        })->toArray();
+        if (!$portofolio) {
+            return back()->with('error', 'Portofolio tidak ditemukan.');
+        }
 
-    } catch (\Exception $e) {
-        \Log::error("Error getting worker reviews: " . $e->getMessage());
-        return [];
+        // Hapus file gambar dari storage
+        foreach ($portofolio->images as $image) {
+            if (Storage::disk('public')->exists($image->image)) {
+                Storage::disk('public')->delete($image->image);
+            }
+            $image->delete(); // Hapus record dari DB
+        }
+
+        // Hapus data portofolio
+        $portofolio->delete();
+
+        return back()->with('success', 'Portofolio berhasil dihapus.');
     }
-}
+   
 }

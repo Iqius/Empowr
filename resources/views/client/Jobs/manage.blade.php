@@ -182,6 +182,7 @@
                     <option value="bidPrice" {{ request('sort') === 'bidPrice' ? 'selected' : '' }}>Harga</option>
                     <option value="experience" {{ request('sort') === 'experience' ? 'selected' : '' }}>Pengalaman</option>
                     <option value="rating" {{ request('sort') === 'rating' ? 'selected' : '' }}>Rating</option>
+
                 </select>
 
                 <select name="dir" id="dirBy" class="p-2 border rounded bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1F4482]">
@@ -207,7 +208,6 @@
                 @php
                     $worker = $applicant->worker;
                     $user = $worker->user;
-                    $avgRating = 0; // default
                 @endphp
 
                 <!-- Kartu Pelamar -->
@@ -225,7 +225,7 @@
                                     Rp{{ number_format($applicant->bidPrice) }}</p>
                                 <p class="text-gray-500 text-sm"><strong>Pengalaman</strong>
                                     {{ $worker->pengalaman_kerja ?? 0 }} tahun</p>
-                                <p class="text-gray-500 text-sm"><strong>Rating</strong> {{ number_format($avgRating, 1) }}
+                                <p class="text-gray-500 text-sm"><strong>Rating</strong> {{ number_format($applicant->avgRating ?? 0, 1) }}
                                 </p>
                             </div>
                         </div>
