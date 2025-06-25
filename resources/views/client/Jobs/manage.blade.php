@@ -195,7 +195,7 @@
                 <button onclick="openModalAffiliasi()" class="bg-blue-500 text-white px-4 py-2 rounded">
                     Dapatkan worker yang bermitra disini
                 </button>
-            @elseif ($job->pengajuan_affiliate == 1 && (auth()->user()->role != 'admin'))
+            @elseif ($job->pengajuan_affiliate == 1 && (auth()->check() && auth()->user()->role != 'admin' && $job->status_affiliate == 0))
                 <button onclick="#" class="bg-blue-500 text-white px-4 py-2 rounded">
                     Chat admin
                 </button>
