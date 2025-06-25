@@ -107,7 +107,15 @@
                         <span class="font-medium">{{ $otherUser->username }}</span>
                     </div>
                 </div>
+
+                <!-- Tombol Hapus dengan SweetAlert -->
+                <button type="button"
+                    class="text-red-500 hover:text-red-700 text-sm"
+                    onclick="confirmDeleteConversation({{ $conversation->id }})">
+                    <i class="fa fa-trash mr-1"></i> Hapus
+                </button>
             </div>
+
 
             <!-- Chat Messages -->
             <div class="flex-1 bg-gray-50 p-4 overflow-y-auto" id="chatMessages">
@@ -137,8 +145,9 @@
                                     </span>
                                 </div>
                             @endif
-                            
+
                             @if($message->sender_id === Auth::id())
+
                                 <!-- Sent Message -->
                                 <div class="flex items-end justify-end">
                                     <div class="bg-blue-500 text-white rounded-lg py-2 px-4 max-w-md break-words">
@@ -258,6 +267,67 @@
 @include('General.footer')
 
 <script>
+    function deleteMessage(messageId) {
+    Swal.fire({
+        title: 'Hapus Pesan?',
+        text: 'Pesan ini hanya akan dihapus dari tampilan Anda.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#aaa',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/chat/message/soft-delete/${messageId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Terhapus!', 'Pesan telah dihapus.', 'success')
+                        .then(() => location.reload());
+                } else {
+                    Swal.fire('Gagal', 'Pesan gagal dihapus.', 'error');
+                }
+            });
+        }
+    });
+}
+    function confirmDeleteConversation(conversationId) {
+        Swal.fire({
+            title: 'Hapus Percakapan?',
+            text: 'Tindakan ini tidak bisa dibatalkan.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/chat/${conversationId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        Swal.fire('Terhapus!', 'Percakapan telah dihapus.', 'success')
+                            .then(() => {
+                            window.location.href = '{{ route("chat.index") }}';
+                            });
+                    } else {
+                        Swal.fire('Gagal', 'Gagal menghapus percakapan.', 'error');
+                    }
+                });
+            }
+        });
+    }
     document.addEventListener('DOMContentLoaded', function() {
         // AJAX search for admin users
         @if($isAdmin)

@@ -24,29 +24,42 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role === 'client') {
-            $tasks = Task::with('review')
-                ->where('client_id', $user->id)
-                ->where('status', 'completed')
-                ->latest()
-                ->get();
-            $ratingData = TaskReview::where('reviewed_user_id', $user)
-                ->whereNotNull('rating')
-                ->select('rating')
-                ->selectRaw('COUNT(*) as count')
-                ->groupBy('rating')
-                ->orderBy('rating', 'desc')
-                ->get();
+if ($user->role === 'client') {
+    $tasks = Task::with('review')
+        ->where('client_id', $user->id)
+        ->where('status', 'completed')
+        ->latest()
+        ->get();
 
-            return view('General.profil', [
-                'workerProfile' => null,
-                'sertifikasi' => collect(),
-                'portofolio' => collect(),
-                'tasks' => $tasks,
-                'ratingData' => $ratingData,
+    $ratingData = TaskReview::where('reviewed_user_id', $user->id)
+        ->whereNotNull('rating')
+        ->get();
 
-            ]);
-        }
+    $avgRating = $ratingData->avg('rating') ?? 0;
+    $countReviews = $ratingData->count();
+
+    $breakdown = collect([5, 4, 3, 2, 1])->mapWithKeys(function ($star) use ($ratingData, $countReviews) {
+        $count = $ratingData->where('rating', $star)->count();
+        $percentage = $countReviews > 0 ? round(($count / $countReviews) * 100) : 0;
+
+        return [$star => [
+            'count' => $count,
+            'percentage' => $percentage,
+        ]];
+    });
+
+    return view('General.profil', [
+        'workerProfile' => null,
+        'sertifikasi' => collect(),
+        'portofolio' => collect(),
+        'tasks' => $tasks,
+        'ratingData' => $ratingData,
+        'avgRating' => $avgRating,
+        'countReviews' => $countReviews,
+        'breakdown' => $breakdown,
+    ]);
+}
+
 
 
         $workerProfile = $user->workerProfile;
