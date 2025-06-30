@@ -215,14 +215,13 @@ class PaymentController extends Controller
     public function ewalletIndex()
     {
         $user = Auth::user();
-        $workerId= $user->workerProfile->id;
+        $ewallet = Ewallet::where('user_id', $userId)->first();
+        $workerprofileid = WorkerProfile::where('user_id', $userId)->value('id');
+        $paymentAccounts = UserPaymentAccount::where('user_id', $userId)->first();
 
-        $ewallet = Ewallet::where('user_id', $user->id)->first();
-
-        $paymentAccounts = UserPaymentAccount::where('user_id', $user->id)->first();
-
-        $transactions = Transaction::where('worker_id', $workerId)
+      $transactions = Transaction::where('worker_id', $workerId)
                         ->orWhere('client_id', $user->id)
+
                         ->orderBy('created_at', 'desc')
                         ->get();
 

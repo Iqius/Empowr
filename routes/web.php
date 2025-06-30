@@ -109,8 +109,8 @@ Route::get('/dashboard1', function () {
     return match ($user->role) {
         'client' => redirect()->route('client.dashboardClient'),
         'worker' => redirect()->route('worker.dashboardWorker'),
-        'admin'  => redirect()->route('admin.dashboardAdmin'),
-        default  => redirect('/'),
+        'admin' => redirect()->route('admin.dashboardAdmin'),
+        default => redirect('/'),
     };
 })->middleware(['auth'])->name('dashboard');
 // affiliated view
@@ -169,7 +169,8 @@ Route::get('/chat/{user}', [ChatController::class, 'show'])->middleware(['auth']
 Route::post('/chat', [ChatController::class, 'store'])->middleware(['auth'])->name('chat.store');
 Route::delete('/chat/{conversation}', [ChatController::class, 'destroy'])->middleware(['auth'])->name('chat.destroy');
 Route::post('/chat/finish/{id}', [ChatController::class, 'finishConversation'])->name('chat.finish');
-Route::delete('/chat/destroy/{id}', [ChatController::class, 'destroyConversation'])->name('chat.destroy');
+Route::delete('/chat/message/soft-delete/{id}', [ChatController::class, 'softDeleteMessage'])->name('chat.message.softDelete');
+
 // Route::get('/chat/messages', [ChatController::class, 'fetchMessages']);
 // --notif
 Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifications.index');
@@ -216,6 +217,13 @@ Route::post('/withdraw/reject/{id}', [WithdrawController::class, 'rejectWithdraw
 // nampilkan view detail tugas client
 Route::get('/jobs/manage/{id}', [JobController::class, 'manage'])->name('jobs.manage');
 
+
+// GUIDE
+Route::get('/guide', function () {
+    return view('general.guide');
+});
+//search
+Route::get('/tasks/search', [JobController::class, 'search']);
 
 // GA DIPAKE
 

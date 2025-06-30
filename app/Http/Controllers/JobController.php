@@ -41,22 +41,26 @@ class JobController extends Controller
     }
 
 
-    // Create job Client
+    /// Create job Client
     public function createJobClient(Request $request)
     {
         $request->validate([
-            'job_file' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240', // max 2MB
+            'job_file' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240', // max 10MB
         ]);
 
+        $path = null; // Default null, kalau tidak ada file
 
-        // Handle file upload jika ada
-        $path = null;
         if ($request->hasFile('job_file')) {
-            $path = $request->file('job_file')->store('task_files', 'public');
+            $file = $request->file('job_file');
+
+            // Gunakan nama asli + timestamp supaya unik
+            $originalName = time() . '_' . $file->getClientOriginalName();
+
+            // Simpan file ke storage/app/public/task_files
+            $path = $file->storeAs('task_files', $originalName, 'public');
         }
 
-
-
+        // Simpan job ke database
         $task = Task::create([
             'client_id' => Auth::id(),
             'profile_id' => null, // default null, nanti diassign saat ada worker apply
@@ -70,12 +74,13 @@ class JobController extends Controller
             'price' => $request->price,
             'status' => 'open',
             'revisions' => $request->revisions,
-            'category' => json_encode($request->kategoriWorker),
-            'job_file' => $path,
+            'kategory' => json_encode($request->kategoriWorker),
+            'job_file' => $path, // akan null jika tidak upload
         ]);
 
         return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
+
 
 
     // Tampilan add newjob
@@ -159,6 +164,15 @@ class JobController extends Controller
                 $applicant->avgRating = 0;
             }
         }
+        
+        $job = Task::with('user')->findOrFail($id);
+
+        $clientUser = $job->user;
+
+        if ($clientUser) {
+            $ratingData = TaskReview::where('reviewed_user_id', $clientUser->id)->get();
+            $clientUser->avgRating = $ratingData->avg('rating') ?? 0;
+        }
 
         // Cek apakah user ini sudah melamar task tersebut
         $hasApplied = TaskApplication::where('task_id', $id)
@@ -192,59 +206,59 @@ class JobController extends Controller
 
 
 
-   public function manage($id, Request $request)
-{
-    $user = Auth::user();
+    public function manage($id, Request $request)
+    {
+        $user = Auth::user();
 
-    if ($user->role == 'admin') {
-        $task = Task::where('id', $id)->firstOrFail();
-    } else {
-        $task = Task::with('user')->findOrFail($id);
-    }
-
-    $userId = Auth::id();
-    $ewallet = Ewallet::where('user_id', $userId)->first();
-
-    // Ambil parameter sort dan arah
-    $sortBy = $request->get('sort', 'bidPrice');
-    $sortDir = $request->get('dir', 'asc');
-
-    $allowedSorts = ['bidPrice', 'experience'];
-    if (!in_array($sortBy, $allowedSorts)) {
-        $sortBy = 'bidPrice';
-    }
-
-    // Ambil semua applicant + relasi yang dibutuhkan
-    $applicants = TaskApplication::with([
-        'worker.user',
-        'worker.certifications.images',
-        'worker.portfolios.images',
-    ])->where('task_id', $id)->get();
-    foreach ($applicants as $applicant) {
-        $user = $applicant->worker->user ?? null;
-
-        if ($user) {
-            $ratingData = TaskReview::where('reviewed_user_id', $user->id)->get();
-            $applicant->avgRating = $ratingData->avg('rating') ?? 0;
+        if ($user->role == 'admin') {
+            $task = Task::where('id', $id)->firstOrFail();
         } else {
-            $applicant->avgRating = 0;
+            $task = Task::with('user')->findOrFail($id);
         }
-    }
-    // Sorting manual jika berdasarkan pengalaman
-    if ($sortBy === 'experience') {
-        $applicants = $applicants->sortBy(function ($applicant) {
-            return $applicant->worker->pengalaman_kerja ?? 0;
-        }, SORT_REGULAR, $sortDir === 'desc')->values();
-    } else {
-        // Sorting langsung berdasarkan kolom TaskApplication
-        $applicants = $applicants->sortBy(function ($applicant) use ($sortBy) {
-            return $applicant->{$sortBy} ?? 0;
-        }, SORT_REGULAR, $sortDir === 'desc')->values();
-    }
+
+        $userId = Auth::id();
+        $ewallet = Ewallet::where('user_id', $userId)->first();
+
+        // Ambil parameter sort dan arah
+        $sortBy = $request->get('sort', 'bidPrice');
+        $sortDir = $request->get('dir', 'asc');
+
+        $allowedSorts = ['bidPrice', 'experience'];
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'bidPrice';
+        }
+
+        // Ambil semua applicant + relasi yang dibutuhkan
+        $applicants = TaskApplication::with([
+            'worker.user',
+            'worker.certifications.images',
+            'worker.portfolios.images',
+        ])->where('task_id', $id)->get();
+        foreach ($applicants as $applicant) {
+            $user = $applicant->worker->user ?? null;
+
+            if ($user) {
+                $ratingData = TaskReview::where('reviewed_user_id', $user->id)->get();
+                $applicant->avgRating = $ratingData->avg('rating') ?? 0;
+            } else {
+                $applicant->avgRating = 0;
+            }
+        }
+        // Sorting manual jika berdasarkan pengalaman
+        if ($sortBy === 'experience') {
+            $applicants = $applicants->sortBy(function ($applicant) {
+                return $applicant->worker->pengalaman_kerja ?? 0;
+            }, SORT_REGULAR, $sortDir === 'desc')->values();
+        } else {
+            // Sorting langsung berdasarkan kolom TaskApplication
+            $applicants = $applicants->sortBy(function ($applicant) use ($sortBy) {
+                return $applicant->{$sortBy} ?? 0;
+            }, SORT_REGULAR, $sortDir === 'desc')->values();
+        }
 
 
-    return view('client.jobs.manage', compact('task', 'applicants', 'ewallet'));
-}
+        return view('client.jobs.manage', compact('task', 'applicants', 'ewallet'));
+    }
 
 
 
@@ -307,7 +321,7 @@ class JobController extends Controller
     }
 
 
-    
+
 
     //tolak worker
     public function ClientReject(Request $request)
@@ -333,8 +347,24 @@ class JobController extends Controller
         return back()->with('success', 'Lamaran berhasil dihapus.');
     }
 
+  public function search(Request $request)
+  {
+      $query = $request->q;
+      $sort = $request->sort;
 
+      $tasks = Task::with('user')->where('title', 'like', '%' . $query . '%');
 
+      if ($sort === 'price-asc') {
+          $tasks = $tasks->orderBy('price', 'asc');
+      } elseif ($sort === 'price-desc') {
+          $tasks = $tasks->orderBy('price', 'desc');
+      }
+
+      $tasks = $tasks->get();
+
+      $html = view('components.job-cards', ['jobs' => $tasks])->render();
+      return response($html);
+  }
 
 }
 
@@ -484,6 +514,3 @@ class JobController extends Controller
     //         return back()->with('error', 'Terjadi kesalahan: ' . $errorMessage);
     //     }
     // }
-
-
-   

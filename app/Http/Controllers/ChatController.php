@@ -40,7 +40,18 @@ class ChatController extends Controller
     $this->markMessagesAsRead($conversation);
     
     // Get messages for this conversation
-    $messages = $conversation->messages()->with(['sender', 'receiver'])->get();
+    $messages = $conversation->messages()
+        ->where(function ($query) {
+            $query->where(function ($q) {
+                $q->where('sender_id', Auth::id())
+                ->where('deleted_by_sender', false);
+            })->orWhere(function ($q) {
+                $q->where('receiver_id', Auth::id())
+                ->where('deleted_by_receiver', false);
+            });
+        })
+        ->with(['sender', 'receiver'])
+        ->get();
     
     // Get all conversations for the sidebar
     $conversations = Conversation::where('user_id', Auth::id())
@@ -233,32 +244,54 @@ $taskId = $request->input('task_id');
     /**
      * Delete a conversation and its messages
      */
-    public function destroy($conversationId)
-    {
-        $conversation = Conversation::where('id', $conversationId)
-            ->where('user_id', Auth::id())
-            ->firstOrFail();
-        
-        // Delete all messages in this conversation
-        Message::where(function($query) use ($conversation) {
-            $query->where('sender_id', Auth::id())
-                  ->where('receiver_id', $conversation->other_user_id);
-        })->orWhere(function($query) use ($conversation) {
-            $query->where('sender_id', $conversation->other_user_id)
-                  ->where('receiver_id', Auth::id());
-        })->delete();
-        
-        // Delete both sides of the conversation
-        Conversation::where('user_id', Auth::id())
-            ->where('other_user_id', $conversation->other_user_id)
-            ->delete();
-        
-        Conversation::where('user_id', $conversation->other_user_id)
-            ->where('other_user_id', Auth::id())
-            ->delete();
-        
-        return redirect()->route('chat.chat_index')->with('success', 'Conversation deleted');
+   public function destroy($conversationId)
+{
+    $conversation = Conversation::where('id', $conversationId)
+        ->where('user_id', Auth::id())
+        ->first();
+
+    if (!$conversation) {
+        return response()->json(['error' => 'Percakapan tidak ditemukan'], 404);
     }
+
+    $authId = Auth::id();
+    $otherId = $conversation->other_user_id;
+
+    // Soft delete pesan dari sisi user yang login
+    $messages = Message::where(function($query) use ($authId, $otherId) {
+        $query->where('sender_id', $authId)
+              ->where('receiver_id', $otherId);
+    })->orWhere(function($query) use ($authId, $otherId) {
+        $query->where('sender_id', $otherId)
+              ->where('receiver_id', $authId);
+    })->get();
+
+    foreach ($messages as $message) {
+        if ($message->sender_id == $authId && !$message->deleted_by_sender) {
+            $message->deleted_by_sender = true;
+        } elseif ($message->receiver_id == $authId && !$message->deleted_by_receiver) {
+            $message->deleted_by_receiver = true;
+        }
+        $message->save();
+
+        // Hapus permanen jika kedua sisi sudah menghapus
+        if ($message->deleted_by_sender && $message->deleted_by_receiver) {
+            if ($message->attachment) {
+                Storage::disk('public')->delete($message->attachment);
+            }
+            $message->delete(); // hard delete
+        }
+    }
+
+    // Hapus hanya sisi conversation user ini
+    Conversation::where('user_id', $authId)
+        ->where('other_user_id', $otherId)
+        ->delete();
+
+    return response()->json(['success' => true]);
+}
+
+
     public function fetchMessages(Request $request, $chatId)
     {
         $afterId = $request->query('after');
@@ -274,4 +307,37 @@ $taskId = $request->input('task_id');
 
         return response()->json($messages);
     }
+   public function softDeleteMessage($id)
+{
+    $message = Message::findOrFail($id);
+    $userId = Auth::id();
+
+    dd($message->deleted_by_sender, $message->deleted_by_receiver);
+
+    // Cek siapa yang menghapus
+    if ($message->sender_id == $userId && !$message->deleted_by_sender) {
+        $message->deleted_by_sender = true;
+    } elseif ($message->receiver_id == $userId && !$message->deleted_by_receiver) {
+        $message->deleted_by_receiver = true;
+    } else {
+        return response()->json(['error' => 'Unauthorized or already deleted'], 403);
+    }
+
+    $message->save();
+
+    // Cek kembali apakah kedua sisi sudah menghapus
+    if ($message->deleted_by_sender && $message->deleted_by_receiver) {
+        if ($message->attachment) {
+            Storage::disk('public')->delete($message->attachment);
+        }
+
+        // Hapus permanen dari DB
+        $message->delete();
+    }
+
+    return response()->json(['success' => true, 'message' => 'Pesan berhasil dihapus dari tampilan Anda.']);
+}
+
+
+
 }
