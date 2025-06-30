@@ -9,21 +9,33 @@
                 @php
                     use App\Models\TaskReview;
 
-                    $hasPendingReview = TaskReview::where('task_id', $task->id)
-                        ->where('user_id', auth()->id())
-                        ->where('rating', 0)
-                        ->exists();
+                    $user = auth()->user();
+
+                    // Cek apakah role-nya worker dan task sudah selesai
+                    $isWorker = $user->role === 'worker';
+                    $isCompleted = $task->status === 'completed';
+
+                    // Cek apakah task review untuk task ini dan user ini sudah ada
+                    $hasReviewed = TaskReview::where('task_id', $task->id)
+                                    ->where('user_id', $user->id)
+                                    ->exists();
                 @endphp
 
-                @if(auth()->user()->role == 'worker' && $hasPendingReview)
+                @if($isWorker && $isCompleted && !$hasReviewed)
                     <button type="button" onclick="openModal()"
                         class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4">
                         Berikan Penilaian
                     </button>
                 @endif
 
+
                 </div>
                 <div class="p-6 bg-white rounded-lg shadow-md my-5">
+                    @if($task->status == 'arbitrase-completed')
+                        <h1 class="text-xl font-semibold text-gray-700 mt-6">TASK STATUS</h1>
+                        <hr class="border-t-1 border-gray-300 mb-7 mt-4">
+                        <div class="job-description text-gray-600 mt-1">TASK STATUS SELESAI DENGAN ARBITRASE</div>
+                    @endif
                     <h1 class="text-xl font-semibold text-gray-700 mt-6">Deskripsi</h1>
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
                     <div class="job-description text-gray-600 mt-1">{!!$task->description!!}</div>
@@ -167,26 +179,18 @@
 </div>
 
 
-<!-- Modal Form Submit-->
-<div id="modal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center hidden opacity-0 transition-opacity duration-500 ease-in-out">
-  <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-    <h2 class="text-xl font-semibold mb-4">Enter Note</h2>
-    <textarea id="noteInput" class="w-full p-2 border rounded mb-4" placeholder="Write your note here..."></textarea>
-    <div class="flex justify-end">
-      <button id="submitNote" class="bg-blue-500 text-white py-2 px-4 rounded">Submit</button>
-      <button id="closeModal" class="ml-2 bg-gray-500 text-white py-2 px-4 rounded">Close</button>
-    </div>
-  </div>
-</div>
 
-<!-- Modal Review -->
-<div id="ratingModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center transition-opacity duration-300">
-    <div id="modalContent" class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 opacity-0 scale-95 transform transition-all duration-300 relative">
+
+<div id="ratingModal"
+    class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center transition-opacity duration-300">
+    <div id="modalContent"
+        class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 opacity-0 scale-95 transform transition-all duration-300 relative">
         <!-- Close Modal -->
-        <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600" onclick="closeModal()">
+        <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600" onclick="closeModalRating()">
             <i class="bi bi-x-lg text-xl"></i>
         </button>
-        <h2 class="text-xl font-semibold mb-4 text-gray-800">Beri Rating & Ulasan Sebelum Menyelesaikan</h2>
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Beri Rating & Ulasan Untuk Worker Sebelum Menyelesaikan
+        </h2>
         <form id="completeJobForm" action="{{ route('task-ulasan.store', $task->id) }}" method="POST" class="space-y-4">
             @csrf
             @method('POST')
@@ -195,16 +199,17 @@
             <div class="flex items-center gap-2">
                 @for ($i = 1; $i <= 5; $i++)
                     <label>
-                        <input type="radio" name="rating" value="{{ $i }}" class="hidden" required>
-                        <i class="bi bi-star text-3xl text-gray-400 hover:text-yellow-400 cursor-pointer"></i>
+                    <input type="radio" name="rating" value="{{ $i }}" class="hidden" required>
+                    <i class="bi bi-star text-3xl text-gray-400 hover:text-yellow-400 cursor-pointer"></i>
                     </label>
-                @endfor
+                    @endfor
             </div>
 
             <!-- Review -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Ulasan</label>
-                <textarea name="review" rows="4" class="w-full border border-gray-300 rounded-lg focus:ring focus:ring-green-200" placeholder="Tulis ulasanmu..." required></textarea>
+                <textarea name="review" rows="4" class="w-full p-2 border rounded-lg mb-4"
+                    placeholder="Tulis ulasanmu..."></textarea>
             </div>
 
             <!-- Submit -->
@@ -216,10 +221,6 @@
         </form>
     </div>
 </div>
-
-
-
-
 
 
 
@@ -337,3 +338,19 @@
         }
     });
 </script>
+
+
+
+
+
+<!-- Modal Form Submit
+<div id="modal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center hidden opacity-0 transition-opacity duration-500 ease-in-out">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+    <h2 class="text-xl font-semibold mb-4">Enter Note</h2>
+    <textarea id="noteInput" class="w-full p-2 border rounded mb-4" placeholder="Write your note here..."></textarea>
+    <div class="flex justify-end">
+      <button id="submitNote" class="bg-blue-500 text-white py-2 px-4 rounded">Submit</button>
+      <button id="closeModal" class="ml-2 bg-gray-500 text-white py-2 px-4 rounded">Close</button>
+    </div>
+  </div>
+</div> -->

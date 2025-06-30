@@ -164,6 +164,15 @@ class JobController extends Controller
                 $applicant->avgRating = 0;
             }
         }
+        
+        $job = Task::with('user')->findOrFail($id);
+
+        $clientUser = $job->user;
+
+        if ($clientUser) {
+            $ratingData = TaskReview::where('reviewed_user_id', $clientUser->id)->get();
+            $clientUser->avgRating = $ratingData->avg('rating') ?? 0;
+        }
 
         // Cek apakah user ini sudah melamar task tersebut
         $hasApplied = TaskApplication::where('task_id', $id)
@@ -337,6 +346,26 @@ class JobController extends Controller
 
         return back()->with('success', 'Lamaran berhasil dihapus.');
     }
+
+  public function search(Request $request)
+  {
+      $query = $request->q;
+      $sort = $request->sort;
+
+      $tasks = Task::with('user')->where('title', 'like', '%' . $query . '%');
+
+      if ($sort === 'price-asc') {
+          $tasks = $tasks->orderBy('price', 'asc');
+      } elseif ($sort === 'price-desc') {
+          $tasks = $tasks->orderBy('price', 'desc');
+      }
+
+      $tasks = $tasks->get();
+
+      $html = view('components.job-cards', ['jobs' => $tasks])->render();
+      return response($html);
+  }
+
 }
 
 

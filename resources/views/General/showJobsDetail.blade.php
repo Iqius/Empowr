@@ -74,10 +74,35 @@
                                 alt="User" class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover">
 
                             <div>
-                                <p class="font-semibold text-gray-800 flex items-center gap-1 mb-2">
+                                <p class="font-semibold text-gray-800 flex items-center gap-1 mb-1">
                                     {{ $job->user->nama_lengkap }}
                                     <span class="text-[#1F4482]">&#10004;</span>
                                 </p>
+                               @php
+                                    $rating = round($job->user->avgRating ?? 0, 1); // Misalnya 3.7
+                                    $fullStars = floor($rating); // Bintang penuh
+                                    $halfStar = ($rating - $fullStars) >= 0.5 ? 1 : 0; // Bintang setengah
+                                    $emptyStars = 5 - $fullStars - $halfStar;
+                                @endphp
+
+                                <p class="text-sm text-yellow-500 flex items-center gap-1">
+                                    @for ($i = 0; $i < $fullStars; $i++)
+                                        <i class="fa-solid fa-star"></i>
+                                    @endfor
+
+                                    @if ($halfStar)
+                                        <i class="fa-solid fa-star-half-stroke"></i>
+                                    @endif
+
+                                    @for ($i = 0; $i < $emptyStars; $i++)
+                                        <i class="fa-regular fa-star"></i>
+                                    @endfor
+
+                                    <span class="ml-1 text-gray-600">
+                                        {{ number_format($rating, 1) }}
+                                    </span>
+                                </p>
+
                                 <p class="text-xs flex items-center gap-1">
                                     <i class="fa-solid fa-pen text-gray-500"></i>
                                     <span class="text-gray-500">Task diposting</span>

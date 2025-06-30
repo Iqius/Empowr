@@ -19,6 +19,8 @@
    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
    <link rel="icon" href="{{ asset('assets/images/logosaja.png') }}" type="image/png">
+   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 
    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
@@ -29,6 +31,10 @@
       data-client-key="{{config('midtrans.client_key')}}"></script>
    @vite(['resources/css/app.css', 'resources/js/app.js'])
    <script src="https://cdn.tailwindcss.com"></script>
+
+<!-- swiper js untuk scroll gambar -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
 
    <style>
       body {
@@ -118,6 +124,8 @@
          color: white;
       }
    </style>
+
+   
 </head>
 
 <body class="bg-gray-100" style="font-family: sans-serif;">

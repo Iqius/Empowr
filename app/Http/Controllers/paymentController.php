@@ -173,21 +173,6 @@ class PaymentController extends Controller
                             $task->price = $transaction->amount;
                             $task->save();
 
-                            TaskReview::create([
-                                'task_id' => $task->id,
-                                'user_id' => $transaction->worker_id, // User yang memberikan ulasan (client)
-                                'reviewed_user_id' => $transaction->client_id, // Worker yang menerima ulasan
-                                'rating' => '0', // Rating
-                                'comment' => null, // Komentar
-                            ]);
-
-                            TaskReview::create([
-                                'task_id' => $task->id,
-                                'user_id' => $transaction->client_id, // User yang memberikan ulasan (client)
-                                'reviewed_user_id' => $transaction->worker_id, // Worker yang menerima ulasan
-                                'rating' => '0', // Rating
-                                'comment' => null, // Komentar
-                            ]);
                         } else {
                             // Kalau bukan affiliate
                             $task->price = $transaction->amount;
@@ -196,22 +181,6 @@ class PaymentController extends Controller
                             $task->status_affiliate = false;
                             $task->status = 'in progress';
                             $task->save();
-
-                            TaskReview::create([
-                                'task_id' => $task->id,
-                                'user_id' => $transaction->worker_id, // User yang memberikan ulasan (client)
-                                'reviewed_user_id' => $transaction->client_id, // Worker yang menerima ulasan
-                                'rating' => '0', // Rating
-                                'comment' => null, // Komentar
-                            ]);
-
-                            TaskReview::create([
-                                'task_id' => $task->id,
-                                'user_id' => $transaction->client_id, // User yang memberikan ulasan (client)
-                                'reviewed_user_id' => $transaction->worker_id, // Worker yang menerima ulasan
-                                'rating' => '0', // Rating
-                                'comment' => null, // Komentar
-                            ]);
                         }
                         // Bisa juga skip penghapusan task application kalau dibutuhkan
                         TaskApplication::where('task_id', $task->id)->delete();
@@ -245,14 +214,14 @@ class PaymentController extends Controller
 
     public function ewalletIndex()
     {
-        $userId = Auth::id();
-
+        $user = Auth::user();
         $ewallet = Ewallet::where('user_id', $userId)->first();
-
+        $workerprofileid = WorkerProfile::where('user_id', $userId)->value('id');
         $paymentAccounts = UserPaymentAccount::where('user_id', $userId)->first();
 
-        $transactions = Transaction::where('worker_id', $userId)
-                        ->orWhere('client_id', $userId)
+      $transactions = Transaction::where('worker_id', $workerId)
+                        ->orWhere('client_id', $user->id)
+
                         ->orderBy('created_at', 'desc')
                         ->get();
 
@@ -302,22 +271,7 @@ class PaymentController extends Controller
                 'status' => 'in progress',
             ]);
 
-            // Untuk ratting otomatis kebuat ketika hire
-            TaskReview::create([
-                'task_id' => $task->id,
-                'user_id' => $workerId, // User yang memberikan ulasan (client)
-                'reviewed_user_id' => $user->id, // Worker yang menerima ulasan
-                'rating' => '0', // Rating
-                'comment' => null, // Komentar
-            ]);
-
-            TaskReview::create([
-                'task_id' => $task->id,
-                'user_id' => $user->id, // User yang memberikan ulasan (client)
-                'reviewed_user_id' => $workerId, // Worker yang menerima ulasan
-                'rating' => '0', // Rating
-                'comment' => null, // Komentar
-            ]);
+           
         } else {
             // Potong saldo ewallet
             $ewallet->balance -= $amount;
@@ -329,24 +283,6 @@ class PaymentController extends Controller
                 'client_id' => $user->id,
                 'status_affiliate' => false,
                 'status' => 'in progress',
-            ]);
-
-
-            // Untuk ratting otomatis kebuat ketika hire
-            TaskReview::create([
-                'task_id' => $task->id,
-                'user_id' => $workerId, // User yang memberikan ulasan (client)
-                'reviewed_user_id' => $user->id, // Worker yang menerima ulasan
-                'rating' => '0', // Rating
-                'comment' => null, // Komentar
-            ]);
-
-            TaskReview::create([
-                'task_id' => $task->id,
-                'user_id' => $user->id, // User yang memberikan ulasan (client)
-                'reviewed_user_id' => $workerId, // Worker yang menerima ulasan
-                'rating' => '0', // Rating
-                'comment' => null, // Komentar
             ]);
         }
         
