@@ -1,18 +1,19 @@
 @include('General.header')
 
 @if(session('success'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: '{{ session('success') }}',
-                timer: 2500,
-                timerProgressBar: true,
-                showConfirmButton: false,
-            });
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('
+            success ') }}',
+            timer: 2500,
+            timerProgressBar: true,
+            showConfirmButton: false,
         });
-    </script>
+    });
+</script>
 @endif
 
 <div class="p-4 mt-14">
@@ -29,28 +30,28 @@
 
                         <div class="flex items-center gap-3 flex-wrap">
                             @auth
-                                @if (Auth::user()->role === 'worker')
-                                    <form id="applyForm" action="{{ route('task.apply', $job->id) }}" method="POST"
-                                        class="flex items-center gap-2">
-                                        @csrf
+                            @if (Auth::user()->role === 'worker')
+                            <form id="applyForm" action="{{ route('task.apply', $job->id) }}" method="POST"
+                                class="flex items-center gap-2">
+                                @csrf
 
-                                        @if($hasApplied)
-                                            <button type="button"
-                                                class="bg-gray-400 cursor-not-allowed text-white text-sm px-8 py-2 rounded-md"
-                                                disabled>
-                                                Task telah dilamar!
-                                            </button>
-                                        @else
-                                            <button type="button" id="openApplyModalBtn"
-                                                class="bg-[#1F4482] text-white text-sm px-8 py-2 rounded-md hover:bg-[#18346a] focus:outline-none">
-                                                Apply Now
-                                            </button>
-                                        @endif
-
-                                        <input type="hidden" name="bidPrice" id="formBidPrice">
-                                        <input type="hidden" name="catatan" id="formCatatan">
-                                    </form>
+                                @if($hasApplied)
+                                <button type="button"
+                                    class="bg-gray-400 cursor-not-allowed text-white text-sm px-8 py-2 rounded-md"
+                                    disabled>
+                                    Task telah dilamar!
+                                </button>
+                                @else
+                                <button type="button" id="openApplyModalBtn"
+                                    class="bg-[#1F4482] text-white text-sm px-8 py-2 rounded-md hover:bg-[#18346a] focus:outline-none">
+                                    Apply Now
+                                </button>
                                 @endif
+
+                                <input type="hidden" name="bidPrice" id="formBidPrice">
+                                <input type="hidden" name="catatan" id="formCatatan">
+                            </form>
+                            @endif
                             @endauth
 
 
@@ -147,12 +148,12 @@
                         <div>
                             <h2 class="text-xl font-semibold text-gray-800 mb-2">Attachment Files</h2>
                             @if ($job->job_file)
-                                <a href="{{ asset('storage/' . $job->job_file) }}" download
-                                    class="inline-block mt-2 px-4 py-2 bg-[#1F4482] text-white text-sm rounded-md hover:bg-[#18346a]">
-                                    Download File
-                                </a>
+                            <a href="{{ asset('storage/' . $job->job_file) }}" download
+                                class="inline-block mt-2 px-4 py-2 bg-[#1F4482] text-white text-sm rounded-md hover:bg-[#18346a]">
+                                Download File
+                            </a>
                             @else
-                                <p class="text-sm text-gray-500">No attachment available.</p>
+                            <p class="text-sm text-gray-500">No attachment available.</p>
                             @endif
                         </div>
                     </div>
@@ -191,13 +192,13 @@
                         <p class="text-gray-500 mb-2">Kategori Task</p>
                         <div>
                             @php
-                                $categories = json_decode($job->category, true) ?? [];
+                            $categories = json_decode($job->kategory, true) ?? [];
                             @endphp
-                            @foreach($categories as $category)
-                                <span
-                                    class="inline-block bg-gradient-to-b from-[#1F4482] to-[#2A5DB2] text-white px-3 py-1 rounded-full text-sm mr-2 mb-2">
-                                    {{ $category }}
-                                </span>
+                            @foreach($categories as $kategory)
+                            <span
+                                class="inline-block bg-gradient-to-b from-[#1F4482] to-[#2A5DB2] text-white px-3 py-1 rounded-full text-sm mr-2 mb-2">
+                                {{ $kategory }}
+                            </span>
                             @endforeach
                         </div>
                     </div>
@@ -211,39 +212,39 @@
 
             <div id="applicants-list" class="space-y-4">
                 @forelse ($applicants as $applicant)
-                    @php
-                        $worker = $applicant->worker;
-                        $user = $worker->user;
-                    @endphp
+                @php
+                $worker = $applicant->worker;
+                $user = $worker->user;
+                @endphp
 
-                    <a href="{{ route('profile.worker.lamar', $worker->id) }}"
-                        class="block p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition hover:bg-gray-100"
-                        data-index="{{ $loop->index }}" data-name="{{ $user->nama_lengkap }}"
-                        data-note="{{ $applicant->catatan }}" data-price="{{ $applicant->bidPrice }}"
-                        data-experience="{{ $worker->pengalaman_kerja }}" data-rating="{{ number_format($applicant->avgRating ?? 0, 1) }}"
+                <a href="{{ route('profile.worker.lamar', $worker->id) }}"
+                    class="block p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition hover:bg-gray-100"
+                    data-index="{{ $loop->index }}" data-name="{{ $user->nama_lengkap }}"
+                    data-note="{{ $applicant->catatan }}" data-price="{{ $applicant->bidPrice }}"
+                    data-experience="{{ $worker->pengalaman_kerja }}" data-rating="{{ number_format($applicant->avgRating ?? 0, 1) }}"
 
-                        data-education="{{ $worker->pendidikan }}" data-cv="{{ $worker->cv }}"
-                        data-label="{{ $worker->empowr_label }}" data-affiliate="{{ $worker->empowr_affiliate }}">
+                    data-education="{{ $worker->pendidikan }}" data-cv="{{ $worker->cv }}"
+                    data-label="{{ $worker->empowr_label }}" data-affiliate="{{ $worker->empowr_affiliate }}">
 
-                        <div class="flex items-center justify-between gap-4 mb-4">
-                            <!-- Left: Profile Section -->
-                            <div class="flex items-center gap-4">
-                                <img src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : asset('assets/images/avatar.png') }}"
-                                    alt="Profile Image" class="w-16 h-16 rounded-full object-cover border border-gray-300">
-                                <div>
-                                    <p class="text-lg font-semibold text-gray-800">{{ $user->nama_lengkap }}</p>
-                                    <p class="text-sm text-gray-500">
-                                        Pengalaman: {{ $worker->pengalaman_kerja ?? '-' }} tahun |
-                                        Rating: {{ number_format($applicant->avgRating ?? 0, 1) }}
-                                    </p>
-                                </div>
+                    <div class="flex items-center justify-between gap-4 mb-4">
+                        <!-- Left: Profile Section -->
+                        <div class="flex items-center gap-4">
+                            <img src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : asset('assets/images/avatar.png') }}"
+                                alt="Profile Image" class="w-16 h-16 rounded-full object-cover border border-gray-300">
+                            <div>
+                                <p class="text-lg font-semibold text-gray-800">{{ $user->nama_lengkap }}</p>
+                                <p class="text-sm text-gray-500">
+                                    Pengalaman: {{ $worker->pengalaman_kerja ?? '-' }} tahun |
+                                    Rating: {{ number_format($applicant->avgRating ?? 0, 1) }}
+                                </p>
                             </div>
-
                         </div>
-                    </a>
+
+                    </div>
+                </a>
 
                 @empty
-                    <p class="text-gray-500 text-sm">Belum ada pelamar untuk task ini.</p>
+                <p class="text-gray-500 text-sm">Belum ada pelamar untuk task ini.</p>
                 @endforelse
             </div>
         </div>
@@ -279,13 +280,19 @@
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         console.log("Quill Editor Initialized");
 
         // 🔹 Konfigurasi toolbar Quill
         const toolbarOptions = [
-            [{ 'header': [1, 2, false] }],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{
+                'header': [1, 2, false]
+            }],
+            [{
+                'list': 'ordered'
+            }, {
+                'list': 'bullet'
+            }],
             ['bold', 'italic', 'underline'],
             ['link', 'image'],
             ['clean']
@@ -294,7 +301,9 @@
         // 🔹 Inisialisasi Quill Editor di halaman ini
         var quill = new Quill('#editor', {
             theme: 'snow',
-            modules: { toolbar: toolbarOptions }
+            modules: {
+                toolbar: toolbarOptions
+            }
         });
 
         // Jika ingin memuat data yang sudah ada (misalnya dari database)
@@ -308,7 +317,7 @@
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const openBtn = document.getElementById("openApplyModalBtn");
         const modal = document.getElementById("applyModal");
         const closeBtn = document.getElementById("closeApplyModal");
@@ -333,7 +342,7 @@
         }
 
         // Format input harga dengan pemisah ribuan saat ketik
-        negoInput.addEventListener("input", function (e) {
+        negoInput.addEventListener("input", function(e) {
             let value = e.target.value.replace(/[^0-9]/g, "");
             if (value) {
                 e.target.value = Number(value).toLocaleString("id-ID");
@@ -349,7 +358,7 @@
         closeBtn.addEventListener("click", closeModal);
 
         // Submit form saat klik tombol daftar
-       submitBtn.addEventListener("click", function () {
+        submitBtn.addEventListener("click", function() {
             const rawNego = negoInput.value.replace(/[.,]/g, "");
             if (!rawNego || isNaN(rawNego) || Number(rawNego) <= 0) {
                 Swal.fire({
@@ -368,7 +377,7 @@
         });
 
         // Opsional: tutup modal dengan ESC key
-        window.addEventListener("keydown", function (e) {
+        window.addEventListener("keydown", function(e) {
             if (e.key === "Escape" && !modal.classList.contains("hidden")) {
                 closeModal();
             }
