@@ -74,11 +74,11 @@
                                 alt="User" class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover">
 
                             <div>
-                                <p class="font-semibold text-gray-800 flex items-center gap-1 mb-1">
+                                <p class="font-semibold text-gray-800 flex items-center gap-1 mb-2">
                                     {{ $job->user->nama_lengkap }}
                                     <span class="text-[#1F4482]">&#10004;</span>
                                 </p>
-                               @php
+                                @php
                                     $rating = round($job->user->avgRating ?? 0, 1); // Misalnya 3.7
                                     $fullStars = floor($rating); // Bintang penuh
                                     $halfStar = ($rating - $fullStars) >= 0.5 ? 1 : 0; // Bintang setengah
@@ -102,7 +102,6 @@
                                         {{ number_format($rating, 1) }}
                                     </span>
                                 </p>
-
                                 <p class="text-xs flex items-center gap-1">
                                     <i class="fa-solid fa-pen text-gray-500"></i>
                                     <span class="text-gray-500">Task diposting</span>
@@ -192,12 +191,12 @@
                         <p class="text-gray-500 mb-2">Kategori Task</p>
                         <div>
                             @php
-                            $categories = json_decode($job->kategory, true) ?? [];
+                            $categories = json_decode($job->category, true) ?? [];
                             @endphp
-                            @foreach($categories as $kategory)
+                            @foreach($categories as $category)
                             <span
                                 class="inline-block bg-gradient-to-b from-[#1F4482] to-[#2A5DB2] text-white px-3 py-1 rounded-full text-sm mr-2 mb-2">
-                                {{ $kategory }}
+                                {{ $category }}
                             </span>
                             @endforeach
                         </div>

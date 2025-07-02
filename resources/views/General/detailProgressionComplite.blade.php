@@ -61,6 +61,30 @@
                             <!-- User Info -->
                             <div>
                                 <h3 class="text-xl font-semibold text-gray-800">{{$task->client->nama_lengkap}}</h3>
+                                @php
+                                    $rating = round($task->client->avgRating ?? 0, 1); // Misalnya 3.7
+                                    $fullStars = floor($rating); // Bintang penuh
+                                    $halfStar = ($rating - $fullStars) >= 0.5 ? 1 : 0; // Bintang setengah
+                                    $emptyStars = 5 - $fullStars - $halfStar;
+                                @endphp
+
+                                <p class="text-sm text-yellow-500 flex items-center gap-1 mt-1">
+                                    @for ($i = 0; $i < $fullStars; $i++)
+                                        <i class="fa-solid fa-star"></i>
+                                    @endfor
+
+                                    @if ($halfStar)
+                                        <i class="fa-solid fa-star-half-stroke"></i>
+                                    @endif
+
+                                    @for ($i = 0; $i < $emptyStars; $i++)
+                                        <i class="fa-regular fa-star"></i>
+                                    @endfor
+
+                                    <span class="ml-1 text-gray-600">
+                                        {{ number_format($rating, 1) }}
+                                    </span>
+                                </p>
                                 <p class="text-gray-600">{{$task->client->role}}</p>
                             </div>
                         </div>
@@ -86,6 +110,31 @@
                             <!-- User Info -->
                             <div>
                                 <h3 class="text-xl font-semibold text-gray-800">{{$task->worker->user->nama_lengkap}}</h3>
+                                @php
+                                    $rating = round($task->worker->user->avgRating ?? 0, 1);
+                                    $fullStars = floor($rating);
+                                    $halfStar = ($rating - $fullStars) >= 0.5 ? 1 : 0;
+                                    $emptyStars = 5 - $fullStars - $halfStar;
+                                @endphp
+
+
+                                    <p class="text-sm text-yellow-500 flex items-center gap-1 mt-1">
+                                        @for ($i = 0; $i < $fullStars; $i++)
+                                            <i class="fa-solid fa-star"></i>
+                                        @endfor
+
+                                        @if ($halfStar)
+                                            <i class="fa-solid fa-star-half-stroke"></i>
+                                        @endif
+
+                                        @for ($i = 0; $i < $emptyStars; $i++)
+                                            <i class="fa-regular fa-star"></i>
+                                        @endfor
+
+                                        <span class="ml-1 text-gray-600">
+                                            {{ number_format($rating, 1) }}
+                                        </span>
+                                    </p>
                                 <p class="text-gray-600">{{$task->worker->user->role}}</p>
                             </div>
                         </div>
