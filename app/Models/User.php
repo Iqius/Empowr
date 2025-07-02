@@ -104,4 +104,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Session::class, 'user_id');
     }
+    public function getAvgRatingAttribute()
+    {
+        return round($this->receivedRatings()->avg('rating') ?? 0, 1);
+    }
+
+    public function receivedRatings()
+    {
+        return $this->hasMany(TaskReview::class, 'reviewed_user_id');
+    }
 }
