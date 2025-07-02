@@ -49,6 +49,7 @@ class AuthController extends Controller
         if ($request->role == 'worker') {
             WorkerProfile::create([
                 'user_id' => $user->id,
+                'keahlian' => "[]",
             ]);
             UserPaymentAccount::create([
                 'user_id' => $user->id,

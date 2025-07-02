@@ -67,7 +67,7 @@
 
                     <div>
                         <label class="text-sm font-medium text-gray-600 mb-1 block">Kategori Task</label>
-                        <select id="keahlian-select" name="kategory" multiple class="w-full p-2 border rounded">
+                        <select id="keahlian-select" name="category[]" multiple class="w-full p-2 border rounded">
                             @php
                             $selectedSkills = json_decode(optional(Auth::user()->keahlian)->keahlian, true) ?? [];
                             $categories = [
@@ -110,6 +110,7 @@
                             "Branding",
                             "Graphic Design",
                             "UI/UX Design",
+                            "IT Support",
                             "Logo Design",
                             "Motion Graphics",
                             "Illustration",
@@ -149,9 +150,9 @@
                             "Other"
                             ];
                             @endphp
-                            @foreach ($categories as $kategory)
-                            <option value="{{ $kategory }}" {{ in_array($kategory, $selectedSkills) ? 'selected' : '' }}>
-                                {{ $kategory }}
+                            @foreach ($categories as $category)
+                            <option value="{{ $category }}" {{ in_array($category, $selectedSkills) ? 'selected' : '' }}>
+                                {{ $category }}
                             </option>
                             @endforeach
                         </select>

@@ -215,7 +215,7 @@
                 if (!empty($worker->keahlian)) {
                 // Decode kedua string JSON menjadi array
                 $workerSkills = json_decode($worker->keahlian, true);
-                $jobCategories = json_decode($job->kategory, true);
+                $jobCategories = json_decode($job->category, true);
 
                 // Jika berhasil decode jadi array, cocokkan
                 if (is_array($workerSkills) && is_array($jobCategories)) {
@@ -223,7 +223,7 @@
                 $showTask = count(array_intersect(array_map('strtolower', $workerSkills), array_map('strtolower', $jobCategories))) > 0;
                 } else {
                 // Fallback: cocokkan string biasa jika gagal decode
-                $showTask = str_contains($job->kategory, $worker->keahlian);
+                $showTask = str_contains($job->category, $worker->keahlian);
                 }
                 }
                 @endphp
@@ -231,9 +231,9 @@
                 @if ($showTask)
                 <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition relative" data-price="{{ $job->price }}">
                     <div class="flex items-center gap-3 mb-3">
-                        {{--<img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}"
-                            alt="User" class="w-9 h-9 rounded-full object-cover" />--}}
-                        <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
+                        <img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}"
+                            alt="User" class="w-9 h-9 rounded-full object-cover" />
+                        <p class="text-sm font-semibold text-gray-800">
                             {{ $job->user->nama_lengkap ?? 'Unknown' }}
                         </p>
                     </div>
