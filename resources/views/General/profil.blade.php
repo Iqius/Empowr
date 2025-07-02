@@ -129,6 +129,7 @@
                                 "Web Development",
                                 "Mobile Development",
                                 "Game Development",
+                                "IT Support",
                                 "Software Engineering",
                                 "Frontend Development",
                                 "Backend Development",

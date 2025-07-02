@@ -155,13 +155,13 @@
                         <p class="text-gray-500 mb-2">Kategori Task</p>
                         <div>
                             @php
-                                $categories = json_decode($job->kategory, true) ?? [];
+                            $categories = json_decode($job->category, true) ?? [];
                             @endphp
                             @foreach($categories as $category)
-                                <span
-                                    class="inline-block bg-gradient-to-b from-[#1F4482] to-[#2A5DB2] text-white px-3 py-1 rounded-full text-sm mr-2 mb-2">
-                                    {{ $category }}
-                                </span>
+                            <span
+                                class="inline-block bg-gradient-to-b from-[#1F4482] to-[#2A5DB2] text-white px-3 py-1 rounded-full text-sm mr-2 mb-2">
+                                {{ $category }}
+                            </span>
                             @endforeach
                         </div>
                     </div>
