@@ -28,8 +28,8 @@ class Task extends Model
         'job_file',
         'start_date',
         'category',
+        'status_affiliate',
         'pengajuan_affiliate',
-        'harga_task_affiliate',
         'harga_pajak_affiliate'
     ];
 

@@ -162,7 +162,7 @@ class PaymentController extends Controller
                     if ($task) {
                         $hasAffiliate = TaskApplication::where('task_id', $task->id)
                             ->where('affiliated', true)
-                            ->exists();
+                            ->first();
 
                         // Kalau ada affiliated = true, update task dengan informasi khusus affiliate (opsional)
                         if ($hasAffiliate) {
@@ -171,6 +171,7 @@ class PaymentController extends Controller
                             $task->client_id = $transaction->client_id;
                             $task->status_affiliate = true;
                             $task->price = $transaction->amount;
+                            $task->harga_pajak_affiliate = $hasAffiliate->harga_pajak_affiliate;
                             $task->save();
 
                         } else {
@@ -236,8 +237,11 @@ class PaymentController extends Controller
         $user = auth()->user();
         $taskId = $request->input('task_id');
         $task = Task::find($taskId);
+        $hasAffiliate = TaskApplication::where('task_id', $task->id)
+            ->where('affiliated', true)
+            ->first();
         // Ambil data yang diperlukan
-        $amount = $request->amount ?? $task->price;
+        $amount = $request->amount ?? $hasAffiliate->bidPrice;
         $paymentMethod = $request->input('payment_method');
         $type = $request->input('type');
         $workerId = $request->worker_profile_id ?? $task->profile_id;
@@ -254,10 +258,6 @@ class PaymentController extends Controller
             return back()->with('error', 'Saldo tidak mencukupi.');
         }
 
-        $hasAffiliate = TaskApplication::where('task_id', $task->id)
-            ->where('affiliated', true)
-            ->exists();
-
         if ($hasAffiliate) {
             // Potong saldo ewallet
             $ewallet->balance -= $amount;
@@ -268,6 +268,7 @@ class PaymentController extends Controller
                 'profile_id' => $workerId,
                 'client_id' => $user->id,
                 'status_affiliate' => true,
+                'harga_pajak_affiliate' => $hasAffiliate->harga_pajak_affiliate,
                 'status' => 'in progress',
             ]);
 

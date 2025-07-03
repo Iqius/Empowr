@@ -107,7 +107,7 @@ class ProgressionController extends Controller
             $ewallet = Ewallet::where('user_id', $userId)->first();
             if ($ewallet) {
                 $ewallet->update([
-                    'balance' => $ewallet->balance + $task->harga_task_affiliate,
+                    'balance' => $ewallet->balance + ($task->price - $task->harga_pajak_affiliate),
                 ]);
             }
 
@@ -119,7 +119,7 @@ class ProgressionController extends Controller
                 'task_id' => $task->id,                  // ID task
                 'worker_id' => $workerProfile->id,       // ID worker profile
                 'client_id' => auth()->user()->id,       // ID client
-                'amount' => $task->harga_task_affiliate,
+                'amount' => $task->price - $task->harga_pajak_affiliate,
                 'status' => 'success',
                 'type' => 'salary',
             ]);
