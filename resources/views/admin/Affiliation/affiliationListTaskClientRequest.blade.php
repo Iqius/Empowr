@@ -44,7 +44,7 @@
                                     </form>
 
                                     {{-- Form Terima --}}
-                                    <button onclick="openModalTerima()" 
+                                    <button onclick="openModalTerima({{ $tasks->id }})" 
                                         class="px-4 py-1 bg-green-500 hover:bg-green-600 text-white text-xs rounded-full font-semibold transition">
                                         Terima
                                     </button>
@@ -54,8 +54,8 @@
                         </tr>
                     </tbody>
                     <!-- Modal Terima affiliate-->
-                    <div id="modalTerima" class="fixed inset-0 flex items-center justify-center opacity-0 pointer-events-none bg-black/30 backdrop-blur-sm transition-opacity duration-300 z-50">
-                        <div id="modalTerimaContent" class="bg-white p-6 rounded-lg w-full max-w-md mx-4 shadow-lg transform scale-95 opacity-0 transition duration-300 overflow-y-auto max-h-[80vh]">
+                    <div id="modalTerima-{{ $tasks->id }}" class="fixed inset-0 flex items-center justify-center opacity-0 pointer-events-none bg-black/30 backdrop-blur-sm transition-opacity duration-300 z-50">
+                        <div class="bg-white p-6 rounded-lg w-full max-w-md mx-4 shadow-lg transform scale-95 opacity-0 transition duration-300 overflow-y-auto max-h-[80vh]">
                             <!-- Header -->
                             <div class="flex justify-between items-center mb-4">
                                 <h2 class="text-lg font-semibold">Terima Task Affiliate</h2>
@@ -119,9 +119,10 @@
 @include('General.footer')
 
 <script>
-    function openModalTerima() {
-        const modal = document.getElementById('modalTerima');
-        const content = document.getElementById('modalTerimaContent');
+    function openModalTerima(taskId) {
+        const modal = document.getElementById(`modalTerima-${taskId}`);
+        const content = modal.querySelector('.modal-content');
+
         modal.classList.remove('opacity-0', 'pointer-events-none');
         setTimeout(() => {
             content.classList.remove('scale-95', 'opacity-0');
@@ -129,9 +130,10 @@
         }, 10);
     }
 
-    function closeModalTerima() {
-        const modal = document.getElementById('modalTerima');
-        const content = document.getElementById('modalTerimaContent');
+    function closeModalTerima(taskId) {
+        const modal = document.getElementById(`modalTerima-${taskId}`);
+        const content = modal.querySelector('.modal-content');
+
         content.classList.remove('scale-100', 'opacity-100');
         content.classList.add('scale-95', 'opacity-0');
         modal.classList.add('opacity-0');
