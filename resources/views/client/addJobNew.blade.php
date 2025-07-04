@@ -67,7 +67,7 @@
 
                     <div>
                         <label class="text-sm font-medium text-gray-600 mb-1 block">Kategori Task</label>
-                        <select id="keahlian-select" name="kategoriWorker[]" multiple class="w-full p-2 border rounded">
+                        <select id="keahlian-select" name="category[]" multiple class="w-full p-2 border rounded">
                             @php
                             $selectedSkills = json_decode(optional(Auth::user()->keahlian)->keahlian, true) ?? [];
                             $categories = [
@@ -110,6 +110,7 @@
                             "Branding",
                             "Graphic Design",
                             "UI/UX Design",
+                            "IT Support",
                             "Logo Design",
                             "Motion Graphics",
                             "Illustration",

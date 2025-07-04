@@ -84,18 +84,24 @@
         <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             @php
             $worker = Auth::user()->workerProfile;
+
             $appliedTasks = \App\Models\Task::whereIn(
             'id',
             \App\Models\TaskApplication::where('profile_id', $worker->id)->pluck('task_id')
-            )->paginate(5); // Menampilkan 5 item per halaman
+            )->paginate(5, ['*'], 'applied_page');
+
+            $accTasks = \App\Models\Task::where('profile_id', $worker->id)
+            ->where('status', 'in progress')
+            ->paginate(5, ['*'], 'accepted_page');
             @endphp
-            <!-- Applied Jobs -->
+
+            <!-- Tugas Dilamar -->
             <div class="bg-white border rounded p-4 shadow-sm">
                 <h2 class="text-lg font-semibold mb-4">Tugas Dilamar</h2>
                 @if($appliedTasks->isEmpty())
                 <p class="text-center text-gray-500">Tidak ada task yang sedang dilamar</p>
                 @else
-                <ul class="space-y-1">
+                <ul class="space-y-4 min-h-[240px]">
                     @foreach ($appliedTasks as $job)
                     <li class="flex items-center justify-between hover:bg-gray-100 hover:rounded p-2">
                         <div class="flex items-center gap-3">
@@ -104,12 +110,10 @@
                             </div>
                             <div>
                                 <p class="font-medium text-sm md:text-base">{{ $job->title }}</p>
-                                <p class="text-gray-400 text-xs">Applied
-                                    {{ \Carbon\Carbon::parse($job->updated_at)->format('d F Y') }}
-                                </p>
+                                <p class="text-gray-400 text-xs">Applied {{ \Carbon\Carbon::parse($job->updated_at)->format('d F Y') }}</p>
                             </div>
                         </div>
-                        <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Lihat</button>
+                        <a href="{{ route('jobs.show', $job->id) }}" class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Lihat</a>
                     </li>
                     @endforeach
                 </ul>
@@ -118,52 +122,37 @@
                 <!-- Pagination -->
                 <div class="flex justify-end mt-4">
                     <nav class="inline-flex gap-1">
-                        <!-- Previous Button -->
-                        @if($appliedTasks->onFirstPage())
-                        <button class="border px-3 py-1 text-sm rounded disabled opacity-50" disabled>
-                            <i class="fas fa-angle-left"></i>
-                        </button>
+                        @if ($appliedTasks->onFirstPage())
+                        <button class="border border-[#1F4482] text-[#1F4482] bg-white px-3 py-1 text-sm rounded opacity-50" disabled>«</button>
                         @else
-                        <a href="{{ $appliedTasks->previousPageUrl() }}" class="border px-3 py-1 text-sm rounded">
-                            <i class="fas fa-angle-left"></i>
-                        </a>
+                        <a href="{{ $appliedTasks->appends(['accepted_page' => request('accepted_page')])->previousPageUrl() }}"
+                            class="border border-[#1F4482] text-[#1F4482] bg-white px-3 py-1 text-sm rounded">«</a>
                         @endif
 
-                        <!-- Pagination Links -->
-                        @foreach ($appliedTasks->links()->elements[0] as $page => $url)
-                        <button
-                            class="border px-3 py-1 text-sm rounded {{ $page == $appliedTasks->currentPage() ? 'bg-[#1F4482] text-white' : 'text-[#1F4482]' }}">
-                            <a href="{{ $url }}">{{ $page }}</a>
-                        </button>
+                        @foreach ($appliedTasks->getUrlRange(1, $appliedTasks->lastPage()) as $page => $url)
+                        <a href="{{ $url }}&accepted_page={{ request('accepted_page') }}"
+                            class="px-3 py-1 text-sm rounded border {{ $page == $appliedTasks->currentPage() ? 'bg-[#1F4482] text-white border-[#1F4482]' : 'bg-white text-[#1F4482] border-[#1F4482]' }}">
+                            {{ $page }}
+                        </a>
                         @endforeach
 
-                        <!-- Next Button -->
-                        @if($appliedTasks->hasMorePages())
-                        <a href="{{ $appliedTasks->nextPageUrl() }}" class="border px-3 py-1 text-sm rounded">
-                            <i class="fas fa-angle-right"></i>
-                        </a>
+                        @if ($appliedTasks->hasMorePages())
+                        <a href="{{ $appliedTasks->appends(['accepted_page' => request('accepted_page')])->nextPageUrl() }}"
+                            class="border border-[#1F4482] text-[#1F4482] bg-white px-3 py-1 text-sm rounded">»</a>
                         @else
-                        <button class="border px-3 py-1 text-sm rounded disabled opacity-50" disabled>
-                            <i class="fas fa-angle-right"></i>
-                        </button>
+                        <button class="border border-[#1F4482] text-[#1F4482] bg-white px-3 py-1 text-sm rounded opacity-50" disabled>»</button>
                         @endif
                     </nav>
                 </div>
             </div>
 
-            @php
-            $worker = Auth::user()->workerProfile;
-            $accTasks = \App\Models\Task::where('profile_id', $worker->id)
-            ->where('status', 'in progress') // pastikan status task diterima
-            ->paginate(5); // Menampilkan 1 item per halaman
-            @endphp
-            <!-- Accept Jobs -->
+            <!-- Tugas Diterima -->
             <div class="bg-white border rounded p-4 shadow-sm">
                 <h2 class="text-lg font-semibold mb-4">Tugas Diterima</h2>
                 @if($accTasks->isEmpty())
                 <p class="text-center text-gray-500">Tidak ada task yang sedang diterima</p>
                 @else
-                <ul class="space-y-4">
+                <ul class="space-y-4 min-h-[240px]">
                     @foreach ($accTasks as $job)
                     <li class="flex items-center justify-between hover:bg-gray-100 hover:rounded p-2">
                         <div class="flex items-center gap-3">
@@ -172,140 +161,108 @@
                             </div>
                             <div>
                                 <p class="font-medium text-sm md:text-base">{{ $job->title }}</p>
-                                <p class="text-gray-400 text-xs">Applied
-                                    {{ \Carbon\Carbon::parse($job->updated_at)->format('d F Y') }}
-                                </p>
+                                <p class="text-gray-400 text-xs">Applied {{ \Carbon\Carbon::parse($job->updated_at)->format('d F Y') }}</p>
                             </div>
                         </div>
-                        <button class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Lihat</button>
+                        <a href="{{ route('jobs.show', $job->id) }}" class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Lihat</a>
                     </li>
                     @endforeach
                 </ul>
                 @endif
+
                 <!-- Pagination -->
                 <div class="flex justify-end mt-4">
                     <nav class="inline-flex gap-1">
-                        <!-- Previous Button -->
-                        @if($accTasks->onFirstPage())
-                        <button class="border px-3 py-1 text-sm rounded disabled opacity-50" disabled>
-                            <i class="fas fa-angle-left"></i>
-                        </button>
+                        @if ($accTasks->onFirstPage())
+                        <button class="border border-[#1F4482] text-[#1F4482] bg-white px-3 py-1 text-sm rounded opacity-50" disabled>«</button>
                         @else
-                        <a href="{{ $accTasks->previousPageUrl() }}" class="border px-3 py-1 text-sm rounded">
-                            <i class="fas fa-angle-left"></i>
-                        </a>
+                        <a href="{{ $accTasks->appends(['applied_page' => request('applied_page')])->previousPageUrl() }}"
+                            class="border border-[#1F4482] text-[#1F4482] bg-white px-3 py-1 text-sm rounded">«</a>
                         @endif
 
-                        <!-- Pagination Links -->
-                        @foreach ($accTasks->links()->elements[0] as $page => $url)
-                        <button
-                            class="border px-3 py-1 text-sm rounded {{ $page == $accTasks->currentPage() ? 'bg-[#1F4482] text-white' : 'text-[#1F4482]' }}">
-                            <a href="{{ $url }}">{{ $page }}</a>
-                        </button>
+                        @foreach ($accTasks->getUrlRange(1, $accTasks->lastPage()) as $page => $url)
+                        <a href="{{ $url }}&applied_page={{ request('applied_page') }}"
+                            class="px-3 py-1 text-sm rounded border {{ $page == $accTasks->currentPage() ? 'bg-[#1F4482] text-white border-[#1F4482]' : 'bg-white text-[#1F4482] border-[#1F4482]' }}">
+                            {{ $page }}
+                        </a>
                         @endforeach
 
-                        <!-- Next Button -->
-                        @if($accTasks->hasMorePages())
-                        <a href="{{ $accTasks->nextPageUrl() }}" class="border px-3 py-1 text-sm rounded">
-                            <i class="fas fa-angle-right"></i>
-                        </a>
+                        @if ($accTasks->hasMorePages())
+                        <a href="{{ $accTasks->appends(['applied_page' => request('applied_page')])->nextPageUrl() }}"
+                            class="border border-[#1F4482] text-[#1F4482] bg-white px-3 py-1 text-sm rounded">»</a>
                         @else
-                        <button class="border px-3 py-1 text-sm rounded disabled opacity-50" disabled>
-                            <i class="fas fa-angle-right"></i>
-                        </button>
+                        <button class="border border-[#1F4482] text-[#1F4482] bg-white px-3 py-1 text-sm rounded opacity-50" disabled>»</button>
                         @endif
                     </nav>
                 </div>
             </div>
         </div>
 
+        @php
+        $worker = Auth::user()->workerProfile;
+        $recommendedTasks = \App\Models\Task::with('user')->where('status', 'open')->get();
+        @endphp
 
+        @if ($recommendedTasks->isNotEmpty())
         <div class="mt-10">
-            <!-- Header -->
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-semibold">Rekomendasi Task</h2>
-                <a href="{{ route('jobs.index') }}" class="text-sm text-[#1F4482] font-medium hover:underline">View
-                    More</a>
-            </div>
+            <h2 class="text-lg font-semibold mb-4">Rekomendasi Task</h2>
 
-
-            <!-- Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-
-                <!-- Task Card -->
-                <!-- Job Card -->
+                @foreach ($recommendedTasks as $job)
                 @php
-                $worker = Auth::user()->workerProfile;
-                $task = \App\Models\Task::where('status', 'open')->get();
+                $showTask = true;
+
+                if (!empty($worker->keahlian)) {
+                // Decode kedua string JSON menjadi array
+                $workerSkills = json_decode($worker->keahlian, true);
+                $jobCategories = json_decode($job->category, true);
+
+                // Jika berhasil decode jadi array, cocokkan
+                if (is_array($workerSkills) && is_array($jobCategories)) {
+                // Cek apakah ada irisan antara keahlian dan kategori
+                $showTask = count(array_intersect(array_map('strtolower', $workerSkills), array_map('strtolower', $jobCategories))) > 0;
+                } else {
+                // Fallback: cocokkan string biasa jika gagal decode
+                $showTask = str_contains($job->category, $worker->keahlian);
+                }
+                }
                 @endphp
 
-
-                @foreach ($task as $job)
-                @php
-                // Hapus tanda kurung dan tanda kutip dari kategory
-                $category = str_replace(['[', ']', '"'], '', $job->kategory);
-                @endphp
-
-                @if(strtolower(trim($category)) == strtolower(trim($worker->keahlian)))
-                <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition relative"
-                    data-price="{{ $job->price }}">
-                    <!-- Save Button -->
-                    <button class="absolute top-3 right-3 text-gray-400 hover:text-[#1F4482] transition">
-                        <i class="fa-regular fa-bookmark text-lg"></i>
-                    </button>
-
-                    <!-- User Info -->
+                @if ($showTask)
+                <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition relative" data-price="{{ $job->price }}">
                     <div class="flex items-center gap-3 mb-3">
-                        {{--<img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}"
-                            alt="User" class="w-9 h-9 rounded-full object-cover" />--}}
-                        <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
+                        <img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}"
+                            alt="User" class="w-9 h-9 rounded-full object-cover" />
+                        <p class="text-sm font-semibold text-gray-800">
                             {{ $job->user->nama_lengkap ?? 'Unknown' }}
-                            <span class="text-[#1F4482]">✔</span>
                         </p>
                     </div>
 
-                    <!-- Job Title -->
-                    <h3 class="text-sm font-semibold text-gray-900 mb-1">
-                        {{ $job->title }}
-                    </h3>
+                    <h3 class="text-sm font-semibold text-gray-900 mb-1">{{ $job->title }}</h3>
 
-                    <!-- Description -->
                     <div class="text-xs text-gray-500 mb-4 leading-relaxed">
                         @php
-                        // Check if the description contains ordered or unordered lists
                         $hasLists = preg_match('/<ol[^>]*>|<ul[^>]*>/i', $job->description);
-
-                                // Get the text before any list appears
                                 $textBeforeLists = preg_split('/<ol[^>]*>|<ul[^>]*>/i', $job->description)[0];
-
-                                        // Strip any HTML tags from this text
                                         $plainTextBeforeLists = strip_tags($textBeforeLists);
-
-                                        // Create the preview - if there are lists, add ellipsis
-                                        if ($hasLists) {
-                                        // Limit the text before the list and add ellipsis
-                                        $previewText = Str::limit($plainTextBeforeLists, 10, '...');
-                                        } else {
-                                        // If no lists, just use normal limit
-                                        $previewText = Str::limit(strip_tags($job->description), 150, '...');
-                                        }
+                                        $previewText = $hasLists
+                                        ? Str::limit($plainTextBeforeLists, 10, '...')
+                                        : Str::limit(strip_tags($job->description), 150, '...');
                                         @endphp
                                         {{ $previewText }}
                     </div>
 
-                    <!-- Bottom Row: Price + Button -->
                     <div class="flex justify-between items-center">
                         <div>
-                            <p class="text-sm font-semibold text-gray-800">Rp
-                                {{ number_format($job->price, 0, ',', '.') }}
+                            <p class="text-sm font-semibold text-gray-800">Rp {{ number_format($job->price, 0, ',', '.') }}</p>
+                            <p class="text-xs text-gray-400">Penutupan
+                                <span class="font-semibold text-gray-500">
+                                    {{ \Carbon\Carbon::parse($job->deadline_promotion)->translatedFormat('d F Y') }}
+                                </span>
                             </p>
-                            <p class="text-xs text-gray-400">Penutupan <span
-                                    class="font-semibold text-gray-500">{{ \Carbon\Carbon::parse($job->deadline_promotion)->translatedFormat('d F Y') }}
-                                </span></p>
                         </div>
                         <a href="{{ route('jobs.show', $job->id) }}">
-                            <button
-                                class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
+                            <button class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
                                 View
                             </button>
                         </a>
@@ -315,6 +272,7 @@
                 @endforeach
             </div>
         </div>
+        @endif
 
     </div>
 </div>
