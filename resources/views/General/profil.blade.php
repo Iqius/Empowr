@@ -6,13 +6,9 @@
             <div class="p-6 bg-white rounded-lg shadow-md h-auto">
                 <div class="flex flex-col items-center gap-4">
                     <label for="profile-pic" class="cursor-pointer">
-                        <img id="profile-image" src="#" alt="Profile Picture"
+                        <img id="profile-image" src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('images/default-avatar.png') }}" alt="Profile Picture"
                             class="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border border-gray-300">
                     </label>
-                    <button id="changeProfilePicButton"
-                        class="text-sm text-[#1F4482] font-medium hover:underline mt-1 mb-3">
-                        Ubah Foto
-                    </button>
                     <div class="text-center">
                         <div class="flex items-center space-x-3">
                             <h2 class="text-2xl font-bold">{{ Auth::user()->username }}</h2>
@@ -57,183 +53,127 @@
 
                 <!-- Tab 1 (datadiri) -->
                 <div id="dataDiri" class="tab-content p-4">
-                    <div class="grid grid-cols-1 md:grid-cols-[8fr_1fr] gap-6 ">
+                    <div class="grid grid-cols-1 md:grid-cols-[5fr_1fr] gap-6 items-start">
                         <div class="flex flex-col gap-4">
                             <h1 class="text-2xl font-semibold mb-6">Personal Information</h1>
+                            {{-- Isi form lainnya bisa di sini --}}
                         </div>
 
                         @if(auth()->user()->role == 'worker')
-                        <div class="flex flex-col gap-4">
-                            <button type="button" onclick="openCvModal('{{ asset('storage/' . $workerProfile?->cv) }}')"
-                                class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-15 py-2 rounded-md shadow">
-                                Lihat CV
-                            </button>
-                        </div>
+                            <div class="flex flex-row gap-4 self-start justify-end">
+                                <!-- Tombol Lihat CV -->
+                                <button type="button" 
+                                    onclick="openCvModal('{{ asset('storage/' . $workerProfile?->cv) }}')"
+                                    class="bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-6 py-2 rounded-md shadow min-w-[140px] flex items-center justify-center">
+                                    Lihat CV
+                                </button>
+
+                                <!-- Tombol Ubah Data Diri -->
+                                <button type="button" 
+                                    onclick="openEditModalDataDiri()"
+                                    class="bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-6 py-2 rounded-md shadow min-w-[150px] whitespace-nowrap">
+                                    Ubah Data Diri
+                                </button>
+                            </div>
+                            
                         @endif
                     </div>
 
-                    <!-- Form bagian text input bisa di-edit -->
-                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
-                        @csrf <!-- CSRF Token -->
-                        <div class="flex flex-col gap-4 mb-7">
-                            <label class="font-semibold">Bio</label>
-                            <textarea id="bioInput"
-                                class="p-2 border rounded w-full bg-gray-100 focus:ring-[#1F4482] focus:border-[#1F4482]"
-                                rows="4" placeholder="{{ Auth::user()->bio ?? 'Tulis bio Anda di sini' }}"
-                                name="bio">{{ Auth::user()->bio }}</textarea>
+
+                    
+                    <div class="flex flex-col gap-4 mb-7">
+                        <label class="font-semibold">Bio</label>
+                        <textarea id="bioInput"
+                            class="p-2 border rounded w-full bg-gray-100 focus:ring-[#1F4482] focus:border-[#1F4482] cursor-not-allowed"
+                            rows="4" placeholder="{{ Auth::user()->bio ?? 'Tulis bio Anda di sini' }}"
+                            name="bio" readonly >{{ Auth::user()->bio }}</textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-7 mb-7">
+                        <!-- Email -->
+                        <div class="flex flex-col gap-4">
+                            <label class="font-semibold">Email</label>
+                            <input id="emailInput" type="email" value="{{ Auth::user()->email }}"
+                                class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600 cursor-not-allowed"
+                                readonly placeholder="Email tidak dapat diedit" name="email">
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-7 mb-7">
-                            <!-- Email -->
-                            <div class="flex flex-col gap-4">
-                                <label class="font-semibold">Email</label>
-                                <input id="emailInput" type="email" value="{{ Auth::user()->email }}"
-                                    class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
-                                    readonly placeholder="Email tidak dapat diedit" name="email">
-                            </div>
-
-                            <!-- Username -->
-                            <div class="flex flex-col gap-4">
-                                <label class="font-semibold">Username</label>
-                                <input id="usernameInput" type="text" value="{{ Auth::user()->username }}"
-                                    class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
-                                    readonly placeholder="Username tidak dapat diedit" name="username">
-                            </div>
-
-                            <!-- No HP -->
-                            <div class="flex flex-col gap-4">
-                                <label class="font-semibold">No Telp</label>
-                                <input id="phoneInput" type="text" value="{{ Auth::user()->nomor_telepon }}"
-                                    class="p-2 border rounded w-full bg-gray-100 cursor-pointer"
-                                    placeholder="Masukkan nomor telepon" name="nomor_telepon">
-                            </div>
-
-                            <!-- Tanggal Bergabung -->
-                            <div class="flex flex-col gap-4">
-                                <label class="font-semibold">Tgl Bergabung</label>
-                                <input type="text"
-                                    value="{{ \Carbon\Carbon::parse(Auth::user()->tanggal_bergabung)->format('d F Y') }}"
-                                    class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
-                                    readonly placeholder="Tanggal bergabung tidak dapat diedit">
-                            </div>
+                        <!-- Username -->
+                        <div class="flex flex-col gap-4">
+                            <label class="font-semibold">Username</label>
+                            <input id="usernameInput" type="text" value="{{ Auth::user()->username }} "
+                                class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
+                                readonly placeholder="Username tidak dapat diedit" name="username">
                         </div>
 
-                        <!-- Keahlian -->
-                        @if(auth()->user()->role == 'worker')
+                        <!-- No HP -->
+                        <div class="flex flex-col gap-4">
+                            <label class="font-semibold">No Telp</label>
+                            <input id="phoneInput" type="text" value="{{ Auth::user()->nomor_telepon }} "
+                                class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed"
+                                placeholder="Masukkan nomor telepon" name="nomor_telepon" readonly>
+                        </div>
+
+                        <!-- Tanggal Bergabung -->
+                        <div class="flex flex-col gap-4">
+                            <label class="font-semibold">Tgl Bergabung</label>
+                            <input type="text"
+                                value="{{ \Carbon\Carbon::parse(Auth::user()->tanggal_bergabung)->format('d F Y') }}"
+                                class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
+                                readonly placeholder="Tanggal bergabung tidak dapat diedit" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Keahlian -->
+                    @if(auth()->user()->role == 'worker')
                         <div class="flex flex-col gap-4 mb-7">
                             <label class="font-semibold">Keahlian</label>
-                            <select id="keahlian-select" name="keahlian[]" multiple class="w-full p-2 border rounded">
+                            <div class="w-full p-2 border rounded bg-gray-50">
                                 @php
                                 $selectedSkills = json_decode(optional(Auth::user()->workerProfile)->keahlian, true) ?? [];
-                                $keahlianes = [
-                                "Web Development",
-                                "Mobile Development",
-                                "Game Development",
-                                "IT Support",
-                                "Software Engineering",
-                                "Frontend Development",
-                                "Backend Development",
-                                "Full Stack Development",
-                                "DevOps",
-                                "QA Testing",
-                                "Automation Testing",
-                                "API Integration",
-                                "WordPress Development",
-                                "Data Science",
-                                "Machine Learning",
-                                "AI Development",
-                                "Data Engineering",
-                                "Data Entry",
-                                "SEO",
-                                "Content Writing",
-                                "Technical Writing",
-                                "Blog Writing",
-                                "Copywriting",
-                                "Scriptwriting",
-                                "Proofreading",
-                                "Translation",
-                                "Transcription",
-                                "Resume Writing",
-                                "Ghostwriting",
-                                "Creative Writing",
-                                "Social Media Management",
-                                "Digital Marketing",
-                                "Email Marketing",
-                                "Affiliate Marketing",
-                                "Influencer Marketing",
-                                "Community Management",
-                                "Search Engine Marketing",
-                                "Branding",
-                                "Graphic Design",
-                                "UI/UX Design",
-                                "Logo Design",
-                                "Motion Graphics",
-                                "Illustration",
-                                "Video Editing",
-                                "Video Production",
-                                "Animation",
-                                "3D Modeling",
-                                "Video Game Design",
-                                "Audio Editing",
-                                "Photography",
-                                "Photo Editing",
-                                "Presentation Design",
-                                "Project Management",
-                                "Virtual Assistant",
-                                "Customer Service",
-                                "Lead Generation",
-                                "Market Research",
-                                "Business Analysis",
-                                "Human Resources",
-                                "Event Planning",
-                                "Bookkeeping",
-                                "Accounting",
-                                "Tax Preparation",
-                                "Financial Analysis",
-                                "Legal Advice",
-                                "Contract Drafting",
-                                "Startup Consulting",
-                                "Investment Research",
-                                "Real Estate Consulting",
-                                "Personal Assistant",
-                                "Clerical Work",
-                                "Data Analysis",
-                                "Business Coaching",
-                                "Career Coaching",
-                                "Life Coaching",
-                                "Consulting",
-                                "Other"
-                                ];
                                 @endphp
-                                @foreach ($keahlianes as $keahlian)
-                                <option value="{{ $keahlian }}" {{ in_array($keahlian, $selectedSkills) ? 'selected' : '' }}>
-                                    {{ $keahlian }}
-                                </option>
-                                @endforeach
-                            </select>
+                                
+                                @if(count($selectedSkills) > 0)
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach($selectedSkills as $skill)
+                                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                                {{ $skill }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <span class="text-gray-500">Belum ada keahlian yang dipilih</span>
+                                @endif
+                            </div>
                         </div>
-                        @endif
+                    @endif
 
-                        <!-- LinkedIn -->
-                        @if(auth()->user()->role == 'worker')
-                        <div class="flex flex-col gap-4 mb-7">
-                            <label class="font-semibold">Tautan LinkedIn</label>
-                            <input id="linkedinInput" type="text" value="{{ $workerProfile?->linkedin}}"
-                                class="p-2 border rounded w-full bg-gray-100 focus:ring-[#1F4482] focus:border-[#1F4482]"
-                                placeholder="Masukkan LinkedIn Anda" name="linkedin">
-                        </div>
-                        @endif
+                    <!-- LinkedIn -->
+                    @if(auth()->user()->role == 'worker')
+                    <div class="flex flex-col gap-4 mb-7">
+                        <label class="font-semibold">Tautan LinkedIn</label>
+                        <input id="linkedinInput" type="text" value="{{ $workerProfile?->linkedin}}"
+                            class="p-2 border rounded w-full bg-gray-100 focus:ring-[#1F4482] focus:border-[#1F4482] cursor-not-allowed"
+                            placeholder="Masukkan LinkedIn Anda" name="linkedin" readonly>
+                    </div>
+                    @endif
 
-                        <div class="flex justify-end mt-6">
-                            <button type="submit"
-                                class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base font-semibold px-8 py-2 rounded-md shadow">
-                                Simpan Perubahan
-                            </button>
-                        </div>
-                    </form>
+                        
+                    
 
                     <hr class="border-t-1 border-gray-300 my-7">
-                    <h1 class="text-2xl font-semibold mb-6">Payment Account</h1>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-[5fr_1fr] gap-6 items-start">
+                        <div class="flex flex-col gap-4">
+                            <h1 class="text-2xl font-semibold mb-6">Payment Account</h1>
+                        </div>
+                        <div class="flex flex-row gap-4 self-start justify-end">
+                            <button type="button" onclick="openModal('editModalRekening')"
+                                class="bg-[#183E74] hover:bg-[#1a4a91] text-white px-4 py-2 rounded shadow">
+                                Ubah rekening
+                            </button>
+                        </div>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-7">
                         <div class="flex flex-col gap-4">
                             <label class="font-semibold">Bank</label>
@@ -245,7 +185,7 @@
                             <label class="font-semibold">Nama akun Bank</label>
                             <input type="text" readonly
                                 class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
-                                value="{{ strtoupper(Auth::user()->paymentAccount?->account_name) ?? '-' }}">
+                                value="{{ strtoupper(Auth::user()->paymentAccount?->bank_account_name) ?? '-' }}">
                         </div>
                         <div class="flex flex-col gap-4">
                             <label class="font-semibold">Nomor rekening</label>
@@ -264,7 +204,7 @@
                             <label class="font-semibold">Nama akun Ewallet</label>
                             <input type="text" readonly
                                 class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
-                                value="{{ strtoupper(Auth::user()->paymentAccount?->ewallet_name) ?? '-' }}">
+                                value="{{ strtoupper(Auth::user()->paymentAccount?->ewallet_account_name) ?? '-' }}">
                         </div>
                         <div class="flex flex-col gap-4">
                             <label class="font-semibold">Nomor E-wallet</label>
@@ -786,6 +726,220 @@
 </div>
 
 
+<!-- Modal edit data diri -->
+<div id="editModalDataDiri" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white w-full max-w-3xl p-6 rounded-lg shadow-lg overflow-y-auto max-h-[90vh] relative">
+        <!-- Tombol Close -->
+        <button type="button" onclick="closeEditModalDataDiri()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+        
+        <h2 class="text-xl font-semibold mb-4">Ubah Data Diri</h2>
+        
+        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+
+            <!-- Input File Biasa -->
+            <div class="mb-4">
+                <label for="profile_image" class="block font-semibold mb-1">Upload Foto Profil</label>
+                <input type="file" name="profile_image" id="profile_image" accept="image/*" class="block w-full border p-2 rounded" onchange="previewPhoto(event)">
+            </div>
+
+            <!-- Preview Gambar -->
+            <div class="mb-4">
+                <img id="photoPreview" 
+                    src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('images/default-avatar.png') }}" 
+                    alt="Preview Foto Profil" 
+                    class="w-32 h-32 object-cover border border-gray-300"> <!-- Tidak pakai rounded-full -->
+            </div>
+
+
+
+
+            <!-- Bio -->
+            <div class="mb-4">
+                <label class="font-semibold">Bio</label>
+                <textarea name="bio" rows="3" class="w-full p-2 border rounded bg-gray-100">{{ Auth::user()->bio }}</textarea>
+            </div>
+
+            <!-- Nama Lengkap dan Email -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="font-semibold">Nama Lengkap</label>
+                    <input type="text" name="nama_lengkap" value="{{ Auth::user()->nama_lengkap }}"
+                        class="w-full p-2 border rounded bg-gray-100">
+                </div>
+                <div>
+                    <label class="font-semibold">Email</label>
+                    <input type="email" value="{{ Auth::user()->email }}"
+                        class="w-full p-2 border rounded bg-gray-100 text-gray-600" readonly>
+                </div>
+            </div>
+
+            <!-- Username dan Nomor Telepon -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="font-semibold">Username</label>
+                    <input type="text" value="{{ Auth::user()->username }}"
+                        class="w-full p-2 border rounded bg-gray-100 text-gray-600" readonly>
+                </div>
+                <div>
+                    <label class="font-semibold">No Telp</label>
+                    <input type="text" name="nomor_telepon" value="{{ Auth::user()->nomor_telepon }}"
+                        class="w-full p-2 border rounded bg-gray-100">
+                </div>
+            </div>
+
+            <!-- LinkedIn -->
+            @if(auth()->user()->role == 'worker')
+            <div class="mb-4">
+                <label class="font-semibold">Tautan LinkedIn</label>
+                <input type="text" name="linkedin" value="{{ $workerProfile?->linkedin }}"
+                    class="w-full p-2 border rounded bg-gray-100">
+            </div>
+            @endif
+
+            <!-- Keahlian -->
+            @if(auth()->user()->role == 'worker')
+                <div class="flex flex-col gap-4 mb-7">
+                    <label for="keahlian-select" class="font-semibold">Keahlian</label>
+
+                    @php
+                        // Ambil data keahlian yang sudah disimpan (dalam format array)
+                        $selectedSkills = json_decode(optional(Auth::user()->keahlian)->keahlian, true) ?? [];
+
+                        // Semua opsi keahlian yang tersedia
+                        $keahlianWorker = [
+                            "Web Development", "Mobile Development", "Game Development", "Software Engineering", "Frontend Development",
+                            "Backend Development", "Full Stack Development", "DevOps", "QA Testing", "Automation Testing", "API Integration",
+                            "WordPress Development", "Data Science", "Machine Learning", "AI Development", "Data Engineering", "Data Entry",
+                            "SEO", "Content Writing", "Technical Writing", "Blog Writing", "Copywriting", "Scriptwriting", "Proofreading",
+                            "Translation", "Transcription", "Resume Writing", "Ghostwriting", "Creative Writing", "Social Media Management",
+                            "Digital Marketing", "Email Marketing", "Affiliate Marketing", "Influencer Marketing", "Community Management",
+                            "Search Engine Marketing", "Branding", "Graphic Design", "UI/UX Design", "IT Support", "Logo Design",
+                            "Motion Graphics", "Illustration", "Video Editing", "Video Production", "Animation", "3D Modeling",
+                            "Video Game Design", "Audio Editing", "Photography", "Photo Editing", "Presentation Design", "Project Management",
+                            "Virtual Assistant", "Customer Service", "Lead Generation", "Market Research", "Business Analysis",
+                            "Human Resources", "Event Planning", "Bookkeeping", "Accounting", "Tax Preparation", "Financial Analysis",
+                            "Legal Advice", "Contract Drafting", "Startup Consulting", "Investment Research", "Real Estate Consulting",
+                            "Personal Assistant", "Clerical Work", "Data Analysis", "Business Coaching", "Career Coaching", "Life Coaching",
+                            "Consulting", "Other"
+                        ];
+                    @endphp
+
+                    <select id="keahlian-select" name="keahlian[]" multiple class="w-full p-2 border rounded">
+                        @foreach ($keahlianWorker as $keahlian)
+                            <option value="{{ $keahlian }}" {{ in_array($keahlian, $selectedSkills) ? 'selected' : '' }}>
+                                {{ $keahlian }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+
+            <div class="flex justify-end mt-6">
+                <button type="submit"
+                    class="bg-[#183E74] hover:bg-[#1a4a91] text-white font-semibold px-6 py-2 rounded shadow">
+                    Simpan Perubahan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Edit Rekening & E-Wallet -->
+<div id="editModalRekening" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+    <div class="bg-white w-full max-w-xl p-6 rounded-xl shadow-lg relative">
+        <h2 class="text-xl font-semibold mb-4">Edit Rekening & E-Wallet</h2>
+
+        <form action="{{ route('profile-akunPembayaran.update') }}" method="POST" class="space-y-4">
+            @csrf
+
+            <!-- ✅ E-Wallet Section -->
+            <div>
+                <label class="block font-medium mb-1">Provider E-Wallet</label>
+                <select name="ewallet_provider" class="w-full border p-2 rounded">
+                    <option value="">-- Pilih E-Wallet --</option>
+                    @foreach(['Gopay','OVO','DANA','ShopeePay','LinkAja','Jenius Pay','Sakuku','iSaku','Paytren','Tidak ada'] as $provider)
+                        <option value="{{ $provider }}" @selected(Auth::user()->paymentAccount?->ewallet_provider === $provider)>
+                            {{ $provider }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div>
+                <label class="block font-medium mb-1">Nomor E-Wallet</label>
+                <input type="text" name="wallet_number"
+                       value="{{ Auth::user()->paymentAccount?->wallet_number }}"
+                       class="w-full border p-2 rounded" placeholder="0812xxxxxxxx">
+            </div>
+
+            <div>
+                <label class="block font-medium mb-1">Nama Akun E-Wallet</label>
+                <input type="text" name="ewallet_account_name"
+                       value="{{ Auth::user()->paymentAccount?->ewallet_account_name }}"
+                       class="w-full border p-2 rounded" placeholder="Nama lengkap sesuai e-wallet">
+            </div>
+
+            <hr class="my-4">
+
+            <!-- ✅ Bank Section -->
+            <div>
+                <label class="block font-medium mb-1">Nama Bank</label>
+                <select name="bank_name" class="w-full border p-2 rounded">
+                    <option value="">-- Pilih Bank --</option>
+                    @foreach([
+                        'BCA', 'BNI', 'BRI', 'Mandiri', 'CIMB Niaga', 'Danamon', 'Permata', 'BTN',
+                        'Maybank', 'OCBC NISP', 'Panin', 'Bank Jago', 'BSI', 'Bank DKI', 'Bank Jabar Banten (BJB)',
+                        'Bank Sumut', 'Bank Nagari', 'Bank Aceh', 'Bank Kaltimtara', 'Bank Kalsel', 'Bank Kalteng',
+                        'Bank Papua', 'Bank NTB Syariah', 'Bank NTT', 'Bank Sulselbar', 'Bank SulutGo', 'Bank Bengkulu',
+                        'Bank Riau Kepri', 'Bank Maluku Malut', 'Bank Lampung', 'Bank Sumsel Babel', 'Tidak ada'
+                    ] as $bank)
+                        <option value="{{ $bank }}" @selected(Auth::user()->paymentAccount?->bank_name === $bank)>
+                            {{ $bank }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div>
+                <label class="block font-medium mb-1">Nomor Rekening</label>
+                <input type="text" name="account_number"
+                       value="{{ Auth::user()->paymentAccount?->account_number }}"
+                       class="w-full border p-2 rounded" placeholder="1234567890">
+            </div>
+
+            <div>
+                <label class="block font-medium mb-1">Nama Pemilik Rekening</label>
+                <input type="text" name="bank_account_name"
+                       value="{{ Auth::user()->paymentAccount?->bank_account_name }}"
+                       class="w-full border p-2 rounded" placeholder="Nama sesuai buku tabungan">
+            </div>
+
+            <!-- ✅ Buttons -->
+            <div class="flex justify-end gap-2 pt-4">
+                <button type="button" onclick="closeModalEditRekening('editModalRekening')"
+                        class="px-4 py-2 rounded border text-gray-700 hover:bg-gray-100">
+                    Batal
+                </button>
+                <button type="submit"
+                        class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+                    Simpan
+                </button>
+            </div>
+        </form>
+
+        <!-- Tombol Close di pojok -->
+        <button onclick="closeModalEditRekening('editModalRekening')"
+                class="absolute top-3 right-4 text-gray-500 hover:text-black text-xl font-bold">
+            &times;
+        </button>
+    </div>
+</div>
+
+
+
+
+
 
 
 
@@ -834,7 +988,46 @@
 </script>
 
 
+<!-- modal edit rekening pengguna -->
+ <script>
+    function openModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+        document.getElementById(id).classList.add('flex');
+    }
 
+    function closeModalEditRekening(id) {
+        document.getElementById(id).classList.add('hidden');
+        document.getElementById(id).classList.remove('flex');
+    }
+</script>
+
+
+
+
+<!-- Untuk modal edit data diri profile -->
+ <script>
+    function openEditModalDataDiri() {
+        document.getElementById('editModalDataDiri').classList.remove('hidden');
+    }
+
+    function closeEditModalDataDiri() {
+        document.getElementById('editModalDataDiri').classList.add('hidden');
+    }
+
+
+    function previewPhoto(event) {
+        const input = event.target;
+        const preview = document.getElementById('photoPreview');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
 
 
 
