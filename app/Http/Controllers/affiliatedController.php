@@ -297,14 +297,9 @@ class AffiliatedController extends Controller
             'catatan' => $request->catatan,
             'status' => 'pending',
             'affiliated' => true,
+            'harga_pajak_affiliate' =>  $hargaPajak,
             'applied_at' => now(),
         ]);
-
-
-        $task->harga_task_affiliate = $hargaTask;
-        $task->harga_pajak_affiliate = $hargaPajak;
-        $task->save();
-
 
         return redirect()->route('List-pengajuan-task-affiliate.view')->with('success', 'Pengajuan affiliate telah dikirimkan.');
     }
