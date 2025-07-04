@@ -1106,14 +1106,28 @@
 
 <!-- untuk menutupi konten tab lain -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Memastikan tab "Data Diri" yang pertama kali ditampilkan saat halaman dimuat
-        showTab('petunjukUmum');
+  document.addEventListener('DOMContentLoaded', function () {
+    const hash = window.location.hash;
 
-        // Menambahkan kelas 'active' pada tombol Data Diri saat halaman dimuat
-        const petunjukUmumButton = document.getElementById('petunjukUmumButton');
-        dataDiriButton.classList.add('active');
-    });
+    if (hash) {
+        const tabId = hash.substring(1); // Buang '#' dari hash
+        showTab(tabId);
+
+        // Tambahkan kelas aktif ke tombol tab sesuai ID hash (jika pakai)
+        const activeButton = document.getElementById(tabId + 'Button');
+        if (activeButton) {
+            activeButton.classList.add('active');
+        }
+    } else {
+        // Default: tampilkan tab petunjukUmum
+        showTab('petunjukUmum');
+        const defaultBtn = document.getElementById('petunjukUmumButton');
+        if (defaultBtn) {
+            defaultBtn.classList.add('active');
+        }
+    }
+});
+
 
     // Fungsi untuk menampilkan tab
     function showTab(tabId) {

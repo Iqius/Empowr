@@ -151,8 +151,6 @@ Route::get('/my-jobs', [JobController::class, 'myJobs'])->middleware('auth')->na
 // --Profile update
 Route::get('/profil', [ProfileController::class, 'showProfile'])->name('profil');
 Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
-// --CHAT MASIH BELUM PASTI
-Route::get('/chat', [\Chatify\Http\Controllers\MessagesController::class, 'index'])->name('chat');
 // --In progress jobs
 Route::get('/in-progress-jobs/{task_id}', [ProgressionController::class, 'DetailJobsInProgress'])->name('inProgress.jobs');
 // --arbitrase
@@ -170,6 +168,7 @@ Route::post('/chat', [ChatController::class, 'store'])->middleware(['auth'])->na
 Route::delete('/chat/{conversation}', [ChatController::class, 'destroy'])->middleware(['auth'])->name('chat.destroy');
 Route::post('/chat/finish/{id}', [ChatController::class, 'finishConversation'])->name('chat.finish');
 Route::delete('/chat/message/soft-delete/{id}', [ChatController::class, 'softDeleteMessage'])->name('chat.message.softDelete');
+Route::get('/chat/admin', [ChatController::class, 'admin'])->middleware(['auth', 'admin'])->name('chat.admin');
 
 // Route::get('/chat/messages', [ChatController::class, 'fetchMessages']);
 // --notif
@@ -235,4 +234,4 @@ Route::get('/tasks/search', [JobController::class, 'search']);
 
 // Route::get('/tasks/{id}/applicants', [JobController::class, 'showApplicants']);
 
-// Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage']);
+Route::post('/profile/image', [ProfileController::class, 'updateProfileImage'])->name('profile.image.update');
