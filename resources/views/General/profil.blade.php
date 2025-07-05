@@ -17,7 +17,7 @@
                             <?php endif; ?>
 
                             @if($workerProfile?->empowr_affiliate)
-                                <img src="{{ asset('assets/images/Affiliasi.png') }}" alt="Affiliasi" class="w-10 h-10">
+                            <img src="{{ asset('assets/images/Affiliasi.png') }}" alt="Affiliasi" class="w-10 h-10">
                             @endif
 
                         </div>
@@ -59,34 +59,31 @@
                             {{-- Isi form lainnya bisa di sini --}}
                         </div>
 
-                        @if(auth()->user()->role == 'worker')
-                            <div class="flex flex-row gap-4 self-start justify-end">
-                                <!-- Tombol Lihat CV -->
-                                <button type="button" 
-                                    onclick="openCvModal('{{ asset('storage/' . $workerProfile?->cv) }}')"
-                                    class="bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-6 py-2 rounded-md shadow min-w-[140px] flex items-center justify-center">
-                                    Lihat CV
-                                </button>
+                        <div class="flex flex-row gap-4 self-start justify-end">
+                            <!-- Tombol Lihat CV -->
+                            <button type="button"
+                                onclick="openCvModal('{{ asset('storage/' . $workerProfile?->cv) }}')"
+                                class="bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-6 py-2 rounded-md shadow min-w-[140px] flex items-center justify-center">
+                                Lihat CV
+                            </button>
 
-                                <!-- Tombol Ubah Data Diri -->
-                                <button type="button" 
-                                    onclick="openEditModalDataDiri()"
-                                    class="bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-6 py-2 rounded-md shadow min-w-[150px] whitespace-nowrap">
-                                    Ubah Data Diri
-                                </button>
-                            </div>
-                            
-                        @endif
+                            <!-- Tombol Ubah Data Diri -->
+                            <button type="button"
+                                onclick="openEditModalDataDiri()"
+                                class="bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-6 py-2 rounded-md shadow min-w-[150px] whitespace-nowrap">
+                                Ubah Data Diri
+                            </button>
+                        </div>
                     </div>
 
 
-                    
+
                     <div class="flex flex-col gap-4 mb-7">
                         <label class="font-semibold">Bio</label>
                         <textarea id="bioInput"
                             class="p-2 border rounded w-full bg-gray-100 focus:ring-[#1F4482] focus:border-[#1F4482] cursor-not-allowed"
                             rows="4" placeholder="{{ Auth::user()->bio ?? 'Tulis bio Anda di sini' }}"
-                            name="bio" readonly >{{ Auth::user()->bio }}</textarea>
+                            name="bio" readonly>{{ Auth::user()->bio }}</textarea>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-7 mb-7">
@@ -126,26 +123,26 @@
 
                     <!-- Keahlian -->
                     @if(auth()->user()->role == 'worker')
-                        <div class="flex flex-col gap-4 mb-7">
-                            <label class="font-semibold">Keahlian</label>
-                            <div class="w-full p-2 border rounded bg-gray-50">
-                                @php
-                                $selectedSkills = json_decode(optional(Auth::user()->workerProfile)->keahlian, true) ?? [];
-                                @endphp
-                                
-                                @if(count($selectedSkills) > 0)
-                                    <div class="flex flex-wrap gap-2">
-                                        @foreach($selectedSkills as $skill)
-                                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                                                {{ $skill }}
-                                            </span>
-                                        @endforeach
-                                    </div>
-                                @else
-                                    <span class="text-gray-500">Belum ada keahlian yang dipilih</span>
-                                @endif
+                    <div class="flex flex-col gap-4 mb-7">
+                        <label class="font-semibold">Keahlian</label>
+                        <div class="w-full p-2 border rounded bg-gray-50">
+                            @php
+                            $selectedSkills = json_decode(optional(Auth::user()->workerProfile)->keahlian, true) ?? [];
+                            @endphp
+
+                            @if(count($selectedSkills) > 0)
+                            <div class="flex flex-wrap gap-2">
+                                @foreach($selectedSkills as $skill)
+                                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                    {{ $skill }}
+                                </span>
+                                @endforeach
                             </div>
+                            @else
+                            <span class="text-gray-500">Belum ada keahlian yang dipilih</span>
+                            @endif
                         </div>
+                    </div>
                     @endif
 
                     <!-- LinkedIn -->
@@ -158,11 +155,11 @@
                     </div>
                     @endif
 
-                        
-                    
+
+
 
                     <hr class="border-t-1 border-gray-300 my-7">
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-[5fr_1fr] gap-6 items-start">
                         <div class="flex flex-col gap-4">
                             <h1 class="text-2xl font-semibold mb-6">Payment Account</h1>
@@ -177,7 +174,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-7">
                         <div class="flex flex-col gap-4">
                             <label class="font-semibold">Bank</label>
-                            <input type="text" 
+                            <input type="text"
                                 class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
                                 value="{{ strtoupper(Auth::user()->paymentAccount?->bank_name) ?? '-' }}">
                         </div>
@@ -189,14 +186,14 @@
                         </div>
                         <div class="flex flex-col gap-4">
                             <label class="font-semibold">Nomor rekening</label>
-                            <input type="text" 
+                            <input type="text"
                                 class="p-2 border rounded w-full bg-gray-100 text-gray-600"
                                 value="{{ strtoupper(Auth::user()->paymentAccount?->account_number) ?? '-' }}">
                         </div>
 
                         <div class="flex flex-col gap-4">
                             <label class="font-semibold">E-wallet</label>
-                            <input type="text" 
+                            <input type="text"
                                 class="p-2 border rounded w-full bg-gray-100 text-gray-600"
                                 value="{{ strtoupper(Auth::user()->paymentAccount?->ewallet_provider) ?? '-' }}">
                         </div>
@@ -208,7 +205,7 @@
                         </div>
                         <div class="flex flex-col gap-4">
                             <label class="font-semibold">Nomor E-wallet</label>
-                            <input type="text" 
+                            <input type="text"
                                 class="p-2 border rounded w-full bg-gray-100 text-gray-600"
                                 value="{{ strtoupper(Auth::user()->paymentAccount?->wallet_number) ?? '-' }}">
                         </div>
@@ -219,47 +216,61 @@
                 <div id="portofolio" class="tab-content p-4 hidden">
                     @if(auth()->user()->role == 'worker')
                     <button id="portfolioBtn"
-                        class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base font-semibold px-8 py-2 rounded-md shadow">Tambahkan
-                        Portofolio</button>
+                        class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base font-semibold px-8 py-2 rounded-md shadow mb-6">
+                        Tambahkan Portofolio
+                    </button>
                     @endif
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 ">
-                        <!-- Button to trigger the modal -->
-                        @foreach ($portofolio as $porto)
-                            <div class="flex flex-col gap-4 relative cursor-pointer" x-data="{ openModal: false }" onclick='openPortoModal(@json($porto))'>
-                                <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200">
-                                    @if($porto->images && count($porto->images) > 0)
-                                    <div class="w-full h-40 mb-3">
-                                        <img src="{{ asset('storage/' . $porto->images[0]->image) }}"
-                                            alt="Gambar Portofolio" class="w-full h-full object-cover rounded-md">
-                                    </div>
-                                    @endif
 
-                                    <a href="#">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        @foreach ($portofolio as $porto)
+                        <div class="flex flex-col gap-4 relative cursor-pointer" x-data="{ openModal: false }">
+                            <div class="bg-white rounded shadow-md hover:shadow-lg transition duration-200 overflow-hidden">
+                                {{-- Area Gambar (hanya trigger modal preview) --}}
+                                <div class="relative" style="height: 180px;">
+                                    <div onclick='openPortoModal(@json($porto))' class="cursor-pointer w-full h-full">
+                                        <img src="{{ url($porto->images[0]->image) }}" alt="Gambar Portofolio"
+                                            class="w-full h-full object-cover rounded-t-md" />
+                                    </div>
+                                </div>
+
+                                {{-- Konten Deskripsi + Tombol Aksi --}}
+                                <div class="p-3 flex justify-between items-start gap-2">
+                                    {{-- Kiri: Teks --}}
+                                    <div class="flex-1">
                                         <p class="text-blue-600 font-semibold text-base sm:text-lg">{{ $porto->title }}</p>
                                         @php
                                         $descriptionWords = explode(' ', $porto->description);
                                         $shortDescription = implode(' ', array_slice($descriptionWords, 0, 10));
                                         $remainingDescription = count($descriptionWords) > 10 ? '...' : '';
                                         @endphp
-
                                         <p class="text-gray-500 text-sm">{{ $shortDescription . $remainingDescription }}</p>
                                         <p class="text-xs text-gray-400 mt-1">Durasi: {{ $porto->duration }} hari</p>
-                                    </a>
+                                    </div>
+
+                                    {{-- Kanan: Tombol --}}
+                                    <div class="flex flex-col items-end gap-2">
+                                        <button onclick='event.stopPropagation(); openEditModal(@json($porto))'
+                                            class="bg-blue-500 text-white px-2 py-1 rounded text-xs">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+
+                                        <form id="delete-form-{{ $porto->id }}" action="{{ route('portofolio.delete', $porto->id) }}" method="POST" class="hidden">
+                                            @csrf
+                                        </form>
+
+                                        <button type="button"
+                                            onclick="confirmDelete({{ $porto->id }})"
+                                            class="bg-red-500 text-white px-2 py-1 rounded text-xs">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <form action="{{ route('portofolio.delete', $porto->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus portofolio ini?')" class="absolute top-2 right-2">
-                                    @csrf
-                                    <button class="text-red-600 hover:text-red-800">
-                                        <i class="bi bi-trash-fill"></i> Hapus
-                                    </button>
-                                </form>
-                                <!-- Tombol edit di setiap item portofolio -->
-                                <button onclick='openEditModal(@json($porto))' class="absolute top-2 left-2 bg-yellow-400 text-white px-2 py-1 rounded text-xs">
-                                    <i class="bi bi-pencil-square"></i> Edit
-                                </button>
                             </div>
+                        </div>
                         @endforeach
                     </div>
                 </div>
+
 
                 <!-- tab sertifikasi -->
                 <div id="sertifikasi" class="tab-content p-4 hidden">
@@ -271,31 +282,37 @@
                     @endif
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-5">
                         @foreach ($sertifikasi as $sertifikat)
-                            <div class="flex flex-col gap-4">
-                                <div class="bg-white p-4 rounded shadow-md hover:shadow-lg transition duration-200 relative">
-                                    {{-- Gambar sertifikat --}}
-                                    @if($sertifikat->images && count($sertifikat->images) > 0)
-                                        <div class="w-full h-40 mb-3">
-                                            <img src="{{ asset('storage/' . $sertifikat->images[0]->image) }}"
-                                                alt="Gambar Sertifikat" class="w-full h-full object-cover rounded-md">
-                                        </div>
-                                    @endif
+                        <div class="flex flex-col gap-4">
+                            <div class="bg-white rounded shadow-md hover:shadow-lg transition duration-200 overflow-hidden">
+                                {{-- Gambar Sertifikat --}}
+                                @if($sertifikat->images && count($sertifikat->images) > 0)
+                                <div class="relative" style="height: 180px;">
+                                    <img src="{{ url($sertifikat->images[0]->image) }}" alt="Gambar Sertifikat"
+                                        class="w-full h-full object-cover rounded-t-md" />
+                                </div>
+                                @endif
 
-                                    {{-- Judul sertifikat --}}
-                                    <p class="text-blue-600 font-semibold text-base sm:text-lg text-center">
-                                        {{ $sertifikat->title ?? 'Tanpa Judul' }}
-                                    </p>
+                                {{-- Judul Sertifikat + Tombol --}}
+                                <div class="p-3 flex justify-between items-start gap-2">
+                                    {{-- Judul --}}
+                                    <div class="flex-1 text-center">
+                                        <p class="text-blue-600 font-semibold text-base sm:text-lg">{{ $sertifikat->title ?? 'Tanpa Judul' }}</p>
+                                    </div>
 
-                                    {{-- Tombol hapus --}}
-                                    <form action="{{ route('sertifikasi.hapusFile', $sertifikat->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus file dan judul sertifikat ini?')">
-                                        @csrf
-                                        <button type="submit"
-                                            class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600">
-                                            Hapus
+                                    {{-- Tombol Hapus --}}
+                                    <div class="flex items-center">
+                                        <form id="delete-sertif-{{ $sertifikat->id }}" action="{{ route('sertifikasi.hapusFile', $sertifikat->id) }}" method="POST" class="hidden">
+                                            @csrf
+                                        </form>
+                                        <button type="button"
+                                            onclick="confirmDeleteSertif({{ $sertifikat->id }})"
+                                            class="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">
+                                            <i class="bi bi-trash-fill"></i>
                                         </button>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
                         @endforeach
                     </div>
                 </div>
@@ -549,7 +566,7 @@
         <form action="{{ route('profile.updatePortofolio') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="modal-body space-y-4">
-               
+
                 <!-- Image Input -->
                 <div class="space-y-2">
                     <label for="portfolioImageInput" class="block text-sm font-medium text-gray-700">Gambar
@@ -578,8 +595,8 @@
                 <!-- Duration Input -->
                 <div class="space-y-2">
                     <label for="portfolioDurationInput" class="block text-sm font-medium text-gray-700">Durasi
-                        Pengerjaan</label>
-                    <input type="text" id="portfolioDurationInput" name="duration"
+                        Pengerjaan (hari)</label>
+                    <input type="number" id="portfolioDurationInput" name="duration"
                         class="w-full  rounded-md border border-1 focus:ring-blue-500 focus:border-blue-500 p-2">
                 </div>
             </div>
@@ -675,10 +692,14 @@
             <!-- Gambar tersimpan (slider) -->
             <div class="mb-3">
                 <label class="block mb-1">Gambar Tersimpan</label>
-                <div class="swiper mySwiper">
+                <div class="swiper mySwiper relative">
                     <div class="swiper-wrapper" id="modalImageSlider">
                         {{-- Diisi lewat JS --}}
                     </div>
+                    <!-- Navigasi Swiper -->
+                    <div class="swiper-button-next text-gray-800"></div>
+                    <div class="swiper-button-prev text-gray-800"></div>
+                    <div class="swiper-pagination mt-2"></div>
                 </div>
             </div>
 
@@ -698,30 +719,28 @@
 </div>
 
 
-<!-- modal preview portofolio -->
-<div id="portoModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
-    <div class="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
-        <!-- Tombol Close -->
-        <button onclick="closePortoModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl">&times;</button>
+<!-- Modal Preview Portofolio -->
+<div id="portoModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-60 flex items-center justify-center">
+    <div class="relative bg-white rounded-lg w-full max-w-xl shadow-lg">
+        <!-- Tombol close -->
+        <button onclick="closePortoModal()"
+            class="absolute -top-4 -right-4 bg-white text-gray-800 hover:text-red-600 hover:bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center shadow-md z-50 text-xl">
+            &times;
+        </button>
 
-        <!-- Swiper Slider -->
-        <div class="swiper mySwiper mb-4">
-            <div class="swiper-wrapper" id="modalSwiperWrapper">
-                {{-- Diisi via JS --}}
-            </div>
-            <!-- Swiper navigation -->
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
+        <!-- Swiper image -->
+        <div class="swiper mySwiper mb-4 rounded-t-lg overflow-hidden">
+            <div class="swiper-wrapper" id="modalSwiperWrapper"></div>
+            <div class="swiper-button-next text-gray-800"></div>
+            <div class="swiper-button-prev text-gray-800"></div>
         </div>
 
-        <!-- Title -->
-        <h2 id="modalPortoTitle" class="text-lg font-bold mb-1"></h2>
-
-        <!-- Durasi -->
-        <p id="modalPortoDuration" class="text-sm text-gray-600 mb-1"></p>
-
         <!-- Deskripsi -->
-        <p id="modalPortoDescription" class="text-sm text-gray-700"></p>
+        <div class="p-4 text-center">
+            <h2 id="modalPortoTitle" class="text-lg font-bold mb-1"></h2>
+            <p id="modalPortoDuration" class="text-sm text-gray-500 mb-1"></p>
+            <p id="modalPortoDescription" class="text-sm text-gray-700"></p>
+        </div>
     </div>
 </div>
 
@@ -731,9 +750,9 @@
     <div class="bg-white w-full max-w-3xl p-6 rounded-lg shadow-lg overflow-y-auto max-h-[90vh] relative">
         <!-- Tombol Close -->
         <button type="button" onclick="closeEditModalDataDiri()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-        
+
         <h2 class="text-xl font-semibold mb-4">Ubah Data Diri</h2>
-        
+
         <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
@@ -745,9 +764,9 @@
 
             <!-- Preview Gambar -->
             <div class="mb-4">
-                <img id="photoPreview" 
-                    src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('images/default-avatar.png') }}" 
-                    alt="Preview Foto Profil" 
+                <img id="photoPreview"
+                    src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('images/default-avatar.png') }}"
+                    alt="Preview Foto Profil"
                     class="w-32 h-32 object-cover border border-gray-300"> <!-- Tidak pakai rounded-full -->
             </div>
 
@@ -799,40 +818,40 @@
 
             <!-- Keahlian -->
             @if(auth()->user()->role == 'worker')
-                <div class="flex flex-col gap-4 mb-7">
-                    <label for="keahlian-select" class="font-semibold">Keahlian</label>
+            <div class="flex flex-col gap-4 mb-7">
+                <label for="keahlian-select" class="font-semibold">Keahlian</label>
 
-                    @php
-                        // Ambil data keahlian yang sudah disimpan (dalam format array)
-                        $selectedSkills = json_decode(optional(Auth::user()->keahlian)->keahlian, true) ?? [];
+                @php
+                // Ambil data keahlian yang sudah disimpan (dalam format array)
+                $selectedSkills = json_decode(optional(Auth::user()->keahlian)->keahlian, true) ?? [];
 
-                        // Semua opsi keahlian yang tersedia
-                        $keahlianWorker = [
-                            "Web Development", "Mobile Development", "Game Development", "Software Engineering", "Frontend Development",
-                            "Backend Development", "Full Stack Development", "DevOps", "QA Testing", "Automation Testing", "API Integration",
-                            "WordPress Development", "Data Science", "Machine Learning", "AI Development", "Data Engineering", "Data Entry",
-                            "SEO", "Content Writing", "Technical Writing", "Blog Writing", "Copywriting", "Scriptwriting", "Proofreading",
-                            "Translation", "Transcription", "Resume Writing", "Ghostwriting", "Creative Writing", "Social Media Management",
-                            "Digital Marketing", "Email Marketing", "Affiliate Marketing", "Influencer Marketing", "Community Management",
-                            "Search Engine Marketing", "Branding", "Graphic Design", "UI/UX Design", "IT Support", "Logo Design",
-                            "Motion Graphics", "Illustration", "Video Editing", "Video Production", "Animation", "3D Modeling",
-                            "Video Game Design", "Audio Editing", "Photography", "Photo Editing", "Presentation Design", "Project Management",
-                            "Virtual Assistant", "Customer Service", "Lead Generation", "Market Research", "Business Analysis",
-                            "Human Resources", "Event Planning", "Bookkeeping", "Accounting", "Tax Preparation", "Financial Analysis",
-                            "Legal Advice", "Contract Drafting", "Startup Consulting", "Investment Research", "Real Estate Consulting",
-                            "Personal Assistant", "Clerical Work", "Data Analysis", "Business Coaching", "Career Coaching", "Life Coaching",
-                            "Consulting", "Other"
-                        ];
-                    @endphp
+                // Semua opsi keahlian yang tersedia
+                $keahlianWorker = [
+                "Web Development", "Mobile Development", "Game Development", "Software Engineering", "Frontend Development",
+                "Backend Development", "Full Stack Development", "DevOps", "QA Testing", "Automation Testing", "API Integration",
+                "WordPress Development", "Data Science", "Machine Learning", "AI Development", "Data Engineering", "Data Entry",
+                "SEO", "Content Writing", "Technical Writing", "Blog Writing", "Copywriting", "Scriptwriting", "Proofreading",
+                "Translation", "Transcription", "Resume Writing", "Ghostwriting", "Creative Writing", "Social Media Management",
+                "Digital Marketing", "Email Marketing", "Affiliate Marketing", "Influencer Marketing", "Community Management",
+                "Search Engine Marketing", "Branding", "Graphic Design", "UI/UX Design", "IT Support", "Logo Design",
+                "Motion Graphics", "Illustration", "Video Editing", "Video Production", "Animation", "3D Modeling",
+                "Video Game Design", "Audio Editing", "Photography", "Photo Editing", "Presentation Design", "Project Management",
+                "Virtual Assistant", "Customer Service", "Lead Generation", "Market Research", "Business Analysis",
+                "Human Resources", "Event Planning", "Bookkeeping", "Accounting", "Tax Preparation", "Financial Analysis",
+                "Legal Advice", "Contract Drafting", "Startup Consulting", "Investment Research", "Real Estate Consulting",
+                "Personal Assistant", "Clerical Work", "Data Analysis", "Business Coaching", "Career Coaching", "Life Coaching",
+                "Consulting", "Other"
+                ];
+                @endphp
 
-                    <select id="keahlian-select" name="keahlian[]" multiple class="w-full p-2 border rounded">
-                        @foreach ($keahlianWorker as $keahlian)
-                            <option value="{{ $keahlian }}" {{ in_array($keahlian, $selectedSkills) ? 'selected' : '' }}>
-                                {{ $keahlian }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                <select id="keahlian-select" name="keahlian[]" multiple class="w-full p-2 border rounded">
+                    @foreach ($keahlianWorker as $keahlian)
+                    <option value="{{ $keahlian }}" {{ in_array($keahlian, $selectedSkills) ? 'selected' : '' }}>
+                        {{ $keahlian }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
             @endif
 
             <div class="flex justify-end mt-6">
@@ -859,9 +878,9 @@
                 <select name="ewallet_provider" class="w-full border p-2 rounded">
                     <option value="">-- Pilih E-Wallet --</option>
                     @foreach(['Gopay','OVO','DANA','ShopeePay','LinkAja','Jenius Pay','Sakuku','iSaku','Paytren','Tidak ada'] as $provider)
-                        <option value="{{ $provider }}" @selected(Auth::user()->paymentAccount?->ewallet_provider === $provider)>
-                            {{ $provider }}
-                        </option>
+                    <option value="{{ $provider }}" @selected(Auth::user()->paymentAccount?->ewallet_provider === $provider)>
+                        {{ $provider }}
+                    </option>
                     @endforeach
                 </select>
             </div>
@@ -869,15 +888,15 @@
             <div>
                 <label class="block font-medium mb-1">Nomor E-Wallet</label>
                 <input type="text" name="wallet_number"
-                       value="{{ Auth::user()->paymentAccount?->wallet_number }}"
-                       class="w-full border p-2 rounded" placeholder="0812xxxxxxxx">
+                    value="{{ Auth::user()->paymentAccount?->wallet_number }}"
+                    class="w-full border p-2 rounded" placeholder="0812xxxxxxxx">
             </div>
 
             <div>
                 <label class="block font-medium mb-1">Nama Akun E-Wallet</label>
                 <input type="text" name="ewallet_account_name"
-                       value="{{ Auth::user()->paymentAccount?->ewallet_account_name }}"
-                       class="w-full border p-2 rounded" placeholder="Nama lengkap sesuai e-wallet">
+                    value="{{ Auth::user()->paymentAccount?->ewallet_account_name }}"
+                    class="w-full border p-2 rounded" placeholder="Nama lengkap sesuai e-wallet">
             </div>
 
             <hr class="my-4">
@@ -888,15 +907,15 @@
                 <select name="bank_name" class="w-full border p-2 rounded">
                     <option value="">-- Pilih Bank --</option>
                     @foreach([
-                        'BCA', 'BNI', 'BRI', 'Mandiri', 'CIMB Niaga', 'Danamon', 'Permata', 'BTN',
-                        'Maybank', 'OCBC NISP', 'Panin', 'Bank Jago', 'BSI', 'Bank DKI', 'Bank Jabar Banten (BJB)',
-                        'Bank Sumut', 'Bank Nagari', 'Bank Aceh', 'Bank Kaltimtara', 'Bank Kalsel', 'Bank Kalteng',
-                        'Bank Papua', 'Bank NTB Syariah', 'Bank NTT', 'Bank Sulselbar', 'Bank SulutGo', 'Bank Bengkulu',
-                        'Bank Riau Kepri', 'Bank Maluku Malut', 'Bank Lampung', 'Bank Sumsel Babel', 'Tidak ada'
+                    'BCA', 'BNI', 'BRI', 'Mandiri', 'CIMB Niaga', 'Danamon', 'Permata', 'BTN',
+                    'Maybank', 'OCBC NISP', 'Panin', 'Bank Jago', 'BSI', 'Bank DKI', 'Bank Jabar Banten (BJB)',
+                    'Bank Sumut', 'Bank Nagari', 'Bank Aceh', 'Bank Kaltimtara', 'Bank Kalsel', 'Bank Kalteng',
+                    'Bank Papua', 'Bank NTB Syariah', 'Bank NTT', 'Bank Sulselbar', 'Bank SulutGo', 'Bank Bengkulu',
+                    'Bank Riau Kepri', 'Bank Maluku Malut', 'Bank Lampung', 'Bank Sumsel Babel', 'Tidak ada'
                     ] as $bank)
-                        <option value="{{ $bank }}" @selected(Auth::user()->paymentAccount?->bank_name === $bank)>
-                            {{ $bank }}
-                        </option>
+                    <option value="{{ $bank }}" @selected(Auth::user()->paymentAccount?->bank_name === $bank)>
+                        {{ $bank }}
+                    </option>
                     @endforeach
                 </select>
             </div>
@@ -904,25 +923,25 @@
             <div>
                 <label class="block font-medium mb-1">Nomor Rekening</label>
                 <input type="text" name="account_number"
-                       value="{{ Auth::user()->paymentAccount?->account_number }}"
-                       class="w-full border p-2 rounded" placeholder="1234567890">
+                    value="{{ Auth::user()->paymentAccount?->account_number }}"
+                    class="w-full border p-2 rounded" placeholder="1234567890">
             </div>
 
             <div>
                 <label class="block font-medium mb-1">Nama Pemilik Rekening</label>
                 <input type="text" name="bank_account_name"
-                       value="{{ Auth::user()->paymentAccount?->bank_account_name }}"
-                       class="w-full border p-2 rounded" placeholder="Nama sesuai buku tabungan">
+                    value="{{ Auth::user()->paymentAccount?->bank_account_name }}"
+                    class="w-full border p-2 rounded" placeholder="Nama sesuai buku tabungan">
             </div>
 
             <!-- ✅ Buttons -->
             <div class="flex justify-end gap-2 pt-4">
                 <button type="button" onclick="closeModalEditRekening('editModalRekening')"
-                        class="px-4 py-2 rounded border text-gray-700 hover:bg-gray-100">
+                    class="px-4 py-2 rounded border text-gray-700 hover:bg-gray-100">
                     Batal
                 </button>
                 <button type="submit"
-                        class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+                    class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
                     Simpan
                 </button>
             </div>
@@ -930,18 +949,11 @@
 
         <!-- Tombol Close di pojok -->
         <button onclick="closeModalEditRekening('editModalRekening')"
-                class="absolute top-3 right-4 text-gray-500 hover:text-black text-xl font-bold">
+            class="absolute top-3 right-4 text-gray-500 hover:text-black text-xl font-bold">
             &times;
         </button>
     </div>
 </div>
-
-
-
-
-
-
-
 
 <!-- ----------------------------------JS BATAS ------------------------------------------------------------------- -->
 
@@ -951,11 +963,55 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
 <script>
+    function confirmDelete(id) {
+        event.stopPropagation(); // Supaya tidak trigger modal preview
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "Data portofolio tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`delete-form-${id}`).submit();
+            }
+        });
+    }
+</script>
+<script>
+    function confirmDeleteSertif(id) {
+        event.stopPropagation(); // prevent klik lainnya
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "File dan judul sertifikat akan dihapus permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`delete-sertif-${id}`).submit();
+            }
+        });
+    }
+</script>
+
+
+<script>
     let swiper;
 
     function openPortoModal(porto) {
         // Tampilkan modal
-        document.getElementById('portoModal').classList.remove('hidden');
+        const modal = document.getElementById('portoModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        // Isi teks
         document.getElementById('modalPortoTitle').textContent = porto.title;
         document.getElementById('modalPortoDuration').textContent = "Durasi: " + porto.duration + " hari";
         document.getElementById('modalPortoDescription').textContent = porto.description;
@@ -968,28 +1024,37 @@
         porto.images.forEach(img => {
             const slide = document.createElement('div');
             slide.className = 'swiper-slide';
-            slide.innerHTML = `<img src="${window.location.origin}/${img.image}" class="w-full h-64 object-cover rounded-md" />`;
+            slide.innerHTML = `
+                <img src="${window.location.origin}/${img.image}" 
+                     class="w-full max-h-[400px] object-contain rounded-t-lg" />
+            `;
             wrapper.appendChild(slide);
         });
 
-        // Inisialisasi ulang swiper
+        // Destroy jika ada instance swiper sebelumnya
         if (swiper) swiper.destroy();
-        swiper = new Swiper(".mySwiper", {
-            navigation: {
-                nextEl: ".swiper-button-next",
-                prevEl: ".swiper-button-prev",
-            },
-        });
+
+        // Inisialisasi Swiper ulang
+        setTimeout(() => {
+            swiper = new Swiper(".mySwiper", {
+                loop: true,
+                navigation: {
+                    nextEl: ".swiper-button-next",
+                    prevEl: ".swiper-button-prev",
+                },
+            });
+        }, 100);
     }
 
     function closePortoModal() {
-        document.getElementById('portoModal').classList.add('hidden');
+        const modal = document.getElementById('portoModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
     }
 </script>
 
-
 <!-- modal edit rekening pengguna -->
- <script>
+<script>
     function openModal(id) {
         document.getElementById(id).classList.remove('hidden');
         document.getElementById(id).classList.add('flex');
@@ -1001,11 +1066,8 @@
     }
 </script>
 
-
-
-
 <!-- Untuk modal edit data diri profile -->
- <script>
+<script>
     function openEditModalDataDiri() {
         document.getElementById('editModalDataDiri').classList.remove('hidden');
     }
@@ -1056,7 +1118,7 @@
                 slide.classList.add('swiper-slide', 'relative');
 
                 slide.innerHTML = `
-                    <img src="/${img.image}" class="w-64 h-64 object-cover rounded border mx-auto" />
+                    <img src="/${img.image}" class="max-w-full max-h-64 mx-auto rounded border object-contain" />
                     <form method="POST" action="/portofolio/image/${img.id}/delete" class="absolute top-1 right-1">
                         @csrf
                         @method('DELETE')
@@ -1451,44 +1513,44 @@ if (data.reviews.length < 10) {
             });
             @endif
         </script>
-<script>
-     const imageInput = document.getElementById('profile-image-input');
-    const profileImage = document.getElementById('profile-image');
-    const uploadStatus = document.getElementById('upload-status');
+        <script>
+            const imageInput = document.getElementById('profile-image-input');
+            const profileImage = document.getElementById('profile-image');
+            const uploadStatus = document.getElementById('upload-status');
 
-    imageInput.addEventListener('change', async function () {
-        const file = this.files[0];
-        if (!file) return;
+            imageInput.addEventListener('change', async function() {
+                const file = this.files[0];
+                if (!file) return;
 
-        const formData = new FormData();
-        formData.append('profile_image', file);
+                const formData = new FormData();
+                formData.append('profile_image', file);
 
-        uploadStatus.classList.remove('hidden');
-        uploadStatus.textContent = "Uploading...";
+                uploadStatus.classList.remove('hidden');
+                uploadStatus.textContent = "Uploading...";
 
-        try {
-            const response = await fetch("{{ route('profile.image.update') }}", {
-                method: "POST",
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                body: formData
+                try {
+                    const response = await fetch("{{ route('profile.image.update') }}", {
+                        method: "POST",
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        profileImage.src = data.image_url;
+                        uploadStatus.textContent = "Upload berhasil!";
+                    } else {
+                        uploadStatus.textContent = "Upload gagal.";
+                    }
+
+                } catch (error) {
+                    uploadStatus.textContent = "Terjadi kesalahan.";
+                }
+
+                setTimeout(() => uploadStatus.classList.add('hidden'), 3000);
             });
-
-            const data = await response.json();
-
-            if (data.success) {
-                profileImage.src = data.image_url;
-                uploadStatus.textContent = "Upload berhasil!";
-            } else {
-                uploadStatus.textContent = "Upload gagal.";
-            }
-
-        } catch (error) {
-            uploadStatus.textContent = "Terjadi kesalahan.";
-        }
-
-        setTimeout(() => uploadStatus.classList.add('hidden'), 3000);
-    });
-</script>
+        </script>
         @include('General.footer')

@@ -132,21 +132,24 @@ class ProfileController extends Controller
 
         $user->save();
 
-        // Worker profile (CV, LinkedIn, Keahlian)
-        $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
+        // Hanya update data ini jika user adalah worker
+        if ($user->role === 'worker') {
+            $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
 
-        if ($request->hasFile('cv')) {
-            $workerProfile->cv = $request->file('cv')->store('cv', 'public');
+            if ($request->hasFile('cv')) {
+                $workerProfile->cv = $request->file('cv')->store('cv', 'public');
+            }
+
+            $workerProfile->keahlian = $request->keahlian ? json_encode($request->keahlian) : $workerProfile->keahlian;
+            $workerProfile->linkedin = $request->linkedin ?? $workerProfile->linkedin;
+            $workerProfile->empowr_label = $request->has('empowr_label');
+            $workerProfile->empowr_affiliate = $request->has('empowr_affiliate');
+            $workerProfile->save();
         }
-
-        $workerProfile->keahlian = $request->keahlian ? json_encode($request->keahlian) : $workerProfile->keahlian;
-        $workerProfile->linkedin = $request->linkedin ?? $workerProfile->linkedin;
-        $workerProfile->empowr_label = $request->has('empowr_label');
-        $workerProfile->empowr_affiliate = $request->has('empowr_affiliate');
-        $workerProfile->save();
 
         return redirect()->route('profil')->with('success-update', 'Data diri berhasil diperbarui.');
     }
+
 
     public function updatePaymentAccount(Request $request)
     {
@@ -253,7 +256,8 @@ class ProfileController extends Controller
 
 
 
-    public function updateSertifikasi(Request $request){
+    public function updateSertifikasi(Request $request)
+    {
 
         $user = Auth::user();
 
@@ -301,10 +305,11 @@ class ProfileController extends Controller
         }
     }
 
-    public function updatePortofolio(Request $request){
+    public function updatePortofolio(Request $request)
+    {
         $user = Auth::user();
 
-        $request->validate([        
+        $request->validate([
             'title' => 'nullable|string',
             'portofolio' => 'nullable|array',
             'portofolio.*' => 'file|mimes:jpg,jpeg,png|max:2048',
@@ -340,7 +345,7 @@ class ProfileController extends Controller
 
         // ⬇️ Jika ada file baru → hapus gambar lama dan ganti
         if ($request->hasFile('portofolio')) {
-            
+
             $files = is_array($request->file('portofolio')) ? $request->file('portofolio') : [$request->file('portofolio')];
             foreach ($files as $file) {
                 $fileName = round(microtime(true) * 1000) . '-' . $file->getClientOriginalName();
@@ -391,7 +396,7 @@ class ProfileController extends Controller
 
         return response()->json(['success' => true, 'image_url' => asset('storage/' . $imagePath)]);
     }
-  
+
     public function getWorkerRatingData($workerId)
     {
         try {
@@ -445,7 +450,7 @@ class ProfileController extends Controller
         }
     }
 
-   
+
     public function getWorkerReviews($workerId, $limit = 10, $offset = 0)
     {
         try {
@@ -536,5 +541,4 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Portofolio berhasil dihapus.');
     }
-   
 }
