@@ -151,7 +151,11 @@ Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
 Route::get('/my-jobs', [JobController::class, 'myJobs'])->middleware('auth')->name('jobs.my');
 // --Profile update
 Route::get('/profil', [ProfileController::class, 'showProfile'])->name('profil');
-Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
+
+Route::post('/profile/data-diri/update', [ProfileController::class, 'updateDataDiri'])->name('profile.update');
+Route::post('/profile/akun-pembayaran/update', [ProfileController::class, 'updatePaymentAccount'])->name('profile-akunPembayaran.update');
+// --CHAT MASIH BELUM PASTI
+Route::get('/chat', [\Chatify\Http\Controllers\MessagesController::class, 'index'])->name('chat');
 // --In progress jobs
 Route::get('/in-progress-jobs/{task_id}', [ProgressionController::class, 'DetailJobsInProgress'])->name('inProgress.jobs');
 // --arbitrase
