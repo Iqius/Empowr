@@ -310,11 +310,11 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'title' => 'nullable|string',
-            'portofolio' => 'nullable|array',
+            'title' => 'required|string',
+            'portofolio' => 'required|array',
             'portofolio.*' => 'file|mimes:jpg,jpeg,png|max:2048',
-            'description' => 'nullable|string',
-            'duration' => 'nullable|integer',
+            'description' => 'required|string',
+            'duration' => 'required|integer',
         ]);
 
         $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
