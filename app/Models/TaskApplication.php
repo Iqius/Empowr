@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TaskApplication extends Model
 {
-    protected $fillable = ['task_id', 'profile_id', 'catatan','bidPrice', 'status','applied_at', 'affiliated'];
+    protected $fillable = ['task_id', 'profile_id', 'catatan','bidPrice', 'status', 'harga_pajak_affiliate','applied_at', 'affiliated'];
     public $timestamps = false;
 
 

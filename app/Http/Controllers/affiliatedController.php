@@ -186,9 +186,10 @@ class AffiliatedController extends Controller
     public function createAffiliatedOrder(Request $request)
     {
         $request->validate([
-            'identity_photo' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg,jpg|max:10240',
-            'selfie_with_id' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg,jpg|max:10240',
-            'keahlian_affiliate' => 'nullable|string|max:255',
+            'identity_photo' => 'required|file|mimes:pdf,doc,docx,png,jpeg,jpg|max:10240',
+            'selfie_with_id' => 'required|file|mimes:pdf,doc,docx,png,jpeg,jpg|max:10240',
+            'keahlian_affiliate' => 'required|array|min:1',
+            'keahlian_affiliate.*' => 'string|max:255',
         ]);
 
         // Ambil user_id dari relasi workerProfile
@@ -272,7 +273,7 @@ class AffiliatedController extends Controller
             'message' => 'Maaf pengajuan affiliate telah ditolak.',
             'is_read' => false,
         ]);
-        return redirect()->route('List-pengajuan-task-affiliate.view')->with('success', 'Pengajuan affiliate ditolak.');
+        return redirect()->route('List-pengajuan-task-affiliate.view')->with('success', 'Berhasil menolak permintaan affiliate task!');
 
     }
 
@@ -283,9 +284,7 @@ class AffiliatedController extends Controller
         $task = Task::findOrFail($id);
         $workerProfiles = $request->worker_id;
 
-        $existing = TaskApplication::where('task_id', $id)
-            ->where('profile_id', $workerProfiles)
-            ->first();
+       
 
             $hargaTask = (float) str_replace(',', '.', $request->harga_task_affiliate);
             $hargaPajak = (float) str_replace(',', '.', $request->harga_pajak_affiliate);
@@ -297,15 +296,10 @@ class AffiliatedController extends Controller
             'catatan' => $request->catatan,
             'status' => 'pending',
             'affiliated' => true,
+            'harga_pajak_affiliate' =>  $hargaPajak,
             'applied_at' => now(),
         ]);
 
-
-        $task->harga_task_affiliate = $hargaTask;
-        $task->harga_pajak_affiliate = $hargaPajak;
-        $task->save();
-
-
-        return redirect()->route('List-pengajuan-task-affiliate.view')->with('success', 'Pengajuan affiliate telah dikirimkan.');
+        return redirect()->route('List-pengajuan-task-affiliate.view')->with('success', 'Berhasil menugaskan worker affiliate!');
     }
 }

@@ -162,7 +162,7 @@ class PaymentController extends Controller
                     if ($task) {
                         $hasAffiliate = TaskApplication::where('task_id', $task->id)
                             ->where('affiliated', true)
-                            ->exists();
+                            ->first();
 
                         // Kalau ada affiliated = true, update task dengan informasi khusus affiliate (opsional)
                         if ($hasAffiliate) {
@@ -171,6 +171,7 @@ class PaymentController extends Controller
                             $task->client_id = $transaction->client_id;
                             $task->status_affiliate = true;
                             $task->price = $transaction->amount;
+                            $task->harga_pajak_affiliate = $hasAffiliate->harga_pajak_affiliate;
                             $task->save();
 
                         } else {
@@ -215,11 +216,11 @@ class PaymentController extends Controller
     public function ewalletIndex()
     {
         $user = Auth::user();
-        $ewallet = Ewallet::where('user_id', $userId)->first();
-        $workerprofileid = WorkerProfile::where('user_id', $userId)->value('id');
-        $paymentAccounts = UserPaymentAccount::where('user_id', $userId)->first();
+        $ewallet = Ewallet::where('user_id', $user->id)->first();
+        $workerprofileid = WorkerProfile::where('user_id', $user->id)->value('id');
+        $paymentAccounts = UserPaymentAccount::where('user_id', $user->id)->first();
 
-      $transactions = Transaction::where('worker_id', $workerId)
+      $transactions = Transaction::where('worker_id', $workerprofileid)
                         ->orWhere('client_id', $user->id)
 
                         ->orderBy('created_at', 'desc')
@@ -236,8 +237,11 @@ class PaymentController extends Controller
         $user = auth()->user();
         $taskId = $request->input('task_id');
         $task = Task::find($taskId);
+        $hasAffiliate = TaskApplication::where('task_id', $task->id)
+            ->where('affiliated', true)
+            ->first();
         // Ambil data yang diperlukan
-        $amount = $request->amount ?? $task->price;
+        $amount = $request->amount ?? $hasAffiliate->bidPrice;
         $paymentMethod = $request->input('payment_method');
         $type = $request->input('type');
         $workerId = $request->worker_profile_id ?? $task->profile_id;
@@ -254,10 +258,6 @@ class PaymentController extends Controller
             return back()->with('error', 'Saldo tidak mencukupi.');
         }
 
-        $hasAffiliate = TaskApplication::where('task_id', $task->id)
-            ->where('affiliated', true)
-            ->exists();
-
         if ($hasAffiliate) {
             // Potong saldo ewallet
             $ewallet->balance -= $amount;
@@ -268,6 +268,7 @@ class PaymentController extends Controller
                 'profile_id' => $workerId,
                 'client_id' => $user->id,
                 'status_affiliate' => true,
+                'harga_pajak_affiliate' => $hasAffiliate->harga_pajak_affiliate,
                 'status' => 'in progress',
             ]);
 

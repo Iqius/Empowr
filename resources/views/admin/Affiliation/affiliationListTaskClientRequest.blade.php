@@ -34,17 +34,18 @@
                                     </form>
 
                                     {{-- Form Tolak --}}
-                                    <form action="{{ route('rejected.affiliate-task', $tasks->id) }}" method="POST"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menolak task ini?')">
+                                    <form id="formTolak-{{ $tasks->id }}" action="{{ route('rejected.affiliate-task', $tasks->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit"
+                                        <button type="button"
+                                            onclick="konfirmasiTolak({{ $tasks->id }})"
                                             class="px-4 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded-full font-semibold transition">
                                             Tolak
                                         </button>
                                     </form>
 
+
                                     {{-- Form Terima --}}
-                                    <button onclick="openModalTerima()" 
+                                    <button onclick="openModalTerima({{ $tasks->id }})" 
                                         class="px-4 py-1 bg-green-500 hover:bg-green-600 text-white text-xs rounded-full font-semibold transition">
                                         Terima
                                     </button>
@@ -54,8 +55,8 @@
                         </tr>
                     </tbody>
                     <!-- Modal Terima affiliate-->
-                    <div id="modalTerima" class="fixed inset-0 flex items-center justify-center opacity-0 pointer-events-none bg-black/30 backdrop-blur-sm transition-opacity duration-300 z-50">
-                        <div id="modalTerimaContent" class="bg-white p-6 rounded-lg w-full max-w-md mx-4 shadow-lg transform scale-95 opacity-0 transition duration-300 overflow-y-auto max-h-[80vh]">
+                    <div id="modalTerima-{{ $tasks->id }}" class="fixed inset-0 flex items-center justify-center opacity-0 pointer-events-none bg-black/30 backdrop-blur-sm transition-opacity duration-300 z-50">
+                        <div class="modal-content bg-white p-6 rounded-lg w-full max-w-md mx-4 shadow-lg transform scale-95 opacity-0 transition duration-300 overflow-y-auto max-h-[80vh]">
                             <!-- Header -->
                             <div class="flex justify-between items-center mb-4">
                                 <h2 class="text-lg font-semibold">Terima Task Affiliate</h2>
@@ -102,6 +103,7 @@
                                     <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Simpan</button>
                                 </div>
                             </form>
+                            
                         </div>
                     </div>
                 @endforeach
@@ -115,13 +117,11 @@
 
 
 
-
-@include('General.footer')
-
 <script>
-    function openModalTerima() {
-        const modal = document.getElementById('modalTerima');
-        const content = document.getElementById('modalTerimaContent');
+    function openModalTerima(taskId) {
+        const modal = document.getElementById(`modalTerima-${taskId}`);
+        const content = modal.querySelector('.modal-content');
+
         modal.classList.remove('opacity-0', 'pointer-events-none');
         setTimeout(() => {
             content.classList.remove('scale-95', 'opacity-0');
@@ -129,9 +129,10 @@
         }, 10);
     }
 
-    function closeModalTerima() {
-        const modal = document.getElementById('modalTerima');
-        const content = document.getElementById('modalTerimaContent');
+    function closeModalTerima(taskId) {
+        const modal = document.getElementById(`modalTerima-${taskId}`);
+        const content = modal.querySelector('.modal-content');
+
         content.classList.remove('scale-100', 'opacity-100');
         content.classList.add('scale-95', 'opacity-0');
         modal.classList.add('opacity-0');
@@ -139,5 +140,39 @@
             modal.classList.add('pointer-events-none');
         }, 300);
     }
+
+    // SweetAlert jika session success ada
+    @if(session('success'))
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            timer: 2000,
+            showConfirmButton: false,
+            confirmButtonColor: '#3085d6',
+        });
+    });
+    @endif
+       function konfirmasiTolak(taskId) {
+        Swal.fire({
+            title: 'Yakin ingin menolak task ini?',
+            text: 'Tindakan ini tidak dapat dibatalkan!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Ya, tolak',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`formTolak-${taskId}`).submit();
+            }
+        });
+    }
 </script>
+
+@include('General.footer')
+
+
 

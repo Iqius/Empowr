@@ -29,7 +29,6 @@ return new class extends Migration {
             $table->boolean('status_affiliate')->nullable();
             $table->boolean('pengajuan_affiliate')->nullable();
             $table->decimal('harga_pajak_affiliate', 15, 2)->default(0);
-            $table->decimal('harga_task_affiliate', 15, 2)->default(0);
             $table->timestamps();
 
             $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');

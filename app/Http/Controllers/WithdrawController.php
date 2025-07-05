@@ -22,10 +22,9 @@ class WithdrawController extends Controller
         ]);
 
         $user = Auth::user();
-        $workerId = $user->workerProfile->id;
-        
         if ($user->role == 'worker') {
-            
+            $workerId = $user->workerProfile->id;
+
 
             // Ambil semua task yang sudah selesai
             $completedTaskIds = Task::where('profile_id', $workerId)
@@ -47,24 +46,6 @@ class WithdrawController extends Controller
             }
 
             if ($unratedTasks->isNotEmpty()) {
-                return back()->with([
-                    'show_unrated_modal' => true,
-                    'unrated_tasks' => $unratedTasks
-                ]);
-            }
-        }else{
-            $completedTaskIds = Task::where('profile_id', $user->id)
-                                ->where('status', 'completed')
-                                ->pluck('id');        
-            $reviewedTaskIds = TaskReview::where('user_id', $user->id)
-                                        ->whereIn('task_id', $completedTaskIds)
-                                        ->pluck('task_id');
-            $unreviewedCompletedTaskIds = $completedTaskIds->diff($reviewedTaskIds);
-            $unratedTasks = [];
-            if ($unreviewedCompletedTaskIds->isNotEmpty()) {
-                $unratedTasks = Task::whereIn('id', $unreviewedCompletedTaskIds)->get();
-            }
-            if ($unratedTasks->count() > 0) {
                 return back()->with([
                     'show_unrated_modal' => true,
                     'unrated_tasks' => $unratedTasks

@@ -205,60 +205,72 @@ class JobController extends Controller
     }
 
 
+public function manage($id, Request $request)
+{
+    $user = Auth::user();
 
-    public function manage($id, Request $request)
-    {
-        $user = Auth::user();
+    $task = $user->role === 'admin'
+        ? Task::findOrFail($id)
+        : Task::with('user')->findOrFail($id);
 
-        if ($user->role == 'admin') {
-            $task = Task::where('id', $id)->firstOrFail();
-        } else {
-            $task = Task::with('user')->findOrFail($id);
-        }
+    $ewallet = Ewallet::where('user_id', $user->id)->first();
 
-        $userId = Auth::id();
-        $ewallet = Ewallet::where('user_id', $userId)->first();
-
-        // Ambil parameter sort dan arah
-        $sortBy = $request->get('sort', 'bidPrice');
-        $sortDir = $request->get('dir', 'asc');
-
-        $allowedSorts = ['bidPrice', 'experience'];
-        if (!in_array($sortBy, $allowedSorts)) {
-            $sortBy = 'bidPrice';
-        }
-
-        // Ambil semua applicant + relasi yang dibutuhkan
-        $applicants = TaskApplication::with([
-            'worker.user',
-            'worker.certifications.images',
-            'worker.portfolios.images',
-        ])->where('task_id', $id)->get();
-        foreach ($applicants as $applicant) {
-            $user = $applicant->worker->user ?? null;
-
-            if ($user) {
-                $ratingData = TaskReview::where('reviewed_user_id', $user->id)->get();
-                $applicant->avgRating = $ratingData->avg('rating') ?? 0;
-            } else {
-                $applicant->avgRating = 0;
-            }
-        }
-        // Sorting manual jika berdasarkan pengalaman
-        if ($sortBy === 'experience') {
-            $applicants = $applicants->sortBy(function ($applicant) {
-                return $applicant->worker->pengalaman_kerja ?? 0;
-            }, SORT_REGULAR, $sortDir === 'desc')->values();
-        } else {
-            // Sorting langsung berdasarkan kolom TaskApplication
-            $applicants = $applicants->sortBy(function ($applicant) use ($sortBy) {
-                return $applicant->{$sortBy} ?? 0;
-            }, SORT_REGULAR, $sortDir === 'desc')->values();
-        }
-
-
-        return view('client.jobs.manage', compact('task', 'applicants', 'ewallet'));
+    // Ambil parameter sorting dari request
+    $sortBy = $request->get('sort', 'bidPrice');
+    $sortDir = $request->get('dir', 'asc');
+    $allowedSorts = ['bidPrice', 'experience', 'rating'];
+    if (!in_array($sortBy, $allowedSorts)) {
+        $sortBy = 'bidPrice';
     }
+
+    // Ambil semua pelamar
+    $allApplicants = TaskApplication::with([
+        'worker.user',
+        'worker.certifications.images',
+        'worker.portfolios.images',
+    ])->where('task_id', $id)->get();
+
+    // Hitung rating masing-masing pelamar
+    foreach ($allApplicants as $applicant) {
+        $user = $applicant->worker->user ?? null;
+        $applicant->avgRating = $user
+            ? TaskReview::where('reviewed_user_id', $user->id)->avg('rating') ?? 0
+            : 0;
+    }
+
+    // Pisahkan affiliate dan regular
+   $affiliateApplicants = $allApplicants->filter(function ($a) {
+    return in_array($a->worker->empowr_affiliate ?? 0, [1, '1'], true);
+})->values();
+
+$regularApplicants = $allApplicants->reject(function ($a) {
+    return in_array($a->worker->empowr_affiliate ?? 0, [1, '1'], true);
+})->values();
+
+    // Sort regular applicants saja
+    if ($sortBy === 'experience') {
+        $regularApplicants = $regularApplicants->sortBy(function ($a) {
+            return $a->worker->pengalaman_kerja ?? 0;
+        }, SORT_REGULAR, $sortDir === 'desc');
+    } elseif ($sortBy === 'rating') {
+        $regularApplicants = $regularApplicants->sortBy(function ($a) {
+            return $a->avgRating ?? 0;
+        }, SORT_REGULAR, $sortDir === 'desc');
+    } else {
+        $regularApplicants = $regularApplicants->sortBy(function ($a) use ($sortBy) {
+            return $a->{$sortBy} ?? 0;
+        }, SORT_REGULAR, $sortDir === 'desc');
+    }
+
+    // Gabungkan: affiliate tetap di atas
+$applicants = $affiliateApplicants->concat($regularApplicants)->values();
+
+    return view('client.jobs.manage', compact('task', 'applicants', 'ewallet'));
+}
+
+
+
+
 
 
 
