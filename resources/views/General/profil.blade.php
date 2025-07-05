@@ -11,7 +11,7 @@
                     </label>
                     <div class="text-center">
                         <div class="flex items-center space-x-3">
-                            <h2 class="text-2xl font-bold">{{ Auth::user()->username }}</h2>
+                            <h2 class="text-2xl font-bold">{{ Auth::user()->nama_lengkap }}</h2>
                             <?php if ($countReviews > 10 && $avgRating > 4): ?>
                                 <img src="assets/images/verif.png" alt="verif" class="w-10 h-10">
                             <?php endif; ?>
