@@ -34,14 +34,15 @@
                                     </form>
 
                                     {{-- Form Tolak --}}
-                                    <form action="{{ route('rejected.affiliate-task', $tasks->id) }}" method="POST"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menolak task ini?')">
+                                    <form id="formTolak-{{ $tasks->id }}" action="{{ route('rejected.affiliate-task', $tasks->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit"
+                                        <button type="button"
+                                            onclick="konfirmasiTolak({{ $tasks->id }})"
                                             class="px-4 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded-full font-semibold transition">
                                             Tolak
                                         </button>
                                     </form>
+
 
                                     {{-- Form Terima --}}
                                     <button onclick="openModalTerima({{ $tasks->id }})" 
@@ -102,6 +103,7 @@
                                     <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Simpan</button>
                                 </div>
                             </form>
+                            
                         </div>
                     </div>
                 @endforeach
@@ -114,9 +116,6 @@
 
 
 
-
-
-@include('General.footer')
 
 <script>
     function openModalTerima(taskId) {
@@ -141,5 +140,39 @@
             modal.classList.add('pointer-events-none');
         }, 300);
     }
+
+    // SweetAlert jika session success ada
+    @if(session('success'))
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            timer: 2000,
+            showConfirmButton: false,
+            confirmButtonColor: '#3085d6',
+        });
+    });
+    @endif
+       function konfirmasiTolak(taskId) {
+        Swal.fire({
+            title: 'Yakin ingin menolak task ini?',
+            text: 'Tindakan ini tidak dapat dibatalkan!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Ya, tolak',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`formTolak-${taskId}`).submit();
+            }
+        });
+    }
 </script>
+
+@include('General.footer')
+
+
 

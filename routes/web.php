@@ -14,6 +14,7 @@ use App\Http\Controllers\AffiliatedController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\WithdrawController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\UserControlController;
 
 // LANDING PAGE
 Route::get('/', function () {
@@ -150,6 +151,7 @@ Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
 Route::get('/my-jobs', [JobController::class, 'myJobs'])->middleware('auth')->name('jobs.my');
 // --Profile update
 Route::get('/profil', [ProfileController::class, 'showProfile'])->name('profil');
+
 Route::post('/profile/data-diri/update', [ProfileController::class, 'updateDataDiri'])->name('profile.update');
 Route::post('/profile/akun-pembayaran/update', [ProfileController::class, 'updatePaymentAccount'])->name('profile-akunPembayaran.update');
 // --CHAT MASIH BELUM PASTI
@@ -171,6 +173,7 @@ Route::post('/chat', [ChatController::class, 'store'])->middleware(['auth'])->na
 Route::delete('/chat/{conversation}', [ChatController::class, 'destroy'])->middleware(['auth'])->name('chat.destroy');
 Route::post('/chat/finish/{id}', [ChatController::class, 'finishConversation'])->name('chat.finish');
 Route::delete('/chat/message/soft-delete/{id}', [ChatController::class, 'softDeleteMessage'])->name('chat.message.softDelete');
+Route::get('/chat/admin', [ChatController::class, 'admin'])->middleware(['auth', 'admin'])->name('chat.admin');
 
 // Route::get('/chat/messages', [ChatController::class, 'fetchMessages']);
 // --notif
@@ -212,6 +215,19 @@ Route::post('/withdraw/approve/{id}', [WithdrawController::class, 'approveWithdr
 Route::post('/withdraw/reject/{id}', [WithdrawController::class, 'rejectWithdraw'])->name('withdraw.reject');
 
 
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/user-control', [UserControlController::class, 'index'])->name('user.control');
+
+    // Ubah status
+    Route::post('/user-control/{id}/update-label', [UserControlController::class, 'updateLabel'])->name('user.updateLabel');
+    Route::post('/user-control/{id}/update-affiliate', [UserControlController::class, 'updateAffiliate'])->name('user.updateAffiliate');
+
+    // Hapus status
+    Route::delete('/user-control/{id}/delete-label', [UserControlController::class, 'deleteLabel'])->name('user.deleteLabel');
+    Route::delete('/user-control/{id}/delete-affiliate', [UserControlController::class, 'deleteAffiliate'])->name('user.deleteAffiliate');
+});
+
+
 
 
 // CLIENT ditaro diatas ga mau kebaca
@@ -236,4 +252,4 @@ Route::get('/tasks/search', [JobController::class, 'search']);
 
 // Route::get('/tasks/{id}/applicants', [JobController::class, 'showApplicants']);
 
-// Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage']);
+Route::post('/profile/image', [ProfileController::class, 'updateProfileImage'])->name('profile.image.update');

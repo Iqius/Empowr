@@ -177,7 +177,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-7">
                         <div class="flex flex-col gap-4">
                             <label class="font-semibold">Bank</label>
-                            <input type="text" readonly
+                            <input type="text" 
                                 class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
                                 value="{{ strtoupper(Auth::user()->paymentAccount?->bank_name) ?? '-' }}">
                         </div>
@@ -189,15 +189,15 @@
                         </div>
                         <div class="flex flex-col gap-4">
                             <label class="font-semibold">Nomor rekening</label>
-                            <input type="text" readonly
-                                class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
+                            <input type="text" 
+                                class="p-2 border rounded w-full bg-gray-100 text-gray-600"
                                 value="{{ strtoupper(Auth::user()->paymentAccount?->account_number) ?? '-' }}">
                         </div>
 
                         <div class="flex flex-col gap-4">
                             <label class="font-semibold">E-wallet</label>
-                            <input type="text" readonly
-                                class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
+                            <input type="text" 
+                                class="p-2 border rounded w-full bg-gray-100 text-gray-600"
                                 value="{{ strtoupper(Auth::user()->paymentAccount?->ewallet_provider) ?? '-' }}">
                         </div>
                         <div class="flex flex-col gap-4">
@@ -208,8 +208,8 @@
                         </div>
                         <div class="flex flex-col gap-4">
                             <label class="font-semibold">Nomor E-wallet</label>
-                            <input type="text" readonly
-                                class="p-2 border rounded w-full bg-gray-100 cursor-not-allowed text-gray-600"
+                            <input type="text" 
+                                class="p-2 border rounded w-full bg-gray-100 text-gray-600"
                                 value="{{ strtoupper(Auth::user()->paymentAccount?->wallet_number) ?? '-' }}">
                         </div>
                     </div>
@@ -1451,5 +1451,44 @@ if (data.reviews.length < 10) {
             });
             @endif
         </script>
+<script>
+     const imageInput = document.getElementById('profile-image-input');
+    const profileImage = document.getElementById('profile-image');
+    const uploadStatus = document.getElementById('upload-status');
 
+    imageInput.addEventListener('change', async function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('profile_image', file);
+
+        uploadStatus.classList.remove('hidden');
+        uploadStatus.textContent = "Uploading...";
+
+        try {
+            const response = await fetch("{{ route('profile.image.update') }}", {
+                method: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                profileImage.src = data.image_url;
+                uploadStatus.textContent = "Upload berhasil!";
+            } else {
+                uploadStatus.textContent = "Upload gagal.";
+            }
+
+        } catch (error) {
+            uploadStatus.textContent = "Terjadi kesalahan.";
+        }
+
+        setTimeout(() => uploadStatus.classList.add('hidden'), 3000);
+    });
+</script>
         @include('General.footer')
