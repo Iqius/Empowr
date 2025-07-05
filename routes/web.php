@@ -14,6 +14,7 @@ use App\Http\Controllers\AffiliatedController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\WithdrawController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\UserControlController;
 
 // LANDING PAGE
 Route::get('/', function () {
@@ -208,6 +209,19 @@ Route::post('/admin/List-Request-Affiliasi-Task/approve-affiliated/{id}', [Affil
 Route::get('/withdraw', [WithdrawController::class, 'indexWithdraw'])->name('withdraw.view');
 Route::post('/withdraw/approve/{id}', [WithdrawController::class, 'approveWithdraw'])->name('withdraw.approve');
 Route::post('/withdraw/reject/{id}', [WithdrawController::class, 'rejectWithdraw'])->name('withdraw.reject');
+
+
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/user-control', [UserControlController::class, 'index'])->name('user.control');
+
+    // Ubah status
+    Route::post('/user-control/{id}/update-label', [UserControlController::class, 'updateLabel'])->name('user.updateLabel');
+    Route::post('/user-control/{id}/update-affiliate', [UserControlController::class, 'updateAffiliate'])->name('user.updateAffiliate');
+
+    // Hapus status
+    Route::delete('/user-control/{id}/delete-label', [UserControlController::class, 'deleteLabel'])->name('user.deleteLabel');
+    Route::delete('/user-control/{id}/delete-affiliate', [UserControlController::class, 'deleteAffiliate'])->name('user.deleteAffiliate');
+});
 
 
 

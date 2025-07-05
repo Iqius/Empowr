@@ -32,8 +32,8 @@
    @vite(['resources/css/app.css', 'resources/js/app.js'])
    <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- swiper js untuk scroll gambar -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+   <!-- swiper js untuk scroll gambar -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
 
    <style>
@@ -125,7 +125,7 @@
       }
    </style>
 
-   
+
 </head>
 
 <body class="bg-gray-100" style="font-family: sans-serif;">
@@ -160,41 +160,41 @@
                      class="w-8 h-8 bg-gray-300 text-[#1F4482] rounded-full flex items-center justify-center relative">
                      <i class="fa-solid fa-bell"></i>
                      @if ($unreadCount > 0)
-                   <span
-                     class="absolute -top-1 -right-1 bg-red-400 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center border border-white">
-                     {{ $unreadCount }}
-                   </span>
-                @endif
+                     <span
+                        class="absolute -top-1 -right-1 bg-red-400 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center border border-white">
+                        {{ $unreadCount }}
+                     </span>
+                     @endif
                   </button>
-<div id="dropdown-notif"
-     class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
-    <div class="px-4 py-2 font-semibold text-[#1F4482] border-b">Notification</div>
-    
-    @foreach ($notifications as $notif)
-        @php
-            // Dapatkan user pengirim
-            $sender = \App\Models\User::where('nama_lengkap', $notif->sender_name)->first();
-        @endphp
+                  <div id="dropdown-notif"
+                     class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+                     <div class="px-4 py-2 font-semibold text-[#1F4482] border-b">Notification</div>
 
-        <a 
-          @if($notif->jenis === 'chat' && $sender)
-            href="{{ url('chat/' . $sender->id) }}"
-          @else
-            href="{{ route('notifications.index') }}"
-          @endif
-          class="block px-4 py-2 border-b hover:bg-gray-50"
-        >
-            <p class="font-semibold">{{ $notif->sender_name }}</p>
-            <p class="text-sm text-gray-700">{!! $notif->message !!}</p>
-            <p class="text-xs text-gray-400">{{ $notif->created_at->diffForHumans() }}</p>
-        </a>
-    @endforeach
+                     @foreach ($notifications as $notif)
+                     @php
+                     // Dapatkan user pengirim
+                     $sender = \App\Models\User::where('nama_lengkap', $notif->sender_name)->first();
+                     @endphp
 
-    <a href="{{ route('notifications.index') }}"
-       class="block px-4 py-2 text-center text-[#1F4482] hover:underline">
-        Lihat Semua Notifikasi
-    </a>
-</div>
+                     <a
+                        @if($notif->jenis === 'chat' && $sender)
+                        href="{{ url('chat/' . $sender->id) }}"
+                        @else
+                        href="{{ route('notifications.index') }}"
+                        @endif
+                        class="block px-4 py-2 border-b hover:bg-gray-50"
+                        >
+                        <p class="font-semibold">{{ $notif->sender_name }}</p>
+                        <p class="text-sm text-gray-700">{!! $notif->message !!}</p>
+                        <p class="text-xs text-gray-400">{{ $notif->created_at->diffForHumans() }}</p>
+                     </a>
+                     @endforeach
+
+                     <a href="{{ route('notifications.index') }}"
+                        class="block px-4 py-2 text-center text-[#1F4482] hover:underline">
+                        Lihat Semua Notifikasi
+                     </a>
+                  </div>
 
                </div>
 
@@ -228,7 +228,7 @@
                         </li>
                         <li>
                            <a href="{{ route('ewallet.index', Auth::user()->id) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
-                              Wallet <span class="text-blue-500">IDR {{ Auth::user()->ewallet?->balance }}</span> 
+                              Wallet <span class="text-blue-500">IDR {{ Auth::user()->ewallet?->balance }}</span>
                            </a>
                         </li>
                         <li>
@@ -247,34 +247,34 @@
    </nav>
 
    @if(auth()->check() && (auth()->user()->role === 'worker' || auth()->user()->role === 'client'))
-      <aside id="logo-sidebar"
-        class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200"
-        aria-label="Sidebar">
-        <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
-          <ul class="space-y-2 font-medium">
+   <aside id="logo-sidebar"
+      class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200"
+      aria-label="Sidebar">
+      <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
+         <ul class="space-y-2 font-medium">
             <!-- Dashboard -->
             <li>
                <a href="{{ Auth::user()->role === 'client' ? route('client.dashboardClient') : route('worker.dashboardWorker') }}"
-                 class="sidebar-item flex items-center p-2 rounded-lg">
-                 <i class="bi bi-house text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Beranda</span>
+                  class="sidebar-item flex items-center p-2 rounded-lg">
+                  <i class="bi bi-house text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">Beranda</span>
                </a>
             </li>
 
             <!-- Jobs -->
             <li>
                <a href="{{ route('jobs.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                 <i class="bi bi-briefcase text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Semua Tugas</span>
+                  <i class="bi bi-briefcase text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">Semua Tugas</span>
                </a>
             </li>
 
             <!-- My Job -->
             <li>
                <a href="{{ Auth::user()->role === 'client' ? route('jobs.my') : route('jobs.Worker') }}"
-                 class="sidebar-item flex items-center p-2 rounded-lg">
-                 <i class="bi bi-person-workspace text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Tugas Saya</span>
+                  class="sidebar-item flex items-center p-2 rounded-lg">
+                  <i class="bi bi-person-workspace text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">Tugas Saya</span>
                </a>
             </li>
 
@@ -289,56 +289,56 @@
             <!-- Arbitrase -->
             <li>
                <a href="{{ url('/arbitrase') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                 <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Arbitrase</span>
+                  <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">Arbitrase</span>
                </a>
             </li>
 
             <!-- Guide -->
             <li>
                <a href="{{ url('/guide') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                 <i class="bi bi-book text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Petunjuk</span>
+                  <i class="bi bi-book text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">Petunjuk</span>
                </a>
             </li>
 
             <!-- Affiliate -->
             <li>
                <a href="{{ url('/affiliate') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                 <i class="bi bi-currency-dollar text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Affiliasi</span>
+                  <i class="bi bi-currency-dollar text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">Affiliasi</span>
                </a>
             </li>
 
             <!-- Contact Admin -->
             <li>
                <a href="{{ url('/contact-admin') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                 <i class="bi bi-telephone text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Hubungi Admin</span>
+                  <i class="bi bi-telephone text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">Hubungi Admin</span>
                </a>
             </li>
-          </ul>
-        </div>
-      </aside>
+         </ul>
+      </div>
+   </aside>
    @elseif (auth()->user()->role === 'admin')
-      <aside id="logo-sidebar"
-        class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200"
-        aria-label="Sidebar">
-        <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
-          <ul class="space-y-2 font-medium">
+   <aside id="logo-sidebar"
+      class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200"
+      aria-label="Sidebar">
+      <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
+         <ul class="space-y-2 font-medium">
             <!-- Dashboard -->
             <li>
                <a href="{{ route('admin.dashboardAdmin') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                 <i class="bi bi-house text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Dashboard</span>
+                  <i class="bi bi-house text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">Dashboard</span>
                </a>
             </li>
 
             <!-- Jobs -->
             <li>
                <a href="{{ route('jobs.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                 <i class="bi bi-briefcase text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Jobs</span>
+                  <i class="bi bi-briefcase text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">Jobs</span>
                </a>
             </li>
 
@@ -346,43 +346,51 @@
             <!-- Pencairan dana -->
             <li>
                <a href="{{ route('withdraw.view') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                 <i class="bi bi-currency-dollar text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Pencairan dana</span>
+                  <i class="bi bi-currency-dollar text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">Pencairan dana</span>
                </a>
             </li>
 
             <!-- Chat -->
             <li>
                <a href="{{ url('/chatify') }}#" class="sidebar-item flex items-center p-2 rounded-lg">
-                 <i class="bi bi-chat-dots text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Chat</span>
+                  <i class="bi bi-chat-dots text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">Chat</span>
                </a>
             </li>
 
             <!-- Arbitrase -->
             <li>
                <a href="{{ route('arbitrase.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                 <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Arbitrase</span>
+                  <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">Arbitrase</span>
+               </a>
+            </li>
+
+            <!-- User Control -->
+            <li>
+               <a href="{{ route('user.control') }}" class="sidebar-item flex items-center p-2 rounded-lg">
+                  <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">User Control</span>
                </a>
             </li>
 
             <!-- Affiliate -->
             <li>
                <a href="{{ route('List-pengajuan-task-affiliate.view') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                 <i class="bi bi-people text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Affiliate</span>
+                  <i class="bi bi-people text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">Affiliate</span>
                </a>
             </li>
             <li>
                <a href="{{ route('List-pengajuan-worker-affiliate.view') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                 <i class="bi bi-people text-lg text-[#1F4482]"></i>
-                 <span class="ml-3">Pendaftaran Affiliate</span>
+                  <i class="bi bi-people text-lg text-[#1F4482]"></i>
+                  <span class="ml-3">Pendaftaran Affiliate</span>
                </a>
             </li>
-          </ul>
-        </div>
-      </aside>
+         </ul>
+      </div>
+   </aside>
    @endif
 
    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden" onclick="closeSidebar()">
@@ -401,7 +409,7 @@
    </div>
 
    <script>
-      document.addEventListener("DOMContentLoaded", function () {
+      document.addEventListener("DOMContentLoaded", function() {
          const currentUrl = window.location.href;
          const sidebarItems = document.querySelectorAll('.sidebar-item');
 
@@ -414,6 +422,4 @@
             }
          });
       });
-
-      
    </script>
