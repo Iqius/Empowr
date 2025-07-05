@@ -180,7 +180,6 @@
                 <label for="sortBy" class="font-semibold">Urutkan Berdasarkan:</label>
                 <select name="sort" id="sortBy" class="p-2 border rounded bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1F4482]">
                     <option value="bidPrice" {{ request('sort') === 'bidPrice' ? 'selected' : '' }}>Harga</option>
-                    <option value="experience" {{ request('sort') === 'experience' ? 'selected' : '' }}>Pengalaman</option>
                     <option value="rating" {{ request('sort') === 'rating' ? 'selected' : '' }}>Rating</option>
 
                 </select>
@@ -196,79 +195,80 @@
                     Dapatkan worker yang bermitra disini
                 </button>
             @elseif ($job->pengajuan_affiliate == 1 && (auth()->check() && auth()->user()->role != 'admin' && $job->status_affiliate == 0))
-                <button onclick="#" class="bg-blue-500 text-white px-4 py-2 rounded">
-                    Chat admin
-                </button>
+                <a href="/chat/admin" class="bg-blue-500 text-white px-4 py-2 rounded inline-block">
+                    Chat Admin
+                </a>
+
             @endif
         </div>
 
         <!-- List Pelamar (Daftar Pelamar) -->
         <div id="applicants-list" class="space-y-6">
-            @foreach ($applicants as $applicant)
-                @php
-                    $worker = $applicant->worker;
-                    $user = $worker->user;
-                @endphp
+    @foreach ($applicants as $applicant)
+        @php
+            $worker = $applicant->worker;
+            $user = $worker->user;
+            $isAffiliate = in_array($worker->empowr_affiliate ?? 0, [1, '1'], true);
+        @endphp
 
-                <!-- Kartu Pelamar -->
-                <div
-                    class="flex flex-col lg:flex-row gap-4 bg-white border rounded-lg shadow-lg p-6 hover:bg-gray-50 transition-all duration-300 hover:shadow-xl">
+        <div
+            class="flex flex-col lg:flex-row gap-4 bg-white border rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl
+            {{ $isAffiliate ? 'ring-4 ring-blue-500 animate-pulse' : '' }}">
 
-                    <!-- Kiri: Detail Pelamar -->
-                    <div class="flex-1">
-                        <div class="flex items-center gap-4">
-                            <img src="{{ asset('storage/' . ($worker->profile_image ?? 'default.jpg')) }}" alt="Profile"
-                                class="w-16 h-16 rounded-full object-cover">
-                            <div class="mt-4 text-gray-600 text-sm">
-                                <p class="font-semibold text-lg text-gray-800">{{ $user->nama_lengkap }}</p>
-                                <p class="text-gray-500 text-sm"><strong>Negoisasi</strong>
-                                    Rp{{ number_format($applicant->bidPrice) }}</p>
-                                <p class="text-gray-500 text-sm"><strong>Pengalaman</strong>
-                                    {{ $worker->pengalaman_kerja ?? 0 }} tahun</p>
-                                <p class="text-gray-500 text-sm"><strong>Rating</strong> {{ number_format($applicant->avgRating ?? 0, 1) }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="mt-4 text-gray-600 text-sm">
-                            <p><strong>Catatan: </strong> {{ $applicant->catatan }}</p>
-                        </div>
+            <div class="flex-1">
+                <div class="flex items-center gap-4">
+                    <img src="{{ asset('storage/' . ($worker->profile_image ?? 'default.jpg')) }}"
+                         class="w-16 h-16 rounded-full object-cover {{ $isAffiliate ? 'ring-2 ring-blue-500' : '' }}"
+                         alt="Profile">
+                    <div class="mt-4 text-gray-600 text-sm">
+                        <p class="font-semibold text-lg text-gray-800">
+                            {{ $user->nama_lengkap }}
+                            @if ($isAffiliate)
+                                | <span class="text-blue-500">Affiliate</span> 
+                            @endif
+                        </p>
+                        <p class="text-gray-500 text-sm"><strong>Negoisasi</strong> Rp{{ number_format($applicant->bidPrice) }}</p>
+                        <p class="text-gray-500 text-sm"><strong>Rating</strong> {{ number_format($applicant->avgRating ?? 0, 1) }}</p>
                     </div>
-
-
-                    @if(auth()->check() && auth()->user()->role != 'admin')
-                        <!-- Kanan: Tombol-Tombol Aksi -->
-                        <div class="flex flex-col justify-between items-end">
-                            <div class="flex gap-2 mt-4">
-                                <a href="{{ route('profile.worker.lamar', $worker->id) }}"
-                                    class="bg-[#1F4482] hover:bg-[#18346a] text-white px-4 py-2 rounded-md shadow inline-block">
-                                    Lihat Profil
-                                </a>
-                                <a href="{{ url('chat/' . $user->id) }}"
-                                    class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a] inline-block " data-task-id="{{ $applicant->task->id }}">
-                                    Chat
-                                </a>
-
-
-                                <!-- Tombol yang membuka modal hire -->
-                                <button type="button"
-                                    class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800" data-profile-id="{{ $applicant->profile_id }}" data-bid-price="{{ $applicant->bidPrice }}" onclick="openPaymentModal(this)">
-                                    Hire worker
-                                </button>
-
-                                <form action="{{ route('client.reject') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="application_id" value="{{ $applicant->id }}">
-                                    <button type="submit" class="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-800">
-                                        Tolak
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    @endif
                 </div>
-            @endforeach
+
+                <div class="mt-4 text-gray-600 text-sm">
+                    <p><strong>Catatan: </strong> {{ $applicant->catatan }}</p>
+                </div>
+            </div>
+
+            @if(auth()->check() && auth()->user()->role != 'admin')
+                <div class="flex flex-col justify-between items-end">
+                    <div class="flex gap-2 mt-4">
+                        <a href="{{ route('profile.worker.lamar', $worker->id) }}"
+                            class="bg-[#1F4482] hover:bg-[#18346a] text-white px-4 py-2 rounded-md shadow">
+                            Lihat Profil
+                        </a>
+                        <a href="{{ url('chat/' . $user->id) }}"
+                            class="bg-[#1F4482] hover:bg-[#18346a] text-white px-4 py-2 rounded-md">
+                            Chat
+                        </a>
+                        <button type="button"
+                            class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800"
+                            data-profile-id="{{ $applicant->profile_id }}" data-bid-price="{{ $applicant->bidPrice }}"
+                            onclick="openPaymentModal(this)">
+                            Hire Worker
+                        </button>
+                        <form action="{{ route('client.reject') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="application_id" value="{{ $applicant->id }}">
+                            <button type="submit"
+                                class="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-800">
+                                Tolak
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endif
         </div>
+    @endforeach
+</div>
+
     </div>
 
     
@@ -456,40 +456,53 @@
 
 
 
-<!-- Modal untuk request affiliasi -->
-<div id="infoModalAffiliasi" class="fixed inset-0 z-[9999] flex items-center justify-center opacity-0 pointer-events-none backdrop-blur-sm transition-opacity duration-300 bg-black/30">
-    <div id="modalContentAffiliasi"class="bg-white p-6 rounded-lg w-full max-w-lg shadow-lg transform scale-95 opacity-0 transition duration-300max-h-[80vh] flex flex-col">
-        <form action="{{ route('jobs.request-affiliate', $task->id) }}" method="POST">
+<!-- Modal Wrapper affiliasi -->
+<div id="infoModalAffiliasi"
+     class="fixed inset-0 z-[9999] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 bg-black/30 backdrop-blur-sm">
+
+    <!-- Modal Box -->
+    <div id="modalContentAffiliasi"
+         class="bg-white rounded-lg w-full max-w-md sm:max-w-lg lg:max-w-xl mx-4 shadow-lg transform scale-95 opacity-0 transition duration-300
+                flex flex-col max-h-[90vh]">
+
+        <!-- Form -->
+        <form action="{{ route('jobs.request-affiliate', $task->id) }}" method="POST" class="flex flex-col h-full">
             @csrf
-            <!-- Modal Header -->
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold">Informasi</h2>
-                <button onclick="closeModalAffiliasi()" class="text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
+
+            <!-- Header -->
+            <div class="flex justify-between items-center px-4 py-3 sm:px-6 sm:py-4 border-b">
+                <h2 class="text-base sm:text-xl font-semibold">Informasi</h2>
+                <button type="button" onclick="closeModalAffiliasi()" class="text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
             </div>
 
-            <!-- Modal Body (scrollable bagian ini) -->
-            <div class="overflow-y-auto mb-4 text-sm text-gray-700 space-y-2 flex-1 pr-1">
-                <p>Ini adalah informasi penting sebelum Anda mengajukan permintaan. Harap dibaca dengan seksama.</p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
-                <p>More long content here...</p>
-                <!-- Tambahkan banyak paragraf untuk simulasi -->
-                <p>Lorem ipsum...</p>
-                <p>Lorem ipsum...</p>
-                <p>Lorem ipsum...</p>
-                <p>Lorem ipsum...</p>
-                <p>Lorem ipsum...</p>
-                <p>Lorem ipsum...</p>
+            <!-- Scrollable Body -->
+            <div class="overflow-y-auto px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-700 space-y-3 flex-1">
+                <p><strong>Permintaan ke Mitra Affiliator</strong></p>
+
+                <p>Anda akan mengirimkan tugas ini kepada mitra affiliator kami.</p>
+
+                <p>Mereka adalah pihak terverifikasi yang dapat membantu menyelesaikan tugas Anda secara profesional.</p>
+
+                <p>Pastikan deskripsi tugas jelas dan sesuai. Biaya akan dibicarakan setelah mitra menyetujui permintaan Anda.</p>
+
+                <p>Dengan melanjutkan, Anda setuju untuk bekerja sama secara profesional dan mengikuti aturan platform.</p>
             </div>
 
-            <!-- Modal Footer -->
-            <div class="flex justify-end space-x-2 pt-2 border-t">
-                <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Ajukan</button>
-                <button type="button" onclick="closeModalAffiliasi()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Tutup</button>
+            <!-- Footer -->
+            <div class="flex justify-end gap-2 px-4 py-3 sm:px-6 sm:py-4 border-t">
+                <button type="submit" class="px-4 py-2 text-sm sm:text-base bg-green-500 text-white rounded hover:bg-green-600">
+                    Ajukan
+                </button>
+                <button type="button" onclick="closeModalAffiliasi()" class="px-4 py-2 text-sm sm:text-base bg-gray-300 rounded hover:bg-gray-400">
+                    Tutup
+                </button>
             </div>
-            
         </form>
     </div>
 </div>
+
+
+
 
 
 

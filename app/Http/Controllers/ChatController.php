@@ -30,6 +30,11 @@ class ChatController extends Controller
     //spesifik chat
     public function show($userId)
 {
+
+        if ($userId === 'admin') {
+            $adminUser = User::where('role', 'admin')->firstOrFail();
+            $userId = $adminUser->id;
+        }
     // Find the other user
     $otherUser = User::findOrFail($userId);
     
