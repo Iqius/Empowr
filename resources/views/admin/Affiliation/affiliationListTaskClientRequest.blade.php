@@ -51,7 +51,6 @@
                                     </button>
                                 </div>
                             </td>
-
                         </tr>
                     </tbody>
                     <!-- Modal Terima affiliate-->

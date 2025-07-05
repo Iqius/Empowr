@@ -132,18 +132,20 @@ class ProfileController extends Controller
 
         $user->save();
 
-        // Worker profile (CV, LinkedIn, Keahlian)
-        $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
+        // Hanya update data ini jika user adalah worker
+        if ($user->role === 'worker') {
+            $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
 
-        if ($request->hasFile('cv')) {
-            $workerProfile->cv = $request->file('cv')->store('cv', 'public');
+            if ($request->hasFile('cv')) {
+                $workerProfile->cv = $request->file('cv')->store('cv', 'public');
+            }
+
+            $workerProfile->keahlian = $request->keahlian ? json_encode($request->keahlian) : $workerProfile->keahlian;
+            $workerProfile->linkedin = $request->linkedin ?? $workerProfile->linkedin;
+            $workerProfile->empowr_label = $request->has('empowr_label');
+            $workerProfile->empowr_affiliate = $request->has('empowr_affiliate');
+            $workerProfile->save();
         }
-
-        $workerProfile->keahlian = $request->keahlian ? json_encode($request->keahlian) : $workerProfile->keahlian;
-        $workerProfile->linkedin = $request->linkedin ?? $workerProfile->linkedin;
-        $workerProfile->empowr_label = $request->has('empowr_label');
-        $workerProfile->empowr_affiliate = $request->has('empowr_affiliate');
-        $workerProfile->save();
 
         return redirect()->route('profil')->with('success-update', 'Data diri berhasil diperbarui.');
     }
@@ -176,79 +178,6 @@ class ProfileController extends Controller
         $account->save();
 
         return redirect()->route('profil')->with('success-update', 'Akun pembayaran berhasil diperbarui.');
-    }
-
-
-    public function updateProfile(Request $request)
-    {
-        $user = Auth::user();
-
-        $request->validate([
-            'nama_lengkap' => 'nullable|string|max:255',
-            'email' => 'nullable|email',
-            'nomor_telepon' => 'nullable|string',
-            'bio' => 'nullable|string',
-
-            // ubah menjadi tidak required
-            'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-
-            'keahlian' => 'nullable|array',
-            'keahlian.*' => 'string|max:255',
-
-            'cv' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240',
-
-            'wallet_number' => 'nullable|string',
-            'ewallet_account_name' => 'nullable|string',
-            'ewallet_provider' => 'nullable|string',
-            'bank_name' => 'nullable|string',
-            'account_number' => 'nullable|string',
-            'bank_account_name' => 'nullable|string',
-        ]);
-
-        $user->nama_lengkap = $request->nama_lengkap ?? $user->nama_lengkap;
-        $user->email = $request->email ?? $user->email;
-        $user->nomor_telepon = $request->nomor_telepon ?? $user->nomor_telepon;
-        $user->bio = $request->input('bio');
-
-        // ✅ Update Profile Image
-        if ($request->hasFile('profile_image')) {
-            // Hapus gambar lama jika ada
-            if ($user->profile_image && \Storage::disk('public')->exists($user->profile_image)) {
-                \Storage::disk('public')->delete($user->profile_image);
-            }
-
-            // Simpan gambar baru
-            $user->profile_image = $request->file('profile_image')->store('profile_images', 'public');
-        }
-
-        $user->save();
-
-        $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
-
-        // ✅ CV upload
-        if ($request->hasFile('cv')) {
-            $workerProfile->cv = $request->file('cv')->store('cv', 'public');
-        }
-
-        $workerProfile->keahlian = json_encode($request->keahlian ?? []);
-
-        $workerProfile->linkedin = $request->linkedin ?? $workerProfile->linkedin;
-
-        $workerProfile->empowr_label = $request->has('empowr_label');
-        $workerProfile->empowr_affiliate = $request->has('empowr_affiliate');
-        $workerProfile->save();
-
-        // ✅ Update Rekening
-        $existingAccount = UserPaymentAccount::firstOrNew(['user_id' => $user->id]);
-        $existingAccount->wallet_number = $request->wallet_number ?? $existingAccount->wallet_number;
-        $existingAccount->ewallet_provider = $request->ewallet_provider ?? $existingAccount->ewallet_provider;
-        $existingAccount->ewallet_name = $request->ewallet_account_name ?? $existingAccount->ewallet_name;
-        $existingAccount->bank_name = $request->bank_name ?? $existingAccount->bank_name;
-        $existingAccount->account_number = $request->account_number ?? $existingAccount->account_number;
-        $existingAccount->bank_account_name = $request->bank_account_name ?? $existingAccount->bank_account_name;
-        $existingAccount->save();
-
-        return redirect()->route('profil')->with('success-update', 'Profil berhasil diupdate');
     }
 
 
