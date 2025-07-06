@@ -58,7 +58,6 @@
                             <h1 class="text-2xl font-semibold mb-6">Personal Information</h1>
                             {{-- Isi form lainnya bisa di sini --}}
                         </div>
-
                         <div class="flex flex-row gap-4 self-start justify-end">
                             <!-- Tombol Lihat CV -->
                             <button type="button"
@@ -68,7 +67,7 @@
                             </button>
 
                             <!-- Tombol Ubah Data Diri -->
-                            <button type="button"
+                            <button type="button" 
                                 onclick="openEditModalDataDiri()"
                                 class="bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-6 py-2 rounded-md shadow min-w-[150px] whitespace-nowrap">
                                 Ubah Data Diri
