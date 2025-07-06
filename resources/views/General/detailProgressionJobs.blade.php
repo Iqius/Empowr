@@ -245,7 +245,7 @@
                 <div class="flex gap-2 mt-4">
                     <button type="button" onclick="openModalWithStatus('approved', {{ $lastProgression->id }})"
                         class="flex-1 py-3 bg-[#1F4482] text-white rounded-lg rounded-md hover:bg-[#18346a] transition-colors">Approve</button>
-                    @if($lastProgression->progression_ke !== $task->revisions + 3)
+                    @if($lastProgression->progression_ke !== $task->revisions + 3 && $lastProgression->progression_ke == 3)
                         <button type="button" onclick="openModalWithStatus('rejected', {{ $lastProgression->id }})"
                         class="flex-1 py-3 bg-red-600 rounded text-white hover:bg-red-700 transition-colors">Reject</button>
                     @endif
@@ -719,6 +719,10 @@
         <h2 class="text-xl font-semibold mb-4">Masukkan Catatan</h2>
         <textarea id="noteInput" rows="4" class="w-full p-2 border rounded-lg mb-4"
             placeholder="Masukkan catatan progres untuk Worker"></textarea>
+        <p class="text-gray-600 mb-4"><strong>*Untuk saat progression ke-3</strong></p>
+        <p class="text-gray-600 mb-4">Masukkan catatan progres untuk Worker <strong>sebelum tahap
+            revisi</strong>. Bila tidak diperlukan revisi, tuliskan pada catatan <strong>tidak perlu revisi</strong> dan juga menekan <strong>tombol approve</strong> dan  <strong>selesaikan task.</strong></p>
+        <p class="text-gray-600 mb-4"><strong>Bila progression 1-3 menurut anda sudah selesai, boleh langsung menekan tombol selesakan task.</strong></p>
         <div class="flex justify-end">
             <button id="submitNote"
                 class="py-2 px-4 bg-[#1F4482] text-white rounded-lg rounded-md hover:bg-[#18346a] focus:outline-none focus:ring-2 focus:ring-blue-300">Kirim</button>

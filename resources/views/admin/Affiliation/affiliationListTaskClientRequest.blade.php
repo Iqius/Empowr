@@ -55,7 +55,7 @@
                     </tbody>
                     <!-- Modal Terima affiliate-->
                     <div id="modalTerima-{{ $tasks->id }}" class="fixed inset-0 flex items-center justify-center opacity-0 pointer-events-none bg-black/30 backdrop-blur-sm transition-opacity duration-300 z-50">
-                        <div class="bg-white p-6 rounded-lg w-full max-w-md mx-4 shadow-lg transform scale-95 opacity-0 transition duration-300 overflow-y-auto max-h-[80vh]">
+                        <div class="bg-white p-6 rounded-lg w-full max-w-md mx-4 shadow-lg transform scale-95 opacity-100 transition duration-300 overflow-y-auto max-h-[80vh]">
                             <!-- Header -->
                             <div class="flex justify-between items-center mb-4">
                                 <h2 class="text-lg font-semibold">Terima Task Affiliate</h2>

@@ -198,7 +198,7 @@
                 <p class="text-gray-400 text-xs">Created {{ \Carbon\Carbon::parse($task->created_at)->format('d F Y') }}</p>
               </div>
             </div>
-            <a href="{{ route('jobs.show', $task->id) }}" class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</a>
+            <a href="{{ route('inProgress.jobs', $task->id) }}" class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</a>
           </li>
           @endforeach
         </ul>
@@ -255,7 +255,7 @@
                 <p class="text-gray-400 text-xs">Applier {{ $app->worker->user->nama_lengkap ?? '-' }}</p>
               </div>
             </div>
-            <a href="{{ route('jobs.show', $app->task->id) }}" class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</a>
+            <a href="{{ route('jobs.manage', $app->task->id) }}" class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Open</a>
           </li>
           @endforeach
         </ul>

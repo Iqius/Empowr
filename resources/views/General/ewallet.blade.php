@@ -148,17 +148,15 @@
 </div>
 
 <!-- Modal withdraw -->
-<div id="withdrawModal"class="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 hidden justify-center items-center transition-opacity duration-300">
-    <!-- Modal Content -->
+<div id="withdrawModal" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 hidden justify-center items-center transition-opacity duration-300">
     <div id="withdrawModalContent"
         class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md scale-95 opacity-0 transform transition-all duration-300 ease-out"
     >
         <h2 class="text-xl font-semibold mb-4 text-center">Ajukan Withdraw</h2>
 
-        <form action="{{ route('withdraw.pengajuan') }}" method="POST">
+        <form id="withdrawForm" action="{{ route('withdraw.pengajuan') }}" method="POST">
             @csrf
 
-            <!-- Jumlah Withdraw -->
             <div class="mb-4">
                 <label for="amount" class="block text-gray-700 font-medium mb-1">Jumlah Penarikan</label>
                 <input type="number" name="amount" id="amount" min="10000"
@@ -166,9 +164,12 @@
                     required>
             </div>
 
-            <!-- Metode Pembayaran -->
             <div class="mb-4">
-                <select id="withdraw_method" name="withdraw_method" onchange="togglePaymentFields()">
+                <label for="withdraw_method" class="block text-gray-700 font-medium mb-1">Metode Pembayaran</label>
+                {{-- Tambahkan 'required' di sini --}}
+                <select id="withdraw_method" name="withdraw_method" onchange="togglePaymentFields()"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required>
                     <option value="">-- Pilih Metode Pembayaran --</option>
                     @if($paymentAccounts && $paymentAccounts->bank_name !== 'Tidak ada')
                         <option value="bank">Bank ({{ $paymentAccounts->bank_name }})</option>
@@ -178,18 +179,17 @@
                     @endif
                 </select>
 
-                <div id="bankFields" style="display:none;">
-                    <p>No. Rekening: {{ $paymentAccounts->account_number }}</p>
-                    <p>Atas Nama: {{ $paymentAccounts->bank_account_name }}</p>
+                <div id="bankFields" style="display:none;" class="mt-2 text-sm text-gray-600 p-3 bg-gray-50 rounded-md">
+                    <p><strong>No. Rekening:</strong> {{ $paymentAccounts->account_number ?? '-' }}</p>
+                    <p><strong>Atas Nama:</strong> {{ $paymentAccounts->bank_account_name ?? '-' }}</p>
                 </div>
 
-                <div id="ewalletFields" style="display:none;">
-                    <p>No. Wallet: {{ $paymentAccounts->wallet_number }}</p>
-                    <p>Atas Nama: {{ $paymentAccounts->ewallet_account_name }}</p>
+                <div id="ewalletFields" style="display:none;" class="mt-2 text-sm text-gray-600 p-3 bg-gray-50 rounded-md">
+                    <p><strong>No. Wallet:</strong> {{ $paymentAccounts->wallet_number ?? '-' }}</p>
+                    <p><strong>Atas Nama:</strong> {{ $paymentAccounts->ewallet_account_name ?? '-' }}</p>
                 </div>
             </div>
 
-            <!-- Tombol -->
             <div class="flex justify-end space-x-2 mt-6">
                 <button type="button" onclick="closeWithdrawModal()"
                     class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition">
@@ -315,6 +315,7 @@
 
 <!-- JS untuk modal withdraw -->
 <script>
+    // Fungsi untuk membuka dan menutup modal withdraw
     function openWithdrawModal() {
         const modal = document.getElementById('withdrawModal');
         const content = document.getElementById('withdrawModalContent');
@@ -325,6 +326,10 @@
             content.classList.remove('scale-95', 'opacity-0');
             content.classList.add('scale-100', 'opacity-100');
         }, 50); // kecil delay agar animasi smooth
+
+        // Panggil togglePaymentFields() saat modal dibuka
+        // Ini memastikan tampilan bank/ewallet sesuai pilihan saat ini
+        togglePaymentFields();
     }
 
     function closeWithdrawModal() {
@@ -339,6 +344,44 @@
             modal.classList.add('hidden');
         }, 300); // sesuai durasi animasi
     }
+
+    // Fungsi untuk menampilkan/menyembunyikan field bank/ewallet
+    function togglePaymentFields() {
+        const method = document.getElementById('withdraw_method').value;
+        document.getElementById('bankFields').style.display = method === 'bank' ? 'block' : 'none';
+        document.getElementById('ewalletFields').style.display = method === 'ewallet' ? 'block' : 'none';
+    }
+
+    // Validasi saat form withdraw disubmit
+    document.addEventListener('DOMContentLoaded', function() {
+        const withdrawForm = document.getElementById('withdrawForm');
+        if (withdrawForm) {
+            withdrawForm.addEventListener('submit', function(event) {
+                const withdrawMethod = document.getElementById('withdraw_method');
+
+                // Jika nilai dropdown masih kosong ("-- Pilih Metode Pembayaran --")
+                if (withdrawMethod.value === "") {
+                    // Mencegah pengiriman formulir
+                    event.preventDefault();
+
+                    // Tampilkan alert
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Metode Pembayaran Belum Dipilih',
+                        text: 'Mohon pilih metode pembayaran bank atau e-wallet terlebih dahulu.',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#3085d6',
+                    }).then(() => {
+                        // Fokuskan kembali ke dropdown
+                        withdrawMethod.focus();
+                    });
+                }
+            });
+        }
+    });
+
+    // Initial call to hide fields if no method is pre-selected on page load
+    document.addEventListener('DOMContentLoaded', togglePaymentFields);
 </script>
 
 
