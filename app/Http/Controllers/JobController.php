@@ -359,24 +359,52 @@ $applicants = $affiliateApplicants->concat($regularApplicants)->values();
         return back()->with('success', 'Lamaran berhasil dihapus.');
     }
 
-  public function search(Request $request)
-  {
-      $query = $request->q;
-      $sort = $request->sort;
+    public function search(Request $request)
+    {
+        $query = $request->q;
+        $sort = $request->sort;
 
-      $tasks = Task::with('user')->where('title', 'like', '%' . $query . '%');
+        $tasks = Task::with('user')->where('title', 'like', '%' . $query . '%');
 
-      if ($sort === 'price-asc') {
-          $tasks = $tasks->orderBy('price', 'asc');
-      } elseif ($sort === 'price-desc') {
-          $tasks = $tasks->orderBy('price', 'desc');
-      }
+        if ($sort === 'price-asc') {
+            $tasks = $tasks->orderBy('price', 'asc');
+        } elseif ($sort === 'price-desc') {
+            $tasks = $tasks->orderBy('price', 'desc');
+        }
 
-      $tasks = $tasks->get();
+        $tasks = $tasks->get();
 
-      $html = view('components.job-cards', ['jobs' => $tasks])->render();
-      return response($html);
-  }
+        $html = view('components.job-cards', ['jobs' => $tasks])->render();
+        return response($html);
+    }
+
+    public function updateBidPrice(Request $request, TaskApplication $application)
+    {
+        try {
+            // 1. Validasi Data
+            $request->validate([
+                'bidPrice' => 'required|numeric|min:0',
+            ], [
+                'bidPrice.required' => 'Harga penawaran wajib diisi.',
+                'bidPrice.numeric' => 'Harga penawaran harus berupa angka.',
+                'bidPrice.min' => 'Harga penawaran tidak boleh negatif.',
+            ]);
+
+            // 2. Perbarui bidPrice
+            $application->bidPrice = $request->bidPrice;
+            $application->save();
+
+            // 3. Redirect kembali dengan pesan sukses
+            return back()->with('success', 'Harga penawaran berhasil diperbarui.');
+
+        } catch (ValidationException $e) {
+            // Jika ada error validasi, redirect kembali dengan error
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            // Tangani error umum lainnya (misalnya, masalah database)
+            return back()->with('error', 'Gagal memperbarui harga penawaran. Pesan error: ' . $e->getMessage());
+        }
+    }
 
 }
 

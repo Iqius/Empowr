@@ -24,7 +24,7 @@
                             @if($withdraw->worker)
                                 {{ $withdraw->worker->user->nama_lengkap }}
                             @elseif($withdraw->client)
-                                {{ $withdraw->client->user->nama_lengkap }}
+                                {{ $withdraw->client->nama_lengkap }}
                             @endif
                         </td>
                         <td class="px-4 py-2 text-sm text-gray-800">Rp {{ number_format($withdraw->amount, 0, ',', '.') }}</td>

@@ -81,7 +81,7 @@
         <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition relative"
             data-status="{{ $job->status }}">
             <div class="flex items-center gap-3 mb-3">
-                <img src="{{ $job->client->profile_image ? asset('storage/' . $job->task->client->profile_image) : asset('assets/images/avatar.png') }}"
+                <img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}"
                     alt="Client Profile" class="w-9 h-9 rounded-full object-cover">
                 <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
                     {{ $job->user->nama_lengkap ?? 'Unknown' }}

@@ -869,13 +869,12 @@
     <div class="bg-white w-full max-w-xl p-6 rounded-xl shadow-lg relative">
         <h2 class="text-xl font-semibold mb-4">Edit Rekening & E-Wallet</h2>
 
-        <form action="{{ route('profile-akunPembayaran.update') }}" method="POST" class="space-y-4">
+        <form id="editAccountForm" action="{{ route('profile-akunPembayaran.update') }}" method="POST" class="space-y-4">
             @csrf
 
-            <!-- ✅ E-Wallet Section -->
             <div>
-                <label class="block font-medium mb-1">Provider E-Wallet</label>
-                <select name="ewallet_provider" class="w-full border p-2 rounded">
+                <label for="ewallet_provider" class="block font-medium mb-1">Provider E-Wallet</label>
+                <select id="ewallet_provider_select" name="ewallet_provider" class="w-full border p-2 rounded">
                     <option value="">-- Pilih E-Wallet --</option>
                     @foreach(['Gopay','OVO','DANA','ShopeePay','LinkAja','Jenius Pay','Sakuku','iSaku','Paytren','Tidak ada'] as $provider)
                     <option value="{{ $provider }}" @selected(Auth::user()->paymentAccount?->ewallet_provider === $provider)>
@@ -886,25 +885,24 @@
             </div>
 
             <div>
-                <label class="block font-medium mb-1">Nomor E-Wallet</label>
-                <input type="text" name="wallet_number"
+                <label for="wallet_number_input" class="block font-medium mb-1">Nomor E-Wallet</label>
+                <input type="text" id="wallet_number_input" name="wallet_number"
                     value="{{ Auth::user()->paymentAccount?->wallet_number }}"
                     class="w-full border p-2 rounded" placeholder="0812xxxxxxxx">
             </div>
 
             <div>
-                <label class="block font-medium mb-1">Nama Akun E-Wallet</label>
-                <input type="text" name="ewallet_account_name"
+                <label for="ewallet_account_name_input" class="block font-medium mb-1">Nama Akun E-Wallet</label>
+                <input type="text" id="ewallet_account_name_input" name="ewallet_account_name"
                     value="{{ Auth::user()->paymentAccount?->ewallet_account_name }}"
                     class="w-full border p-2 rounded" placeholder="Nama lengkap sesuai e-wallet">
             </div>
 
             <hr class="my-4">
 
-            <!-- ✅ Bank Section -->
             <div>
-                <label class="block font-medium mb-1">Nama Bank</label>
-                <select name="bank_name" class="w-full border p-2 rounded">
+                <label for="bank_name_select" class="block font-medium mb-1">Nama Bank</label>
+                <select id="bank_name_select" name="bank_name" class="w-full border p-2 rounded">
                     <option value="">-- Pilih Bank --</option>
                     @foreach([
                     'BCA', 'BNI', 'BRI', 'Mandiri', 'CIMB Niaga', 'Danamon', 'Permata', 'BTN',
@@ -921,20 +919,19 @@
             </div>
 
             <div>
-                <label class="block font-medium mb-1">Nomor Rekening</label>
-                <input type="text" name="account_number"
+                <label for="account_number_input" class="block font-medium mb-1">Nomor Rekening</label>
+                <input type="text" id="account_number_input" name="account_number"
                     value="{{ Auth::user()->paymentAccount?->account_number }}"
                     class="w-full border p-2 rounded" placeholder="1234567890">
             </div>
 
             <div>
-                <label class="block font-medium mb-1">Nama Pemilik Rekening</label>
-                <input type="text" name="bank_account_name"
+                <label for="bank_account_name_input" class="block font-medium mb-1">Nama Pemilik Rekening</label>
+                <input type="text" id="bank_account_name_input" name="bank_account_name"
                     value="{{ Auth::user()->paymentAccount?->bank_account_name }}"
                     class="w-full border p-2 rounded" placeholder="Nama sesuai buku tabungan">
             </div>
 
-            <!-- ✅ Buttons -->
             <div class="flex justify-end gap-2 pt-4">
                 <button type="button" onclick="closeModalEditRekening('editModalRekening')"
                     class="px-4 py-2 rounded border text-gray-700 hover:bg-gray-100">
@@ -947,7 +944,6 @@
             </div>
         </form>
 
-        <!-- Tombol Close di pojok -->
         <button onclick="closeModalEditRekening('editModalRekening')"
             class="absolute top-3 right-4 text-gray-500 hover:text-black text-xl font-bold">
             &times;
@@ -1064,6 +1060,54 @@
         document.getElementById(id).classList.add('hidden');
         document.getElementById(id).classList.remove('flex');
     }
+    document.addEventListener('DOMContentLoaded', function() {
+        const editAccountForm = document.getElementById('editAccountForm');
+        if (editAccountForm) {
+            editAccountForm.addEventListener('submit', function(event) {
+                const ewalletProvider = document.getElementById('ewallet_provider_select').value;
+                const walletNumber = document.getElementById('wallet_number_input').value.trim();
+                const bankName = document.getElementById('bank_name_select').value;
+                const accountNumber = document.getElementById('account_number_input').value.trim();
+
+                let isValid = true;
+                let errorMessage = '';
+
+                // Validasi E-Wallet
+                if (ewalletProvider !== '' && ewalletProvider !== 'Tidak ada') {
+                    if (walletNumber === '') {
+                        isValid = false;
+                        errorMessage = 'Nomor E-Wallet tidak boleh kosong jika provider E-Wallet dipilih.';
+                    } else if (!/^\d+$/.test(walletNumber)) {
+                        isValid = false;
+                        errorMessage = 'Nomor E-Wallet hanya boleh berisi angka.';
+                    }
+                }
+
+                // Validasi Bank (hanya jika validasi E-Wallet sukses)
+                if (isValid && bankName !== '' && bankName !== 'Tidak ada') {
+                    if (accountNumber === '') {
+                        isValid = false;
+                        errorMessage = 'Nomor Rekening tidak boleh kosong jika Nama Bank dipilih.';
+                    } else if (!/^\d+$/.test(accountNumber)) {
+                        isValid = false;
+                        errorMessage = 'Nomor Rekening hanya boleh berisi angka.';
+                    }
+                }
+
+                // Tampilkan alert jika validasi gagal
+                if (!isValid) {
+                    event.preventDefault(); // Mencegah pengiriman formulir
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validasi Gagal',
+                        text: errorMessage,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#d33',
+                    });
+                }
+            });
+        }
+    });
 </script>
 
 <!-- Untuk modal edit data diri profile -->
