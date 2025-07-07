@@ -211,11 +211,12 @@
             $isAffiliate = in_array($worker->empowr_affiliate ?? 0, [1, '1'], true);
             $users = Auth::user();
             $isWorker = $users->workerProfile !== null;
+            $assignadmin = $applicant->affiliated == 1;
             @endphp
 
             <div
                 class="flex flex-col lg:flex-row gap-4 bg-white border rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl
-            {{ $isAffiliate ? 'ring-4 ring-blue-500 animate-pulse' : '' }}">
+            {{ $isAffiliate && $assignadmin ? 'ring-4 ring-blue-500 animate-pulse' : '' }}">
 
                 <div class="flex-1">
                     <div class="flex items-center gap-4">
