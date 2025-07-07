@@ -20,9 +20,8 @@ return new class extends Migration
             $table->enum('role', ['worker', 'client', 'admin']);
             $table->string('profile_image')->nullable();
             $table->string('nomor_telepon')->nullable();
-            $table->string('alamat')->nullable();
-            $table->string('negara')->nullable();
             $table->timestamp('tanggal_bergabung')->useCurrent();
+            $table->string('linkedin')->nullable();
             $table->text('bio')->nullable();
             $table->timestamps();
         });

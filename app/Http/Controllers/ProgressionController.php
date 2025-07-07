@@ -15,6 +15,7 @@ use App\Models\TaskReview;
 use App\Models\Ewallet;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
+use App\Models\Arbitrase;
 
 class ProgressionController extends Controller
 {
@@ -226,13 +227,45 @@ class ProgressionController extends Controller
         $currentStep = $progressionsByStep->keys()->max() + 1;
         $canSubmit = $this->determineCanSubmit($currentStep, $progressionsByStep);
 
-        if ($task->status !== 'completed' && $task->status !== 'on-hold' && $task->status !== 'arbitrase-completed') {
+
+        $user = Auth::user();
+        if ($user->role === 'worker') {
+            $pengajuId = optional($user->workerProfile)->id;
+            $arbitrase = Arbitrase::where('pelapor', $pengajuId)
+                ->where('task_id', $task->id)
+                ->whereIn('status', ['open', 'under review'])
+                ->latest()
+                ->first();
+        } else {
+            $pengajuId = $user->id;
+            $arbitrase = Arbitrase::where('pelapor', $pengajuId)
+                ->where('task_id', $task->id)
+                ->whereIn('status', ['open', 'under review'])
+                ->latest()
+                ->first();
+        }
+
+        
+        // Logika untuk kontrol tombol
+        $showCancelButton = false;
+        $showReportButton = false;
+
+        if ($arbitrase && $arbitrase->pelapor == $pengajuId && in_array($task->status, ['on-hold', 'under review'])) {
+            $showCancelButton = true;
+        } elseif (!$arbitrase && !in_array($task->status, ['on-hold', 'arbitrase-completed'])) {
+            $showReportButton = true;
+        }
+
+        if ($task->status !== 'completed') {
             return view('General.detailProgressionJobs', compact(
                 'task',
                 'steps',
                 'progressionsByStep',
                 'progressions',
-                'canSubmit' // jangan lupa lempar ke view kalau mau dipakai
+                'canSubmit',
+                'arbitrase',
+                'showCancelButton',
+                'showReportButton'
             ));
         } else {
             return view('General.detailProgressionComplite', compact(

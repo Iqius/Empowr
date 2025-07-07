@@ -14,15 +14,14 @@ return new class extends Migration
         Schema::create('arbitrase', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('task_id');
-            $table->unsignedBigInteger('client_id');
-            $table->unsignedBigInteger('worker_id');
             $table->text('reason');
-            $table->enum('status', ['open', 'under review', 'resolved']);
+            $table->enum('status', ['open', 'under review', 'resolved', 'cancelled']);
             $table->dateTime('created_at');
+            $table->unsignedBigInteger('pelapor');
+            
 
             $table->foreign('task_id')->references('id')->on('task')->onDelete('cascade');
-            $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('worker_id')->references('user_id')->on('worker_profiles')->onDelete('cascade');
+            $table->foreign('pelapor')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
