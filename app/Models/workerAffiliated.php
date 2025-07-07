@@ -19,6 +19,7 @@ class WorkerAffiliated extends Model
         'jadwal_interview',
         'keahlian_affiliate',
         'status',
+        'status_decision',
     ];
 
     public function workerProfile()
