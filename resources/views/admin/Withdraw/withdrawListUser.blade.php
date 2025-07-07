@@ -1,19 +1,21 @@
 @include('General.header')
 
-<div class="p-6">
-    <h1 class="text-2xl font-bold mb-6">Daftar Pengajuan Withdraw</h1>
+<div class="max-w-7xl mx-auto bg-white p-6 rounded shadow-md mt-20"">
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold mb-6">Daftar Pengajuan Withdraw</h1>
+    </div>
 
-    <div class="overflow-x-auto bg-white rounded-lg shadow">
-        <table class="min-w-full divide-y divide-gray-200">
+    <div class="overflow-x-auto ">
+        <table class="min-w-full table-auto border border-gray-300">
             <thead class="bg-gray-100">
                 <tr>
-                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Order ID</th>
-                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">User</th>
-                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Jumlah</th>
-                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Metode</th>
-                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
-                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Tanggal</th>
-                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Aksi</th>
+                    <th class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">Order ID</th>
+                    <th class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">User</th>
+                    <th class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">Jumlah</th>
+                    <th class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">Metode</th>
+                    <th class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">Status</th>
+                    <th class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">Tanggal</th>
+                    <th class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
@@ -60,27 +62,43 @@
                                 </form>
 
                                 <!-- Modal Info Rekening -->
-                                <div id="modalRekening{{ $withdraw->id }}" 
-                                    class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
-                                    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
-                                        <button onclick="document.getElementById('modalRekening{{ $withdraw->id }}').classList.add('hidden')" 
-                                                class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl font-bold">
-                                            ×
+                                <div id="modalRekening{{ $withdraw->id }}"
+                                    class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50">
+                                    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative">
+                                        <!-- Tombol Close -->
+                                        <button onclick="document.getElementById('modalRekening{{ $withdraw->id }}').classList.add('hidden')"
+                                            class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl font-bold transition">
+                                            &times;
                                         </button>
-                                        <h3 class="text-lg font-semibold mb-4 border-b pb-2">Informasi Rekening</h3>
-                                        <p class="mb-2"><strong>Metode:</strong> {{ ucfirst($withdraw->withdraw_method) }}</p>
-                                        @php
-                                            $paymentAccount = $withdraw->worker->user->paymentAccount ?? $withdraw->client->paymentAccount;
-                                        @endphp
-                                        @if($withdraw->withdraw_method === 'bank')
-                                            <p class="mb-1"><strong>No. Rekening:</strong> {{ $paymentAccount->account_number ?? '-' }}</p>
-                                            <p><strong>Atas Nama:</strong> {{ $paymentAccount->bank_account_name ?? '-' }}</p>
-                                        @else
-                                            <p class="mb-1"><strong>No. Wallet:</strong> {{ $paymentAccount->wallet_number ?? '-' }}</p>
-                                            <p><strong>Atas Nama:</strong> {{ $paymentAccount->ewallet_account_name ?? '-' }}</p>
-                                        @endif
+
+                                        <div class=" rounded-md p-2 mb-1 shadow-sm w-fit mx-auto">
+                                            <img src="{{ asset('assets/images/withdraw_admin.gif') }}" alt="Metode Pembayaran"
+                                                class="w-auto max-w-full max-h-28 mx-auto mb-4">
+                                        </div>
+                                        <!-- Judul Modal -->
+                                        <h3 class="text-xl font-bold text-gray-800 mb-5 border-b pb-3 text-center">
+                                            Informasi Rekening
+                                        </h3>
+
+                                        <!-- Konten Informasi -->
+                                        <div class="space-y-3 text-sm text-gray-700">
+                                            <p><strong>Metode:</strong> {{ ucfirst($withdraw->withdraw_method) }}</p>
+
+                                            @php
+                                                $paymentAccount = $withdraw->worker->user->paymentAccount ?? $withdraw->client->paymentAccount;
+                                            @endphp
+
+                                            @if($withdraw->withdraw_method === 'bank')
+                                                <p><strong>No. Rekening:</strong> {{ $paymentAccount->account_number ?? '-' }}</p>
+                                                <p><strong>Atas Nama:</strong> {{ $paymentAccount->bank_account_name ?? '-' }}</p>
+                                            @else
+                                                <p><strong>No. Wallet:</strong> {{ $paymentAccount->wallet_number ?? '-' }}</p>
+                                                <p><strong>Atas Nama:</strong> {{ $paymentAccount->ewallet_account_name ?? '-' }}</p>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
+
 
                                 <!-- Modal Setujui dengan Upload -->
                                 <div id="modalApprove{{ $withdraw->id }}" 
