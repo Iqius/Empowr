@@ -102,9 +102,18 @@
     </div>
 
     @php
+    use Carbon\Carbon;
+
     $user = Auth::user();
 
     $postedTasks = \App\Models\Task::where('client_id', $user->id)
+    ->where(function ($query) {
+    $query->where(function ($q) {
+    $q->where('status', 'open')
+    ->where('deadline_promotion', '>=', Carbon::now());
+    })
+    ->orWhereHas('applications');
+    })
     ->orderBy('created_at', 'desc')
     ->paginate(3, ['*'], 'posted_page');
 
@@ -299,7 +308,6 @@
 
 @php
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 $user = Auth::user();
 
