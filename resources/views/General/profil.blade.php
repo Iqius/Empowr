@@ -12,7 +12,7 @@
                     <div class="text-center">
                         <div class="flex items-center space-x-3">
                             <h2 class="text-2xl font-bold">{{ Auth::user()->nama_lengkap }}</h2>
-                            <?php if ($countReviews > 10 && $avgRating > 4): ?>
+                            <?php if ($countReviews >= 10 && $avgRating > 4 && $workerProfile?->empowr_affiliate !=1): ?>
                                 <img src="assets/images/verif.png" alt="verif" class="w-10 h-10">
                             <?php endif; ?>
 
@@ -58,7 +58,6 @@
                             <h1 class="text-2xl font-semibold mb-6">Personal Information</h1>
                             {{-- Isi form lainnya bisa di sini --}}
                         </div>
-
                         <div class="flex flex-row gap-4 self-start justify-end">
                             <!-- Tombol Lihat CV -->
                             <button type="button"
@@ -68,7 +67,7 @@
                             </button>
 
                             <!-- Tombol Ubah Data Diri -->
-                            <button type="button"
+                            <button type="button" 
                                 onclick="openEditModalDataDiri()"
                                 class="bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-6 py-2 rounded-md shadow min-w-[150px] whitespace-nowrap">
                                 Ubah Data Diri
@@ -581,7 +580,7 @@
                     <label for="portfolioTitleInput" class="block text-sm font-medium text-gray-700">Judul
                         Portofolio</label>
                     <input type="text" id="portfolioTitleInput" name="title"
-                        class="w-full border border-1 rounded-md  focus:ring-blue-500 focus:border-blue-500 p-2">
+                        class="w-full border border-1 rounded-md  focus:ring-blue-500 focus:border-blue-500 p-2" required>
                 </div>
 
                 <!-- Description Input -->
@@ -589,7 +588,7 @@
                     <label for="portfolioDescriptionInput" class="block text-sm font-medium text-gray-700">Deskripsi
                         Portofolio</label>
                     <textarea id="portfolioDescriptionInput" name="description" rows="4"
-                        class="w-full rounded-md border border-1  focus:ring-blue-500 focus:border-blue-500 p-2"></textarea>
+                        class="w-full rounded-md border border-1  focus:ring-blue-500 focus:border-blue-500 p-2" required></textarea>
                 </div>
 
                 <!-- Duration Input -->
@@ -597,7 +596,7 @@
                     <label for="portfolioDurationInput" class="block text-sm font-medium text-gray-700">Durasi
                         Pengerjaan (hari)</label>
                     <input type="number" id="portfolioDurationInput" name="duration"
-                        class="w-full  rounded-md border border-1 focus:ring-blue-500 focus:border-blue-500 p-2">
+                        class="w-full  rounded-md border border-1 focus:ring-blue-500 focus:border-blue-500 p-2" required>
                 </div>
             </div>
 
@@ -642,7 +641,7 @@
                         <i class="bi bi-type me-1"></i> Judul Sertifikat
                     </label>
                     <input type="text" id="certificateTitleInput" name="title_sertifikasi"
-                        class="w-full border border-1 rounded-md focus:ring-blue-500 focus:border-blue-500 p-2">
+                        class="w-full border border-1 rounded-md focus:ring-blue-500 focus:border-blue-500 p-2" required>
                 </div>
             </div>
 
@@ -674,19 +673,19 @@
             <!-- Title -->
             <div class="mb-3">
                 <label class="block">Judul</label>
-                <input type="text" name="title" id="modalTitle" class="w-full border p-2 rounded" />
+                <input type="text" name="title" id="modalTitle" class="w-full border p-2 rounded" required/>
             </div>
 
             <!-- Description -->
             <div class="mb-3">
                 <label class="block">Deskripsi</label>
-                <textarea name="description" id="modalDescription" rows="3" class="w-full border p-2 rounded"></textarea>
+                <textarea name="description" id="modalDescription" rows="3" class="w-full border p-2 rounded" required></textarea>
             </div>
 
             <!-- Duration -->
             <div class="mb-3">
                 <label class="block">Durasi (hari)</label>
-                <input type="number" name="duration" id="modalDuration" class="w-full border p-2 rounded" />
+                <input type="number" name="duration" id="modalDuration" class="w-full border p-2 rounded" required/>
             </div>
 
             <!-- Gambar tersimpan (slider) -->
@@ -869,13 +868,12 @@
     <div class="bg-white w-full max-w-xl p-6 rounded-xl shadow-lg relative">
         <h2 class="text-xl font-semibold mb-4">Edit Rekening & E-Wallet</h2>
 
-        <form action="{{ route('profile-akunPembayaran.update') }}" method="POST" class="space-y-4">
+        <form id="editAccountForm" action="{{ route('profile-akunPembayaran.update') }}" method="POST" class="space-y-4">
             @csrf
 
-            <!-- ✅ E-Wallet Section -->
             <div>
-                <label class="block font-medium mb-1">Provider E-Wallet</label>
-                <select name="ewallet_provider" class="w-full border p-2 rounded">
+                <label for="ewallet_provider" class="block font-medium mb-1">Provider E-Wallet</label>
+                <select id="ewallet_provider_select" name="ewallet_provider" class="w-full border p-2 rounded">
                     <option value="">-- Pilih E-Wallet --</option>
                     @foreach(['Gopay','OVO','DANA','ShopeePay','LinkAja','Jenius Pay','Sakuku','iSaku','Paytren','Tidak ada'] as $provider)
                     <option value="{{ $provider }}" @selected(Auth::user()->paymentAccount?->ewallet_provider === $provider)>
@@ -886,25 +884,24 @@
             </div>
 
             <div>
-                <label class="block font-medium mb-1">Nomor E-Wallet</label>
-                <input type="text" name="wallet_number"
+                <label for="wallet_number_input" class="block font-medium mb-1">Nomor E-Wallet</label>
+                <input type="text" id="wallet_number_input" name="wallet_number"
                     value="{{ Auth::user()->paymentAccount?->wallet_number }}"
                     class="w-full border p-2 rounded" placeholder="0812xxxxxxxx">
             </div>
 
             <div>
-                <label class="block font-medium mb-1">Nama Akun E-Wallet</label>
-                <input type="text" name="ewallet_account_name"
+                <label for="ewallet_account_name_input" class="block font-medium mb-1">Nama Akun E-Wallet</label>
+                <input type="text" id="ewallet_account_name_input" name="ewallet_account_name"
                     value="{{ Auth::user()->paymentAccount?->ewallet_account_name }}"
                     class="w-full border p-2 rounded" placeholder="Nama lengkap sesuai e-wallet">
             </div>
 
             <hr class="my-4">
 
-            <!-- ✅ Bank Section -->
             <div>
-                <label class="block font-medium mb-1">Nama Bank</label>
-                <select name="bank_name" class="w-full border p-2 rounded">
+                <label for="bank_name_select" class="block font-medium mb-1">Nama Bank</label>
+                <select id="bank_name_select" name="bank_name" class="w-full border p-2 rounded">
                     <option value="">-- Pilih Bank --</option>
                     @foreach([
                     'BCA', 'BNI', 'BRI', 'Mandiri', 'CIMB Niaga', 'Danamon', 'Permata', 'BTN',
@@ -921,20 +918,19 @@
             </div>
 
             <div>
-                <label class="block font-medium mb-1">Nomor Rekening</label>
-                <input type="text" name="account_number"
+                <label for="account_number_input" class="block font-medium mb-1">Nomor Rekening</label>
+                <input type="text" id="account_number_input" name="account_number"
                     value="{{ Auth::user()->paymentAccount?->account_number }}"
                     class="w-full border p-2 rounded" placeholder="1234567890">
             </div>
 
             <div>
-                <label class="block font-medium mb-1">Nama Pemilik Rekening</label>
-                <input type="text" name="bank_account_name"
+                <label for="bank_account_name_input" class="block font-medium mb-1">Nama Pemilik Rekening</label>
+                <input type="text" id="bank_account_name_input" name="bank_account_name"
                     value="{{ Auth::user()->paymentAccount?->bank_account_name }}"
                     class="w-full border p-2 rounded" placeholder="Nama sesuai buku tabungan">
             </div>
 
-            <!-- ✅ Buttons -->
             <div class="flex justify-end gap-2 pt-4">
                 <button type="button" onclick="closeModalEditRekening('editModalRekening')"
                     class="px-4 py-2 rounded border text-gray-700 hover:bg-gray-100">
@@ -947,7 +943,6 @@
             </div>
         </form>
 
-        <!-- Tombol Close di pojok -->
         <button onclick="closeModalEditRekening('editModalRekening')"
             class="absolute top-3 right-4 text-gray-500 hover:text-black text-xl font-bold">
             &times;
@@ -1064,6 +1059,54 @@
         document.getElementById(id).classList.add('hidden');
         document.getElementById(id).classList.remove('flex');
     }
+    document.addEventListener('DOMContentLoaded', function() {
+        const editAccountForm = document.getElementById('editAccountForm');
+        if (editAccountForm) {
+            editAccountForm.addEventListener('submit', function(event) {
+                const ewalletProvider = document.getElementById('ewallet_provider_select').value;
+                const walletNumber = document.getElementById('wallet_number_input').value.trim();
+                const bankName = document.getElementById('bank_name_select').value;
+                const accountNumber = document.getElementById('account_number_input').value.trim();
+
+                let isValid = true;
+                let errorMessage = '';
+
+                // Validasi E-Wallet
+                if (ewalletProvider !== '' && ewalletProvider !== 'Tidak ada') {
+                    if (walletNumber === '') {
+                        isValid = false;
+                        errorMessage = 'Nomor E-Wallet tidak boleh kosong jika provider E-Wallet dipilih.';
+                    } else if (!/^\d+$/.test(walletNumber)) {
+                        isValid = false;
+                        errorMessage = 'Nomor E-Wallet hanya boleh berisi angka.';
+                    }
+                }
+
+                // Validasi Bank (hanya jika validasi E-Wallet sukses)
+                if (isValid && bankName !== '' && bankName !== 'Tidak ada') {
+                    if (accountNumber === '') {
+                        isValid = false;
+                        errorMessage = 'Nomor Rekening tidak boleh kosong jika Nama Bank dipilih.';
+                    } else if (!/^\d+$/.test(accountNumber)) {
+                        isValid = false;
+                        errorMessage = 'Nomor Rekening hanya boleh berisi angka.';
+                    }
+                }
+
+                // Tampilkan alert jika validasi gagal
+                if (!isValid) {
+                    event.preventDefault(); // Mencegah pengiriman formulir
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validasi Gagal',
+                        text: errorMessage,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#d33',
+                    });
+                }
+            });
+        }
+    });
 </script>
 
 <!-- Untuk modal edit data diri profile -->
@@ -1100,45 +1143,56 @@
     const sliderContainer = document.getElementById('modalImageSlider');
 
     function openEditModal(portofolio) {
-
         const modal = document.getElementById('editModal');
-        // Isi data input
+
+        // Populate input fields
         document.getElementById('modalPortofolioId').value = portofolio.id;
         document.getElementById('modalTitle').value = portofolio.title;
         document.getElementById('modalDescription').value = portofolio.description;
         document.getElementById('modalDuration').value = portofolio.duration;
 
-        // Kosongkan isi slider
+        // Clear existing slider content
         sliderContainer.innerHTML = '';
 
-        // Tambahkan gambar ke slider
+        // Add images to the slider
         if (portofolio.images && portofolio.images.length > 0) {
+            const isLastImage = portofolio.images.length === 1; // Check if there's only one image
+
             portofolio.images.forEach(img => {
                 const slide = document.createElement('div');
                 slide.classList.add('swiper-slide', 'relative');
 
-                slide.innerHTML = `
-                    <img src="/${img.image}" class="max-w-full max-h-64 mx-auto rounded border object-contain" />
+                // Conditionally add the delete button or disable it
+                let deleteButtonHtml = `
                     <form method="POST" action="/portofolio/image/${img.id}/delete" class="absolute top-1 right-1">
                         @csrf
                         @method('DELETE')
-                        <button class="bg-red-600 text-white text-xs px-1 rounded-full hover:bg-red-700">&times;</button>
+                        <button class="bg-red-600 text-white text-xs px-1 rounded-full hover:bg-red-700 ${isLastImage ? 'opacity-50 cursor-not-allowed' : ''}" ${isLastImage ? 'disabled' : ''}>&times;</button>
                     </form>
+                `;
+
+                // If it's the last image, you might even consider not showing the button at all,
+                // or showing it disabled with a tooltip explaining why.
+                // For simplicity, we'll just disable it here.
+
+                slide.innerHTML = `
+                    <img src="/${img.image}" class="max-w-full max-h-64 mx-auto rounded border object-contain" />
+                    ${deleteButtonHtml}
                 `;
                 sliderContainer.appendChild(slide);
             });
         }
 
-        // Tampilkan modal
+        // Show the modal
         modal.classList.remove('hidden');
         modal.classList.add('flex');
 
-        // Inisialisasi ulang Swiper
+        // Re-initialize Swiper
         setTimeout(() => {
             new Swiper('.mySwiper', {
                 slidesPerView: 1,
                 spaceBetween: 10,
-                loop: true,
+                loop: true, // Keep loop if you want it to cycle, but be mindful with single images
                 pagination: {
                     el: ".swiper-pagination",
                     clickable: true,
@@ -1553,4 +1607,28 @@ if (data.reviews.length < 10) {
                 setTimeout(() => uploadStatus.classList.add('hidden'), 3000);
             });
         </script>
-        @include('General.footer')
+        @if(session('success'))
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: '{{ session('success') }}',
+                        confirmButtonColor: '#3085d6'
+                    });
+                });
+            </script>
+            @endif
+
+            @if(session('error'))
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: '{{ session('error') }}',
+                        confirmButtonColor: '#d33'
+                    });
+                });
+            </script>
+        @endif

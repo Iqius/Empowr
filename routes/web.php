@@ -122,6 +122,9 @@ Route::post('/worker/progression-affilated/submited-ulang/{id}', [AffiliatedCont
 Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->middleware('auth')->name('manage.worker');
 // LAMAR WORKER
 Route::post('/task/{task}/apply', [JobController::class, 'apply'])->name('task.apply');
+// update bid price
+Route::put('/applications/{application}/update-bid-price', [JobController::class, 'updateBidPrice'])
+    ->name('applications.updateBidPrice');
 // hapus sertfikat di profile
 Route::post('/sertifikasi/hapus-file/{id}', [ProfileController::class, 'deleteSertifikasi'])->name('sertifikasi.hapusFile');
 // hapus portofolio di profile

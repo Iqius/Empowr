@@ -226,7 +226,7 @@ class ProgressionController extends Controller
         $currentStep = $progressionsByStep->keys()->max() + 1;
         $canSubmit = $this->determineCanSubmit($currentStep, $progressionsByStep);
 
-        if ($task->status !== 'completed') {
+        if ($task->status !== 'completed' && $task->status !== 'on-hold' && $task->status !== 'arbitrase-completed') {
             return view('General.detailProgressionJobs', compact(
                 'task',
                 'steps',
