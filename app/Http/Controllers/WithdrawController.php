@@ -107,7 +107,6 @@ class WithdrawController extends Controller
     public function approveWithdraw(Request $request, $id)
     {
         $withdraw = Transaction::findOrFail($id);
-
         // Validasi input
         $request->validate([
             'bukti_transfer' => 'required|image|mimes:jpeg,png,jpg|max:2048',
@@ -131,16 +130,22 @@ class WithdrawController extends Controller
     {
         $withdraw = Transaction::findOrFail($id);
 
-        // Ambil e-wallet pemilik dana
-        $ewallet = null;
+        $userIdToRefund = null;
 
-        if ($withdraw->worker && $withdraw->worker->user) {
-            $ewallet = $withdraw->worker->user->Ewallet;
-        } elseif ($withdraw->client && $withdraw->client->user) {
-            $ewallet = $withdraw->client->Ewallet;
+        // Determine which user (worker or client) needs the refund
+        if ($withdraw->worker) {
+            // Get the user ID from the worker's profile
+            $userIdToRefund = $withdraw->worker->user_id;
+        } elseif ($withdraw->client) {
+            // Get the user ID directly from the client (which is a User model)
+            $userIdToRefund = $withdraw->client->id;
         }
 
-        
+        $ewallet = null;
+        if ($userIdToRefund) {
+            // Manually find the e-wallet using the user_id
+            $ewallet = Ewallet::where('user_id', $userIdToRefund)->first();
+        }
 
         // Cek apakah e-wallet ditemukan
         if (!$ewallet) {

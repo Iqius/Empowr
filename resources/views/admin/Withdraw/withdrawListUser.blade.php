@@ -128,6 +128,28 @@
             document.querySelector(target).classList.remove('hidden');
         });
     });
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 3000 // Auto-close after 3 seconds
+            });
+        @endif
+
+        @if ($errors->any())
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal!',
+                html: 'Terdapat beberapa kesalahan input:<br><ul>' +
+                      @foreach ($errors->all() as $error)
+                        '<li>{{ $error }}</li>' +
+                      @endforeach
+                      '</ul>',
+                showConfirmButton: true
+            });
+        @endif
 </script>
 
 
