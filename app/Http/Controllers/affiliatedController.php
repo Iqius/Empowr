@@ -283,22 +283,36 @@ class AffiliatedController extends Controller
         
         $task = Task::findOrFail($id);
         $workerProfiles = $request->worker_id;
+        $hargaTask = $request->harga_task_affiliate;
+        $hargaPajak = $request->harga_pajak_affiliate;
 
-        $apakahada = TaskApplication::where('task_id', $task->id)
-            ->where('profile_id', $workerProfiles);
-        dd($apakahada);
+        $existingApplication = TaskApplication::where('task_id', $task->id)
+        ->where('profile_id', $workerProfiles)
+        ->first();
 
-        TaskApplication::create([
-            'task_id' => $task->id,
-            'profile_id' => $workerProfiles,
-            'bidPrice' => $hargaTask + $hargaPajak,
-            'catatan' => $request->catatan,
-            'status' => 'pending',
-            'affiliated' => true,
-            'harga_pajak_affiliate' =>  $hargaPajak,
-            'applied_at' => now(),
-        ]);
-
+        if ($existingApplication) {
+            // Jika sudah ada, update isinya
+            $existingApplication->update([
+                'bidPrice' => $hargaTask + $hargaPajak,
+                'catatan' => $request->catatan,
+                'status' => 'pending',
+                'affiliated' => true,
+                'harga_pajak_affiliate' => $hargaPajak,
+                'applied_at' => now(),
+            ]);
+        } else {
+            // Jika belum ada, buat baru
+            TaskApplication::create([
+                'task_id' => $task->id,
+                'profile_id' => $workerProfileId,
+                'bidPrice' => $hargaTask + $hargaPajak,
+                'catatan' => $request->catatan,
+                'status' => 'pending',
+                'affiliated' => true,
+                'harga_pajak_affiliate' => $hargaPajak,
+                'applied_at' => now(),
+            ]);
+        }
         return redirect()->route('List-pengajuan-task-affiliate.view')->with('success', 'Berhasil menugaskan worker affiliate!');
     }
 }
