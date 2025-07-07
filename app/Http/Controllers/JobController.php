@@ -164,7 +164,7 @@ class JobController extends Controller
                 $applicant->avgRating = 0;
             }
         }
-        
+
         $job = Task::with('user')->findOrFail($id);
 
         $clientUser = $job->user;
@@ -184,7 +184,16 @@ class JobController extends Controller
     }
     public function myJobs()
     {
-        $task = Task::where('client_id', Auth::id())->get();
+        $now = now();
+
+        // Ambil semua task milik client
+        $task = Task::where('client_id', Auth::id())
+            ->where(function ($query) use ($now) {
+                $query->where('deadline_promotion', '>=', $now)
+                    ->orWhereHas('applications'); // tampilkan juga yang expired tapi punya pelamar
+            })
+            ->get();
+
         return view('client.jobs.myJobClient', compact('task'));
     }
 
@@ -205,68 +214,68 @@ class JobController extends Controller
     }
 
 
-public function manage($id, Request $request)
-{
-    $user = Auth::user();
+    public function manage($id, Request $request)
+    {
+        $user = Auth::user();
 
-    $task = $user->role === 'admin'
-        ? Task::findOrFail($id)
-        : Task::with('user')->findOrFail($id);
+        $task = $user->role === 'admin'
+            ? Task::findOrFail($id)
+            : Task::with('user')->findOrFail($id);
 
-    $ewallet = Ewallet::where('user_id', $user->id)->first();
+        $ewallet = Ewallet::where('user_id', $user->id)->first();
 
-    // Ambil parameter sorting dari request
-    $sortBy = $request->get('sort', 'bidPrice');
-    $sortDir = $request->get('dir', 'asc');
-    $allowedSorts = ['bidPrice', 'experience', 'rating'];
-    if (!in_array($sortBy, $allowedSorts)) {
-        $sortBy = 'bidPrice';
+        // Ambil parameter sorting dari request
+        $sortBy = $request->get('sort', 'bidPrice');
+        $sortDir = $request->get('dir', 'asc');
+        $allowedSorts = ['bidPrice', 'experience', 'rating'];
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'bidPrice';
+        }
+
+        // Ambil semua pelamar
+        $allApplicants = TaskApplication::with([
+            'worker.user',
+            'worker.certifications.images',
+            'worker.portfolios.images',
+        ])->where('task_id', $id)->get();
+
+        // Hitung rating masing-masing pelamar
+        foreach ($allApplicants as $applicant) {
+            $user = $applicant->worker->user ?? null;
+            $applicant->avgRating = $user
+                ? TaskReview::where('reviewed_user_id', $user->id)->avg('rating') ?? 0
+                : 0;
+        }
+
+        // Pisahkan affiliate dan regular
+        $affiliateApplicants = $allApplicants->filter(function ($a) {
+            return in_array($a->worker->empowr_affiliate ?? 0, [1, '1'], true);
+        })->values();
+
+        $regularApplicants = $allApplicants->reject(function ($a) {
+            return in_array($a->worker->empowr_affiliate ?? 0, [1, '1'], true);
+        })->values();
+
+        // Sort regular applicants saja
+        if ($sortBy === 'experience') {
+            $regularApplicants = $regularApplicants->sortBy(function ($a) {
+                return $a->worker->pengalaman_kerja ?? 0;
+            }, SORT_REGULAR, $sortDir === 'desc');
+        } elseif ($sortBy === 'rating') {
+            $regularApplicants = $regularApplicants->sortBy(function ($a) {
+                return $a->avgRating ?? 0;
+            }, SORT_REGULAR, $sortDir === 'desc');
+        } else {
+            $regularApplicants = $regularApplicants->sortBy(function ($a) use ($sortBy) {
+                return $a->{$sortBy} ?? 0;
+            }, SORT_REGULAR, $sortDir === 'desc');
+        }
+
+        // Gabungkan: affiliate tetap di atas
+        $applicants = $affiliateApplicants->concat($regularApplicants)->values();
+
+        return view('client.jobs.manage', compact('task', 'applicants', 'ewallet'));
     }
-
-    // Ambil semua pelamar
-    $allApplicants = TaskApplication::with([
-        'worker.user',
-        'worker.certifications.images',
-        'worker.portfolios.images',
-    ])->where('task_id', $id)->get();
-
-    // Hitung rating masing-masing pelamar
-    foreach ($allApplicants as $applicant) {
-        $user = $applicant->worker->user ?? null;
-        $applicant->avgRating = $user
-            ? TaskReview::where('reviewed_user_id', $user->id)->avg('rating') ?? 0
-            : 0;
-    }
-
-    // Pisahkan affiliate dan regular
-   $affiliateApplicants = $allApplicants->filter(function ($a) {
-    return in_array($a->worker->empowr_affiliate ?? 0, [1, '1'], true);
-})->values();
-
-$regularApplicants = $allApplicants->reject(function ($a) {
-    return in_array($a->worker->empowr_affiliate ?? 0, [1, '1'], true);
-})->values();
-
-    // Sort regular applicants saja
-    if ($sortBy === 'experience') {
-        $regularApplicants = $regularApplicants->sortBy(function ($a) {
-            return $a->worker->pengalaman_kerja ?? 0;
-        }, SORT_REGULAR, $sortDir === 'desc');
-    } elseif ($sortBy === 'rating') {
-        $regularApplicants = $regularApplicants->sortBy(function ($a) {
-            return $a->avgRating ?? 0;
-        }, SORT_REGULAR, $sortDir === 'desc');
-    } else {
-        $regularApplicants = $regularApplicants->sortBy(function ($a) use ($sortBy) {
-            return $a->{$sortBy} ?? 0;
-        }, SORT_REGULAR, $sortDir === 'desc');
-    }
-
-    // Gabungkan: affiliate tetap di atas
-$applicants = $affiliateApplicants->concat($regularApplicants)->values();
-
-    return view('client.jobs.manage', compact('task', 'applicants', 'ewallet'));
-}
 
 
 
@@ -396,7 +405,6 @@ $applicants = $affiliateApplicants->concat($regularApplicants)->values();
 
             // 3. Redirect kembali dengan pesan sukses
             return back()->with('success', 'Harga penawaran berhasil diperbarui.');
-
         } catch (ValidationException $e) {
             // Jika ada error validasi, redirect kembali dengan error
             return back()->withErrors($e->errors())->withInput();
@@ -405,7 +413,32 @@ $applicants = $affiliateApplicants->concat($regularApplicants)->values();
             return back()->with('error', 'Gagal memperbarui harga penawaran. Pesan error: ' . $e->getMessage());
         }
     }
+    public function handleExpiredPromotionTasks()
+    {
+        $today = now();
 
+        // Ambil task yang sudah melewati deadline_promotion
+        $expiredTasks = Task::whereDate('deadline_promotion', '<', $today)->get();
+
+        foreach ($expiredTasks as $task) {
+            // Hitung jumlah pelamar
+            $applicationsCount = TaskApplication::where('task_id', $task->id)->count();
+
+            if ($applicationsCount == 0) {
+                // Hapus jika tidak ada pelamar
+                if ($task->job_file && Storage::disk('public')->exists($task->job_file)) {
+                    Storage::disk('public')->delete($task->job_file);
+                }
+
+                $task->delete();
+            }
+
+            // Jika ada pelamar, cukup tandai untuk ditampilkan khusus di dashboard client
+            // Tidak perlu update apa-apa, cukup filter nanti saat render view
+        }
+
+        return response()->json(['message' => 'Expired tasks handled.']);
+    }
 }
 
 

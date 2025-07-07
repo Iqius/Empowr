@@ -91,8 +91,7 @@ Route::get('/profile/reviews/load-more', [ProfileController::class, 'loadMoreRev
 Route::get('/profile/worker/{id}/rating', [ProfileController::class, 'getWorkerRatingAjax'])->name('profile.worker.rating');
 Route::get('/profile/my-rating', [ProfileController::class, 'getMyRatingData'])->name('profile.my.rating');
 
-
-
+Route::get('/check-expired-tasks', [JobController::class, 'handleExpiredPromotionTasks']);
 
 
 
