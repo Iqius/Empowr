@@ -91,7 +91,15 @@
                         class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
                         Lihat Detail
                     </button>
+                    
                 </a>
+                @if ($job->status === 'open')
+                <a href="{{ route('client.update', $job->id) }}">
+                    <button class="bg-[#33a723] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#26851f] transition">
+                        update
+                    </button>
+                </a>
+                @endif
             </div>
         </div>
         @endforeach

@@ -640,6 +640,19 @@
             closePaymentModal();
         }
     }
+
+    @if(session('success-tambah-tugas-affiliate'))
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil',
+        text: '{{ session('success-tambah-tugas-affiliate') }}',
+        confirmButtonColor: '#3085d6'
+    }).then(() => {
+        // You might want to redirect or just close the modal here
+        // For now, let's just reload the page to reflect the change
+        window.location.reload();
+    });
+    @endif
 </script>
 
 
