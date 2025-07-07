@@ -15,8 +15,8 @@
                 </thead>
                 @foreach($task as $tasks)
                 @php
-                $worker = $item->workerProfile;
-                $user = $worker->user;
+                    $worker = optional($tasks->worker);
+                    $user = optional($worker->user);
                 @endphp
                 <tbody class="bg-white divide-y divide-gray-100">
                     <tr class="hover:bg-blue-50 transition">
