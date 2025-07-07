@@ -24,41 +24,41 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-if ($user->role === 'client') {
-    $tasks = Task::with('review')
-        ->where('client_id', $user->id)
-        ->where('status', 'completed')
-        ->latest()
-        ->get();
+        if ($user->role === 'client') {
+            $tasks = Task::with('review')
+                ->where('client_id', $user->id)
+                ->where('status', 'completed')
+                ->latest()
+                ->get();
 
-    $ratingData = TaskReview::where('reviewed_user_id', $user->id)
-        ->whereNotNull('rating')
-        ->get();
+            $ratingData = TaskReview::where('reviewed_user_id', $user->id)
+                ->whereNotNull('rating')
+                ->get();
 
-    $avgRating = $ratingData->avg('rating') ?? 0;
-    $countReviews = $ratingData->count();
+            $avgRating = $ratingData->avg('rating') ?? 0;
+            $countReviews = $ratingData->count();
 
-    $breakdown = collect([5, 4, 3, 2, 1])->mapWithKeys(function ($star) use ($ratingData, $countReviews) {
-        $count = $ratingData->where('rating', $star)->count();
-        $percentage = $countReviews > 0 ? round(($count / $countReviews) * 100) : 0;
+            $breakdown = collect([5, 4, 3, 2, 1])->mapWithKeys(function ($star) use ($ratingData, $countReviews) {
+                $count = $ratingData->where('rating', $star)->count();
+                $percentage = $countReviews > 0 ? round(($count / $countReviews) * 100) : 0;
 
-        return [$star => [
-            'count' => $count,
-            'percentage' => $percentage,
-        ]];
-    });
+                return [$star => [
+                    'count' => $count,
+                    'percentage' => $percentage,
+                ]];
+            });
 
-    return view('General.profil', [
-        'workerProfile' => null,
-        'sertifikasi' => collect(),
-        'portofolio' => collect(),
-        'tasks' => $tasks,
-        'ratingData' => $ratingData,
-        'avgRating' => $avgRating,
-        'countReviews' => $countReviews,
-        'breakdown' => $breakdown,
-    ]);
-}
+            return view('General.profil', [
+                'workerProfile' => null,
+                'sertifikasi' => collect(),
+                'portofolio' => collect(),
+                'tasks' => $tasks,
+                'ratingData' => $ratingData,
+                'avgRating' => $avgRating,
+                'countReviews' => $countReviews,
+                'breakdown' => $breakdown,
+            ]);
+        }
 
 
 
@@ -102,8 +102,7 @@ if ($user->role === 'client') {
         return view('General.lamaranWorkerDetailProfile', compact('worker', 'data'));
     }
 
-
-    public function updateProfile(Request $request)
+    public function updateDataDiri(Request $request)
     {
         $user = Auth::user();
 
@@ -112,66 +111,80 @@ if ($user->role === 'client') {
             'email' => 'nullable|email',
             'nomor_telepon' => 'nullable|string',
             'bio' => 'nullable|string',
-
-            // ubah validasi keahlian
+            'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'keahlian' => 'nullable|array',
             'keahlian.*' => 'string|max:255',
-
-            'pengalaman_kerja' => 'nullable|string',
-            'pendidikan' => 'nullable|string',
             'cv' => 'nullable|file|mimes:pdf,doc,docx,png,jpeg|max:10240',
-
-            'wallet_number' => 'nullable|string',
-            'ewallet_account_name' => 'nullable|string',
-            'ewallet_provider' => 'nullable|string',
-            'bank_name' => 'nullable|string',
-            'account_number' => 'nullable|string',
-            'bank_account_name' => 'nullable|string',
+            'linkedin' => 'nullable|string',
         ]);
 
         $user->nama_lengkap = $request->nama_lengkap ?? $user->nama_lengkap;
         $user->email = $request->email ?? $user->email;
         $user->nomor_telepon = $request->nomor_telepon ?? $user->nomor_telepon;
         $user->bio = $request->input('bio');
-        $user->save();
 
-        $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
-
-        // CV upload
-        if ($request->hasFile('cv')) {
-            $workerProfile->cv = $request->file('cv')->store('cv', 'public');
+        if ($request->hasFile('profile_image')) {
+            if ($user->profile_image && \Storage::disk('public')->exists($user->profile_image)) {
+                \Storage::disk('public')->delete($user->profile_image);
+            }
+            $user->profile_image = $request->file('profile_image')->store('profile_images', 'public');
         }
 
-        // ✅ Simpan array keahlian sebagai JSON
-        $workerProfile->keahlian = json_encode($request->keahlian ?? []);
+        $user->save();
 
-        $workerProfile->linkedin = $request->linkedin ?? $workerProfile->linkedin;
-        $workerProfile->pengalaman_kerja = $request->pengalaman_kerja ?? $workerProfile->pengalaman_kerja;
-        $workerProfile->pendidikan = $request->pendidikan ?? $workerProfile->pendidikan;
+        // Hanya update data ini jika user adalah worker
+        if ($user->role === 'worker') {
+            $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
 
-        $workerProfile->empowr_label = $request->has('empowr_label');
-        $workerProfile->empowr_affiliate = $request->has('empowr_affiliate');
-        $workerProfile->save();
+            if ($request->hasFile('cv')) {
+                $workerProfile->cv = $request->file('cv')->store('cv', 'public');
+            }
 
-        // Rekening
-        $existingAccount = UserPaymentAccount::firstOrNew(['user_id' => $user->id]);
-        $existingAccount->wallet_number = $request->wallet_number ?? $existingAccount->wallet_number;
-        $existingAccount->ewallet_provider = $request->ewallet_provider ?? $existingAccount->ewallet_provider;
-        $existingAccount->ewallet_name = $request->ewallet_name ?? $existingAccount->ewallet_name;
+            $workerProfile->keahlian = $request->keahlian ? json_encode($request->keahlian) : $workerProfile->keahlian;
+            $workerProfile->linkedin = $request->linkedin ?? $workerProfile->linkedin;
+            $workerProfile->empowr_label = $request->has('empowr_label');
+            $workerProfile->empowr_affiliate = $request->has('empowr_affiliate');
+            $workerProfile->save();
+        }
 
-        $existingAccount->bank_name = $request->bank_name ?? $existingAccount->bank_name;
-        $existingAccount->account_number = $request->account_number ?? $existingAccount->account_number;
-        $existingAccount->bank_account_name = $request->bank_account_name ?? $existingAccount->bank_account_name;
-        
-        $existingAccount->save();
+        return redirect()->route('profil')->with('success-update', 'Data diri berhasil diperbarui.');
+    }
 
 
-        return redirect()->route('profil')->with('success-update', 'Profil berhasil diupdate');
+    public function updatePaymentAccount(Request $request)
+    {
+        $request->validate([
+            'wallet_number' => 'nullable|string',
+            'ewallet_account_name' => 'nullable|string',
+            'ewallet_provider' => 'nullable|string',
+
+            'bank_name' => 'nullable|string',
+            'account_number' => 'nullable|string',
+            'bank_account_name' => 'nullable|string',
+        ]);
+
+        $user = Auth::user();
+
+        $account = UserPaymentAccount::firstOrNew(['user_id' => $user->id]);
+
+        $account->wallet_number = $request->wallet_number ?? $account->wallet_number;
+        $account->ewallet_provider = $request->ewallet_provider ?? $account->ewallet_provider;
+        $account->ewallet_account_name = $request->ewallet_account_name ?? $account->ewallet_account_name;
+
+        $account->bank_name = $request->bank_name ?? $account->bank_name;
+        $account->account_number = $request->account_number ?? $account->account_number;
+        $account->bank_account_name = $request->bank_account_name ?? $account->bank_account_name;
+
+
+        $account->save();
+
+        return redirect()->route('profil')->with('success-update', 'Akun pembayaran berhasil diperbarui.');
     }
 
 
 
-    public function updateSertifikasi(Request $request){
+    public function updateSertifikasi(Request $request)
+    {
 
         $user = Auth::user();
 
@@ -219,15 +232,16 @@ if ($user->role === 'client') {
         }
     }
 
-    public function updatePortofolio(Request $request){
+    public function updatePortofolio(Request $request)
+    {
         $user = Auth::user();
 
-        $request->validate([        
-            'title' => 'nullable|string',
-            'portofolio' => 'nullable|array',
+        $request->validate([
+            'title' => 'required|string',
+            'portofolio' => 'required|array',
             'portofolio.*' => 'file|mimes:jpg,jpeg,png|max:2048',
-            'description' => 'nullable|string',
-            'duration' => 'nullable|integer',
+            'description' => 'required|string',
+            'duration' => 'required|integer',
         ]);
 
         $workerProfile = $user->workerProfile ?? new WorkerProfile(['user_id' => $user->id]);
@@ -258,7 +272,7 @@ if ($user->role === 'client') {
 
         // ⬇️ Jika ada file baru → hapus gambar lama dan ganti
         if ($request->hasFile('portofolio')) {
-            
+
             $files = is_array($request->file('portofolio')) ? $request->file('portofolio') : [$request->file('portofolio')];
             foreach ($files as $file) {
                 $fileName = round(microtime(true) * 1000) . '-' . $file->getClientOriginalName();
@@ -275,18 +289,18 @@ if ($user->role === 'client') {
     }
 
     public function deletePortofolioImage($id)
-{
-    $image = PortofolioImage::findOrFail($id);
+    {
+        $image = PortofolioImage::findOrFail($id);
 
-    // Hapus file
-    if (file_exists(public_path($image->image))) {
-        unlink(public_path($image->image));
+        // Hapus file
+        if (file_exists(public_path($image->image))) {
+            unlink(public_path($image->image));
+        }
+
+        $image->delete();
+
+        return back()->with('success', 'Gambar berhasil dihapus.');
     }
-
-    $image->delete();
-
-    return back()->with('success', 'Gambar berhasil dihapus.');
-}
 
 
     public function updateProfileImage(Request $request)
@@ -309,7 +323,7 @@ if ($user->role === 'client') {
 
         return response()->json(['success' => true, 'image_url' => asset('storage/' . $imagePath)]);
     }
-  
+
     public function getWorkerRatingData($workerId)
     {
         try {
@@ -363,7 +377,7 @@ if ($user->role === 'client') {
         }
     }
 
-   
+
     public function getWorkerReviews($workerId, $limit = 10, $offset = 0)
     {
         try {
@@ -454,5 +468,4 @@ if ($user->role === 'client') {
 
         return back()->with('success', 'Portofolio berhasil dihapus.');
     }
-   
 }

@@ -14,6 +14,7 @@ use App\Http\Controllers\AffiliatedController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\WithdrawController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\UserControlController;
 
 // LANDING PAGE
 Route::get('/', function () {
@@ -121,6 +122,9 @@ Route::post('/worker/progression-affilated/submited-ulang/{id}', [AffiliatedCont
 Route::get('/worker/myjob/{id}', [JobController::class, 'manageWorker'])->middleware('auth')->name('manage.worker');
 // LAMAR WORKER
 Route::post('/task/{task}/apply', [JobController::class, 'apply'])->name('task.apply');
+// update bid price
+Route::put('/applications/{application}/update-bid-price', [JobController::class, 'updateBidPrice'])
+    ->name('applications.updateBidPrice');
 // hapus sertfikat di profile
 Route::post('/sertifikasi/hapus-file/{id}', [ProfileController::class, 'deleteSertifikasi'])->name('sertifikasi.hapusFile');
 // hapus portofolio di profile
@@ -150,7 +154,11 @@ Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
 Route::get('/my-jobs', [JobController::class, 'myJobs'])->middleware('auth')->name('jobs.my');
 // --Profile update
 Route::get('/profil', [ProfileController::class, 'showProfile'])->name('profil');
-Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
+
+Route::post('/profile/data-diri/update', [ProfileController::class, 'updateDataDiri'])->name('profile.update');
+Route::post('/profile/akun-pembayaran/update', [ProfileController::class, 'updatePaymentAccount'])->name('profile-akunPembayaran.update');
+// --CHAT MASIH BELUM PASTI
+Route::get('/chat', [\Chatify\Http\Controllers\MessagesController::class, 'index'])->name('chat');
 // --In progress jobs
 Route::get('/in-progress-jobs/{task_id}', [ProgressionController::class, 'DetailJobsInProgress'])->name('inProgress.jobs');
 // --arbitrase
@@ -208,6 +216,19 @@ Route::post('/admin/List-Request-Affiliasi-Task/approve-affiliated/{id}', [Affil
 Route::get('/withdraw', [WithdrawController::class, 'indexWithdraw'])->name('withdraw.view');
 Route::post('/withdraw/approve/{id}', [WithdrawController::class, 'approveWithdraw'])->name('withdraw.approve');
 Route::post('/withdraw/reject/{id}', [WithdrawController::class, 'rejectWithdraw'])->name('withdraw.reject');
+
+
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/user-control', [UserControlController::class, 'index'])->name('user.control');
+
+    // Ubah status
+    Route::post('/user-control/{id}/update-label', [UserControlController::class, 'updateLabel'])->name('user.updateLabel');
+    Route::post('/user-control/{id}/update-affiliate', [UserControlController::class, 'updateAffiliate'])->name('user.updateAffiliate');
+
+    // Hapus status
+    Route::delete('/user-control/{id}/delete-label', [UserControlController::class, 'deleteLabel'])->name('user.deleteLabel');
+    Route::delete('/user-control/{id}/delete-affiliate', [UserControlController::class, 'deleteAffiliate'])->name('user.deleteAffiliate');
+});
 
 
 
