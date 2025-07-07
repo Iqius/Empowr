@@ -220,11 +220,17 @@ class PaymentController extends Controller
         $workerprofileid = WorkerProfile::where('user_id', $user->id)->value('id');
         $paymentAccounts = UserPaymentAccount::where('user_id', $user->id)->first();
 
-      $transactions = Transaction::where('worker_id', $workerprofileid)
-                        ->orWhere('client_id', $user->id)
 
-                        ->orderBy('created_at', 'desc')
-                        ->get();
+        if($user->role === 'worker') {
+            $transactions = Transaction::where('worker_id', $workerprofileid)
+                ->where('type', '!=', 'payment')
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else {
+            $transactions = Transaction::where('client_id', $user->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
 
         return view('General.ewallet', compact('ewallet', 'paymentAccounts', 'transactions'));
     }

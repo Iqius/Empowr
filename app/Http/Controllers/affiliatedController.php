@@ -285,7 +285,9 @@ class AffiliatedController extends Controller
         $workerProfiles = $request->worker_id;
         $hargaTask = $request->harga_task_affiliate;
         $hargaPajak = $request->harga_pajak_affiliate;
-
+        $admin = Auth::user();
+        $client = $task->client_id;
+        $workerprofileid = WorkerProfile::where('id', $workerProfiles)->value('user_id');
         $existingApplication = TaskApplication::where('task_id', $task->id)
         ->where('profile_id', $workerProfiles)
         ->first();
@@ -300,11 +302,17 @@ class AffiliatedController extends Controller
                 'harga_pajak_affiliate' => $hargaPajak,
                 'applied_at' => now(),
             ]);
+            Notification::create([
+                'user_id' => $workerprofileid,
+                'sender_name' => $admin->nama_lengkap,
+                'message' => 'Lamaran: Anda telah diubah sebagai worker affiliate untuk tugas ' . $task->title,
+                'is_read' => false,
+            ]);
         } else {
             // Jika belum ada, buat baru
             TaskApplication::create([
                 'task_id' => $task->id,
-                'profile_id' => $workerProfileId,
+                'profile_id' => $workerProfiles,
                 'bidPrice' => $hargaTask + $hargaPajak,
                 'catatan' => $request->catatan,
                 'status' => 'pending',
@@ -313,6 +321,13 @@ class AffiliatedController extends Controller
                 'applied_at' => now(),
             ]);
         }
+        Notification::create([
+                'user_id' => $client,
+                'sender_name' => $admin->nama_lengkap,
+                'message' => 'Lamaran: Worker affiliate telah ditambahkan ke lamaran tugas ' . $task->title,
+                'is_read' => false,
+        ]);
+        
         return redirect()->route('List-pengajuan-task-affiliate.view')->with('success', 'Berhasil menugaskan worker affiliate!');
     }
 }

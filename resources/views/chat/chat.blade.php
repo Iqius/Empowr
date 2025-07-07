@@ -5,19 +5,6 @@
     <!-- Left Sidebar -->
     <div class="w-15 sm:w-64 md:w-80 bg-white border-r border-gray-300 flex flex-col">
 
-        <!-- Search Section (Only visible for admin) -->
-        @if($isAdmin)
-        <div id="searchContainer" class="p-3 border-b border-gray-300">
-            <form action="{{ route('chat.search') }}" method="GET" id="searchForm">
-                <div class="relative">
-                    <input type="text" name="query" placeholder="Search users" class="w-full bg-gray-100 rounded-full py-2 px-4 pl-10 outline-none" id="searchInput">
-                    <i class="fa fa-search absolute left-4 top-3 text-gray-400"></i>
-                </div>
-            </form>
-            <div id="searchResults" class="mt-2 hidden"></div>
-        </div>
-        @endif
-
         <!-- Contacts List -->
         <div class="flex-1 overflow-y-auto">
             @if($conversations->count() > 0)

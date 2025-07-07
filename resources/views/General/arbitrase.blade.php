@@ -65,7 +65,7 @@
           <tr>
             <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
             <td class="px-4 py-2 border">{{ $item->task_id }}</td>
-            <td class="px-4 py-2 border">{{ $item->pelapor }}</td>
+            <td class="px-4 py-2 border">{{ $item->pelapor}}</td>
             <td class="px-4 py-2 border">{{ $item->reason }}</td>
             <td class="px-4 py-2 border">{{ ($item->status) }}</td>
             <td class="px-4 py-2 border">{{ $item->created_at }}</td>

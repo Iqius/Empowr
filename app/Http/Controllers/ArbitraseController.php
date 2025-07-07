@@ -70,17 +70,17 @@ class ArbitraseController extends Controller
         // Ambil user client dan worker
         $client = $task->client; // pastikan relasi Task -> client didefinisikan
         $workerUser = $task->workerProfile?->user;
-        
+
         $data = [
-            'task_id' => $task,
+            'task_id' => $task->id,
             'reason' => $request->reason ?? 'Tidak ada alasan',
             'status' => 'under review',
             'created_at' => now(),
             'pelapor' => $user->id,
         ];
-        
-        Task::where('id', $task)->update(['status' => 'on-hold']);
-        // Simpan ke database
+
+        $task->status = 'on-hold';
+        $task->save();
         Arbitrase::create($data);
         $notifMessage = 'Pengguna ' . $user->nama_lengkap . ' melaporkan tugas "' . $task->title . '" ke pihak Empowr.';
 

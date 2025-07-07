@@ -17,11 +17,17 @@
                 @php
                     $worker = optional($tasks->worker);
                     $user = optional($worker->user);
+                    $users = $tasks->client_id;
+                    $client = \App\Models\User::find($users);
+                    $profileImage = $client->profile_image
+                    ? asset('storage/' . $client->profile_image)
+                    : asset('images/default-avatar.png');
                 @endphp
+                
                 <tbody class="bg-white divide-y divide-gray-100">
                     <tr class="hover:bg-blue-50 transition">
                         <td class="px-4 py-3 flex items-center gap-3">
-                            <img src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : asset('images/default-avatar.png') }}"
+                            <img src="{{ $profileImage }}"
                                 class="w-10 h-10 rounded-full object-cover">
                             <span class="font-medium">{{ $tasks->client->nama_lengkap }}</span>
                         </td>

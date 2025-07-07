@@ -102,22 +102,32 @@
 
                                 <!-- Modal Setujui dengan Upload -->
                                 <div id="modalApprove{{ $withdraw->id }}" 
-                                    class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
-                                    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+                                    class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50">
+                                    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative">
+                                        <!-- Tombol Close -->
                                         <button onclick="document.getElementById('modalApprove{{ $withdraw->id }}').classList.add('hidden')" 
-                                                class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl font-bold">
-                                            ×
+                                            class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl font-bold transition">
+                                            &times;
                                         </button>
-                                        <h3 class="text-lg font-semibold mb-4 border-b pb-2">Upload Bukti Transfer</h3>
-                                    <form action="{{ route('withdraw.approve', $withdraw->id) }}" method="POST" enctype="multipart/form-data">
+
+                                        <!-- Judul -->
+                                        <h3 class="text-xl font-bold text-gray-800 mb-5 border-b pb-3 text-center">
+                                            Upload Bukti Transfer
+                                        </h3>
+
+                                        <!-- Form Upload -->
+                                        <form action="{{ route('withdraw.approve', $withdraw->id) }}" method="POST" enctype="multipart/form-data">
                                             @csrf
                                             <label class="block mb-2 text-sm font-medium text-gray-700">Upload Gambar:</label>
                                             <input type="file" name="bukti_transfer" accept="image/*" 
-                                                class="w-full border border-gray-300 rounded p-2 mb-4" required>
+                                                class="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:ring focus:border-blue-300" 
+                                                required>
 
-                                            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                                                Kirim
-                                            </button>
+                                            <div class="flex justify-end">
+                                                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                                                    Kirim
+                                                </button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>

@@ -18,6 +18,9 @@
                     @php
                     $worker = $item->workerProfile;
                     $user = $worker->user;
+                    $profileImage = $user->profile_image
+                    ? asset('storage/' . $user->profile_image)
+                    : asset('images/default-avatar.png');
                     @endphp
                     @if(($item->status != 'result' && strtolower(trim($item->status_decision)) != 'approve') || strtolower(trim($item->status_decision)) != 'rejected')
                     <tr class="hover:bg-blue-50 transition">
