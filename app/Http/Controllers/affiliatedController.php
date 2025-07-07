@@ -284,10 +284,9 @@ class AffiliatedController extends Controller
         $task = Task::findOrFail($id);
         $workerProfiles = $request->worker_id;
 
-       
-
-            $hargaTask = (float) str_replace(',', '.', $request->harga_task_affiliate);
-            $hargaPajak = (float) str_replace(',', '.', $request->harga_pajak_affiliate);
+        $apakahada = TaskApplication::where('task_id', $task->id)
+            ->where('profile_id', $workerProfiles);
+        dd($apakahada);
 
         TaskApplication::create([
             'task_id' => $task->id,
