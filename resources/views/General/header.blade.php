@@ -353,7 +353,7 @@
 
             <!-- Chat -->
             <li>
-               <a href="{{ url('/chatify') }}#" class="sidebar-item flex items-center p-2 rounded-lg">
+               <a href="{{ route('chat.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
                   <i class="bi bi-chat-dots text-lg text-[#1F4482]"></i>
                   <span class="ml-3">Chat</span>
                </a>
