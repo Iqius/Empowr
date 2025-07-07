@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('task_id');
             $table->text('reason');
-            $table->enum('status', ['open', 'under review', 'resolved', 'canceled']);
+            $table->enum('status', ['open', 'under review', 'resolved', 'cancelled']);
             $table->dateTime('created_at');
             $table->unsignedBigInteger('pelapor');
             
