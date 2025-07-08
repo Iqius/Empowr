@@ -33,10 +33,8 @@ class User extends Authenticatable
         'nomor_telepon',
         'password',
         'linkedin',
-        'profile_image',
-        'alamat',  // Tambahkan ini
-        'negara',  // Tambahkan ini
-        // 'bio',     // Tambahkan ini
+        'profile_image', 
+        'bio',    
     ];
 
 

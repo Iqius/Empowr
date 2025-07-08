@@ -21,33 +21,33 @@
     <div id="progres" class=" tab-content p-4 rounded h-full">
         <!-- Button Complete -->
         @if(auth()->user()->role == 'client')
-        <div class="flex justify-end space-x-4 mb-7">
+            <div class="flex justify-end space-x-4 mb-7">
 
-            <button type="button" onclick="openModal()"
-                class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4">
-                Selesaikan Task
-            </button>
-        </div>
+                <button type="button" onclick="openModal()"
+                    class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4">
+                    Selesaikan Task
+                </button>
+            </div>
         @endif
 
         <div class="bg-white rounded-xl shadow-sm border flex flex-col h-full space-y-6">
             <div class="flex flex-col gap-4 py-6 px-4">
                 <div class="flex justify-between items-center relative">
                     @php
-                    $stepsData = [
-                    ['label' => 'Progres Ke-1', 'key' => 'step1'],
-                    ['label' => 'Progres Ke-2', 'key' => 'step2'],
-                    ['label' => 'Progres Ke-3', 'key' => 'step3'],
-                    ['label' => 'Selesai', 'key' => 'step4']
-                    ];
-                    @endphp
+                        $stepsData = [
+                        ['label' => 'Progres Ke-1', 'key' => 'step1'],
+                        ['label' => 'Progres Ke-2', 'key' => 'step2'],
+                        ['label' => 'Progres Ke-3', 'key' => 'step3'],
+                        ['label' => 'Selesai', 'key' => 'step4']
+                        ];
+                        @endphp
 
-                    @foreach ($stepsData as $index => $step)
-                    @php
-                    $status = $steps[$step['key']] ?? 'pending';
-                    $isCompleted = $status === 'approved';
-                    $isRejected = $status === 'rejected';
-                    $isCurrent = $status === 'pending';
+                        @foreach ($stepsData as $index => $step)
+                        @php
+                        $status = $steps[$step['key']] ?? 'pending';
+                        $isCompleted = $status === 'approved';
+                        $isRejected = $status === 'rejected';
+                        $isCurrent = $status === 'pending';
                     @endphp
 
                     <div class="flex-1 flex flex-col items-center z-10 relative">
@@ -92,12 +92,12 @@
                 <!-- Single Card for Worker -->
                 @if(auth()->user()->role == 'worker')
                 @php
-                $currentStep = $progressionsByStep->count() + 1;
-                $maxSteps = 3 + $task->revisions; // 3 progression + jumlah revisi yang dibolehkan
-                $latestProgression = $progressionsByStep->last();
+                    $currentStep = $progressionsByStep->count() + 1;
+                    $maxSteps = 3 + $task->revisions; // 3 progression + jumlah revisi yang dibolehkan
+                    $latestProgression = $progressionsByStep->last();
 
-                // Fix for initial submission - ensure canSubmit is true for first submission
-                $canSubmitInitial = ($progressionsByStep->isEmpty() || ($latestProgression && $latestProgression->status_approve !== 'waiting'));
+                    // Fix for initial submission - ensure canSubmit is true for first submission
+                    $canSubmitInitial = ($progressionsByStep->isEmpty() || ($latestProgression && $latestProgression->status_approve !== 'waiting'));
                 @endphp
 
                 <div class="flex flex-col gap-4 py-6 px-4">
@@ -143,117 +143,117 @@
                     <!-- Submission Section -->
                     @if($canSubmitInitial && $currentStep <= $maxSteps)
                         <div>
-                        <h2 class="font-bold text-lg mb-2">
-                            @if($currentStep > 3)
-                            Submit Revisi Ke-{{ $currentStep - 3 }}
+                            <h2 class="font-bold text-lg mb-2">
+                                @if($currentStep > 3)
+                                Submit Revisi Ke-{{ $currentStep - 3 }}
+                                @else
+                                Submit Progression Ke-{{ $currentStep }}
+                                @endif
+                            </h2>
+
+                            <form action="{{ route('task-progression.store', $task->id) }}" method="POST"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <label for="file-upload"
+                                    class="group cursor-pointer bg-gray-50 rounded-lg p-4 border-2 border-dashed border-gray-300 w-full flex items-center justify-start gap-4 transition-all duration-300 hover:bg-gray-100">
+                                    <div
+                                        class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">
+                                        📄</div>
+                                    <p class="text-gray-700 font-medium">Klik untuk mengunggah file</p>
+                                </label>
+
+                                <input id="file-upload" type="file" name="file" class="hidden" required>
+
+                                <div id="file-name-display" class="mt-2 text-sm text-gray-600 hidden">
+                                    File dipilih: <span id="selected-file-name" class="font-medium"></span>
+                                </div>
+
+                                <p class="mt-4 text-sm text-gray-600">Tanggal di submit:
+                                    {{ now()->format('d-m-Y H:i')}}
+                                </p>
+
+                                <button type="submit"
+                                    class="mt-4 w-full py-3 bg-[#1F4482] rounded text-white hover:bg-[#18346a] font-semibold transition-colors">Submit</button>
+                            </form>
+                        </div>
+                    @else
+                        <div class="bg-gray-100 rounded p-4 text-center">
+                            @if($currentStep > $maxSteps)
+                            <p class="text-gray-700">Semua tahap sudah diselesaikan</p>
                             @else
-                            Submit Progression Ke-{{ $currentStep }}
+                            <p class="text-gray-700">Menunggu review dari client untuk melanjutkan</p>
                             @endif
-                        </h2>
+                        </div>
+                    @endif
+                </div>
+            @endif
 
-                        <form action="{{ route('task-progression.store', $task->id) }}" method="POST"
-                            enctype="multipart/form-data">
+            <!-- Card untuk Client -->
+            @if(auth()->user()->role == 'client')
+                @php
+                    $lastProgression = $progressions->sortByDesc('progression_ke')->first();
+                @endphp
+
+                <div class="flex flex-col gap-4 py-6 px-4">
+                    <h2 class="font-bold text-lg mb-4">Review Progress</h2>
+
+                    @if($progressions->count() == 0)
+                    <p class="text-gray-700">Belum ada progress yang diupload.</p>
+                    @else
+                    <!-- Latest Submission Only -->
+                    <div>
+                        <h3 class="font-semibold text-md">
+                            @if($lastProgression->progression_ke > 3)
+                            Revisi Ke-{{ $lastProgression->progression_ke - 3 }}
+                            @else
+                            Progression Ke-{{ $lastProgression->progression_ke }}
+                            @endif
+                        </h3>
+
+                        <a href="{{ asset('storage/' . $lastProgression->path_file) }}" target="_blank"
+                            class="group cursor-pointer bg-white rounded-lg p-4 shadow w-full flex items-center justify-start gap-4 transition-all duration-300 hover:bg-gray-100 mt-2">
+                            <div
+                                class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">
+                                📄</div>
+                            <p class="text-gray-700 font-medium">{{ basename($lastProgression->path_file) }}</p>
+                        </a>
+
+                        <p class="mt-2 text-sm text-gray-500">Tanggal Submit:
+                            {{ $lastProgression->date_upload?->format('d M Y H:i') ?? '-' }}
+                        </p>
+
+                        <p class="text-sm text-gray-500">Status:
+                            <span
+                                class="font-semibold {{ $lastProgression->status_approve === 'approved' ? 'text-green-600' : ($lastProgression->status_approve === 'rejected' ? 'text-red-600' : 'text-yellow-600') }}">
+                                {{ ucfirst($lastProgression->status_approve) }}
+                            </span>
+                        </p>
+
+                        @if($lastProgression->note)
+                        <p class="text-sm text-gray-500">Note: {{ $lastProgression->note }}</p>
+                        @endif
+
+                        @if($lastProgression->status_approve === 'waiting')
+                        <form id="reviewForm-{{ $lastProgression->id }}" method="POST"
+                            action="{{ route('task-progression.review', $lastProgression->id) }}">
                             @csrf
-                            <label for="file-upload"
-                                class="group cursor-pointer bg-gray-50 rounded-lg p-4 border-2 border-dashed border-gray-300 w-full flex items-center justify-start gap-4 transition-all duration-300 hover:bg-gray-100">
-                                <div
-                                    class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">
-                                    📄</div>
-                                <p class="text-gray-700 font-medium">Klik untuk mengunggah file</p>
-                            </label>
-
-                            <input id="file-upload" type="file" name="file" class="hidden" required>
-
-                            <div id="file-name-display" class="mt-2 text-sm text-gray-600 hidden">
-                                File dipilih: <span id="selected-file-name" class="font-medium"></span>
-                            </div>
-
-                            <p class="mt-4 text-sm text-gray-600">Tanggal di submit:
-                                {{ now()->format('d-m-Y H:i')}}
-                            </p>
-
-                            <button type="submit"
-                                class="mt-4 w-full py-3 bg-[#1F4482] rounded text-white hover:bg-[#18346a] font-semibold transition-colors">Submit</button>
+                            <input type="hidden" name="status_approve" id="statusApprove-{{ $lastProgression->id }}">
+                            <input type="hidden" name="note" id="noteHidden-{{ $lastProgression->id }}">
                         </form>
-                </div>
-                @else
-                <div class="bg-gray-100 rounded p-4 text-center">
-                    @if($currentStep > $maxSteps)
-                    <p class="text-gray-700">Semua tahap sudah diselesaikan</p>
-                    @else
-                    <p class="text-gray-700">Menunggu review dari client untuk melanjutkan</p>
+
+                        <div class="flex gap-2 mt-4">
+                            <button type="button" onclick="openModalWithStatus('approved', {{ $lastProgression->id }})"
+                                class="flex-1 py-3 bg-[#1F4482] text-white rounded-lg rounded-md hover:bg-[#18346a] transition-colors">Approve</button>
+                            @if($lastProgression->progression_ke !== $task->revisions + 3)
+                                <button type="button" onclick="openModalWithStatus('rejected', {{ $lastProgression->id }})"
+                                class="flex-1 py-3 bg-red-600 rounded text-white hover:bg-red-700 transition-colors">Reject</button>
+                            @endif
+                        </div>
+                        @endif
+                    </div>
                     @endif
                 </div>
-                @endif
-            </div>
             @endif
-        @endif
-
-        <!-- Card untuk Client -->
-        @if(auth()->user()->role == 'client')
-        @php
-        $lastProgression = $progressions->sortByDesc('progression_ke')->first();
-        @endphp
-
-        <div class="flex flex-col gap-4 py-6 px-4">
-            <h2 class="font-bold text-lg mb-4">Review Progress</h2>
-
-            @if($progressions->count() == 0)
-            <p class="text-gray-700">Belum ada progress yang diupload.</p>
-            @else
-            <!-- Latest Submission Only -->
-            <div>
-                <h3 class="font-semibold text-md">
-                    @if($lastProgression->progression_ke > 3)
-                    Revisi Ke-{{ $lastProgression->progression_ke - 3 }}
-                    @else
-                    Progression Ke-{{ $lastProgression->progression_ke }}
-                    @endif
-                </h3>
-
-                <a href="{{ asset('storage/' . $lastProgression->path_file) }}" target="_blank"
-                    class="group cursor-pointer bg-white rounded-lg p-4 shadow w-full flex items-center justify-start gap-4 transition-all duration-300 hover:bg-gray-100 mt-2">
-                    <div
-                        class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">
-                        📄</div>
-                    <p class="text-gray-700 font-medium">{{ basename($lastProgression->path_file) }}</p>
-                </a>
-
-                <p class="mt-2 text-sm text-gray-500">Tanggal Submit:
-                    {{ $lastProgression->date_upload?->format('d M Y H:i') ?? '-' }}
-                </p>
-
-                <p class="text-sm text-gray-500">Status:
-                    <span
-                        class="font-semibold {{ $lastProgression->status_approve === 'approved' ? 'text-green-600' : ($lastProgression->status_approve === 'rejected' ? 'text-red-600' : 'text-yellow-600') }}">
-                        {{ ucfirst($lastProgression->status_approve) }}
-                    </span>
-                </p>
-
-                @if($lastProgression->note)
-                <p class="text-sm text-gray-500">Note: {{ $lastProgression->note }}</p>
-                @endif
-
-                @if($lastProgression->status_approve === 'waiting')
-                <form id="reviewForm-{{ $lastProgression->id }}" method="POST"
-                    action="{{ route('task-progression.review', $lastProgression->id) }}">
-                    @csrf
-                    <input type="hidden" name="status_approve" id="statusApprove-{{ $lastProgression->id }}">
-                    <input type="hidden" name="note" id="noteHidden-{{ $lastProgression->id }}">
-                </form>
-
-                <div class="flex gap-2 mt-4">
-                    <button type="button" onclick="openModalWithStatus('approved', {{ $lastProgression->id }})"
-                        class="flex-1 py-3 bg-[#1F4482] text-white rounded-lg rounded-md hover:bg-[#18346a] transition-colors">Approve</button>
-                    @if($lastProgression->progression_ke !== $task->revisions + 3 && $lastProgression->progression_ke == 3)
-                        <button type="button" onclick="openModalWithStatus('rejected', {{ $lastProgression->id }})"
-                        class="flex-1 py-3 bg-red-600 rounded text-white hover:bg-red-700 transition-colors">Reject</button>
-                    @endif
-                </div>
-                @endif
-            </div>
-            @endif
-        </div>
         @endif
     </div>
 </div>
@@ -305,10 +305,24 @@
         <!-- Action Buttons (Di sebelah kanan Profil) -->
         <div class="flex flex-col gap-2">
             <!-- Laporkan Button -->
-            <button onclick="openModalLapor()"
-                class="w-32 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
-                Laporkan
-            </button>
+             @if ($showReportButton)
+                <button onclick="openModalLapor()"
+                    class="w-32 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+                    Laporkan
+                </button>
+            @endif
+
+            @if ($showCancelButton)
+                <form action="{{ route('arbitrase.batalkan') }}" method="POST" onsubmit="return confirm('Yakin ingin membatalkan laporan arbitrase ini?')">
+                    @csrf
+                    <input type="hidden" name="task_id" value="{{ $task->id }}">
+                    <button type="submit"
+                        class="w-32 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                        Batalkan Laporan
+                    </button>
+                </form>
+            @endif
+
 
             <!-- Chat Button -->
             <a href="{{ url('chat/' . $task->worker->user->id) }}"
@@ -364,10 +378,24 @@
         <!-- Action Buttons (Di sebelah kanan Profil) -->
         <div class="flex flex-col gap-2">
             <!-- Laporkan Button -->
-            <button onclick="openModalLapor()"
-                class="w-32 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
-                Laporkan
-            </button>
+             @if ($showReportButton)
+                <button onclick="openModalLapor()"
+                    class="w-32 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+                    Laporkan
+                </button>
+            @endif
+
+            @if ($showCancelButton)
+                <form action="{{ route('arbitrase.batalkan') }}" method="POST" onsubmit="return confirm('Yakin ingin membatalkan laporan arbitrase ini?')">
+                    @csrf
+                    <input type="hidden" name="task_id" value="{{ $task->id }}">
+                    <button type="submit"
+                        class="w-32 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                        Batalkan Laporan
+                    </button>
+                </form>
+            @endif
+
 
             <!-- Chat Button -->
             <a href="{{ url('chat/' . $task->client->id) }}"

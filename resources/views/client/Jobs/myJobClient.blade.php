@@ -82,6 +82,8 @@
                     <a href="{{ route('inProgress.jobs', $job->id) }}">
                 @elseif ($job->status == 'completed')
                     <a href="{{ route('inProgress.jobs', $job->id) }}">
+                @elseif ($job->status === 'on-hold')
+                    <a href="{{ route('inProgress.jobs', $job->id) }}">
                 @elseif ($job->status == 'on-hold' || $job->status == 'arbitrase-completed')
                     <a href="{{ route('inProgress.jobs', $job->id) }}">
                 @else

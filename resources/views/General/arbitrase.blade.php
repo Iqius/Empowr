@@ -1,155 +1,109 @@
 @include('General.header')
 
-@if(auth()->check() && (auth()->user()->role === 'worker' || auth()->user()->role === 'client'))
-<div class="max-w-6xl mx-auto bg-white p-6 rounded shadow-md mt-20">
-  <div class="flex justify-between items-center mb-4">
-    <h1 class="text-2xl font-semibold">Daftar Arbitrase</h1>
-    <!-- <button onclick="document.getElementById('modal').classList.remove('hidden')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-      + Tambah Arbitrase
-    </button> -->
-  </div>
-  <!-- Tabel -->
-  <div class="overflow-x-auto">
-    <table class="min-w-full table-auto border border-gray-300">
-      <thead class="bg-gray-100">
-        <tr>
-          <th class="px-4 py-2 border">ID</th>
-          <th class="px-4 py-2 border">Task ID</th>
-          <th class="px-4 py-2 border">Client ID</th>
-          <th class="px-4 py-2 border">Worker ID</th>
-          <th class="px-4 py-2 border">Reason</th>
-          <th class="px-4 py-2 border">Status</th>
-          <th class="px-4 py-2 border">Created At</th>
-        </tr>
-      </thead>
-      <tbody>
-        @forelse($arbitrases as $item)
-        <tr>
-          <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
-          <td class="px-4 py-2 border">{{ $item->task_id }}</td>
-          <td class="px-4 py-2 border">{{ $item->client_id }}</td>
-          <td class="px-4 py-2 border">{{ $item->worker_id }}</td>
-          <td class="px-4 py-2 border">{{ $item->reason }}</td>
-          <td class="px-4 py-2 border">{{ ($item->status) }}</td>
-          <td class="px-4 py-2 border">{{ $item->created_at }}</td>
-        </tr>
-        @empty
-        <tr>
-          <td colspan="7" class="text-center py-4">Tidak ada data arbitrase.</td>
-        </tr>
-        @endforelse
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- Modal Form -->
-<div id="modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
-  <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
-    <div class="flex justify-between items-center p-4 border-b">
-      <h2 class="text-xl font-bold">Form Tambah Arbitrase</h2>
-      <button onclick="document.getElementById('modal').classList.add('hidden')" class="text-gray-500 hover:text-red-500 text-2xl">&times;</button>
+@if(auth()->user()->role === 'worker' || auth()->user()->role === 'client')
+  <div class="max-w-6xl mx-auto bg-white p-6 rounded shadow-md mt-20">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-semibold">Daftar Arbitrase</h1>
+      <!-- <button onclick="document.getElementById('modal').classList.remove('hidden')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        + Tambah Arbitrase
+      </button> -->
     </div>
-
-    <form class="p-4 space-y-4">
-      <div>
-        <label class="block text-gray-700 mb-1">User ID</label>
-        <input type="text" name="user_id" value="USR123" readonly class="w-full border rounded-md px-3 py-2 bg-gray-100">
-      </div>
-
-      <div>
-        <label class="block text-gray-700 mb-1">Pilih Task</label>
-        <select name="task_id" class="w-full border rounded-md px-3 py-2">
-          <option value="">-- Pilih Task --</option>
-          <option value="TSK001">Desain Logo</option>
-          <option value="TSK002">Edit Video</option>
-          <option value="TSK003">Penulisan Artikel</option>
-        </select>
-      </div>
-
-      <div>
-        <label class="block text-gray-700 mb-1">Alasan Arbitrase</label>
-        <textarea name="reason" rows="3" class="w-full border rounded-md px-3 py-2" placeholder="Jelaskan alasan..."></textarea>
-      </div>
-
-      <div>
-        <label class="block text-gray-700 mb-1">Upload Bukti</label>
-        <input type="file" name="bukti" class="w-full">
-      </div>
-
-      <div class="flex justify-end space-x-2 pt-2">
-        <button type="button" onclick="document.getElementById('modal').classList.add('hidden')" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md">Batal</button>
-        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">Simpan</button>
-      </div>
-    </form>
+    <!-- Tabel -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full table-auto border border-gray-300">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="px-4 py-2 border">ID</th>
+            <th class="px-4 py-2 border">Task ID</th>
+            <th class="px-4 py-2 border">Pelapor</th>
+            <th class="px-4 py-2 border">Reason</th>
+            <th class="px-4 py-2 border">Status</th>
+            <th class="px-4 py-2 border">Created At</th>
+          </tr>
+        </thead>
+        <tbody>
+          @forelse($arbitrases as $item)
+          <tr>
+            <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
+            <td class="px-4 py-2 border">{{ $item->task_id }}</td>
+            <td class="px-4 py-2 border">{{ $item->pelapor }}</td>
+            <td class="px-4 py-2 border">{{ $item->reason }}</td>
+            <td class="px-4 py-2 border">{{ ($item->status) }}</td>
+            <td class="px-4 py-2 border">{{ $item->created_at }}</td>
+          </tr>
+          @empty
+          <tr>
+            <td colspan="7" class="text-center py-4">Tidak ada data arbitrase.</td>
+          </tr>
+          @endforelse
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
-
 @elseif (auth()->check() && auth()->user()->role === 'admin') <!-- UNTUK ADMIN -->
-<!-- Tabel -->
-<div class="max-w-6xl mx-auto bg-white p-6 rounded shadow-md mt-20">
-  <div class="flex justify-between items-center mb-4">
-    <h1 class="text-2xl font-semibold">Daftar Arbitrase</h1>
-  </div>
-  <div class="overflow-x-auto">
-    <table class="min-w-full table-auto border border-gray-300">
-      <thead class="bg-gray-100">
-        <tr>
-          <th class="px-4 py-2 border">ID</th>
-          <th class="px-4 py-2 border">Task ID</th>
-          <th class="px-4 py-2 border">Client ID</th>
-          <th class="px-4 py-2 border">Worker ID</th>
-          <th class="px-4 py-2 border">Reason</th>
-          <th class="px-4 py-2 border">Status</th>
-          <th class="px-4 py-2 border">Created At</th>
-          <th class="px-4 py-2 border">Action</th>
-        </tr>
-      </thead>
-      <tbody>
+  <!-- Tabel -->
+  <div class="max-w-6xl mx-auto bg-white p-6 rounded shadow-md mt-20">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-semibold">Daftar Arbitrase</h1>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full table-auto border border-gray-300">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="px-4 py-2 border">ID</th>
+            <th class="px-4 py-2 border">Task ID</th>
+            <th class="px-4 py-2 border">Pelapor</th>
+            <th class="px-4 py-2 border">Reason</th>
+            <th class="px-4 py-2 border">Status</th>
+            <th class="px-4 py-2 border">Created At</th>
+            <th class="px-4 py-2 border">Action</th>
+          </tr>
+        </thead>
+        <tbody>
 
-        @forelse($arbitrases as $item)
-        <tr>
-          <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
-          <td class="px-4 py-2 border">{{ $item->task_id }}</td>
-          <td class="px-4 py-2 border">{{ $item->client_id }}</td>
-          <td class="px-4 py-2 border">{{ $item->worker_id }}</td>
-          <td class="px-4 py-2 border">{{ $item->reason }}</td>
-          <td class="px-4 py-2 border">{{ ($item->status) }}</td>
-          <td class="px-4 py-2 border">{{ $item->created_at }}</td>
-          <td class="px-4 py-2 border text-center">
-            <!-- Detail Button -->
-            <a href="{{ route('inProgress.jobs', $item->task_id) }}">
-              <button
-                class="px-4 py-2 bg-blue-500 text-white rounded">
-                Detail
+          @forelse($arbitrases as $item)
+          <tr>
+            <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
+            <td class="px-4 py-2 border">{{ $item->task_id }}</td>
+            <td class="px-4 py-2 border">{{ $item->pelapor}}</td>
+            <td class="px-4 py-2 border">{{ $item->reason }}</td>
+            <td class="px-4 py-2 border">{{ ($item->status) }}</td>
+            <td class="px-4 py-2 border">{{ $item->created_at }}</td>
+            <td class="px-4 py-2 border text-center">
+              <!-- Detail Button -->
+              <a href="{{ route('inProgress.jobs', $item->task_id) }}">
+                <button
+                  class="px-4 py-2 bg-blue-500 text-white rounded">
+                  Detail
+                </button>
+              </a>
+              @if ($item->status !== 'resolved' && $item->status != 'cancelled')
+              <!-- Tolak Button -->
+              <form action="{{ route('arbitrase.reject', $item->id) }}" method="POST" class="inline-block ml-2">
+                @csrf
+                <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded">Tolak</button>
+              </form>
+              <!-- Tindak Lanjut Button -->
+              <button type="button" 
+                      class="px-4 py-2 bg-green-500 text-white rounded open-modal" 
+                      data-id="{{ $item->id }}">
+                Tindak Lanjut
               </button>
-            </a>
-            @if ($item->status !== 'resolved')
-            <!-- Tolak Button -->
-            <form action="{{ route('arbitrase.reject', $item->id) }}" method="POST" class="inline-block ml-2">
-              @csrf
-              <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded">Tolak</button>
-            </form>
-            <!-- Tindak Lanjut Button -->
-            <button type="button" 
-                    class="px-4 py-2 bg-green-500 text-white rounded open-modal" 
-                    data-id="{{ $item->id }}">
-              Tindak Lanjut
-            </button>
-          </td>
-          @endif
-        </tr>
-        @empty
-        <tr>
-          <td colspan="6" class="text-center p-4">Tidak ada data arbitrase.</td>
-        </tr>
-        @endforelse
-      </tbody>
-    </table>
+            </td>
+            @endif
+          </tr>
+          @empty
+          <tr>
+            <td colspan="6" class="text-center p-4">Tidak ada data arbitrase.</td>
+          </tr>
+          @endforelse
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
-</div>
+  </div>
 @endif
+
 <!-- Modal Tindak Lanjut Arbitrase -->
 <div id="modal-tindak-lanjut" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
   <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
@@ -161,11 +115,28 @@
       <input type="hidden" name="arbitrase_id" id="arbitrase_id">
       <label class="block mb-2 text-gray-700">Persentase</label>
       <select name="persentase" class="w-full border px-3 py-2 rounded mb-4" required>
-        <option value="">-- Pilih Opsi --</option>
-        <option value="25">Worker 25 / 75 Client</option>
-        <option value="50">Worker 50 / 50 Client</option>
-        <option value="75">Worker 75 / 25 Client</option>
-        <option value="100">100 Client</option>
+          <option value="">-- Pilih Opsi Pembagian --</option>
+          <option value="0">Pelapor 0% / Terlapor 100%</option>
+          <option value="5">Pelapor 5% / Terlapor 95%</option>
+          <option value="10">Pelapor 10% / Terlapor 90%</option>
+          <option value="15">Pelapor 15% / Terlapor 85%</option>
+          <option value="20">Pelapor 20% / Terlapor 80%</option>
+          <option value="25">Pelapor 25% / Terlapor 75%</option>
+          <option value="30">Pelapor 30% / Terlapor 70%</option>
+          <option value="35">Pelapor 35% / Terlapor 65%</option>
+          <option value="40">Pelapor 40% / Terlapor 60%</option>
+          <option value="45">Pelapor 45% / Terlapor 55%</option>
+          <option value="50">Pelapor 50% / Terlapor 50%</option>
+          <option value="55">Pelapor 55% / Terlapor 45%</option>
+          <option value="60">Pelapor 60% / Terlapor 40%</option>
+          <option value="65">Pelapor 65% / Terlapor 35%</option>
+          <option value="70">Pelapor 70% / Terlapor 30%</option>
+          <option value="75">Pelapor 75% / Terlapor 25%</option>
+          <option value="80">Pelapor 80% / Terlapor 20%</option>
+          <option value="85">Pelapor 85% / Terlapor 15%</option>
+          <option value="90">Pelapor 90% / Terlapor 10%</option>
+          <option value="95">Pelapor 95% / Terlapor 5%</option>
+          <option value="100">Pelapor 100% / Terlapor 0%</option>
       </select>
       <div class="flex justify-end">
         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
@@ -186,6 +157,11 @@
     @endforeach
   </div>
 @endif
+
+
+
+
+
 <script>
   const modal = document.getElementById('modal-tindak-lanjut');
   const form = document.getElementById('tindakLanjutForm');

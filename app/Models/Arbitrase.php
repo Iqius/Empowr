@@ -12,8 +12,7 @@ class Arbitrase extends Model
     protected $table = 'arbitrase';
 
     protected $fillable = [
-        'worker_id',
-        'client_id',
+        'pelapor',
         'task_id',
         'status',
         'reason',

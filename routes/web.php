@@ -91,8 +91,7 @@ Route::get('/profile/reviews/load-more', [ProfileController::class, 'loadMoreRev
 Route::get('/profile/worker/{id}/rating', [ProfileController::class, 'getWorkerRatingAjax'])->name('profile.worker.rating');
 Route::get('/profile/my-rating', [ProfileController::class, 'getMyRatingData'])->name('profile.my.rating');
 
-
-
+Route::get('/check-expired-tasks', [JobController::class, 'handleExpiredPromotionTasks']);
 
 
 
@@ -162,10 +161,11 @@ Route::get('/chat', [\Chatify\Http\Controllers\MessagesController::class, 'index
 // --In progress jobs
 Route::get('/in-progress-jobs/{task_id}', [ProgressionController::class, 'DetailJobsInProgress'])->name('inProgress.jobs');
 // --arbitrase
-// web.php
 Route::get('/arbitrase', [ArbitraseController::class, 'indexUser'])->name('arbitrase.user');
 // withdraw
 Route::post('/ewallet/withdraw/pengajuan', [WithdrawController::class, 'pencairanDana'])->name('withdraw.pengajuan');
+// batalkan arbitrase
+Route::post('/arbitrase/batalkan', [ArbitraseController::class, 'batalkanLaporan'])->name('arbitrase.batalkan');
 
 
 //chat

@@ -199,6 +199,8 @@
         </div>
 
         @php
+        use Carbon\Carbon;
+
         $worker = Auth::user()->workerProfile;
         $recommendedTasks = \App\Models\Task::with('user')->where('status', 'open')->get();
         @endphp
@@ -211,19 +213,22 @@
                 @foreach ($recommendedTasks as $job)
                 @php
                 $showTask = true;
+                $deadlinePromotion = Carbon::parse($job->deadline_promotion);
 
-                if (!empty($worker->keahlian)) {
-                // Decode kedua string JSON menjadi array
+                // Sembunyikan jika deadline sudah lewat
+                if ($deadlinePromotion->lt(now())) {
+                $showTask = false;
+                }
+
+                // Filter berdasarkan kecocokan keahlian jika masih layak tampil
+                if ($showTask && !empty($worker->keahlian)) {
                 $workerSkills = json_decode($worker->keahlian, true);
                 $jobCategories = json_decode($job->category, true);
 
-                // Jika berhasil decode jadi array, cocokkan
                 if (is_array($workerSkills) && is_array($jobCategories)) {
-                // Cek apakah ada irisan antara keahlian dan kategori
                 $showTask = count(array_intersect(array_map('strtolower', $workerSkills), array_map('strtolower', $jobCategories))) > 0;
                 } else {
-                // Fallback: cocokkan string biasa jika gagal decode
-                $showTask = str_contains($job->category, $worker->keahlian);
+                $showTask = str_contains(strtolower($job->category), strtolower($worker->keahlian));
                 }
                 }
                 @endphp
@@ -257,7 +262,7 @@
                             <p class="text-sm font-semibold text-gray-800">Rp {{ number_format($job->price, 0, ',', '.') }}</p>
                             <p class="text-xs text-gray-400">Penutupan
                                 <span class="font-semibold text-gray-500">
-                                    {{ \Carbon\Carbon::parse($job->deadline_promotion)->translatedFormat('d F Y') }}
+                                    {{ $deadlinePromotion->translatedFormat('d F Y') }}
                                 </span>
                             </p>
                         </div>
@@ -289,131 +294,131 @@
 
         <form action="{{ route('progress-affiliate.submited')}}" method="POST" enctype="multipart/form-data" class="px-6 pb-4 space-y-4">
             @csrf
-                @php
-                $user = Auth::user();
+            @php
+            $user = Auth::user();
 
-                    $avgRating = $user->avg_rating; // accessor
-                    $countReviews = $user->receivedRatings->count(); // relasi
-                    $ratingError = $avgRating < 4;
-                    $reviewError = $countReviews < 10;
+            $avgRating = $user->avg_rating; // accessor
+            $countReviews = $user->receivedRatings->count(); // relasi
+            $ratingError = $avgRating < 4;
+                $reviewError=$countReviews < 10;
                 @endphp
 
-            <div class="mb-4">
+                <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
                 <input type="text" readonly
                     class="w-full border rounded-md px-3 py-2 text-sm
                         {{ $ratingError ? 'border-red-500 text-red-600' : 'border-gray-300 text-gray-800' }}"
                     value="{{ number_format($avgRating, 1) }}">
                 @if ($ratingError)
-                    <p class="text-sm text-red-600 mt-1">Rating anda lebih rendah dari 4</p>
+                <p class="text-sm text-red-600 mt-1">Rating anda lebih rendah dari 4</p>
                 @endif
-            </div>
-
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Pekerjaan selesai</label>
-                <input type="text" readonly
-                    class="w-full border rounded-md px-3 py-2 text-sm
-                        {{ $reviewError ? 'border-red-500 text-red-600' : 'border-gray-300 text-gray-800' }}"
-                    value="{{ $countReviews }} ulasan">
-                @if ($reviewError)
-                    <p class="text-sm text-red-600 mt-1">Pekerjaan yang anda selesaikan kurang dari 10</p>
-                @endif
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Foto Kartu Identitas</label>
-                <input type="file" name="identity_photo" >
-                    @error('identity_photo')
-                        @if ($message === 'The identity photo field is required.')
-                            <p class="text-sm text-red-600 mt-1">Foto kartu identitas wajib diunggah.</p>
-                        @else
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @endif
-                    @enderror
-            </div>
-
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Foto Selfie dengan Kartu Identitas</label>
-                <input type="file" name="selfie_with_id" >
-                @error('selfie_with_id')
-                    @if ($message === 'The selfie with id field is required.')
-                        <p class="text-sm text-red-600 mt-1">Foto selfie dengan kartu identitas wajib diunggah.</p>
-                    @else
-                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                    @endif
-                @enderror
-            </div>
-
-
-            <div class="mb-4">
-                <label class="text-sm font-medium text-gray-600 mb-1 block">Kategori Task</label>
-                <select id="keahlian-select" name="keahlian_affiliate[]" multiple class="w-full p-2 border rounded">
-                    @php
-                    $selectedSkills = json_decode(optional(Auth::user()->keahlian)->keahlian, true) ?? [];
-                    $categories = [
-                        "Web Development", "Mobile Development", "Game Development", "Software Engineering",
-                        "Frontend Development", "Backend Development", "Full Stack Development", "DevOps",
-                        "QA Testing", "Automation Testing", "API Integration", "WordPress Development",
-                        "Data Science", "Machine Learning", "AI Development", "Data Engineering", "Data Entry",
-                        "SEO", "Content Writing", "Technical Writing", "Blog Writing", "Copywriting",
-                        "Scriptwriting", "Proofreading", "Translation", "Transcription", "Resume Writing",
-                        "Ghostwriting", "Creative Writing", "Social Media Management", "Digital Marketing",
-                        "Email Marketing", "Affiliate Marketing", "Influencer Marketing", "Community Management",
-                        "Search Engine Marketing", "Branding", "Graphic Design", "UI/UX Design", "Logo Design",
-                        "Motion Graphics", "Illustration", "Video Editing", "Video Production", "Animation",
-                        "3D Modeling", "Video Game Design", "Audio Editing", "Photography", "Photo Editing",
-                        "Presentation Design", "Project Management", "Virtual Assistant", "Customer Service",
-                        "Lead Generation", "Market Research", "Business Analysis", "Human Resources",
-                        "Event Planning", "Bookkeeping", "Accounting", "Tax Preparation", "Financial Analysis",
-                        "Legal Advice", "Contract Drafting", "Startup Consulting", "Investment Research",
-                        "Real Estate Consulting", "Personal Assistant", "Clerical Work", "Data Analysis",
-                        "Business Coaching", "Career Coaching", "Life Coaching", "Consulting", "Other"
-                    ];
-                    @endphp
-
-                    @foreach ($categories as $category)
-                    <option value="{{ $category }}" {{ in_array($category, $selectedSkills) ? 'selected' : '' }}>
-                        {{ $category }}
-                    </option>
-                    @endforeach
-                </select>
-                @error('keahlian_affiliate')
-                    @if ($message === 'The keahlian affiliate field is required.')
-                        <p class="text-sm text-red-600 mt-1">Wajib memilih keahlian.</p>
-                    @else
-                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                    @endif
-                @enderror
-            </div>
-
-
-            <!-- Checkbox persetujuan -->
-            <div class="mt-4">
-                <label class="inline-flex items-start space-x-2">
-                    <input type="checkbox" id="agreement" class="mt-1">
-                    <span class="text-sm text-gray-700 leading-relaxed">
-                        Dengan mencentang kotak ini, saya menyatakan bahwa saya telah membaca, memahami, dan menyetujui seluruh
-                        <a href="{{ url('/guide#sebagaiWorker') }}" class="text-blue-600 underline hover:text-blue-800 transition">
-                            syarat dan ketentuan sebagai Worker
-                        </a>
-                        yang tercantum di halaman panduan.
-                    </span>
-
-                </label>
-            </div>
-
-            <!-- Tombol kirim -->
-            <div class="pt-4 flex justify-end">
-                <button type="submit"
-                    id="submit-btn"
-                    class="bg-[#183E74] hover:bg-[#1a4a91] text-white px-6 py-2 rounded-md shadow opacity-50 cursor-not-allowed"
-                    disabled>
-                    Kirim
-                </button>
-            </div>
-        </form>
     </div>
+
+    <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Pekerjaan selesai</label>
+        <input type="text" readonly
+            class="w-full border rounded-md px-3 py-2 text-sm
+                        {{ $reviewError ? 'border-red-500 text-red-600' : 'border-gray-300 text-gray-800' }}"
+            value="{{ $countReviews }} ulasan">
+        @if ($reviewError)
+        <p class="text-sm text-red-600 mt-1">Pekerjaan yang anda selesaikan kurang dari 10</p>
+        @endif
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Foto Kartu Identitas</label>
+        <input type="file" name="identity_photo">
+        @error('identity_photo')
+        @if ($message === 'The identity photo field is required.')
+        <p class="text-sm text-red-600 mt-1">Foto kartu identitas wajib diunggah.</p>
+        @else
+        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+        @endif
+        @enderror
+    </div>
+
+
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Foto Selfie dengan Kartu Identitas</label>
+        <input type="file" name="selfie_with_id">
+        @error('selfie_with_id')
+        @if ($message === 'The selfie with id field is required.')
+        <p class="text-sm text-red-600 mt-1">Foto selfie dengan kartu identitas wajib diunggah.</p>
+        @else
+        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+        @endif
+        @enderror
+    </div>
+
+
+    <div class="mb-4">
+        <label class="text-sm font-medium text-gray-600 mb-1 block">Kategori Task</label>
+        <select id="keahlian-select" name="keahlian_affiliate[]" multiple class="w-full p-2 border rounded">
+            @php
+            $selectedSkills = json_decode(optional(Auth::user()->keahlian)->keahlian, true) ?? [];
+            $categories = [
+            "Web Development", "Mobile Development", "Game Development", "Software Engineering",
+            "Frontend Development", "Backend Development", "Full Stack Development", "DevOps",
+            "QA Testing", "Automation Testing", "API Integration", "WordPress Development",
+            "Data Science", "Machine Learning", "AI Development", "Data Engineering", "Data Entry",
+            "SEO", "Content Writing", "Technical Writing", "Blog Writing", "Copywriting",
+            "Scriptwriting", "Proofreading", "Translation", "Transcription", "Resume Writing",
+            "Ghostwriting", "Creative Writing", "Social Media Management", "Digital Marketing",
+            "Email Marketing", "Affiliate Marketing", "Influencer Marketing", "Community Management",
+            "Search Engine Marketing", "Branding", "Graphic Design", "UI/UX Design", "Logo Design",
+            "Motion Graphics", "Illustration", "Video Editing", "Video Production", "Animation",
+            "3D Modeling", "Video Game Design", "Audio Editing", "Photography", "Photo Editing",
+            "Presentation Design", "Project Management", "Virtual Assistant", "Customer Service",
+            "Lead Generation", "Market Research", "Business Analysis", "Human Resources",
+            "Event Planning", "Bookkeeping", "Accounting", "Tax Preparation", "Financial Analysis",
+            "Legal Advice", "Contract Drafting", "Startup Consulting", "Investment Research",
+            "Real Estate Consulting", "Personal Assistant", "Clerical Work", "Data Analysis",
+            "Business Coaching", "Career Coaching", "Life Coaching", "Consulting", "Other"
+            ];
+            @endphp
+
+            @foreach ($categories as $category)
+            <option value="{{ $category }}" {{ in_array($category, $selectedSkills) ? 'selected' : '' }}>
+                {{ $category }}
+            </option>
+            @endforeach
+        </select>
+        @error('keahlian_affiliate')
+        @if ($message === 'The keahlian affiliate field is required.')
+        <p class="text-sm text-red-600 mt-1">Wajib memilih keahlian.</p>
+        @else
+        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+        @endif
+        @enderror
+    </div>
+
+
+    <!-- Checkbox persetujuan -->
+    <div class="mt-4">
+        <label class="inline-flex items-start space-x-2">
+            <input type="checkbox" id="agreement" class="mt-1">
+            <span class="text-sm text-gray-700 leading-relaxed">
+                Dengan mencentang kotak ini, saya menyatakan bahwa saya telah membaca, memahami, dan menyetujui seluruh
+                <a href="{{ url('/guide#sebagaiWorker') }}" class="text-blue-600 underline hover:text-blue-800 transition">
+                    syarat dan ketentuan sebagai Worker
+                </a>
+                yang tercantum di halaman panduan.
+            </span>
+
+        </label>
+    </div>
+
+    <!-- Tombol kirim -->
+    <div class="pt-4 flex justify-end">
+        <button type="submit"
+            id="submit-btn"
+            class="bg-[#183E74] hover:bg-[#1a4a91] text-white px-6 py-2 rounded-md shadow opacity-50 cursor-not-allowed"
+            disabled>
+            Kirim
+        </button>
+    </div>
+    </form>
+</div>
 </div>
 
 
@@ -468,7 +473,7 @@
     const agreementCheckbox = document.getElementById('agreement');
     const submitBtn = document.getElementById('submit-btn');
 
-    agreementCheckbox.addEventListener('change', function () {
+    agreementCheckbox.addEventListener('change', function() {
         if (this.checked) {
             submitBtn.disabled = false;
             submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');

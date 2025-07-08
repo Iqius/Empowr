@@ -10,6 +10,8 @@ use App\Models\Notification;
 use App\Models\Ewallet;
 use App\Models\Transaction;
 use App\Models\Task;
+use App\Models\WorkerProfile;
+use App\Models\User;
 
 class ArbitraseController extends Controller
 {
@@ -62,22 +64,36 @@ class ArbitraseController extends Controller
         // Ambil user yang sedang login
         $user = Auth::user();
 
-        // Buat data sederhana dari request (tanpa validasi/cek role)
-        $workerProfile = $user->workerProfile;
+        // Ambil task
+        $task = Task::findOrFail($request->task_id);
+
+        // Ambil user client dan worker
+        $client = $task->client; // pastikan relasi Task -> client didefinisikan
+        $workerUser = $task->workerProfile?->user;
 
         $data = [
-            'task_id' => $request->task_id,
+            'task_id' => $task->id,
             'reason' => $request->reason ?? 'Tidak ada alasan',
             'status' => 'under review',
             'created_at' => now(),
-            'client_id' => $request->client_id ?? $user->id,
-            'worker_id' => $request->worker_id ?? ($workerProfile ? $workerProfile->id : null),
+            'pelapor' => $user->id,
         ];
-        Task::where('id', $request->task_id)->update(['status' => 'on-hold']);
-        // dd($request->all());
 
-        // Simpan ke database
+        $task->status = 'on-hold';
+        $task->save();
         Arbitrase::create($data);
+        $notifMessage = 'Pengguna ' . $user->nama_lengkap . ' melaporkan tugas "' . $task->title . '" ke pihak Empowr.';
+
+        foreach ([$client, $workerUser] as $recipient) {
+            if ($recipient) {
+                Notification::create([
+                    'user_id' => $recipient->id,
+                    'sender_name' => $user->nama_lengkap,
+                    'message' => $notifMessage,
+                    'is_read' => false,
+                ]);
+            }
+        }
 
         return back()->with('success', 'Data arbitrase berhasil ditambahkan, silahkan menunggu konfirmasi dari admin.');
     }
@@ -96,17 +112,21 @@ class ArbitraseController extends Controller
         // Set status menjadi rejected
         $arbitrase->status = 'resolved';
 
+        $task = $arbitrase->task;
+        $task->status = 'in progress';
+
+        $task->save();
         $arbitrase->save();
 
         $user = Auth::user();
-        $worker = $arbitrase->worker;
-        $client = $arbitrase->client;
+        $worker = $arbitrase->task->worker->user;
+        $client = $arbitrase->task->client;
 
         $message = 'Arbitrase dengan reason <b>"' . $arbitrase->reason . '"</b> telah ditolak oleh admin.';
 
         // Notifikasi untuk worker
         if ($worker) {
-            Notification::create([
+            $notifWorker = Notification::create([
                 'user_id' => $worker->id,
                 'sender_name' => $user->nama_lengkap,
                 'message' => $message,
@@ -114,9 +134,8 @@ class ArbitraseController extends Controller
             ]);
         }
 
-        // Notifikasi untuk client
         if ($client) {
-            Notification::create([
+            $notifClient = Notification::create([
                 'user_id' => $client->id,
                 'sender_name' => $user->nama_lengkap,
                 'message' => $message,
@@ -148,22 +167,32 @@ class ArbitraseController extends Controller
 
             // Ubah status task jika perlu
             $task = $arbitrase->task;
-            if ($task && $task->status === 'in progress') {
+            if ($task && $task->status === 'on-hold') {
                 Task::where('id', $arbitrase->task_id)->update(['status' => 'arbitrase-completed']);
             }
 
             $user = Auth::user();
-            $worker = $arbitrase->worker;
-            $client = $arbitrase->client;
             $total = $task->price;
+            $client = user::find($task->client_id);
+            $workerProfile = workerProfile::find($task->profile_id);
+            $workerIdEwallet= $workerProfile->user;
 
-            // Hitung pembagian dana
-            $persentaseWorker = (int) $request->persentase;
-            $amountToWorker = $total * ($persentaseWorker / 100);
-            $amountToClient = $total - $amountToWorker;
+            if($arbitrase->pelapor == $client->id){
+                // Hitung pembagian dana
+                $persentase = (int) $request->persentase;
+                $amountToClient = $total * ($persentase / 100);
+                $amountToWorker = $total - $amountToClient;
+            }else{
+                // Hitung pembagian dana
+                $persentase = (int) $request->persentase;
+                $amountToWorker = $total * ($persentase / 100);
+                $amountToClient = $total - $amountToWorker;
+                
+            }
 
             // Update ewallet worker
-            $ewalletWorker = Ewallet::where('user_id', $worker->id)->firstOrFail();
+            $ewalletWorker = Ewallet::where('user_id', $workerIdEwallet->id)->firstOrFail();;
+           
             $ewalletWorker->balance += $amountToWorker;
             $ewalletWorker->save();
 
@@ -173,12 +202,12 @@ class ArbitraseController extends Controller
             $ewalletClient->save();
 
             // Buat order ID unik
-            $orderId = 'pengembalian-' . $task->id . '-' . $client->id . $worker->id . '-' . time();
+            $orderId = 'pengembalian-' . $task->id . '-' . $client->id . $workerProfile->id . '-' . time();
             // Simpan transaksi untuk worker
             Transaction::create([
                 'order_id' => $orderId,
                 'task_id' => $task->id,
-                'worker_id' => $worker->id,
+                'worker_id' => $arbitrase->task->worker->id,
                 'client_id' => null,
                 'amount' => $amountToWorker,
                 'status' => 'success',
@@ -197,11 +226,9 @@ class ArbitraseController extends Controller
                 'type' => 'refund',
             ]);
 
-
-
             // Kirim notifikasi
-            $notifMessage = 'Arbitrase dengan reason ' . $arbitrase->reason . ' telah diterima dan akan ditindaklanjuti sesuai kesepakatan.';
-            foreach ([$worker, $client] as $u) {
+            $notifMessage = 'Arbitrase dengan reason ' . $arbitrase->reason . ' telah diselesaikan dengan pembagian yang sudah ditentukan';
+            foreach ([$workerIdEwallet, $client] as $u) {
                 $notif = Notification::create([
                     'user_id' => $u->id,
                     'sender_name' => $user->nama_lengkap,
@@ -216,5 +243,77 @@ class ArbitraseController extends Controller
             DB::rollBack();
             return back()->withErrors(['message' => 'Terjadi kesalahan: ' . $e->getMessage()]);
         }
+    }
+
+
+    public function batalkanLaporan(Request $request)
+    {
+         
+        $request->validate([
+            'task_id' => 'required|exists:task,id',
+        ]);
+        $user = Auth::user();
+
+        if ($user->role === 'worker') {
+            $pengajuId = $user->workerProfile->id;
+        } else {
+            $pengajuId= $user->id;
+        }
+
+        // Cari arbitrase berdasarkan pengaju
+        $arbitrase = Arbitrase::where('pelapor', $pengajuId)
+            ->whereIn('status', ['open', 'under review'])
+            ->where('task_id', $request->task_id)
+            ->latest()
+            ->first();
+
+        $taskId = $request->task_id; // atau $request->task_id kalau pakai input
+        $task = Task::findOrFail($taskId);
+
+        
+        if ($arbitrase->task_id != $task->id) {
+            return back()->withErrors(['message' => 'Laporan arbitrase tidak cocok dengan tugas yang dipilih.']);
+        }
+
+        // Kembalikan status task jadi 'on-progress'
+        $task = $arbitrase->task;
+        if ($task) {
+            $task->status = 'in progress';
+            $task->save();
+        }
+
+
+
+        // Update status arbitrase
+        $arbitrase->status = 'cancelled';
+        $arbitrase->save();
+
+        $worker = optional($arbitrase->task->worker)->user;
+        $client = $arbitrase->task->client;
+
+        $notifMessage = 'Laporan tugas ' . $arbitrase->task->title . ' telah dibatalkan oleh ' . $user->nama_lengkap;
+
+        if ($worker) {
+            Notification::create([
+                'user_id' => $worker->id,
+                'sender_name' => $user->nama_lengkap,
+                'message' => $notifMessage,
+                'is_read' => false,
+            ]);
+        }
+
+        // Notifikasi untuk client
+        if ($client) {
+            Notification::create([
+                'user_id' => $client->id,
+                'sender_name' => $user->nama_lengkap,
+                'message' => $notifMessage,
+                'is_read' => false,
+            ]);
+        }
+
+
+
+        return back()->with('success', 'Laporan arbitrase berhasil dibatalkan.');
     }
 }

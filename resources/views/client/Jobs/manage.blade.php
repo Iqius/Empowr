@@ -209,17 +209,20 @@
             $worker = $applicant->worker;
             $user = $worker->user;
             $isAffiliate = in_array($worker->empowr_affiliate ?? 0, [1, '1'], true);
+            $users = Auth::user();
+            $isWorker = $users->workerProfile !== null;
+            $assignadmin = $applicant->affiliated == 1;
         @endphp
 
         <div
             class="flex flex-col lg:flex-row gap-4 bg-white border rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl
-            {{ $isAffiliate ? 'ring-4 ring-blue-500 animate-pulse' : '' }}">
+            {{ $isAffiliate && $assignadmin ? 'ring-4 ring-blue-500 animate-pulse' : '' }}">
 
             <div class="flex-1">
                 <div class="flex items-center gap-4">
-                    <img src="{{ asset('storage/' . ($worker->profile_image ?? 'default.jpg')) }}"
-                         class="w-16 h-16 rounded-full object-cover {{ $isAffiliate ? 'ring-2 ring-blue-500' : '' }}"
-                         alt="Profile">
+                        <img src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : asset('images/default-avatar.png') }}"
+                            class="w-16 h-16 rounded-full object-cover {{ $isWorker && $isAffiliate ? 'ring-2 ring-blue-500' : '' }}"
+                            alt="Profile">
                     <div class="mt-4 text-gray-600 text-sm">
                         <p class="font-semibold text-lg text-gray-800">
                             {{ $user->nama_lengkap }}

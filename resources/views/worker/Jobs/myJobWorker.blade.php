@@ -64,15 +64,15 @@
                     </p>
                 </div>
                 @if ($job->status === 'in progress')
-                <a href="{{ route('inProgress.jobs', $job->id) }}">
-                    @else
+                    <a href="{{ route('inProgress.jobs', $job->id) }}">
+                @else
                     <a href="{{ route('manage.worker', $job->task_id) }}">
-                        @endif
                         <button
                             class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
                             Lihat Lamaran
                         </button>
                     </a>
+                @endif
             </div>
         </div>
         @endforeach

@@ -1632,3 +1632,5 @@ if (data.reviews.length < 10) {
                 });
             </script>
         @endif
+
+@include('General.footer')
