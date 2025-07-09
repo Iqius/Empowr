@@ -3,7 +3,7 @@
 <div class="p-4 mt-14">
     <!-- TABEL STATIC BERISI PENGAJU, TAHAPAN, AKSI -->
     <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Daftar Tahapan</h2>
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Daftar List Client Request Worker Afiliasi</h2>
         <div class="overflow-x-auto rounded-lg border border-gray-200 mb-6">
             <table class="min-w-full w-full table-fixed divide-y divide-gray-200 text-sm">
                 <thead class="bg-[#1F4482] text-white text-left">
@@ -64,13 +64,15 @@
                     </tr>
                 </tbody>
                 <!-- Modal Terima affiliate-->
-                <div id="modalTerima-{{ $tasks->id }}" class="fixed inset-0 flex items-center justify-center opacity-0 pointer-events-none bg-black/30 backdrop-blur-sm transition-opacity duration-300 z-50">
-                    <div class="bg-white p-6 rounded-lg w-full max-w-md mx-4 shadow-lg transform scale-95 opacity-100 transition duration-300 overflow-y-auto max-h-[80vh]">
-                        <!-- Header -->
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-semibold">Terima Task Affiliate</h2>
-                            <button onclick="closeModalTerima()" class="text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
-                        </div>
+                <div id="modalTerima-{{ $tasks->id }}" class="modal fixed inset-0 flex items-center justify-center opacity-0 pointer-events-none bg-black/30 backdrop-blur-sm transition-opacity duration-300 z-50">
+
+                    <!-- Isi Modal -->
+                    <div class="modal-content bg-white p-6 rounded-lg w-full max-w-md mx-4 shadow-lg transform scale-95 opacity-100 transition duration-300 overflow-y-auto max-h-[80vh]">
+
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-lg font-semibold">Terima Task Affiliate</h2>
+                                    <button onclick="closeModalTerima(this)" class="text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
+                                </div>
 
                         <!-- Form -->
                         <form action="{{ route('approve.affiliate-task', $tasks->id) }}" method="POST">
@@ -108,7 +110,7 @@
 
                             <!-- Tombol Aksi -->
                             <div class="flex justify-end space-x-2">
-                                <button type="button" onclick="closeModalTerima()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
+                                <button type="button" onclick="closeModalTerima(this)" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
                                 <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Simpan</button>
                             </div>
                         </form>
@@ -138,13 +140,14 @@
         }, 10);
     }
 
-    function closeModalTerima(taskId) {
-        const modal = document.getElementById(`modalTerima-${taskId}`);
+    function closeModalTerima(button) {
+        const modal = button.closest('.modal');
         const content = modal.querySelector('.modal-content');
 
         content.classList.remove('scale-100', 'opacity-100');
         content.classList.add('scale-95', 'opacity-0');
         modal.classList.add('opacity-0');
+
         setTimeout(() => {
             modal.classList.add('pointer-events-none');
         }, 300);

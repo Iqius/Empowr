@@ -222,6 +222,7 @@
                         </p>
                      </div>
                      <ul class="py-1" role="none">
+                        @if(Auth::user()->role !== 'admin')
                         <li>
                            <a href="{{route('profil')}}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                               role="menuitem">Profile</a>
@@ -231,6 +232,7 @@
                               Wallet <span class="text-blue-500">IDR {{ Auth::user()->ewallet?->balance }}</span>
                            </a>
                         </li>
+                        @endif
                         <li>
                            <form id="logoutForm" action="{{ route('logout') }}" method="POST">@csrf</form>
                            <button id="logoutBtn" type="button"

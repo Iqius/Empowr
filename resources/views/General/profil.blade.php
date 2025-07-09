@@ -783,7 +783,7 @@
                 <div>
                     <label class="font-semibold">Nama Lengkap</label>
                     <input type="text" name="nama_lengkap" value="{{ Auth::user()->nama_lengkap }}"
-                        class="w-full p-2 border rounded bg-gray-100">
+                        class="w-full p-2 border rounded bg-gray-100" required>
                 </div>
                 <div>
                     <label class="font-semibold">Email</label>
