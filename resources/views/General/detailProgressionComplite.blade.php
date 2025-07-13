@@ -263,7 +263,7 @@
 
             <!-- Submit -->
             <div class="flex justify-end">
-                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                <button id="submitButton" type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded opacity-50 cursor-not-allowed" disabled>
                     Kirim & Selesaikan
                 </button>
             </div>
@@ -322,7 +322,7 @@
         }, 10); // tunggu sedikit supaya transisinya jalan
     }
 
-    function closeModal() {
+    function closeModalRating() {
         const modal = document.getElementById('ratingModal');
         const content = document.getElementById('modalContent');
 
@@ -339,6 +339,8 @@
     document.querySelectorAll('input[name="rating"]').forEach(radio => {
         radio.addEventListener('change', function() {
             const stars = document.querySelectorAll('#ratingModal i.bi-star');
+            const submitButton = document.getElementById('submitButton');
+
             stars.forEach((star, index) => {
                 if (index < this.value) {
                     star.classList.add('text-yellow-400');
@@ -348,6 +350,10 @@
                     star.classList.add('text-gray-400');
                 }
             });
+
+            // Aktifkan tombol setelah memilih rating
+            submitButton.disabled = false;
+            submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
         });
     });
 </script>
