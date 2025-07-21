@@ -660,12 +660,10 @@
     </div>
 </div>
 
-
 <!-- Modal edit portofolio -->
-<!-- Modal -->
-<div id="editModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
-    <div class="bg-white p-6 rounded-xl w-full max-w-3xl relative">
-        <h2 class="text-lg font-bold mb-4">Edit Portofolio</h2>
+<div id="editModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50 overflow-y-auto min-h-screen">
+<div class="bg-white p-6 md:p-8 rounded-xl w-full max-w-3xl mx-4 relative max-h-[90vh] overflow-y-auto">
+        <h2 class="text-lg md:text-xl font-bold mb-4">Edit Portofolio</h2>
         <form action="{{ route('profile.updatePortofolio') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="portofolio_id" id="modalPortofolioId">

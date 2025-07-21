@@ -63,8 +63,8 @@
                 @csrf
                 <input type="hidden" name="email" value="{{ session('email') }}">
 
-                <h2 class="text-4xl font-extrabold text-[#1F4482] mb-4">Set New Password</h2>
-                <p class="block text-sm font-medium text-gray-600 mb-6">Please enter your new password</p>
+                <h2 class="text-4xl font-extrabold text-[#1F4482] mb-4">Buat password baru</h2>
+                <p class="block text-sm font-medium text-gray-600 mb-6">Masukkan password baru yang anda ingainkan</p>
 
                 @if(session('error'))
                     <div class="mb-4 text-red-500 text-sm">{{ session('error') }}</div>
@@ -84,8 +84,8 @@
 
                 <!-- Confirm Password -->
                 <div class="relative mb-8">
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-600 mb-1">Confirm Password</label>
-                    <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm Password"
+                    <label for="password_confirmation" class="block text-sm font-medium text-gray-600 mb-1">konfirmasi Password</label>
+                    <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Konfirmasi Password"
                         class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base pr-10"
                         required>
                     <button type="button" onclick="togglePassword()"
@@ -100,7 +100,7 @@
                 <!-- Submit Button -->
                 <button type="submit"
                     class="w-full mt-4 inline-block bg-[#183E74] font-semibold hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">
-                    Submit
+                    kirim
                 </button>
             </form>
         </div>

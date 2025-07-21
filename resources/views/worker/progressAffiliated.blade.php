@@ -164,7 +164,7 @@
                             $lastLog = $affiliation->logs()->latest('created_at')->first();
                         @endphp
                         <div class="border-b pb-3 mb-3">
-                            <p>Hasil tahapan
+                            <p>Hasil tahapan sebelumnya:
                                 <span class="text-red-600 font-semibold">
                                     {{ $lastLog ? $lastLog->status_decision : 'Belum ada status' }}
                                 </span>
@@ -208,21 +208,29 @@
                                         Diterima
                                     </div>
                                     <div class="flex gap-4 mt-4">
-                                    <form action="{{ route('List-pengajuan-worker-affiliate.pending-to-under-review', $affiliation->id) }}" method="POST">
+                                  <!-- Tombol SETUJUI -->
+                                    <form id="approveForm" action="{{ route('List-pengajuan-worker-affiliate.pending-to-under-review', $affiliation->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit"
+                                        <button type="button" onclick="confirmApprove()"
                                             class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
                                             Setujui
                                         </button>
                                     </form>
 
-                                    <form action="{{ route('rejected.affiliate', $affiliation->id) }}" method="POST">
+                                    <!-- Tombol TOLAK -->
+                                    <form id="rejectForm" action="{{ route('rejected.affiliate', $affiliation->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit"
+                                        <button type="button" onclick="confirmReject()"
                                             class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
                                             Tolak
                                         </button>
                                     </form>
+                                    
+                                    <!-- tombol chat -->
+                                    <a href="{{ url('chat/' . $affiliation->workerProfile->user->id) }}"
+                                        class="w-full md:w-32 py-2 bg-[#1F4482] text-white rounded-lg hover:bg-[#18346a] text-center">
+                                        Chat
+                                    </a>
 
                                     @if(strtolower(trim($affiliation->status)) === 'interview' && $affiliation->link_meet === null)
                                         <button class="bg-indigo-600 text-white px-5 py-2 rounded-xl hover:bg-indigo-700 transition" onclick="toggleModal(true)">
@@ -415,5 +423,40 @@
     }, 1000);
 </script>
 
+<!-- Script Konfirmasi -->
+<script>
+    function confirmApprove() {
+        Swal.fire({
+            title: 'Yakin ingin menyetujui?',
+            text: "Data akan diproses sebagai disetujui.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#16a34a',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Setujui',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('approveForm').submit();
+            }
+        });
+    }
 
+    function confirmReject() {
+        Swal.fire({
+            title: 'Yakin ingin menolak?',
+            text: "Data akan diproses sebagai ditolak.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Tolak',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('rejectForm').submit();
+            }
+        });
+    }
+</script>
 @include('General.footer')

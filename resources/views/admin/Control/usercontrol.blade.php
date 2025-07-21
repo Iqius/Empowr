@@ -13,9 +13,7 @@
                     <th class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">Worker ID</th>
                     <th class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">Nama Worker</th>
                     <th class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">Username Worker</th>
-                    <th class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">Empowr Label</th>
                     <th class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">Empowr Affiliate</th>
-                    <th class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">Action Empowr Label</th>
                     <th class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">Action Empowr Affiliate</th>
                 </tr>
             </thead>
@@ -25,28 +23,8 @@
                     <td class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">{{ $worker->id }}</td>
                     <td class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">{{ $worker->user->nama_lengkap ?? '-' }}</td>
                     <td class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">{{ $worker->user->username ?? '-' }}</td>
-                    <td class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">{{ $worker->empowr_label ? 'Terverifikasi' : 'Belum Terverifikasi' }}</td>
                     <td class="px-4 py-2 border text-center whitespace-nowrap min-w-[150px]">{{ $worker->empowr_affiliate ? 'Affiliate' : 'Bukan Affiliate' }}</td>
 
-                    {{-- Action Empowr Label --}}
-                    <td class="px-4 py-2 border text-center">
-                        @if(!$worker->empowr_label)
-                        {{-- Tombol Jadikan Label (hanya muncul jika belum jadi label) --}}
-                        <form action="{{ route('user.updateLabel', $worker->id) }}" method="POST" class="inline-block confirm-label-form" data-name="label" data-message="Setuju Memberikan Label Verifikasi?">
-                            @csrf
-                            <button class="bg-blue-500 text-white px-3 py-1 rounded">
-                                Verifikasi
-                            </button>
-                        </form>
-                        @else
-                        {{-- Tombol Hapus (muncul jika sudah jadi label) --}}
-                        <form action="{{ route('user.deleteLabel', $worker->id) }}" method="POST" class="inline-block delete-label-form" data-name="label verifikasi">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Hapus</button>
-                        </form>
-                        @endif
-                    </td>
 
                     {{-- Action Empowr Affiliate --}}
                     <td class="px-4 py-2 border text-center">

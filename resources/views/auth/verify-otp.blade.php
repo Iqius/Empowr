@@ -12,9 +12,9 @@
 
 <body class="min-h-screen flex items-center justify-center bg-[#1F4482] text-black px-4 sm:px-6 lg:px-8">
     <div class="w-full max-w-sm sm:max-w-md md:max-w-lg bg-white p-6 sm:p-8 rounded-lg shadow text-center">
-        <h2 class="text-2xl sm:text-3xl font-semibold mb-3 text-[#1F4482]">Verification Code</h2>
+        <h2 class="text-2xl sm:text-3xl font-semibold mb-3 text-[#1F4482]">Verifikasi Kode OTP</h2>
         <p class="mb-6 text-sm sm:text-base text-gray-600">
-            Please type the verification code sent to <strong>{{ session('email') }}</strong>
+            Masukkan kode OTP verifikasi yang telah dikirim ke <strong>{{ session('email') }}</strong>
         </p>
             @if (session('error'))
                 <div class="mb-4 text-sm text-red-600 bg-red-100 border border-red-400 p-2 rounded">
@@ -40,7 +40,7 @@
             @endif
             <button type="submit"
                 class="w-full mt-4 inline-block bg-[#183E74] font-semibold hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">
-                Validate
+                Kirim   
             </button>
         </form>
 
@@ -53,7 +53,7 @@
                 class="hidden inline">
                 @csrf
                 <button type="submit" class="text-sm font-semibold text-[#1F4482] hover:underline">
-                    Resend OTP
+                    Kirim ulang OTP
                 </button>
             </form>
         </div>

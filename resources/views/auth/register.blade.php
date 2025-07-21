@@ -88,7 +88,7 @@
 
                 <!-- Email Input -->
                 <div class="relative mb-8">
-                    <label for="email" class="block text-sm font-medium text-gray-600 mb-1">Email Address</label>
+                    <label for="email" class="block text-sm font-medium text-gray-600 mb-1">alamat email</label>
                     <input id="email" type="email" name="email" placeholder="Masukkan Email"
                         class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 @error('email') border-red-500 @enderror"
                         value="{{ old('email') }}">
@@ -122,7 +122,7 @@
 
                 <!-- Confirm Password Input -->
                 <div class="relative mb-8">
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-600 mb-1">Confirm
+                    <label for="password_confirmation" class="block text-sm font-medium text-gray-600 mb-1">Konfirmasi 
                         Password</label>
                     <input id="password_confirmation" type="password" name="password_confirmation"
                         placeholder="Masukkan Password"

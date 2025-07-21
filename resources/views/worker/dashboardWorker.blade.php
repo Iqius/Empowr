@@ -300,7 +300,7 @@
             $avgRating = $user->avg_rating; // accessor
             $countReviews = $user->receivedRatings->count(); // relasi
             $ratingError = $avgRating < 4;
-                $reviewError=$countReviews < 10;
+                $reviewError=$countReviews < 1;
                 @endphp
 
                 <div class="mb-4">

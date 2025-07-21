@@ -79,79 +79,61 @@
             </div>
         </div>
 
-        <div class="mt-2 grid grid-cols-1 sm:grid-cols-1 gap-6">
-            <div class="hidden sm:block"></div>
-            <div class="bg-white border rounded p-4 shadow-sm col-span-1 sm:col-span-3">
-                {{-- Chart --}}
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-semibold text-lg">Grafik Status Tugas</h3>
-                    <span class="text-sm text-gray-500">{{ now()->year }}</span>
-                </div>
-                <div class="w-full h-64 relative">
-                    <canvas id="statusChart" class="absolute left-0 top-0 w-full h-full"></canvas>
-                </div>
-            </div>
-        </div>
+      
 
-        @php
-        use App\Models\Task;
+            @php
+            use App\Models\workerAffiliated;
+            use Carbon\Carbon;
 
-        use Carbon\Carbon;
-
-        $recentTasks = Task::with('client')
-        ->where('deadline_promotion', '>=', Carbon::now())
-        ->orderBy('created_at', 'desc')
-        ->paginate(5, ['*'], 'recent_tasks_page');
-
-        @endphp
+            $affiliated = workerAffiliated::with('workerProfile.user')
+                ->where('status', 'pending')
+                ->paginate(5, ['*'], 'affiliated_page');
+            @endphp
 
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
 
-            {{-- RECENT TASKS --}}
+            {{-- PENDING AFFILIATED WORKERS --}}
             <div class="bg-white border rounded p-4 shadow-sm">
-                <h2 class="text-lg font-semibold mb-4">Tugas Terbaru</h2>
-
-                @if ($recentTasks->isEmpty())
-                <p class="text-center text-gray-500">Belum ada tugas yang diposting</p>
+                <h2 class="text-lg font-semibold mb-4">Worker Affiliated Pending</h2>
+                @if ($affiliated->isEmpty())
+                <p class="text-center text-gray-500">Tidak ada worker affiliated pending</p     >
                 @else
                 <ul class="space-y-4 min-h-[150px]">
-                    @foreach ($recentTasks as $task)
+                    @foreach ($affiliated as $affiliation)
                     <li class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
+                        <div class="flex items  -center gap-3">
                             <div class="w-10 h-10 bg-gray-200 flex items-center justify-center rounded">
-                                <i class="fas fa-briefcase text-gray-600"></i>
+                                <i class="fas fa-user-check text-gray-600"></i>
                             </div>
                             <div>
-                                <p class="font-medium text-sm md:text-base">{{ $task->title }}</p>
-                                <p class="text-gray-400 text-xs">Client: {{ $task->client->nama_lengkap ?? 'Tidak diketahui' }}</p>
-                                <p class="text-gray-400 text-xs">Dibuat {{ \Carbon\Carbon::parse($task->created_at)->format('d F Y') }}</p>
+                                <p class="font-medium text-sm md:text-base">{{ $affiliation->workerProfile->user->nama_lengkap ?? 'Worker #' . $affiliation->worker_id }}</p>
+                                <p class="text-gray-400 text-xs">Status: {{ ucfirst($affiliation->status) }}</p>
+                                <p class="text-gray-400 text-xs">Tanggal: {{ Carbon::parse($affiliation->created_at)->format('d F Y') }}</p>
                             </div>
                         </div>
-                        <a href="{{ route('jobs.show', $task->id) }}" class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Lihat</a>
+                            <a href="{{ url('/admin/List-Request-Affiliasi-Worker') }}" class="bg-[#1F4482] text-white px-4 py-1.5 rounded-md text-sm">Lihat</a>
                     </li>
                     @endforeach
-                </ul>
+                </ul>   
 
                 {{-- Pagination --}}
                 <div class="flex justify-end mt-4">
                     <nav class="inline-flex gap-1">
-                        @if ($recentTasks->onFirstPage())
+                        @if ($affiliated->onFirstPage())
                         <button class="border border-[#1F4482] text-[#1F4482] bg-white px-3 py-1 text-sm rounded opacity-50" disabled>«</button>
-                        @else
-                        <a href="{{ $recentTasks->appends(request()->except('recent_tasks_page'))->previousPageUrl() }}"
+                        @else               
+                        <a href="{{ $affiliated->appends(request()->except('affiliated_page'))->previousPageUrl() }}"
                             class="border border-[#1F4482] text-[#1F4482] bg-white px-3 py-1 text-sm rounded">«</a>
                         @endif
-
-                        @foreach ($recentTasks->getUrlRange(1, $recentTasks->lastPage()) as $page => $url)
+                        @foreach ($affiliated->getUrlRange(1, $affiliated->lastPage()) as $page => $url)
                         <a href="{{ $url }}"
-                            class="px-3 py-1 text-sm rounded border {{ $page == $recentTasks->currentPage() ? 'bg-[#1F4482] text-white border-[#1F4482]' : 'bg-white text-[#1F4482] border-[#1F4482]' }}">
+                            class="px-3 py-1 text-sm rounded border {{ $page == $affiliated->currentPage() ? 'bg-[#1F4482] text-white border-[#1F4482]' : 'bg-white text-[#1F4482] border-[#1F4482]' }}">
                             {{ $page }}
                         </a>
-                        @endforeach
-
-                        @if ($recentTasks->hasMorePages())
-                        <a href="{{ $recentTasks->appends(request()->except('recent_tasks_page'))->nextPageUrl() }}"
+                        @endforeach         
+                        @if ($affiliated->hasMorePages())
+                        <a href="{{ $affiliated->appends(request()->except('affiliated_page'))->nextPageUrl() }}"
                             class="border border-[#1F4482] text-[#1F4482] bg-white px-3 py-1 text-sm rounded">»</a>
                         @else
                         <button class="border border-[#1F4482] text-[#1F4482] bg-white px-3 py-1 text-sm rounded opacity-50" disabled>»</button>
@@ -159,7 +141,7 @@
                     </nav>
                 </div>
                 @endif
-            </div>
+            </div>  
 
 
             @php

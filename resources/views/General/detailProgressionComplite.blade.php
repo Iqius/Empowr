@@ -238,7 +238,7 @@
         <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600" onclick="closeModalRating()">
             <i class="bi bi-x-lg text-xl"></i>
         </button>
-        <h2 class="text-xl font-semibold mb-4 text-gray-800">Beri Rating & Ulasan Untuk Worker Sebelum Menyelesaikan
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Beri Rating & Ulasan Untuk Client
         </h2>
         <form id="completeJobForm" action="{{ route('task-ulasan.store', $task->id) }}" method="POST" class="space-y-4">
             @csrf
@@ -336,26 +336,28 @@
     }
 
     // Highlight stars saat pilih rating
-    document.querySelectorAll('input[name="rating"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            const stars = document.querySelectorAll('#ratingModal i.bi-star');
-            const submitButton = document.getElementById('submitButton');
+// Highlight stars saat pilih rating
+document.querySelectorAll('input[name="rating"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const stars = document.querySelectorAll('#ratingModal i.bi-star');
+        const submitButton = document.getElementById('submitButton');
 
-            stars.forEach((star, index) => {
-                if (index < this.value) {
-                    star.classList.add('text-yellow-400');
-                    star.classList.remove('text-gray-400');
-                } else {
-                    star.classList.remove('text-yellow-400');
-                    star.classList.add('text-gray-400');
-                }
-            });
-
-            // Aktifkan tombol setelah memilih rating
-            submitButton.disabled = false;
-            submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+        stars.forEach((star, index) => {
+            if (index < this.value) {
+                star.classList.add('text-yellow-400');
+                star.classList.remove('text-gray-400');
+            } else {
+                star.classList.remove('text-yellow-400');
+                star.classList.add('text-gray-400');
+            }
         });
+
+        // Aktifkan tombol setelah memilih rating
+        submitButton.disabled = false;
+        submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
     });
+});
+
 </script>
 
 <script>

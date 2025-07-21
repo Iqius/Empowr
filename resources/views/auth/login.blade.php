@@ -69,7 +69,7 @@
                     <!-- Email Input -->
                     <div class="relative mb-8">
                         <!-- Email Label -->
-                        <label for="email" class="block text-sm font-medium text-gray-600 mb-1">Email Address</label>
+                        <label for="email" class="block text-sm font-medium text-gray-600 mb-1">Alamat Email</label>
                         <!-- Email Input -->
                         <input id="email" type="email" name="email" placeholder="Masukkan Email" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 
                     @error('email') border-red-500 @enderror" value="{{ old('email') }}">
