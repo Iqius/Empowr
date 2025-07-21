@@ -260,9 +260,10 @@
 
 
 @if (auth()->user()->role == 'client')
-<div class="bg-white p-6 rounded-xl shadow-sm border flex flex-col h-full space-y-6 my-5">
-    <div class="flex items-center justify-between">
-        <!-- Card Profile (Kiri) -->
+<div class="bg-white p-6 rounded-xl shadow-sm border flex flex-col space-y-6 my-5">
+    <!-- Wrapper Profile dan Tombol -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+        <!-- Kiri: Profile -->
         <div class="flex items-center space-x-4">
             <!-- Avatar -->
             <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
@@ -270,68 +271,63 @@
                     alt="" class="w-full h-full object-cover rounded-full">
             </div>
 
-            <!-- User Info -->
+            <!-- Info -->
             <div>
-                <h3 class="text-xl font-semibold text-gray-800">{{$task->worker->user->nama_lengkap}}
-                </h3>
+                <h3 class="text-xl font-semibold text-gray-800">{{ $task->worker->user->nama_lengkap }}</h3>
+
                 @php
-                    $rating = round($task->client->avgRating ?? 0, 1); // Misalnya 3.7
-                    $fullStars = floor($rating); // Bintang penuh
-                    $halfStar = ($rating - $fullStars) >= 0.5 ? 1 : 0; // Bintang setengah
+                    $rating = round($task->client->avgRating ?? 0, 1);
+                    $fullStars = floor($rating);
+                    $halfStar = ($rating - $fullStars) >= 0.5 ? 1 : 0;
                     $emptyStars = 5 - $fullStars - $halfStar;
                 @endphp
 
-                <p class="text-sm text-yellow-500 flex items-center gap-1 mt-1">
+                <p class="text-sm text-yellow-500 flex items-center gap-1 mt-1 flex-wrap">
                     @for ($i = 0; $i < $fullStars; $i++)
                         <i class="fa-solid fa-star"></i>
                     @endfor
-
                     @if ($halfStar)
                         <i class="fa-solid fa-star-half-stroke"></i>
                     @endif
-
                     @for ($i = 0; $i < $emptyStars; $i++)
                         <i class="fa-regular fa-star"></i>
                     @endfor
 
-                    <span class="ml-1 text-gray-600">
-                        {{ number_format($rating, 1) }}
-                    </span>
+                    <span class="ml-1 text-gray-600">{{ number_format($rating, 1) }}</span>
                 </p>
-                <p class="text-gray-600">{{$task->worker->user->role}}</p>
+                <p class="text-gray-600">{{ $task->worker->user->role }}</p>
             </div>
         </div>
 
-        <!-- Action Buttons (Di sebelah kanan Profil) -->
-        <div class="flex flex-col gap-2">
-            <!-- Laporkan Button -->
-             @if ($showReportButton)
+        <!-- Kanan: Tombol -->
+        <div class="flex flex-col md:items-end gap-2 w-full md:w-auto">
+            @if ($showReportButton)
                 <button onclick="openModalLapor()"
-                    class="w-32 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+                    class="w-full md:w-32 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
                     Laporkan
                 </button>
             @endif
 
             @if ($showCancelButton)
-                <form action="{{ route('arbitrase.batalkan') }}" method="POST" onsubmit="return confirm('Yakin ingin membatalkan laporan arbitrase ini?')">
+                <form action="{{ route('arbitrase.batalkan') }}" method="POST"
+                    onsubmit="return confirm('Yakin ingin membatalkan laporan arbitrase ini?')">
                     @csrf
                     <input type="hidden" name="task_id" value="{{ $task->id }}">
                     <button type="submit"
-                        class="w-32 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                        class="w-full md:w-32 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-300">
                         Batalkan Laporan
                     </button>
                 </form>
             @endif
 
-
-            <!-- Chat Button -->
             <a href="{{ url('chat/' . $task->worker->user->id) }}"
-                class="bg-[#1F4482] text-white px-4 py-2 rounded-md hover:bg-[#18346a] flex items-center justify-center">
+                class="w-full md:w-32 py-2 bg-[#1F4482] text-white rounded-lg hover:bg-[#18346a] text-center">
                 Chat
             </a>
         </div>
     </div>
 </div>
+
 @elseif (auth()->user()->role == 'worker')
 <div class="bg-white p-6 rounded-xl shadow-sm border flex flex-col h-full space-y-6 my-5">
     <div class="flex items-center justify-between">
@@ -761,29 +757,34 @@
 </div>
 
 <!-- Modal Laporkan -->
-<div id="laporModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+<div id="laporModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden px-4 sm:px-6">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto">
         <h2 class="text-lg font-semibold mb-4">Ajukan Arbitrase</h2>
         <form id="laporForm" method="POST" action="{{ route('arbitrase.store') }}">
             @csrf
             <input type="hidden" name="task_id" value="{{ $task->id }}">
-            <input type="hidden" name="client_id" value="{{ $task->client_id }}"> <!-- atau tarik dari relasi -->
-            <input type="hidden" name="worker_id" value="{{ $task->worker->user_id }}"> <!-- atau tarik dari relasi -->
+            <input type="hidden" name="client_id" value="{{ $task->client_id }}">
+            <input type="hidden" name="worker_id" value="{{ $task->worker->user_id }}">
 
             <label for="reason" class="block mb-2 text-sm font-medium text-gray-700">Alasan Pelaporan</label>
             <textarea name="reason" rows="4" class="w-full p-2 border rounded-lg"
                 placeholder="Masukkan alasan pelaporan untuk transaksi ini sebagai pertimbangan admin dalam review"
                 required></textarea>
 
-            <div class="flex justify-end mt-4">
+            <div class="flex justify-end mt-4 flex-wrap gap-2">
                 <button type="submit"
-                    class="py-2 px-4 bg-[#1F4482] text-white rounded-lg rounded-md hover:bg-[#18346a] focus:outline-none focus:ring-2 focus:ring-blue-300">Kirim</button>
+                    class="py-2 px-4 bg-[#1F4482] text-white rounded-lg hover:bg-[#18346a] focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    Kirim
+                </button>
                 <button type="button" onclick="closeModalLapor()"
-                    class="ml-2 py-2 px-4 py-2 px-4 bg-gray-500 text-white rounded-lg rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-300">Batal</button>
+                    class="py-2 px-4 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    Batal
+                </button>
             </div>
         </form>
     </div>
 </div>
+
 
 <script>
     // Fungsi untuk membuka modal

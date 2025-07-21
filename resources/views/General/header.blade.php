@@ -129,6 +129,7 @@
 </head>
 
 <body class="bg-gray-100" style="font-family: sans-serif;">
+
    <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200">
       <div class="px-3 py-3 lg:px-5 lg:pl-3">
          <div class="flex items-center justify-between">
@@ -151,9 +152,6 @@
             </div>
 
             <div class="flex items-center space-x-3">
-               <button class="w-8 h-8 bg-gray-300 text-[#1F4482] rounded-full flex items-center justify-center">
-                  <i class="fa-solid fa-bookmark"></i>
-               </button>
 
                <div class="relative inline-block">
                   <button onclick="toggleDropdown()"

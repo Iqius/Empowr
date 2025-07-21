@@ -7,7 +7,7 @@
             <!-- Total Balance Card -->
             <div class="bg-white rounded-lg p-5 shadow-sm">
                 <h2 class="text-2xl font-bold mb-1">IDR</h2>
-                <p class="text-sm text-gray-500 mb-1">Total Balance</p>
+                <p class="text-sm text-gray-500 mb-1">Total Saldo</p>
                 <div class="flex justify-between items-center">
                     @if ($ewallet)
                         <p class="text-2xl font-bold">{{ number_format($ewallet->balance, 0, ',', '.') }}</p>
@@ -15,8 +15,8 @@
                         <p class="text-xl font-bold">Saldo belum tersedia.</p>
                     @endif
                     <div class="flex flex-col space-y-2">
-                    <button class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm" onclick="openWithdrawModal()">Withdraw</button>
-                    <button class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm" onclick="openTopupModal()">Top Up</button>
+                    <button class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm" onclick="openWithdrawModal()">Tarik Saldo</button>
+                    <button class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm" onclick="openTopupModal()">Tambah Saldo</button>
                     </div>
                 </div>  
             </div>
@@ -74,7 +74,7 @@
                     {{-- Judul transaksi berdasarkan type --}}
                     <p class="font-medium">
                         @if($transaction->type === 'payout')
-                            Withdraw
+                            Tarik saldo
                         @elseif($transaction->type === 'payment')
                             Pembayaran: {{ $transaction->task->title ?? 'Task tidak ditemukan' }}
                         @elseif($transaction->type === 'topup')
@@ -124,7 +124,7 @@
 <!-- Modal Top Up -->
 <div id="topupModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 opacity-0" onclick="handleOutsideClick(event)">
     <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm transform transition-transform duration-300 scale-90" id="topupContent" onclick="event.stopPropagation()">
-        <h2 class="text-xl font-bold mb-4">Top Up Saldo</h2>
+        <h2 class="text-xl font-bold mb-4">Tambah Saldo</h2>
         <form action="{{ route('client.bayar') }}" method="POST">
             @csrf
             <input type="hidden" name="type" value="topup">
@@ -134,7 +134,7 @@
                 <input type="hidden" name="worker_id" value="{{ $user->workerProfile->id }}">
             @endif
             <div class="mb-4">
-                <label for="amount" class="block text-sm font-medium">Jumlah Top Up</label>
+                <label for="amount" class="block text-sm font-medium">Jumlah tambah saldo</label>
                 <input type="number" name="amount" id="amount" min="1000" required class="w-full border rounded px-3 py-2 mt-1" placeholder="Masukkan nominal">
             </div>
             <div class="mb-4">
@@ -154,7 +154,7 @@
     <div id="withdrawModalContent"
         class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md scale-95 opacity-0 transform transition-all duration-300 ease-out"
     >
-        <h2 class="text-xl font-semibold mb-4 text-center">Ajukan Withdraw</h2>
+        <h2 class="text-xl font-semibold mb-4 text-center">Ajukan Tarik saldo</h2>
 
         <form id="withdrawForm" action="{{ route('withdraw.pengajuan') }}" method="POST">
             @csrf

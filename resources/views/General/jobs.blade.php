@@ -16,7 +16,7 @@
 
 
     </section>
-@elseif (auth()->check() && auth()->user()->role === 'admin') <!-- UNTUK ADMIN -->
+    @elseif (auth()->check() && auth()->user()->role === 'admin') <!-- UNTUK ADMIN -->
     <section class="p-4 md:p-8 mt-16">
         <a href="{{ route('add-job-view') }}"
             class="inline-block bg-[#183E74] hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow mb-6">

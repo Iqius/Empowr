@@ -216,9 +216,12 @@ class ProgressionController extends Controller
 
         if ($approvedRevision) {
             $steps['step4'] = 'approved';
-        } elseif ($currentRevisions >= $maxRevision) {
-            $steps['step4'] = $revisions->first()?->status_approve ?? 'rejected';
-        } else {
+        }
+        //  elseif ($currentRevisions >= $maxRevision) {
+        //     $steps['step4'] = $revisions->first()?->status_approve ?? 'rejected';
+        // 
+        //}
+         else {
             $steps['step4'] = 'pending';
         }
 

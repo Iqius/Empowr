@@ -86,7 +86,7 @@ class AffiliatedController extends Controller
             ]);
         }elseif ($affiliation->status === 'reviewed'){
             // Ubah menjadi 'under review'
-            $affiliation->status = 'interview';
+            $affiliation->status = 'Interview';
             $affiliation->status_decision = 'approve';
             $affiliation->save();
 
@@ -96,7 +96,7 @@ class AffiliatedController extends Controller
                 'status' => 'reviewed',
                 'action_admin' => auth()->id(),
             ]);
-        }elseif($affiliation->status === 'interview'){
+        }elseif($affiliation->status === 'Interview'){
             // Ubah menjadi 'under review'
             $affiliation->status = 'result';
             $affiliation->status_decision = 'approve';
@@ -105,7 +105,7 @@ class AffiliatedController extends Controller
             WorkerAffiliatedLogs::create([
                 'affiliation_id' => $affiliation->id,
                 'status_decision' => 'approved',
-                'status' => 'interview',
+                'status' => 'Interview',
                 'action_admin' => auth()->id(),
             ]);
         }elseif($affiliation->status === 'result'){
@@ -171,7 +171,7 @@ class AffiliatedController extends Controller
     // Menambahkan jadwal interview worker untuk admin
     public function interviewDate(Request $request, $id){
         $affiliation = WorkerAffiliated::findOrFail($id);
-        if ($affiliation->status === 'interview'){
+        if ($affiliation->status === 'Interview'){
             // Ubah menjadi 'under review'
             $affiliation->link_meet = $request->input('meeting_link');
             $affiliation->jadwal_interview = $request->input('schedule');

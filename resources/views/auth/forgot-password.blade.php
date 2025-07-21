@@ -61,13 +61,12 @@
         <div class="w-full md:w-1/2 p-8 flex flex-col justify-center items-center slide-right overflow-y-auto">
             <form method="POST" action="{{ route('forgot-password.send-otp') }}" class="w-full max-w-md">
                 @csrf
-                <h2 class="text-4xl font-extrabold text-[#1F4482] mb-4 text-center">Forgot Password</h2>
-                <p class="block text-sm font-medium text-gray-600 mb-6 text-center">Enter your email to receive a reset
-                    link</p>
+                <h2 class="text-4xl font-extrabold text-[#1F4482] mb-4 text-center">Lupa Password</h2>
+                <p class="block text-sm font-medium text-gray-600 mb-6 text-center">masukkan email untuk menerima kode verifikasi</p>
 
                 <!-- Email Input -->
                 <div class="relative mb-8">
-                    <label for="email" class="block text-sm font-medium text-gray-600 mb-1">Email Address</label>
+                    <label for="email" class="block text-sm font-medium text-gray-600 mb-1">Alamat Email</label>
                     <input id="email" type="email" name="email" placeholder="Enter Email"
                         class="w-full p-3 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 @error('email') border-red-500 @enderror"
                         value="{{ old('email') }}" required>
@@ -76,12 +75,12 @@
 
                 <!-- Submit Button -->
                 <button type="submit"
-                    class="w-full mt-4 inline-block bg-[#183E74] font-semibold hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">Send
+                    class="w-full mt-4 inline-block bg-[#183E74] font-semibold hover:bg-[#1a4a91] text-white text-sm sm:text-base px-8 py-2 rounded-md shadow">Kirim
                     OTP</button>
 
                 <!-- Back to Login Link -->
-                <p class="text-sm text-gray-600 mt-3 text-center">Remember your password? <a href="{{ route('login') }}"
-                        class="text-sm font-semibold text-[#1F4482] hover:underline">Login</a></p>
+                <p class="text-sm text-gray-600 mt-3 text-center">Ingat Password anda? <a href="{{ route('login') }}"
+                        class="text-sm font-semibold text-[#1F4482] hover:underline">Masuk</a></p>
             </form>
         </div>
     </div>
