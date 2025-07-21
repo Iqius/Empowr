@@ -269,7 +269,7 @@
     }
 </script>
 
-<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="YOUR_CLIENT_KEY"></script>
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
 
 <script>
     snap.pay('{{ session('snap_token') }}', {

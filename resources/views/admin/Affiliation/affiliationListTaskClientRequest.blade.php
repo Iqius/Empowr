@@ -3,7 +3,7 @@
 <div class="p-4 mt-14">
     <!-- TABEL STATIC BERISI PENGAJU, TAHAPAN, AKSI -->
     <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Daftar Tahapan</h2>
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Daftar List Client Request Worker Afiliasi</h2>
         <div class="overflow-x-auto rounded-lg border border-gray-200 mb-6">
             <table class="min-w-full w-full table-fixed divide-y divide-gray-200 text-sm">
                 <thead class="bg-[#1F4482] text-white text-left">
@@ -74,7 +74,6 @@
                             <h2 class="text-lg font-semibold">Terima Task Affiliate</h2>
                             <button onclick="closeModalTerima(this)" class="text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
                         </div>
-
                         <!-- Form -->
                         <form action="{{ route('approve.affiliate-task', $tasks->id) }}" method="POST">
                             @csrf
@@ -153,9 +152,6 @@ function closeModalTerima(button) {
         modal.classList.add('pointer-events-none');
     }, 300);
 }
-
-
-
 
     // SweetAlert jika session success ada
     @if(session('success'))
