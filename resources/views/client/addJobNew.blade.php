@@ -349,13 +349,12 @@
                     err.field.classList.add('border-red-500');
                 });
 
-                // Scroll ke error pertama agar user langsung melihatnya
                 errors[0].field.scrollIntoView({
                     behavior: "smooth",
                     block: "center"
                 });
 
-                return false; // jangan submit
+                return false; 
             }
 
             // Submit form jika validasi lolos

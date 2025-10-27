@@ -142,7 +142,7 @@
     }
 
 function closeModalTerima(button) {
-    const modal = button.closest('.modal'); // Pastikan ada class 'modal'
+    const modal = button.closest('.modal'); 
     const content = modal.querySelector('.modal-content');
 
     content.classList.remove('scale-100', 'opacity-100');
@@ -157,7 +157,7 @@ function closeModalTerima(button) {
 
 
 
-    // SweetAlert jika session success ada
+    // SweetAlert session success
     @if(session('success'))
     document.addEventListener('DOMContentLoaded', function() {
         Swal.fire({

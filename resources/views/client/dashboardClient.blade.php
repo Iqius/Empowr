@@ -337,7 +337,7 @@ $completedData[] = $completed;
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    // ✅ SweetAlert for Success Message
+    //  SweetAlert for Success Message
     @if(session('success'))
     Swal.fire({
       icon: 'success',

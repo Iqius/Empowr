@@ -7,10 +7,10 @@
 
         <!-- Status Dropdown -->
         <select class="p-2 border rounded w-full md:w-auto" id="statusFilter">
-            <option disabled selected>Filter Status</option>
-            <option value="belum">Belum Diterima</option>
-            <option value="sedang">Sedang Dikerjakan</option>
-            <option value="selesai">Selesai Dikerjakan</option>
+            <option value="">Semua Status</option>
+            <option value="open">Belum Dikerjakan</option>
+            <option value="in progress">Sedang Dikerjakan</option>
+            <option value="completed">Selesai Dikerjakan</option>
         </select>
 
     </div>
@@ -77,15 +77,17 @@
         </div>
         @endforeach
 
-        @foreach ($task as $job)
-        <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition relative"
-            data-status="{{ $job->status }}">
+@foreach ($task as $job)
+    <div class="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition relative h-full flex flex-col justify-between"
+        data-status="{{ $job->status }}">
+        
+        {{-- Bagian atas --}}
+        <div>
             <div class="flex items-center gap-3 mb-3">
                 <img src="{{ $job->user->profile_image ? asset('storage/' . $job->user->profile_image) : asset('assets/images/avatar.png') }}"
                     alt="Client Profile" class="w-9 h-9 rounded-full object-cover">
                 <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
                     {{ $job->user->nama_lengkap ?? 'Unknown' }}
-                    <span class="text-[#1F4482]">✔</span>
                 </p>
             </div>
             <h3 class="text-sm font-semibold text-gray-900 mb-1">
@@ -93,45 +95,40 @@
             </h3>
             <div class="text-xs text-gray-500 mb-4 leading-relaxed">
                 @php
-                // Check if the description contains ordered or unordered lists
-                $hasLists = preg_match('/<ol[^>]*>|<ul[^>]*>/i', $job->description);
+                    $hasLists = preg_match('/<ol[^>]*>|<ul[^>]*>/i', $job->description);
+                    $textBeforeLists = preg_split('/<ol[^>]*>|<ul[^>]*>/i', $job->description)[0];
+                    $plainTextBeforeLists = strip_tags($textBeforeLists);
 
-                        // Get the text before any list appears
-                        $textBeforeLists = preg_split('/<ol[^>]*>|<ul[^>]*>/i', $job->description)[0];
-
-                                // Strip any HTML tags from this text
-                                $plainTextBeforeLists = strip_tags($textBeforeLists);
-
-                                // Create the preview - if there are lists, add ellipsis
-                                if ($hasLists) {
-                                // Limit the text before the list and add ellipsis
-                                $previewText = Str::limit($plainTextBeforeLists, 77, '...');
-                                } else {
-                                // If no lists, just use normal limit
-                                $previewText = Str::limit(strip_tags($job->description), 150, '...');
-                                }
-                                @endphp
-                                {{ $previewText }}
-            </div>
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-sm font-semibold text-gray-800">
-                        Rp {{ number_format($job->price, 0, ',', '.') }}
-                    </p>
-                    <p class="text-xs text-gray-400 capitalize">
-                        Status: <span class="text-gray-500 font-semibold">{{ $job->status }}</span>
-                    </p>
-                </div>
-                <a href="{{ route('inProgress.jobs', $job->id) }}">
-                    <button
-                        class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
-                        Lihat Progres
-                    </button>
-                </a>
+                    if ($hasLists) {
+                        $previewText = Str::limit($plainTextBeforeLists, 77, '...');
+                    } else {
+                        $previewText = Str::limit(strip_tags($job->description), 150, '...');
+                    }
+                @endphp
+                {{ $previewText }}
             </div>
         </div>
-        {{--@endif--}}
-        @endforeach
+
+        {{-- Bagian bawah --}}
+        <div class="flex justify-between items-start mt-4">
+            <div>
+                <p class="text-sm font-semibold text-gray-800">
+                    Rp {{ number_format($job->price, 0, ',', '.') }}
+                </p>
+                <p class="text-xs text-gray-400 capitalize mt-1">
+                    Status: <span class="text-gray-500 font-semibold">{{ $job->status }}</span>
+                </p>
+            </div>
+            <a href="{{ route('inProgress.jobs', $job->id) }}">
+                <button
+                    class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
+                    Lihat Progres
+                </button>
+            </a>
+        </div>
+    </div>
+@endforeach
+
     </div>
 </div>
 
@@ -147,4 +144,31 @@
             card.style.display = card.dataset.status === selectedStatus ? 'block' : 'none';
         });
     }
+</script>
+
+<!-- search -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const jobCards = document.querySelectorAll('#jobContainer > div');
+
+        function applyFilters() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedStatus = statusFilter.value;
+
+            jobCards.forEach(card => {
+                const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+                const status = card.dataset.status;
+
+                const matchesSearch = title.includes(searchTerm);
+                const matchesStatus = !selectedStatus || status === selectedStatus;
+
+                card.style.display = (matchesSearch && matchesStatus) ? 'block' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', applyFilters);
+        statusFilter.addEventListener('change', applyFilters);
+    });
 </script>

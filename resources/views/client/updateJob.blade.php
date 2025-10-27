@@ -367,7 +367,4 @@
     });
 </script>
 
-
-
-
 @include('General.footer')

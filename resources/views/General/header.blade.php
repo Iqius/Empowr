@@ -20,6 +20,8 @@
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
    <link rel="icon" href="{{ asset('assets/images/logosaja.png') }}" type="image/png">
    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 
 
    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -31,101 +33,6 @@
       data-client-key="{{config('midtrans.client_key')}}"></script>
    @vite(['resources/css/app.css', 'resources/js/app.js'])
    <script src="https://cdn.tailwindcss.com"></script>
-
-   <!-- swiper js untuk scroll gambar -->
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
-
-   <style>
-      body {
-         font-family: "Poppins", sans-serif;
-      }
-   </style>
-
-   <style>
-      .job-description ol,
-      .job-qualification ol,
-      .rules ol {
-         list-style-type: decimal;
-         margin-left: 1.5rem;
-      }
-
-      .job-description ul,
-      .job-qualification ul,
-      .rules ul {
-         list-style-type: disc;
-         margin-left: 1.5rem;
-      }
-
-      .job-description li,
-      .job-qualification li,
-      .rules li {
-         margin-top: 0.25rem;
-         margin-bottom: 0.25rem;
-      }
-
-      .job-description.text-gray-600.leading-relaxed ol,
-      .job-qualification.text-gray-600.leading-relaxed ol,
-      .rules.text-gray-600.leading-relaxed ol,
-      .job-description.text-gray-600.leading-relaxed ul,
-      .job-qualification.text-gray-600.leading-relaxed ul,
-      .rules.text-gray-600.leading-relaxed ul {
-         list-style-position: outside !important;
-         padding-left: 2rem !important;
-         margin-top: 0.5rem !important;
-         margin-bottom: 0.5rem !important;
-      }
-
-      .job-description.text-gray-600.leading-relaxed li,
-      .job-qualification.text-gray-600.leading-relaxed li,
-      .rules.text-gray-600.leading-relaxed li {
-         margin-bottom: 0.5rem !important;
-         display: list-item !important;
-      }
-
-      .job-description.text-gray-600.leading-relaxed ol,
-      .job-qualification.text-gray-600.leading-relaxed ol,
-      .rules.text-gray-600.leading-relaxed ol {
-         list-style-type: decimal !important;
-      }
-
-      .job-description.text-gray-600.leading-relaxed ul,
-      .job-qualification.text-gray-600.leading-relaxed ul,
-      .rules.text-gray-600.leading-relaxed ul {
-         list-style-type: disc !important;
-      }
-   </style>
-
-   <style>
-      .sidebar-item {
-         transition: background-color 0.3s ease, color 0.3s ease;
-      }
-
-      .sidebar-item.active {
-         background-color: #1F4482;
-         color: white;
-      }
-
-      .sidebar-item.active i {
-         color: white;
-      }
-
-      .sidebar-item:hover,
-      .sidebar-item:focus {
-         background-color: #18346a;
-         color: white;
-      }
-
-      .sidebar-item:hover i {
-         color: white;
-      }
-
-      .sidebar-item:focus i {
-         color: white;
-      }
-   </style>
-
-
 </head>
 
 <body class="bg-gray-100" style="font-family: sans-serif;">
@@ -135,11 +42,11 @@
          <div class="flex items-center justify-between">
             <!-- Kiri: Toggle Sidebar & Logo -->
             <div class="flex items-center">
-               <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
+               <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" aria
                   type="button"
                   class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
                   <span class="sr-only">Open sidebar</span>
-                  <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+                  <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" 
                      xmlns="http://www.w3.org/2000/svg">
                      <path clip-rule="evenodd" fill-rule="evenodd"
                         d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z">
@@ -251,22 +158,25 @@
    @if(auth()->check() && (auth()->user()->role === 'worker' || auth()->user()->role === 'client'))
    <aside id="logo-sidebar"
       class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200"
-      aria-label="Sidebar">
+      aria-label="Sidebar" aria-hidden = "true" >
       <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
          <ul class="space-y-2 font-medium">
             <!-- Dashboard -->
             <li>
                <a href="{{ Auth::user()->role === 'client' ? route('client.dashboardClient') : route('worker.dashboardWorker') }}"
-                  class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-house text-lg text-[#1F4482]"></i>
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white
+                  {{ request()->routeIs(Auth::user()->role === 'client' ? 'client.dashboardClient' : 'worker.dashboardWorker') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-house text-lg mr-2 {{ request()->routeIs(Auth::user()->role === 'client' ? 'client.dashboardClient' : 'worker.dashboardWorker') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Beranda</span>
                </a>
             </li>
 
             <!-- Jobs -->
             <li>
-               <a href="{{ route('jobs.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-briefcase text-lg text-[#1F4482]"></i>
+              <a href="{{ route('jobs.index') }}"
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+                  {{ request()->routeIs('jobs.index') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-briefcase text-lg mr-2 {{ request()->routeIs('jobs.index') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Semua Tugas</span>
                </a>
             </li>
@@ -274,48 +184,59 @@
             <!-- My Job -->
             <li>
                <a href="{{ Auth::user()->role === 'client' ? route('jobs.my') : route('jobs.Worker') }}"
-                  class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-person-workspace text-lg text-[#1F4482]"></i>
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+                  {{ request()->routeIs(Auth::user()->role === 'client' ? 'jobs.my' : 'jobs.Worker') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-person-workspace text-lg mr-2 {{ request()->routeIs(Auth::user()->role === 'client' ? 'jobs.my' : 'jobs.Worker') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Tugas Saya</span>
                </a>
             </li>
 
             <!-- Chat -->
             <li>
-               <a href="{{ route('chat.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-chat-dots text-lg text-[#1F4482]"></i>
+              <a href="{{ route('chat.index') }}"
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+                  {{ request()->routeIs('chat.index') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-chat-dots text-lg mr-2 {{ request()->routeIs('chat.index') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Chat</span>
                </a>
             </li>
 
             <!-- Arbitrase -->
             <li>
-               <a href="{{ url('/arbitrase') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
+               <a href="{{ url('/arbitrase') }}"
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+                  {{ request()->is('arbitrase') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-person-lines-fill text-lg mr-2 {{ request()->is('arbitrase') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Arbitrase</span>
                </a>
             </li>
 
             <!-- Guide -->
             <li>
-               <a href="{{ url('/guide') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-book text-lg text-[#1F4482]"></i>
+               <a href="{{ url('/guide') }}"
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+                  {{ request()->is('guide') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-book text-lg mr-2 {{ request()->is('guide') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Petunjuk</span>
                </a>
             </li>
 
             <!-- Affiliate -->
             <li>
-               <a href="{{ url('/affiliate') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-currency-dollar text-lg text-[#1F4482]"></i>
+               <a href="{{ url('/affiliate') }}"
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+                  {{ request()->is('affiliate') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-currency-dollar text-lg mr-2 {{ request()->is('affiliate') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Affiliasi</span>
                </a>
             </li>
 
             <!-- Contact Admin -->
             <li>
-               <a href="{{ url('/contact-admin') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-telephone text-lg text-[#1F4482]"></i>
+              <a href="{{ url('/contact-admin') }}"
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+                  {{ request()->is('contact-admin') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-telephone text-lg mr-2 {{ request()->is('contact-admin') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Hubungi Admin</span>
                </a>
             </li>
@@ -330,16 +251,20 @@
          <ul class="space-y-2 font-medium">
             <!-- Dashboard -->
             <li>
-               <a href="{{ route('admin.dashboardAdmin') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-house text-lg text-[#1F4482]"></i>
+               <a href="{{ route('admin.dashboardAdmin') }}"
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+                  {{ request()->routeIs('admin.dashboardAdmin') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-house text-lg mr-2 {{ request()->routeIs('admin.dashboardAdmin') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Dashboard</span>
                </a>
             </li>
 
             <!-- Jobs -->
             <li>
-               <a href="{{ route('jobs.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-briefcase text-lg text-[#1F4482]"></i>
+               <a href="{{ route('jobs.index') }}"
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+                  {{ request()->routeIs('jobs.index') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-briefcase text-lg mr-2 {{ request()->routeIs('jobs.index') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Jobs</span>
                </a>
             </li>
@@ -347,46 +272,59 @@
 
             <!-- Pencairan dana -->
             <li>
-               <a href="{{ route('withdraw.view') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-currency-dollar text-lg text-[#1F4482]"></i>
+               <a href="{{ route('withdraw.view') }}"
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+                  {{ request()->routeIs('withdraw.view') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-currency-dollar text-lg mr-2 {{ request()->routeIs('withdraw.view') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Pencairan dana</span>
                </a>
             </li>
 
             <!-- Chat -->
             <li>
-               <a href="{{ route('chat.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-chat-dots text-lg text-[#1F4482]"></i>
+              <a href="{{ route('chat.index') }}"
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+                  {{ request()->routeIs('chat.index') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-chat-dots text-lg mr-2 {{ request()->routeIs('chat.index') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Chat</span>
                </a>
             </li>
 
             <!-- Arbitrase -->
             <li>
-               <a href="{{ route('arbitrase.index') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
+              <a href="{{ route('arbitrase.index') }}"
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+                  {{ request()->routeIs('arbitrase.index') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-person-lines-fill text-lg mr-2 {{ request()->routeIs('arbitrase.index') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Arbitrase</span>
                </a>
+
             </li>
 
             <!-- User Control -->
             <li>
-               <a href="{{ route('user.control') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-person-lines-fill text-lg text-[#1F4482]"></i>
-                  <span class="ml-3">User Control</span>
-               </a>
+             <a href="{{ route('user.control') }}"
+               class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+               {{ request()->routeIs('user.control') ? 'bg-[#1F4482] text-white' : '' }}">
+               <i class="bi bi-person-lines-fill text-lg mr-2 {{ request()->routeIs('user.control') ? 'text-white' : 'text-[#1F4482]' }}"></i>
+               <span class="ml-3">User Control</span>
+            </a>
             </li>
 
             <!-- Affiliate -->
             <li>
-               <a href="{{ route('List-pengajuan-task-affiliate.view') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-people text-lg text-[#1F4482]"></i>
+               <a href="{{ route('List-pengajuan-task-affiliate.view') }}"
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+                  {{ request()->routeIs('List-pengajuan-task-affiliate.view') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-people text-lg mr-2 {{ request()->routeIs('List-pengajuan-task-affiliate.view') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Affiliate</span>
                </a>
             </li>
             <li>
-               <a href="{{ route('List-pengajuan-worker-affiliate.view') }}" class="sidebar-item flex items-center p-2 rounded-lg">
-                  <i class="bi bi-people text-lg text-[#1F4482]"></i>
+               <a href="{{ route('List-pengajuan-worker-affiliate.view') }}"
+                  class="flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-700 hover:bg-[#18346a] hover:text-white focus:bg-[#18346a] focus:text-white
+                  {{ request()->routeIs('List-pengajuan-worker-affiliate.view') ? 'bg-[#1F4482] text-white' : '' }}">
+                  <i class="bi bi-people text-lg mr-2 {{ request()->routeIs('List-pengajuan-worker-affiliate.view') ? 'text-white' : 'text-[#1F4482]' }}"></i>
                   <span class="ml-3">Pendaftaran Affiliate</span>
                </a>
             </li>
@@ -410,18 +348,3 @@
       </div>
    </div>
 
-   <script>
-      document.addEventListener("DOMContentLoaded", function() {
-         const currentUrl = window.location.href;
-         const sidebarItems = document.querySelectorAll('.sidebar-item');
-
-         sidebarItems.forEach(item => {
-            const link = item.getAttribute('href'); // Ambil href dari link
-            if (currentUrl.includes(link)) {
-               item.classList.add('active'); // Tambahkan kelas active pada item yang sesuai
-            } else {
-               item.classList.remove('active'); // Hapus kelas active pada item yang tidak sesuai
-            }
-         });
-      });
-   </script>

@@ -284,7 +284,6 @@
 
 
 <!-- modal affiliated -->
-<!-- Modal -->
 <div id="modalDaftarAffiliator" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center {{ $errors->any() ? '' : 'hidden' }}">
     <div class="bg-white rounded-lg w-full max-w-lg shadow-lg animate__animated animate__fadeIn mx-4 sm:mx-0 overflow-y-auto max-h-[90vh]">
         <div class="px-6 py-4 border-b flex justify-between items-center">
@@ -444,7 +443,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // ✅ SweetAlert for Success Message
+        //  SweetAlert for Success Message
         @if(session('success'))
         Swal.fire({
             icon: 'success',

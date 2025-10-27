@@ -34,14 +34,18 @@
                     @if($task->status == 'arbitrase-completed')
                         <h1 class="text-xl font-semibold text-gray-700 mt-6">TASK STATUS</h1>
                         <hr class="border-t-1 border-gray-300 mb-7 mt-4">
-                        <div class="job-description text-gray-600 mt-1">TASK STATUS SELESAI DENGAN ARBITRASE</div>
+                        <div class="text-gray-600 mt-1 text-sm leading-relaxed">TASK STATUS SELESAI DENGAN ARBITRASE</div>
                     @endif
                     <h1 class="text-xl font-semibold text-gray-700 mt-6">Deskripsi</h1>
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
-                    <div class="job-description text-gray-600 mt-1">{!!$task->description!!}</div>
+                    <div class="text-gray-600 mt-1 leading-relaxed [&_ol]:list-decimal [&_ul]:list-disc [&_ol,&_ul]:list-outside [&_ol,&_ul]:pl-8 [&_li]:my-1">
+                        {!! $task->description !!}
+                    </div>
                     <h1 class="text-xl font-semibold text-gray-700 mt-10">Ketentuan</h1>
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
-                    <div class="job-qualification text-gray-600 mt-1">{!!$task->qualification!!}</div>
+                    <div class="text-gray-600 mt-1 leading-relaxed [&_ol]:list-decimal [&_ul]:list-disc [&_ol,&_ul]:pl-8 [&_ol,&_ul]:list-outside [&_li]:my-1">
+                        {!! $task->qualification !!}
+                    </div>
                     <h1 class="text-xl font-semibold text-gray-700 mt-10">Rules</h1>
                     <hr class="border-t-1 border-gray-300 mb-7 mt-4">
                     <div class="rules text-gray-600 mt-1">{!!$task->provisions!!}</div>
@@ -395,19 +399,3 @@ document.querySelectorAll('input[name="rating"]').forEach(radio => {
         }
     });
 </script>
-
-
-
-
-
-<!-- Modal Form Submit
-<div id="modal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center hidden opacity-0 transition-opacity duration-500 ease-in-out">
-  <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-    <h2 class="text-xl font-semibold mb-4">Enter Note</h2>
-    <textarea id="noteInput" class="w-full p-2 border rounded mb-4" placeholder="Write your note here..."></textarea>
-    <div class="flex justify-end">
-      <button id="submitNote" class="bg-blue-500 text-white py-2 px-4 rounded">Submit</button>
-      <button id="closeModal" class="ml-2 bg-gray-500 text-white py-2 px-4 rounded">Close</button>
-    </div>
-  </div>
-</div> -->

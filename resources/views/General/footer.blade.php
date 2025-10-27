@@ -69,7 +69,21 @@
     }, 10000); //set auto logout 10 sec
 </script>
 
+   <script>
+      document.addEventListener("DOMContentLoaded", function() {
+         const currentUrl = window.location.href;
+         const sidebarItems = document.querySelectorAll('.sidebar-item');
 
+         sidebarItems.forEach(item => {
+            const link = item.getAttribute('href'); 
+            if (currentUrl.includes(link)) {
+               item.classList.add('active'); 
+            } else {
+               item.classList.remove('active'); 
+            }
+         });
+      });
+   </script>
 </body>
 
 </html>

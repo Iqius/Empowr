@@ -147,11 +147,11 @@
         const sortSelect = document.getElementById("sortSelect");
         const jobContainer = document.getElementById("jobContainer");
 
-        // 🟦 Modal Open/Close
+        //  Modal Open/Close
         openModalBtn?.addEventListener("click", () => {
             jobModal?.classList.remove("hidden");
 
-            // ⏫ Tambahkan animasi buka
+            //  Tambahkan animasi buka
             setTimeout(() => {
                 jobModal?.classList.replace("opacity-0", "opacity-100");
                 jobModal?.classList.replace("scale-95", "scale-100");
@@ -159,7 +159,7 @@
         });
 
         closeModalBtn?.addEventListener("click", () => {
-            // ⏬ Tambahkan animasi tutup
+            //  Tambahkan animasi tutup
             jobModal?.classList.replace("opacity-100", "opacity-0");
             jobModal?.classList.replace("scale-100", "scale-95");
 
@@ -170,7 +170,7 @@
 
         jobModal?.addEventListener("click", (e) => {
             if (e.target === jobModal) {
-                // ⏬ Tutup saat klik luar modal + animasi
+                //  Tutup saat klik luar modal + animasi
                 jobModal?.classList.replace("opacity-100", "opacity-0");
                 jobModal?.classList.replace("scale-100", "scale-95");
 
@@ -180,7 +180,7 @@
             }
         });
 
-        // 🟩 Drag & Drop File Upload
+        //  Drag & Drop File Upload
         dropAreaJob?.addEventListener("click", () => {
             fileInputJob.click();
         });
@@ -211,7 +211,7 @@
             }
         });
 
-        // 🟨 Sort Jobs by Price
+        //  Sort Jobs by Price
         sortSelect?.addEventListener("change", function () {
             const value = this.value;
             if (!jobContainer) return;
@@ -227,7 +227,7 @@
             sorted.forEach(card => jobContainer.appendChild(card));
         });
 
-        // ✅ SweetAlert for Success Message
+        //  SweetAlert for Success Message
         @if (session('success'))
             Swal.fire({
                 icon: 'success',

@@ -19,25 +19,7 @@
             </p>
 
         </div>
-        {{-- REMOVE THIS BLOCK - THIS WAS THE OLD INLINE EDIT FIELD --}}
-        {{-- <div id="bidPriceEdit_{{ $application->id }}" class="hidden">
-        <form action="{{ route('applications.updateBidPrice', $application->id) }}" method="POST">
-            @csrf
-            @method('PUT')
-            <label for="bidPrice_{{ $application->id }}" class="block text-gray-700 text-sm font-bold mb-2">
-                Edit Harga Penawaran:
-            </label>
-            <input type="number" id="bidPrice_{{ $application->id }}" name="bidPrice"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                value="{{ $application->bidPrice }}" min="0" step="1">
-            <div class="mt-2 space-x-2">
-                <button type="submit" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm">Save</button>
-                <button type="button" class="px-3 py-1 bg-gray-400 text-white rounded hover:bg-gray-500 text-sm"
-                    onclick="hideEditField('{{ $application->id }}')">Cancel</button>
-            </div>
-        </form>
-    </div> --}}
-    {{-- END REMOVE BLOCK --}}
+
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2 space-y-6">
@@ -69,14 +51,14 @@
                 <div class="space-y-6 flex-1">
                     <div>
                         <h2 class="text-xl font-semibold text-gray-800 mb-2">Tentang Task</h2>
-                        <div class="job-description text-sm text-gray-800 leading-relaxed">
+                        <div class="text-gray-800 mt-1 leading-relaxed [&_ol]:list-decimal [&_ul]:list-disc [&_ol,&_ul]:list-outside [&_ol,&_ul]:pl-8 [&_li]:my-1">
                             {!! $task->description !!}
                         </div>
                     </div>
 
                     <div>
                         <h2 class="text-xl font-semibold text-gray-800 mb-2">Kualifikasi</h2>
-                        <div class="job-qualification text-sm text-gray-800 leading-relaxed">
+                        <div class="text-gray-800 mt-1 leading-relaxed [&_ol]:list-decimal [&_ul]:list-disc [&_ol,&_ul]:pl-8 [&_ol,&_ul]:list-outside [&_li]:my-1">
                             {!! $task->qualification !!}
                         </div>
                     </div>
@@ -219,9 +201,6 @@
             });
         });
 
-        // Ensure this renderWorkerList is only called if applicable to this page
-        // renderWorkerList(); 
-
         document.querySelectorAll('.btn-worker-info').forEach(btn => {
             btn.addEventListener('click', () => {
                 // Ensure workerData is defined in this context if used here
@@ -232,8 +211,6 @@
         });
     });
 
-    // Inisialisasi awal (if `applicants` is defined globally or passed to the script)
-    // renderApplicants(applicants); 
 </script>
 <script>
     function openModal(modalId) {
@@ -256,8 +233,4 @@
         });
     });
 
-    // REMOVE THIS FUNCTION if not used elsewhere in this specific script block
-    // function hideEditField(applicationId) {
-    //     // This function is for the old inline edit, no longer needed with modal
-    // }
 </script>

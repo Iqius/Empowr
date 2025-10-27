@@ -22,41 +22,44 @@ class ArbitraseController extends Controller
         if (!$user) {
             return redirect()->route('login');
         }
-
         if ($user->role === 'admin') {
             $arbitrases = Arbitrase::all();
-        } else {
-            $arbitrases = Arbitrase::where('client_id', $user->id)
-                ->orWhere('worker_id', $workerProfile->user_id)
-                ->get();
-        }
-
+        } 
         return view('General.arbitrase', compact('arbitrases'));
     }
 
     public function indexUser()
-    {
-        $user = auth()->user();
-        if (!$user) {
-            return redirect()->route('login');
-        }
-
-        $workerProfile = $user->workerProfile;
-
-        $arbitrases = Arbitrase::query();
-
-        if ($user->role === 'client') {
-            $arbitrases = $arbitrases->where('client_id', $user->id);
-        } elseif ($user->role === 'worker' && $workerProfile) {
-            $arbitrases = $arbitrases->where('worker_id', $user->id);
-        } else {
-            return abort(403, 'Unauthorized role');
-        }
-
-        return view('General.arbitrase', [
-            'arbitrases' => $arbitrases->get()
-        ]);
+{
+    $user = auth()->user();
+    if (!$user) {
+        return redirect()->route('login');
     }
+
+    $workerProfile = $user->workerProfile;
+
+    // Ambil semua arbitrase terlebih dahulu
+    $arbitraseQuery = Arbitrase::query();
+
+    // Ambil ID arbitrase yang relevan
+    $arbitraseQuery->where(function ($query) use ($user, $workerProfile) {
+        $query->where('pelapor', $user->id);
+
+        // Tambahkan logika untuk cek apakah user adalah pihak yang dilaporkan (client atau worker)
+        $query->orWhereHas('task', function ($taskQuery) use ($user, $workerProfile) {
+            $taskQuery->where(function ($taskInner) use ($user, $workerProfile) {
+                if ($user->role === 'client') {
+                    $taskInner->where('client_id', $user->id);
+                } elseif ($user->role === 'worker' && $workerProfile) {
+                    $taskInner->where('profile_id', $workerProfile->id);
+                }
+            });
+        });
+    });
+
+    $arbitrases = $arbitraseQuery->get();
+
+    return view('General.arbitrase', compact('arbitrases'));
+}
 
 
     public function store(Request $request)
