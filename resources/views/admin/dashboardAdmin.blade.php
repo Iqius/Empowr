@@ -319,7 +319,6 @@ $completedData[] = $completed;
 
 @include('General.footer')
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         @if(session('success'))
@@ -331,44 +330,5 @@ $completedData[] = $completed;
             confirmButtonText: 'OK'
         });
         @endif
-    });
-
-    const statusCtx = document.getElementById('statusChart').getContext('2d');
-    new Chart(statusCtx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            datasets: [{
-                    label: 'Ongoing',
-                    data: @json($ongoingData),
-                    borderColor: '#3b82f6',
-                    fill: false,
-                    tension: 0.4,
-                    pointBackgroundColor: '#3b82f6'
-                },
-                {
-                    label: 'Completed',
-                    data: @json($completedData),
-                    borderColor: '#10b981',
-                    fill: false,
-                    tension: 0.4,
-                    pointBackgroundColor: '#10b981'
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top'
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
     });
 </script>

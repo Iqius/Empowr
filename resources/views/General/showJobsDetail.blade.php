@@ -125,14 +125,14 @@
                     <div class="space-y-6 flex-1">
                         <div>
                             <h2 class="text-xl font-semibold text-gray-800 mb-2">Tentang Task</h2>
-                            <div class="job-description text-sm text-gray-800 leading-relaxed">
+                            <div class="text-gray-800 mt-1 leading-relaxed [&_ol]:list-decimal [&_ul]:list-disc [&_ol,&_ul]:list-outside [&_ol,&_ul]:pl-8 [&_li]:my-1">
                                 {!! $job->description !!}
                             </div>
                         </div>
 
                         <div>
                             <h2 class="text-xl font-semibold text-gray-800 mb-2">Kualifikasi</h2>
-                            <div class="job-qualification text-sm text-gray-800 leading-relaxed">
+                            <div class="text-gray-800 leading-relaxed [&_ol]:list-decimal [&_ul]:list-disc [&_ol,&_ul]:pl-8 [&_ol,&_ul]:list-outside [&_li]:my-1">
                                 {!! $job->qualification !!}
                             </div>
                         </div>
@@ -282,7 +282,7 @@
     document.addEventListener("DOMContentLoaded", function() {
         console.log("Quill Editor Initialized");
 
-        // 🔹 Konfigurasi toolbar Quill
+        //  Konfigurasi toolbar Quill
         const toolbarOptions = [
             [{
                 'header': [1, 2, false]
@@ -297,7 +297,7 @@
             ['clean']
         ];
 
-        // 🔹 Inisialisasi Quill Editor di halaman ini
+        //  Inisialisasi Quill Editor di halaman ini
         var quill = new Quill('#editor', {
             theme: 'snow',
             modules: {

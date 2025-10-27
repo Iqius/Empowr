@@ -216,7 +216,7 @@ class AffiliatedController extends Controller
             'profile_id' => $user->workerProfile->id,
             'identity_photo' => $identityPhotoPath,
             'selfie_with_id' => $selfieWithIdPath,
-            'keahlian_affiliate' => json_encode($request->kategoriWorker),
+            'keahlian_affiliate' => json_encode($request->keahlian_affiliate),
             'status' => 'pending',
         ]);
 

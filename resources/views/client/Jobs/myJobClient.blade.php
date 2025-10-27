@@ -121,11 +121,10 @@
         const sortSelect = document.getElementById("sortSelect");
         const jobContainer = document.getElementById("jobContainer");
 
-        // 🟦 Modal Open/Close
+        // Modal Open/Close
         openModalBtn?.addEventListener("click", () => {
             jobModal?.classList.remove("hidden");
 
-            // ⏫ Tambahkan animasi buka
             setTimeout(() => {
                 jobModal?.classList.replace("opacity-0", "opacity-100");
                 jobModal?.classList.replace("scale-95", "scale-100");
@@ -133,7 +132,6 @@
         });
 
         closeModalBtn?.addEventListener("click", () => {
-            // ⏬ Tambahkan animasi tutup
             jobModal?.classList.replace("opacity-100", "opacity-0");
             jobModal?.classList.replace("scale-100", "scale-95");
 
@@ -144,7 +142,6 @@
 
         jobModal?.addEventListener("click", (e) => {
             if (e.target === jobModal) {
-                // ⏬ Tutup saat klik luar modal + animasi
                 jobModal?.classList.replace("opacity-100", "opacity-0");
                 jobModal?.classList.replace("scale-100", "scale-95");
 
@@ -154,7 +151,7 @@
             }
         });
 
-        // 🟩 Drag & Drop File Upload
+        // Drag & Drop File Upload
         dropAreaJob?.addEventListener("click", () => {
             fileInputJob.click();
         });
@@ -200,5 +197,32 @@
                 card.style.display = (card.dataset.status === status) ? 'block' : 'none';
             }
         });
+    });
+</script>
+
+<!-- search -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const jobCards = document.querySelectorAll('#jobContainer > div');
+
+        function applyFilters() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedStatus = statusFilter.value;
+
+            jobCards.forEach(card => {
+                const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+                const status = card.dataset.status;
+
+                const matchesSearch = title.includes(searchTerm);
+                const matchesStatus = !selectedStatus || status === selectedStatus;
+
+                card.style.display = (matchesSearch && matchesStatus) ? 'block' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', applyFilters);
+        statusFilter.addEventListener('change', applyFilters);
     });
 </script>

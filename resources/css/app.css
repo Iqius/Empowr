@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    .background-blue {
+        background-color: #1F4482;
+    }
+
+    .slide-left {
+        animation: slideInLeft 1s ease-out forwards;
+    }
+
+    .slide-right {
+        animation: slideInRight 1s ease-out forwards;
+    }
+
+    @keyframes slideInLeft {
+        from {
+            transform: translateX(-100%);
+        }
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+        }
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    .animate-slide-in-left {
+        animation: slideInLeft 1s ease-out forwards;
+    }
+
+    .animate-slide-in-right {
+        animation: slideInRight 1s ease-out forwards;
+    }
+}

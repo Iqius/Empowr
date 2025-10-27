@@ -424,13 +424,10 @@
                     <!-- untuk menutupi konten tab lain -->
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
-                            // Memastikan tab "Data Diri" yang pertama kali ditampilkan saat halaman dimuat
                             showTab('dataDiri');
 
-                            // Menambahkan kelas 'active' pada tombol Data Diri saat halaman dimuat
 
-                        }); // const dataDiriButton = document.getElementById('dataDiriButton');
-                        // dataDiriButton.classList.add('active');
+                        }); 
 
                         // Fungsi untuk menampilkan tab
                         function showTab(tabId) {

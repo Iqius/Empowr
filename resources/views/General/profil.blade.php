@@ -1,4 +1,32 @@
 @include('General.header')
+  <style>
+      .sidebar-item {
+         transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      .sidebar-item.active {
+         background-color: #1F4482;
+         color: white;
+      }
+
+      .sidebar-item.active i {
+         color: white;
+      }
+
+      .sidebar-item:hover,
+      .sidebar-item:focus {
+         background-color: #18346a;
+         color: white;
+      }
+
+      .sidebar-item:hover i {
+         color: white;
+      }
+
+      .sidebar-item:focus i {
+         color: white;
+      }
+   </style>
 <div class="p-4 mt-10">
     <div class="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-6 min-h-screen">
         <!-- Kolom kiri untuk tab -->
@@ -949,12 +977,6 @@
 </div>
 
 <!-- ----------------------------------JS BATAS ------------------------------------------------------------------- -->
-
-<!-- Swiper JS -->
-<!-- SwiperJS CDN -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-
 <script>
     function confirmDelete(id) {
         event.stopPropagation(); // Supaya tidak trigger modal preview
@@ -1154,7 +1176,7 @@
 
         // Add images to the slider
         if (portofolio.images && portofolio.images.length > 0) {
-            const isLastImage = portofolio.images.length === 1; // Check if there's only one image
+            const isLastImage = portofolio.images.length === 1; 
 
             portofolio.images.forEach(img => {
                 const slide = document.createElement('div');
@@ -1168,10 +1190,6 @@
                         <button class="bg-red-600 text-white text-xs px-1 rounded-full hover:bg-red-700 ${isLastImage ? 'opacity-50 cursor-not-allowed' : ''}" ${isLastImage ? 'disabled' : ''}>&times;</button>
                     </form>
                 `;
-
-                // If it's the last image, you might even consider not showing the button at all,
-                // or showing it disabled with a tooltip explaining why.
-                // For simplicity, we'll just disable it here.
 
                 slide.innerHTML = `
                     <img src="/${img.image}" class="max-w-full max-h-64 mx-auto rounded border object-contain" />
@@ -1190,7 +1208,7 @@
             new Swiper('.mySwiper', {
                 slidesPerView: 1,
                 spaceBetween: 10,
-                loop: true, // Keep loop if you want it to cycle, but be mindful with single images
+                loop: true, 
                 pagination: {
                     el: ".swiper-pagination",
                     clickable: true,
@@ -1512,11 +1530,6 @@ if (data.reviews.length < 10) {
                     }, 300); // Match the transition duration
                 });
 
-                // Close modal with the "Tutup" button
-                // closeModalBtn.addEventListener('click', function () {
-                //     closeModal.click();
-                // });
-
                 // Optionally, close the modal if clicking outside of it
                 portfolioModal.addEventListener('click', function(event) {
                     if (event.target === portfolioModal) {
@@ -1535,8 +1548,7 @@ if (data.reviews.length < 10) {
 
                 // Menambahkan kelas 'active' pada tombol Data Diri saat halaman dimuat
 
-            }); // const dataDiriButton = document.getElementById('dataDiriButton');
-            // dataDiriButton.classList.add('active');
+            }); 
 
             // Fungsi untuk menampilkan tab
             function showTab(tabId) {
@@ -1553,7 +1565,9 @@ if (data.reviews.length < 10) {
                 allButtons.forEach(button => button.classList.remove('active')); // Menghapus kelas active dari semua tombol
                 const activeButton = document.querySelector(`button[onclick="showTab('${tabId}')"]`);
                 activeButton.classList.add('active'); // Menambahkan kelas active pada tombol yang dipilih
-            }
+            }// const dataDiriButton = document.getElementById('dataDiriButton');
+
+            // dataDiriButton.classList.add('active');
 
             @if(session('success-update'))
             Swal.fire({
