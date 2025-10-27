@@ -238,9 +238,8 @@ class ProfileController extends Controller
 
         $request->validate([
             'title' => 'required|string',
-            'portofolio' => 'required|array',
             'portofolio.*' => 'file|mimes:jpg,jpeg,png|max:2048',
-            'description' => 'required|string',
+            'description' => 'string',
             'duration' => 'required|integer',
         ]);
 
@@ -253,7 +252,6 @@ class ProfileController extends Controller
         // ⬇️ Update portofolio (data saja)
         if ($request->filled('portofolio_id')) {
             $portofolio = Portofolio::find($request->portofolio_id);
-
             if ($portofolio && $portofolio->worker_id === $workerProfile->id) {
                 $portofolio->title = $request->title ?? $portofolio->title;
                 $portofolio->description = $request->description ?? $portofolio->description;
@@ -272,7 +270,7 @@ class ProfileController extends Controller
 
         // ⬇️ Jika ada file baru → hapus gambar lama dan ganti
         if ($request->hasFile('portofolio')) {
-
+            
             $files = is_array($request->file('portofolio')) ? $request->file('portofolio') : [$request->file('portofolio')];
             foreach ($files as $file) {
                 $fileName = round(microtime(true) * 1000) . '-' . $file->getClientOriginalName();

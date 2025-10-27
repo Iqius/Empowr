@@ -89,29 +89,12 @@
                         </div>
                         @if($job->status == 'open')
                             <div class="flex gap-2">
-                                <form id="cancelTaskForm{{ $job->id }}" action="{{ route('jobs.destroy', $job->id) }}"
-                                    method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="confirmCancel({{ $job->id }})"
-                                        class="bg-[#ff5959] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#ff3535] transition">
-                                        Hapus
-                                    </button>
-                                </form>
-
                                 <a href="{{ route('jobs.show', $job->id) }}">
                                     <button
                                         class="bg-[#1F4482] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#18346a] transition">
                                         View
                                     </button>
                                 </a>
-                                <a href="{{ route('client.update', $job->id) }}">
-                                    <button
-                                        class="bg-[#33a723] text-white text-sm px-4 py-1.5 rounded-md hover:bg-[#26851f] transition">
-                                        update
-                                    </button>
-                                </a>
-
                             </div>
                         @elseif ($job->status == 'in progress')
                             <a href="{{ route('inProgress.jobs', $job->id) }}">
